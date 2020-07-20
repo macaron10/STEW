@@ -17,6 +17,7 @@ public class GroupJoin {
 	private long gpJoinNo;// 소속 아이디
 
 	private String userId;// 유저아이디
-	private int gpNo;// 스터디아이디
+	private int gpNo;// 스터디아이디 test
+	
 
 }

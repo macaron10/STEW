@@ -10,6 +10,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import com.ssafy.study.user.model.UserDetail;
+import com.ssafy.study.util.JwtUtil;
 
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;

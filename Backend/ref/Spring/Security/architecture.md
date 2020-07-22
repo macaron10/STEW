@@ -307,7 +307,16 @@
       spring.redis.host=127.0.0.1
       ```
 
+* **SecurityConfig**
+  * @EnableGlobalmethodSecurity(securedEnabled=true)
+    * Controller에서 @Secured("ROLE_ADMIN")으로 권한 부여
+    * 이전 방법으로 하는게 더 편할거 같다
+  
+* **JWT**
 
+  * ServletRequest에서 jwt가져오기
+    * `request.getHeader("Authorization")`
+  * startWith("Bearer ")
 
 
 

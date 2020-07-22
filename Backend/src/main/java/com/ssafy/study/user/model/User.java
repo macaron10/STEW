@@ -9,9 +9,8 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.Transient;
-
-import org.springframework.data.annotation.Id;
 
 import com.ssafy.study.enums.UserRole;
 
@@ -44,6 +43,10 @@ public class User implements Serializable{
 	@Column(nullable = false)
 	private char userGender;
 	
+	@Column(nullable = false, length = 15)
+	@Enumerated(EnumType.STRING)
+	private UserRole role;
+	
 	@Column(length = 200)
 	private String userIntro;
 	
@@ -54,9 +57,6 @@ public class User implements Serializable{
 	
 	private Date userRegDate;
 	
-	@Column(nullable = false, length = 15)
-	@Enumerated(EnumType.STRING)
-	private UserRole role;
 	
 	@Builder
 	public User(String userEmail, String userPw) {

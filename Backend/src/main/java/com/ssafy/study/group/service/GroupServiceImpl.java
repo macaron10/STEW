@@ -15,26 +15,26 @@ import com.ssafy.study.group.repository.GroupRepository;
 @Service
 public class GroupServiceImpl implements GroupService {
 	@Autowired
-	private GroupRepository gpRepo;
+	private GroupRepository groupRepository;
 
 	@Override
 	public Group createGroup(Group group) {
-		return gpRepo.save(group);
+		return groupRepository.save(group);
 	}
 
 	@Override
 	public void modifyGroup(Group group) {
-		gpRepo.save(group);
+		groupRepository.save(group);
 	}
 
 	@Override
 	public void deleteGroup(long gpNo) {
-		gpRepo.deleteById(gpNo);
+		groupRepository.deleteById(gpNo);
 	}
 
 	@Override
 	public GroupDto.ResGroup selectGroup(long gpNo) {
-		Optional<Group> g = gpRepo.findByGpNo(gpNo);
+		Optional<Group> g = groupRepository.findByGpNo(gpNo);
 		if (g.isPresent())
 			return new ResGroup(g.get());
 		return null;
@@ -42,17 +42,17 @@ public class GroupServiceImpl implements GroupService {
 
 	@Override
 	public List<Group> findMyGroups(String userId) {
-		return gpRepo.findByGpMgrId(userId);
+		return groupRepository.findByGpMgrId(userId);
 	}
 
 	@Override
 	public List<Group> findAllGroups() {
-		return gpRepo.findAll();
+		return groupRepository.findAll();
 	}
 
 	@Override
 	public List<Group> searchGroups(GroupSearch groupSearch) {
-		return gpRepo.searchGroups(groupSearch);
+		return groupRepository.searchGroups(groupSearch);
 	}
 
 }

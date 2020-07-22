@@ -1,5 +1,5 @@
 <template>
-  <v-parallax src="https://cdn.vuetifyjs.com/images/parallax/material.jpg"></v-parallax>
+<h1>about 페이지</h1>
 </template>
 
 <script>

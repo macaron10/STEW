@@ -3,8 +3,7 @@
     <Navbar @drawer-onoff="turnOnDrawer"/>
     <Sidebar :drawer="drawer" />
     <v-main>
-        <Home />
-        <About />
+      <router-view />
     </v-main>
   </v-app>
 </template>
@@ -15,16 +14,13 @@ import Vue from "vue";
 import Navbar from "./components/Navbar.vue";
 import Sidebar from "./components/Sidebar.vue";
 
-import Home from "./views/Home.vue"
-import About from "./views/About.vue"
-
 export default Vue.extend({
   name: "App",
   props: {
     source: String,
   },
   components: {
-    Navbar, Sidebar, Home, About
+    Navbar, Sidebar,
   },
   data: () => ({
     dialog: false,

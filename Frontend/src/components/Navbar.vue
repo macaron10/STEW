@@ -10,7 +10,21 @@
       style="width: 300px"
       class="ml-0 pl-4"
     >
-      <span class="hidden-sm-and-down">Google Contacts</span>
+      <v-btn
+      icon
+      large
+      :to="{ name: 'Main' }"
+    >
+      <v-avatar
+        size="32px"
+        item
+      >
+        <v-img
+          src="https://cdn.vuetifyjs.com/images/logos/logo.svg"
+          alt="Vuetify"
+        ></v-img></v-avatar>
+    </v-btn>
+      <span class="hidden-sm-and-down">Cam Study</span>
     </v-toolbar-title>
     <v-text-field
       flat
@@ -27,18 +41,11 @@
     <v-btn icon>
       <v-icon>mdi-account-plus</v-icon>
     </v-btn>
-    <v-btn
-      icon
-      large
-    >
-      <v-avatar
-        size="32px"
-        item
-      >
-        <v-img
-          src="https://cdn.vuetifyjs.com/images/logos/logo.svg"
-          alt="Vuetify"
-        ></v-img></v-avatar>
+    <v-btn icon>
+      <v-icon>mdi-account-circle</v-icon>
+    </v-btn>
+    <v-btn icon :to="{ name: 'Home' }">
+      <v-icon>mdi-home</v-icon>
     </v-btn>
   </v-app-bar>
 </template>

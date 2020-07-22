@@ -44,9 +44,6 @@
     <v-btn icon>
       <v-icon>mdi-account-circle</v-icon>
     </v-btn>
-    <v-btn icon :to="{ name: 'Home' }">
-      <v-icon>mdi-home</v-icon>
-    </v-btn>
   </v-app-bar>
 </template>
 
@@ -56,7 +53,7 @@ export default {
     methods: {
       drawerOnOff(event) {
         this.$emit('drawer-onoff')
-      }
+      },
     }
 }
 </script>

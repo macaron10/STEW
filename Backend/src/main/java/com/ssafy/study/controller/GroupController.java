@@ -19,7 +19,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ssafy.study.common.model.BasicResponse;
 import com.ssafy.study.group.model.Group;
-import com.ssafy.study.group.model.GroupRequestDto;
+import com.ssafy.study.group.model.GroupDto;
+import com.ssafy.study.group.model.GroupSearch;
 import com.ssafy.study.group.service.GroupService;
 
 import io.swagger.annotations.ApiOperation;
@@ -31,7 +32,7 @@ import io.swagger.annotations.ApiResponses;
 		@ApiResponse(code = 404, message = "Not Found", response = BasicResponse.class),
 		@ApiResponse(code = 500, message = "Failure", response = BasicResponse.class) })
 
-@CrossOrigin(origins = { "http://localhost:3000" })
+//@CrossOrigin(origins = { "http://localhost:3000" })
 @RestController
 @RequestMapping("/study")
 public class GroupController {
@@ -57,31 +58,82 @@ public class GroupController {
 	@GetMapping("/my")
 	@ApiOperation("회원의 스터디 목록 조회")
 	public Object findMyStudyList() {
-		return null;
+		ResponseEntity response;
+
+		BasicResponse result = new BasicResponse();
+		result.object = gpService.findMyGroups("userid");
+		result.msg = "success";
+		result.status = true;
+
+		response = new ResponseEntity<>(result, HttpStatus.OK);
+
+		return response;
 	}
 
 	@PostMapping("/")
 	@ApiOperation("스터디 생성")
-	public Object createStudy(@RequestBody @Valid GroupRequestDto group) {
+	public Object createStudy(@RequestBody @Valid GroupDto.RegistGroup group) {
+		ResponseEntity response;
 
-		return null;
+		gpService.createGroup(group.toEntity());
+		BasicResponse result = new BasicResponse();
+		result.msg = "success";
+		result.status = true;
+
+		response = new ResponseEntity<>(result, HttpStatus.OK);
+
+		return response;
 	}
 
 	@GetMapping("/{no}")
 	@ApiOperation("스터디 상세 조회")
 	public Object selectStudyNo(@PathVariable long no) {
-		return null;
+		ResponseEntity response;
+
+		BasicResponse result = new BasicResponse();
+		result.object = gpService.selectGroup(no);
+		result.msg = "success";
+		result.status = true;
+
+		response = new ResponseEntity<>(result, HttpStatus.OK);
+
+		return response;
 	}
 
 	@PutMapping("/{no}")
 	@ApiOperation("스터디 수정")
-	public Object modifytudy(@RequestBody Group group) {
-		return null;
+	public Object modifytudy(@RequestBody GroupDto.ModifyGroup group) {
+		ResponseEntity response;
+
+		gpService.modifyGroup(group.toEntity());
+		BasicResponse result = new BasicResponse();
+		result.msg = "success";
+		result.status = true;
+
+		response = new ResponseEntity<>(result, HttpStatus.OK);
+
+		return response;
 	}
 
 	@DeleteMapping("/{no}")
 	@ApiOperation("스터디번호로 스터디 삭제")
 	public Object deleteStudy(@PathVariable long no) {
+		ResponseEntity response;
+
+		gpService.deleteGroup(no);
+		BasicResponse result = new BasicResponse();
+		result.msg = "success";
+		result.status = true;
+
+		response = new ResponseEntity<>(result, HttpStatus.OK);
+
+		return response;
+	}
+
+	@GetMapping("/search")
+	@ApiOperation("스터디 검색")
+	public Object searchStudy(@RequestBody GroupSearch groupSearch) {
+
 		return null;
 	}
 

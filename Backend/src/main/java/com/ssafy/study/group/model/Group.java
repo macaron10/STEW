@@ -1,6 +1,6 @@
 package com.ssafy.study.group.model;
 
-import java.sql.Date;
+import java.time.LocalDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -9,12 +9,17 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.PrePersist;
 import javax.persistence.Table;
 
+import org.springframework.data.annotation.CreatedDate;
+
+import com.ssafy.study.group.model.GroupDto.ResGroup;
+
+import lombok.Builder;
 import lombok.Data;
 
 @Data
+@Builder
 @Entity
 @Table(name = "gp_tb")
 public class Group {
@@ -40,7 +45,22 @@ public class Group {
 	private int gpMaxNum;// 최대인원
 	private int gpCurNum;// 현재인원
 
-	@Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", updatable = false)
-	private Date gpRegDate;// 등록일
+	@CreatedDate
+	private LocalDateTime gpRegDate;// 등록일
+
+	public void update(ResGroup group) {
+		this.gpNo = group.getGpNo();
+		this.setGpCat(new GroupCategory(group.getGpCatNo()));
+		this.gpNm = group.getGpNm();
+		this.gpMgrId = group.getGpMgrId();
+		this.gpIntro = group.getGpIntro();
+		this.gpTag = group.getGpTag();
+		this.gpStTm = group.getGpStTm();
+		this.gpEndTm = group.getGpEndTm();
+		this.gpPublic = group.isGpPublic();
+		this.gpImg = group.getGpImg();
+		this.gpMaxNum = group.getGpMaxNum();
+		this.gpCurNum = group.getGpCurNum();
+	}
 
 }

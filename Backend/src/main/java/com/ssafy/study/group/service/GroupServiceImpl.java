@@ -7,6 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.ssafy.study.group.model.Group;
+import com.ssafy.study.group.model.GroupDto;
+import com.ssafy.study.group.model.GroupDto.ResGroup;
+import com.ssafy.study.group.model.GroupSearch;
 import com.ssafy.study.group.repository.GroupRepository;
 
 @Service
@@ -20,18 +23,21 @@ public class GroupServiceImpl implements GroupService {
 	}
 
 	@Override
-	public void deleteGroup(long gp_id) {
-		gpRepo.deleteById(gp_id);
+	public void modifyGroup(Group group) {
+		gpRepo.save(group);
 	}
 
 	@Override
-	public int modifyGroup(Group group) {
-		return 0;
+	public void deleteGroup(long gpNo) {
+		gpRepo.deleteById(gpNo);
 	}
 
 	@Override
-	public Optional<Group> selectGroup(long gpNo) {
-		return gpRepo.findByGpNo(gpNo);
+	public GroupDto.ResGroup selectGroup(long gpNo) {
+		Optional<Group> g = gpRepo.findByGpNo(gpNo);
+		if (g.isPresent())
+			return new ResGroup(g.get());
+		return null;
 	}
 
 	@Override
@@ -45,9 +51,8 @@ public class GroupServiceImpl implements GroupService {
 	}
 
 	@Override
-	public List<Group> searchGroups() {
-		return null;
+	public List<Group> searchGroups(GroupSearch groupSearch) {
+		return gpRepo.searchGroups(groupSearch);
 	}
-
 
 }

@@ -110,7 +110,7 @@ export default {
       { icon: 'mdi-cog', text: 'Settings' },
       { icon: 'mdi-message', text: '문의하기' },
       { icon: 'mdi-help-circle', text: '가이드' },
-      { icon: 'mdi-cellphone-link', text: '뭐넣지?' },
+      { icon: 'mdi-cellphone-link', text: 'Home화면' },
       { icon: 'mdi-keyboard', text: '사이드바 닫기(미구현)' },
     ],
     })

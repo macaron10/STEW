@@ -1,48 +1,47 @@
-package com.ssafy.study.config.security;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-
-import com.ssafy.study.user.model.UserDetail;
-import com.ssafy.study.util.JwtUtil;
-
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
-
-@RequiredArgsConstructor
-public class CustomAuthenticationProvider implements AuthenticationProvider{
-	
-	@Autowired
-	private UserDetailsService userDetailsService;
-	
-	@NonNull
-	private BCryptPasswordEncoder passwordEncoder;
-	
-	@Override
-	public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-		UsernamePasswordAuthenticationToken token = (UsernamePasswordAuthenticationToken)authentication;
-		
-		String userEmail = token.getName();
-		String userPw = (String) token.getCredentials();
-		
-		UserDetail userDetail = (UserDetail) userDetailsService.loadUserByUsername(userEmail);
-		
-		if(!passwordEncoder.matches(userPw, userDetail.getPassword())) {
-			throw new BadCredentialsException(userDetail.getUserEmail() + "Invalid password");
-		}
-		
-		return new UsernamePasswordAuthenticationToken(userDetail, userPw, userDetail.getAuthorities());
-	}
-
-	@Override
-	public boolean supports(Class<?> authentication) {
-		return authentication.equals(UsernamePasswordAuthenticationToken.class);
-	}
-	
-}
+//package com.ssafy.study.config.security;
+//
+//import org.springframework.beans.factory.annotation.Autowired;
+//import org.springframework.security.authentication.AuthenticationProvider;
+//import org.springframework.security.authentication.BadCredentialsException;
+//import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+//import org.springframework.security.core.Authentication;
+//import org.springframework.security.core.AuthenticationException;
+//import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+//
+//import com.ssafy.study.user.model.UserPrincipal;
+//import com.ssafy.study.user.service.UserPrincipalDetailsService;
+//
+//import lombok.NonNull;
+//import lombok.RequiredArgsConstructor;
+//
+//@RequiredArgsConstructor
+//public class CustomAuthenticationProvider implements AuthenticationProvider{
+//	
+//	@Autowired
+//	private UserPrincipalDetailsService userPrincipalDetailsService;
+//	
+//	@NonNull
+//	private BCryptPasswordEncoder passwordEncoder;
+//	
+//	@Override
+//	public Authentication authenticate(Authentication authentication) throws AuthenticationException {
+//		UsernamePasswordAuthenticationToken token = (UsernamePasswordAuthenticationToken)authentication;
+//		
+//		String userEmail = token.getName();
+//		String userPw = (String) token.getCredentials();
+//		
+//		UserPrincipal userPrincipal = (UserPrincipal) userPrincipalDetailsService.loadUserByUsername(userEmail);
+//		
+//		if(!passwordEncoder.matches(userPw, userPrincipal.getPassword())) {
+//			throw new BadCredentialsException(userPrincipal.getUsername() + "Invalid password");
+//		}
+//		
+//		return new UsernamePasswordAuthenticationToken(userPrincipal, userPw, userPrincipal.getAuthorities());
+//	}
+//
+//	@Override
+//	public boolean supports(Class<?> authentication) {
+//		return authentication.equals(UsernamePasswordAuthenticationToken.class);
+//	}
+//	
+//}

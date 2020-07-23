@@ -2,17 +2,16 @@ package com.ssafy.study.user.model;
 
 import java.io.Serializable;
 import java.sql.Date;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Transient;
-
-import com.ssafy.study.enums.UserRole;
 
 import lombok.Builder;
 import lombok.Data;
@@ -43,9 +42,10 @@ public class User implements Serializable{
 	@Column(nullable = false)
 	private char userGender;
 	
-	@Column(nullable = false, length = 15)
-	@Enumerated(EnumType.STRING)
-	private UserRole role;
+	@Column(nullable = false)
+	private String roles;
+	
+	private String permissions;
 	
 	@Column(length = 200)
 	private String userIntro;
@@ -57,7 +57,6 @@ public class User implements Serializable{
 	
 	private Date userRegDate;
 	
-	
 	@Builder
 	public User(String userEmail, String userPw) {
 		this.userEmail = userEmail;
@@ -67,5 +66,21 @@ public class User implements Serializable{
 	@Setter
 	@Transient
 	private boolean isEnable = true;
+	
+	public List<String> getRoleList(){
+		if(this.roles.length() > 0) {
+			return Arrays.asList(this.roles.split(","));
+		}
+		
+		return new ArrayList<>();
+	}
+	
+	public List<String> getPermissionList(){
+		if(this.permissions.length() > 0) {
+			return Arrays.asList(this.permissions.split(","));
+		}
+		
+		return new ArrayList<>();
+	}
 	
 }

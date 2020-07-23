@@ -7,9 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.ssafy.study.group.model.Group;
-import com.ssafy.study.group.model.GroupDto;
 import com.ssafy.study.group.model.GroupDto.ResGroup;
 import com.ssafy.study.group.model.GroupSearch;
+import com.ssafy.study.group.repository.GroupCategoryRepository;
 import com.ssafy.study.group.repository.GroupRepository;
 
 @Service
@@ -17,14 +17,13 @@ public class GroupServiceImpl implements GroupService {
 	@Autowired
 	private GroupRepository groupRepository;
 
-	@Override
-	public Group createGroup(Group group) {
-		return groupRepository.save(group);
-	}
+	@Autowired
+	private GroupCategoryRepository cateRepo;
 
 	@Override
-	public void modifyGroup(Group group) {
-		groupRepository.save(group);
+	public Group saveGroup(Group group) {
+		group.setGpCat(cateRepo.findByGpCatNo(group.getGpCat().getGpCatNo()));
+		return groupRepository.save(group);
 	}
 
 	@Override
@@ -33,11 +32,8 @@ public class GroupServiceImpl implements GroupService {
 	}
 
 	@Override
-	public GroupDto.ResGroup selectGroup(long gpNo) {
-		Optional<Group> g = groupRepository.findByGpNo(gpNo);
-		if (g.isPresent())
-			return new ResGroup(g.get());
-		return null;
+	public Optional<Group> selectGroup(long gpNo) {
+		return groupRepository.findByGpNo(gpNo);
 	}
 
 	@Override
@@ -52,7 +48,7 @@ public class GroupServiceImpl implements GroupService {
 
 	@Override
 	public List<Group> searchGroups(GroupSearch groupSearch) {
-		return groupRepository.searchGroups(groupSearch);
+		return null;
 	}
 
 }

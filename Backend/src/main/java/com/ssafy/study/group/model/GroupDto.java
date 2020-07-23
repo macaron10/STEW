@@ -6,13 +6,15 @@ import javax.validation.constraints.NotNull;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 public class GroupDto {
 
 	@Getter
 	@Valid
 	@NoArgsConstructor
-	public class RegistGroup {
+	@ToString
+	public static class RegistGroup {
 		@ApiModelProperty(required = true)
 		@NotNull
 		private int gpCatNo;// 타입 아이디
@@ -34,14 +36,14 @@ public class GroupDto {
 
 		public Group toEntity() {
 			return Group.builder().gpCat(new GroupCategory(gpCatNo)).gpNm(gpNm).gpIntro(gpIntro).gpTag(gpTag)
-					.gpStTm(gpStTm).gpEndTm(gpEndTm).gpPublic(gpPublic).gpImg(gpImg).build();
+					.gpStTm(gpStTm).gpEndTm(gpEndTm).gpMaxNum(5).gpPublic(gpPublic).gpImg(gpImg).build();
 		}
 	}
 
 	@Getter
 	@Valid
 	@NoArgsConstructor
-	public class ModifyGroup {
+	public static class ModifyGroup {
 		private long gpNo; // 스터디 아이디
 
 		@ApiModelProperty(required = true)
@@ -61,7 +63,7 @@ public class GroupDto {
 		private String gpImg;// 썸네일
 
 		public Group toEntity() {
-			return Group.builder().gpNo(gpNo).gpCat(new GroupCategory(gpCatNo)).gpNm(gpNm).gpIntro(gpIntro).gpTag(gpTag)
+			return Group.builder().gpNo(gpNo).gpNm(gpNm).gpIntro(gpIntro).gpTag(gpTag)
 					.gpStTm(gpStTm).gpEndTm(gpEndTm).gpPublic(gpPublic).gpImg(gpImg).build();
 		}
 	}

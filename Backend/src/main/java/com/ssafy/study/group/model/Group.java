@@ -13,14 +13,18 @@ import javax.persistence.Table;
 
 import org.springframework.data.annotation.CreatedDate;
 
-import com.ssafy.study.group.model.GroupDto.ResGroup;
+import com.ssafy.study.group.model.GroupDto.ModifyGroup;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
-@Builder
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Table(name = "gp_tb")
 public class Group {
 	@Id
@@ -48,19 +52,15 @@ public class Group {
 	@CreatedDate
 	private LocalDateTime gpRegDate;// 등록일
 
-	public void update(ResGroup group) {
-		this.gpNo = group.getGpNo();
-		this.setGpCat(new GroupCategory(group.getGpCatNo()));
+	public void update(ModifyGroup group) {
+		this.gpCat = new GroupCategory(group.getGpCatNo());
 		this.gpNm = group.getGpNm();
-		this.gpMgrId = group.getGpMgrId();
 		this.gpIntro = group.getGpIntro();
 		this.gpTag = group.getGpTag();
 		this.gpStTm = group.getGpStTm();
 		this.gpEndTm = group.getGpEndTm();
 		this.gpPublic = group.isGpPublic();
 		this.gpImg = group.getGpImg();
-		this.gpMaxNum = group.getGpMaxNum();
-		this.gpCurNum = group.getGpCurNum();
 	}
 
 }

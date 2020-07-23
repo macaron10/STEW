@@ -9,13 +9,11 @@ import com.ssafy.study.group.model.GroupSearch;
 
 public interface GroupService {
 
-	Group createGroup(Group group);
+	Group saveGroup(Group group);
 
 	void deleteGroup(long gpNo);
 
-	void modifyGroup(Group group);
-
-	ResGroup selectGroup(long gpNo);
+	Optional<Group> selectGroup(long gpNo);
 
 	List<Group> findMyGroups(String userId);
 

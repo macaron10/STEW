@@ -88,6 +88,9 @@ export default {
         { icon: 'mdi-home', text: 'HOME', page: 'Home' },
       { icon: 'mdi-contacts', text: 'My STudy', page: 'StudyDetail' },
       { icon: 'mdi-plus', text: 'Study 만들기', page: 'StudyCreate' },
+      { icon: 'mdi-message', text: 'Contact Us', page: 'Contact' },
+      { icon: 'mdi-help-circle', text: '가이드', page: 'Guide' },
+      { icon: 'mdi-keyboard', text: '사이드바 닫기(미구현)', page: 'Main' },
       {
         icon: 'mdi-chevron-up',
         'icon-alt': 'mdi-chevron-down',
@@ -110,9 +113,6 @@ export default {
           { text: 'Other contacts' },
         ],
       },
-      { icon: 'mdi-message', text: 'Contact Us', page: 'Contact' },
-      { icon: 'mdi-help-circle', text: '가이드', page: 'Guide' },
-      { icon: 'mdi-keyboard', text: '사이드바 닫기(미구현)', page: 'Main' },
     ],
     }),
     methods: {

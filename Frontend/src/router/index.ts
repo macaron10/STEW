@@ -6,6 +6,7 @@ import StudyCreate from '../views/StudyCreate.vue';
 import StudyDetail from '../views/StudyDetail.vue';
 import Contact from '../views/Contact.vue';
 import Guide from '../views/Guide.vue';
+import UserDetail from '../views/UserDetail.vue';
 
 Vue.use(VueRouter);
 
@@ -39,6 +40,11 @@ const routes: Array<RouteConfig> = [
     path: '/guide',
     name: 'Guide',
     component: Guide
+  },
+  {
+    path: '/user/detail',
+    name: 'UserDetail',
+    component: UserDetail
   },
 ];
 

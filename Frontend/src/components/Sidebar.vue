@@ -59,8 +59,11 @@
           v-else
           :key="item.text"
           link
+          @click="clickclick"
+          :to="{ name: item.page }"
         >
-          <v-list-item-action>
+          <v-list-item-action
+          >
             <v-icon>{{ item.icon }}</v-icon>
           </v-list-item-action>
           <v-list-item-content>
@@ -82,13 +85,16 @@ export default {
     },
     data: () => ({
       items: [
-      { icon: 'mdi-plus', text: 'Study 만들기' },
-      { icon: 'mdi-contacts', text: 'My STudy' },
-      { icon: 'mdi-content-copy', text: '일정' },
+        { icon: 'mdi-home', text: 'HOME', page: 'Home' },
+      { icon: 'mdi-contacts', text: 'My STudy', page: 'StudyDetail' },
+      { icon: 'mdi-plus', text: 'Study 만들기', page: 'StudyCreate' },
+      { icon: 'mdi-message', text: 'Contact Us', page: 'Contact' },
+      { icon: 'mdi-help-circle', text: '가이드', page: 'Guide' },
+      { icon: 'mdi-keyboard', text: '사이드바 닫기(미구현)', page: 'Main' },
       {
         icon: 'mdi-chevron-up',
         'icon-alt': 'mdi-chevron-down',
-        text: 'Labels',
+        text: '라벨(나중에 필요하면 쓸 것)',
         model: true,
         children: [
           { icon: 'mdi-plus', text: 'Create label' },
@@ -97,7 +103,7 @@ export default {
       {
         icon: 'mdi-chevron-up',
         'icon-alt': 'mdi-chevron-down',
-        text: 'More',
+        text: '추가(나중에 필요하면 쓸 것)',
         model: false,
         children: [
           { text: 'Import' },
@@ -107,13 +113,13 @@ export default {
           { text: 'Other contacts' },
         ],
       },
-      { icon: 'mdi-cog', text: 'Settings' },
-      { icon: 'mdi-message', text: '문의하기' },
-      { icon: 'mdi-help-circle', text: '가이드' },
-      { icon: 'mdi-cellphone-link', text: 'Home화면' },
-      { icon: 'mdi-keyboard', text: '사이드바 닫기(미구현)' },
     ],
-    })
+    }),
+    methods: {
+      clickclick(event) {
+        console.log('클릭미')
+      }
+    }
 }
 </script>
 

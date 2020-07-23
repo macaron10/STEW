@@ -29,19 +29,18 @@ public class TestController {
 	@GetMapping("/test")
 	@ApiOperation("아무나 요청 가능")
 	public String test1() {
-		
 		return "API Test 1 ";
 	}
 	
 //	only manager
-	@GetMapping("/management/reports")
+	@GetMapping("/manager")
 	@ApiOperation("매니저만")
 	public String reports() {
 		return "API Test 2";
 	}
 	
 //	only admin
-	@GetMapping("/admin/users")
+	@GetMapping("/admin")
 	@ApiOperation("어드민만")
 	public List<User> allUsers(){
 		return this.userRepository.findAll();

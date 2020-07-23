@@ -14,14 +14,24 @@ import javax.persistence.Id;
 import javax.persistence.Transient;
 
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @NoArgsConstructor
-@Data
+@Getter
 @Entity
 public class User implements Serializable{
+	
+	@Builder
+	public User(String userEmail, String userPw, char userGender, String roles, String userNm) {
+		this.userEmail = userEmail;
+		this.userPw = userPw;
+		this.userGender = userGender;
+		this.roles = roles;
+		this.userNm = userNm;
+	}
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(nullable = false)
@@ -33,54 +43,39 @@ public class User implements Serializable{
 	@Column(nullable = false, unique = true, length = 128)
 	private String userEmail;
 	
+	@Setter
 	@Column(nullable = false, length = 128)
 	private String userPw;
 	
-	@Column(nullable = false, length = 50)
+	@Setter
+	@Column(length = 15)
 	private String userPhone;
 	
 	@Column(nullable = false)
 	private char userGender;
 	
+	@Setter
 	@Column(nullable = false)
 	private String roles;
 	
+	@Setter
 	private String permissions;
 	
+	@Setter
 	@Column(length = 200)
 	private String userIntro;
 	
+	@Setter
 	@Column(length = 100)
 	private String userImg;
 	
+	@Setter
 	private int userGoalHr;
 	
 	private Date userRegDate;
-	
-	@Builder
-	public User(String userEmail, String userPw) {
-		this.userEmail = userEmail;
-		this.userPw = userPw;
-	}
-	
+		
 	@Setter
 	@Transient
 	private boolean isEnable = true;
-	
-	public List<String> getRoleList(){
-		if(this.roles.length() > 0) {
-			return Arrays.asList(this.roles.split(","));
-		}
-		
-		return new ArrayList<>();
-	}
-	
-	public List<String> getPermissionList(){
-		if(this.permissions.length() > 0) {
-			return Arrays.asList(this.permissions.split(","));
-		}
-		
-		return new ArrayList<>();
-	}
 	
 }

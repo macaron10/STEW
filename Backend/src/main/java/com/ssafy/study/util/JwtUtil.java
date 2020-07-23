@@ -3,6 +3,7 @@ package com.ssafy.study.util;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.security.core.GrantedAuthority;
@@ -40,13 +41,32 @@ public class JwtUtil implements Serializable{
 	
 	public static String generateAccessToken(UserPrincipal userPrincipal) {
 		
-		List<String> authorities = new ArrayList<>();
-		for(GrantedAuthority p : )
+		ArrayList<String> authorities = new ArrayList<>();
+		for(GrantedAuthority p : userPrincipal.getAuthorities()) {
+			authorities.add(p.getAuthority());
+		}
 		
 		return 
 				JWT.create()
-				.withArrayClaim("role", )
+				.withArrayClaim("role", authorities.toArray(new String[authorities.size()]))
+				.withSubject(userPrincipal.getUsername())
+				.withIssuedAt(new Date(System.currentTimeMillis()))
+				.withExpiresAt(new Date(System.currentTimeMillis() + JwtProperties.EXPIRATION_TIME_ACCESS))
+				.sign(Algorithm.HMAC512(JwtProperties.SECRET.getBytes()));
+		
 	}
+	
+	public static String generateRefreshToken(UserPrincipal userPrincipal) {
+		
+		return
+				JWT.create()
+				.withSubject(userPrincipal.getUsername())
+				.withIssuedAt(new Date(System.currentTimeMillis()))
+				.withExpiresAt(new Date(System.currentTimeMillis() + JwtProperties.EXPIRATION_TIME_REFRESH))
+				.sign(Algorithm.HMAC512(JwtProperties.SECRET.getBytes()));
+		
+	}
+	
 }
 ////	AccessToken 만료 시간
 //	public static final long JWT_ACCESS_TOKEN_VALIDITY = 10 * 60;

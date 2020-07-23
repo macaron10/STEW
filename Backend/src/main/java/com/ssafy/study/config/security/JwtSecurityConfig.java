@@ -2,7 +2,7 @@ package com.ssafy.study.config.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -12,6 +12,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 
 import com.ssafy.study.user.repository.UserRepository;
 import com.ssafy.study.user.service.UserPrincipalDetailsService;
@@ -25,6 +26,7 @@ public class JwtSecurityConfig extends WebSecurityConfigurerAdapter{
 	
 	private final UserPrincipalDetailsService userPrincipalDetailsService;
 	private final UserRepository userRepository;
+	private final RedisTemplate<String, Object> redisTemplate;
 	
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
@@ -32,12 +34,16 @@ public class JwtSecurityConfig extends WebSecurityConfigurerAdapter{
 			.csrf().disable()
 			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 			.and()
+			.formLogin().disable()
 			.addFilter(jwtAuthenticationFilter(authenticationManager()))
-			.addFilter(new JwtAuthorizationFilter(authenticationManager(), this.userRepository))
+			.addFilter(new JwtAuthorizationFilter(authenticationManager(), this.userRepository, this.redisTemplate))
+			.logout()
+			.logoutUrl("/user/logout")
+			.addLogoutHandler(jwtLogoutHandler())
+			.and()
 			.authorizeRequests()
-			.antMatchers(HttpMethod.POST, "/login").permitAll()
 			.antMatchers("/swagger-ui.html").permitAll()
-			.antMatchers("/api/management/*").hasRole("MANAGER")
+			.antMatchers("/api/manager/*").hasRole("MANAGER")
 			.antMatchers("/api/admin/*").hasRole("ADMIN")
 			.anyRequest().permitAll();
 	}
@@ -62,13 +68,24 @@ public class JwtSecurityConfig extends WebSecurityConfigurerAdapter{
 	}
 	
 	@Bean
-	JwtLoginSuccessHandler jwtLoginSuccessHandler() {
-		return new JwtLoginSuccessHandler();
+	JwtAuthenticationSuccessHandler jwtAuthenticationSuccessHandler() {
+		return new JwtAuthenticationSuccessHandler();
 	}
+	@Bean
+	JwtLogoutHandler jwtLogoutHandler() {
+		return new JwtLogoutHandler();
+	}
+	
+//	@Bean
+//	CustomLogoutSuccessHandler customLogoutSuccessHandler() {
+//		return new CustomLogoutSuccessHandler();
+//	}
 	
 	private JwtAuthenticationFilter jwtAuthenticationFilter(AuthenticationManager authenticationManager) throws Exception {
 		JwtAuthenticationFilter authenticationFilter = new JwtAuthenticationFilter(authenticationManager);
-		authenticationFilter.setAuthenticationSuccessHandler(jwtLoginSuccessHandler());
+		authenticationFilter.setPostOnly(true);
+		authenticationFilter.setFilterProcessesUrl("/user/signin");
+		authenticationFilter.setAuthenticationSuccessHandler(jwtAuthenticationSuccessHandler());
 		
 		return authenticationFilter;
 	}

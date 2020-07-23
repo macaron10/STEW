@@ -1,6 +1,7 @@
 package com.ssafy.study.user.model;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -15,19 +16,23 @@ public class UserPrincipal implements UserDetails{
 		this.user = user;
 	}
 	
+	private List<String> arrToList(String input){
+		if(input == null || input.length() == 0) return new ArrayList<>();
+		
+		return Arrays.asList(input.split(","));
+	}
+	
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		List<GrantedAuthority> authorities = new ArrayList<>();
 		
-		this.user.getPermissionList().forEach(p -> {
+		arrToList(this.user.getPermissions()).forEach(p -> {
 			GrantedAuthority authority = new SimpleGrantedAuthority(p);
-			
 			authorities.add(authority);
 		});
 		
-		this.user.getRoleList().forEach(r -> {
-			GrantedAuthority authority = new SimpleGrantedAuthority("ROLE_" + r);
-			
+		arrToList(this.user.getRoles()).forEach(p -> {
+			GrantedAuthority authority = new SimpleGrantedAuthority("ROLE_" + p);
 			authorities.add(authority);
 		});
 		

@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ssafy.study.common.model.BasicResponse;
 import com.ssafy.study.user.model.User;
+import com.ssafy.study.user.model.UserSignUpRequest;
 import com.ssafy.study.user.repository.UserRepository;
 
 import io.swagger.annotations.ApiOperation;
@@ -66,18 +68,21 @@ public class UserController {
 	
 //	테스트용
 	@PostMapping("/signup")
-	@ApiOperation("회원가입")
-	public ResponseEntity<BasicResponse> signUp(@RequestBody User user){
+	@ApiOperation("회원가입 테스트")
+	public ResponseEntity<BasicResponse> signUp(@RequestBody UserSignUpRequest signUpInfo){
 		
-		String password = user.getUserPw();
+		String password = signUpInfo.getUserPw();
 		
-		user.setUserPw(new BCryptPasswordEncoder().encode(password));
+		signUpInfo.setUserPw(new BCryptPasswordEncoder().encode(password));
+		
+		User user = signUpInfo.toEntity();
+		userRepository.save(user);
 		
 		BasicResponse result = new BasicResponse();
 		
+		result.status = true;
+		result.msg = "success";
 		result.object = user;
-		
-		userRepository.save(user);
 		
 		return new ResponseEntity<>(result, HttpStatus.OK);
 		

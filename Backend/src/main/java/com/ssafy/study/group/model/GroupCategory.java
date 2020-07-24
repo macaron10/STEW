@@ -27,4 +27,19 @@ public class GroupCategory {
 		this.gpCatNo = gpCatNo;
 	}
 
+	public GroupCategory(String gpCatLg) {
+		this.gpCatLg = gpCatLg;
+	}
+
+	public GroupCategory(String gpCatLg, String gpCatMd) {
+		this.gpCatLg = gpCatLg;
+		this.gpCatMd = gpCatMd;
+	}
+
+	public GroupCategory(String gpCatLg, String gpCatMd, String gpCatSm) {
+		this.gpCatLg = gpCatLg;
+		this.gpCatMd = gpCatMd;
+		this.gpCatSm = gpCatSm;
+	}
+
 }

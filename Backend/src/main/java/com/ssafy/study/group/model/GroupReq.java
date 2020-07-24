@@ -19,7 +19,7 @@ public class GroupReq {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private long gpRegNo;// 요청 아이디
+	private long gpReqNo;// 요청 아이디
 
 	@ManyToOne
 	@JoinColumn(name = "gp_no")

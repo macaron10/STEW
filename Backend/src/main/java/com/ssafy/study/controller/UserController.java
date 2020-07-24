@@ -3,8 +3,8 @@ package com.ssafy.study.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ssafy.study.common.model.BasicResponse;
 import com.ssafy.study.user.model.User;
+import com.ssafy.study.user.model.UserSignInRequest;
 import com.ssafy.study.user.model.UserSignUpRequest;
 import com.ssafy.study.user.repository.UserRepository;
 
@@ -33,17 +34,17 @@ public class UserController {
 //	@Autowired
 //	private UserServiceImpl userService;
 	
-//	@PostMapping("/signin")
-//	@ApiOperation("로그인")
-//	public ResponseEntity<BasicResponse> signIn(@RequestParam String userEmail, @RequestParam String userPw) {
-//		
-//		BasicResponse result = new BasicResponse();
-//		
-//		result.object = userService.findUserByUserEmail(userEmail);
-//		
-//		return new ResponseEntity<>(result, HttpStatus.OK);
-//		
-//	}
+	@PostMapping("/signin")
+	@ApiOperation("로그인")
+	public ResponseEntity<BasicResponse> signIn(@RequestBody UserSignInRequest sigininreq) {
+		
+		BasicResponse result = new BasicResponse();
+		
+		System.out.println("allflalqwlf" + SecurityContextHolder.getContext().getAuthentication());
+		
+		return new ResponseEntity<>(result, HttpStatus.OK);
+		
+	}
 	
 //	테스트용
 //	@PostMapping("/hello")

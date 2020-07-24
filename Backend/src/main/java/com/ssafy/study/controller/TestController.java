@@ -3,12 +3,15 @@ package com.ssafy.study.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ssafy.study.common.model.BasicResponse;
 import com.ssafy.study.user.model.User;
+import com.ssafy.study.user.model.UserPrincipal;
 import com.ssafy.study.user.repository.UserRepository;
 
 import io.swagger.annotations.ApiOperation;
@@ -28,7 +31,9 @@ public class TestController {
 	
 	@GetMapping("/test")
 	@ApiOperation("아무나 요청 가능")
-	public String test1() {
+	public String test1(UserPrincipal principal) {
+		System.out.println(principal);
+		System.out.println(SecurityContextHolder.getContext().getAuthentication());
 		return "API Test 1 ";
 	}
 	

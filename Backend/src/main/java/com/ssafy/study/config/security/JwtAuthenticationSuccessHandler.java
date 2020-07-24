@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 
 import com.ssafy.study.user.model.UserPrincipal;
@@ -43,6 +44,8 @@ public class JwtAuthenticationSuccessHandler extends SavedRequestAwareAuthentica
 		
 		redisTemplate.opsForValue().set(userToken.getUsername(), userToken);
 		redisTemplate.expire(userToken.getUsername(), JwtProperties.EXPIRATION_TIME_REFRESH, TimeUnit.MILLISECONDS);
+		
+		SecurityContextHolder.getContext().setAuthentication(authResult);
 		
 		response.addHeader(JwtProperties.HEADER_STRING, JwtProperties.TOKEN_PREFIX + accessToken);
 	}

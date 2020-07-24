@@ -3,7 +3,6 @@ package com.ssafy.study.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -47,7 +46,9 @@ public class TestController {
 //	only admin
 	@GetMapping("/admin")
 	@ApiOperation("어드민만")
-	public List<User> allUsers(){
+	public List<User> allUsers(UserPrincipal userPrincipal){
+//		System.out.println("INFO : " + userPrincipal.getAuthorities());
+		
 		return this.userRepository.findAll();
 	}
 }

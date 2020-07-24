@@ -28,6 +28,8 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 	@Override
 	public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
 			throws AuthenticationException{
+		logger.info("Authentication Filter");
+		
 		if(!request.getMethod().equals("POST")) 
 			throw new AuthenticationServiceException("Authentication method not supported " + request.getMethod());
 		

@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ssafy.study.common.model.BasicResponse;
 import com.ssafy.study.user.model.User;
 import com.ssafy.study.user.model.UserPrincipal;
-import com.ssafy.study.user.repository.UserRepository;
+import com.ssafy.study.user.service.UserService;
 
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -26,14 +26,16 @@ import io.swagger.annotations.ApiResponses;
 public class TestController {
 	
 	@Autowired
-	private UserRepository userRepository;
+	private UserService userService;
 	
 	@GetMapping("/test")
 	@ApiOperation("아무나 요청 가능")
 	public String test1(UserPrincipal principal) {
+		
+		
 		System.out.println(principal);
 		System.out.println(SecurityContextHolder.getContext().getAuthentication());
-		return "API Test 1 ";
+		return "API Test 1 " + userService.loadUserByUserId(1).getRoles();
 	}
 	
 //	only manager
@@ -49,6 +51,6 @@ public class TestController {
 	public List<User> allUsers(UserPrincipal userPrincipal){
 //		System.out.println("INFO : " + userPrincipal.getAuthorities());
 		
-		return this.userRepository.findAll();
+		return this.userService.findAll();
 	}
 }

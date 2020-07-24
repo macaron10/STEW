@@ -7,29 +7,27 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.auth0.jwt.exceptions.TokenExpiredException;
-import com.ssafy.study.user.model.User;
 import com.ssafy.study.user.model.UserPrincipal;
 import com.ssafy.study.user.model.UserToken;
 import com.ssafy.study.user.repository.UserRepository;
 import com.ssafy.study.util.JwtProperties;
 import com.ssafy.study.util.JwtUtil;
 
-public class JwtAuthorizationFilter extends BasicAuthenticationFilter{
+public class JwtAuthorizationFilter extends OncePerRequestFilter{
 	
 	private RedisTemplate<String, Object> redisTemplate;
 	private UserRepository userRepository;
 	
 	public JwtAuthorizationFilter(AuthenticationManager authenticationManager, UserRepository userRepository, RedisTemplate redisTemplate) {
-		super(authenticationManager);
+		super();
 		this.userRepository = userRepository;
 		this.redisTemplate = redisTemplate;
 	}
@@ -39,23 +37,21 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter{
 			throws IOException, ServletException {
 		
 		logger.info("Authorization Filter");
-		String header = request.getHeader(JwtProperties.HEADER_STRING);
+		String token = request.getHeader(JwtProperties.HEADER_STRING);
 		
-		if(header == null || !header.startsWith(JwtProperties.TOKEN_PREFIX)) {
+		if(token == null || !token.startsWith(JwtProperties.TOKEN_PREFIX)) {
 			chain.doFilter(request, response);
 			return;
 		}
 		
-		Authentication authentication = getUsernamePasswordAuthentication(request, response);
+		Authentication authentication = getUsernamePasswordAuthentication(response, token);
 		
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 		
 		chain.doFilter(request, response);
 	}
 	
-	private Authentication getUsernamePasswordAuthentication(HttpServletRequest request, HttpServletResponse response) {
-		String token = request.getHeader(JwtProperties.HEADER_STRING);
-		
+	private Authentication getUsernamePasswordAuthentication(HttpServletResponse response, String token) {
 		if(token == null || !token.startsWith(JwtProperties.TOKEN_PREFIX)) return null;
 		
 		String userEmail = JwtUtil.getUsernameFromToken(token.replace(JwtProperties.TOKEN_PREFIX, ""));

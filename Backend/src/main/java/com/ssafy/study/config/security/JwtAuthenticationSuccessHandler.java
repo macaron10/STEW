@@ -31,14 +31,16 @@ public class JwtAuthenticationSuccessHandler extends SavedRequestAwareAuthentica
 		
 		UserPrincipal userPrincipal = (UserPrincipal) authResult.getPrincipal();
 		
+		System.out.println("이놈이다!" + authResult.getAuthorities());
+		
 		List<String> authorities = new ArrayList<>();
 		
 		for(GrantedAuthority p : userPrincipal.getAuthorities()) {
 			authorities.add(p.getAuthority());
 		}
 		
-		String accessToken = JwtUtil.generateAccessToken(userPrincipal);
 		String refreshToken = JwtUtil.generateRefreshToken(userPrincipal);
+		String accessToken = JwtUtil.generateAccessToken(userPrincipal);
 		
 		UserToken userToken = new UserToken(userPrincipal.getUsername(), refreshToken);
 		

@@ -1,5 +1,6 @@
 package com.ssafy.study.config.security;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -12,7 +13,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.ssafy.study.user.repository.UserRepository;
 import com.ssafy.study.user.service.UserPrincipalDetailsService;
@@ -28,6 +29,9 @@ public class JwtSecurityConfig extends WebSecurityConfigurerAdapter{
 	private final UserRepository userRepository;
 	private final RedisTemplate<String, Object> redisTemplate;
 	
+	@Autowired
+	private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+	
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http
@@ -35,17 +39,28 @@ public class JwtSecurityConfig extends WebSecurityConfigurerAdapter{
 			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 			.and()
 			.formLogin().disable()
+//			.addFilter(jwtAuthenticationFilter(authenticationManager()))
+//			.addFilter(new JwtAuthorizationFilter(authenticationManager(), this.userRepository, this.redisTemplate))
 			.addFilter(jwtAuthenticationFilter(authenticationManager()))
-			.addFilter(new JwtAuthorizationFilter(authenticationManager(), this.userRepository, this.redisTemplate))
 			.logout()
 			.logoutUrl("/user/logout")
 			.addLogoutHandler(jwtLogoutHandler())
 			.and()
 			.authorizeRequests()
 			.antMatchers("/swagger-ui.html").permitAll()
+			.and()
+			.authorizeRequests()
 			.antMatchers("/api/manager/*").hasRole("MANAGER")
+			.and()
+			.authorizeRequests()
 			.antMatchers("/api/admin/*").hasRole("ADMIN")
-			.anyRequest().permitAll();
+			.and()
+			.authorizeRequests()
+			.anyRequest().permitAll()
+			.and()
+			.exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint)
+			.and()
+			.addFilterBefore(new JwtAuthorizationFilter(authenticationManager(), this.userRepository, this.redisTemplate), UsernamePasswordAuthenticationFilter.class);
 	}
 
 	@Override

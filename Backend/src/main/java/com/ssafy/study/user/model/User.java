@@ -2,27 +2,36 @@ package com.ssafy.study.user.model;
 
 import java.io.Serializable;
 import java.sql.Date;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Transient;
 
-import com.ssafy.study.enums.UserRole;
-
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @NoArgsConstructor
-@Data
+@Getter
 @Entity
 public class User implements Serializable{
+	
+	@Builder
+	public User(String userEmail, String userPw, char userGender, String roles, String userNm) {
+		this.userEmail = userEmail;
+		this.userPw = userPw;
+		this.userGender = userGender;
+		this.roles = roles;
+		this.userNm = userNm;
+	}
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(nullable = false)
@@ -34,36 +43,37 @@ public class User implements Serializable{
 	@Column(nullable = false, unique = true, length = 128)
 	private String userEmail;
 	
+	@Setter
 	@Column(nullable = false, length = 128)
 	private String userPw;
 	
-	@Column(nullable = false, length = 50)
+	@Setter
+	@Column(length = 15)
 	private String userPhone;
 	
 	@Column(nullable = false)
 	private char userGender;
 	
-	@Column(nullable = false, length = 15)
-	@Enumerated(EnumType.STRING)
-	private UserRole role;
+	@Setter
+	@Column(nullable = false)
+	private String roles;
 	
+	@Setter
+	private String permissions;
+	
+	@Setter
 	@Column(length = 200)
 	private String userIntro;
 	
+	@Setter
 	@Column(length = 100)
 	private String userImg;
 	
+	@Setter
 	private int userGoalHr;
 	
 	private Date userRegDate;
-	
-	
-	@Builder
-	public User(String userEmail, String userPw) {
-		this.userEmail = userEmail;
-		this.userPw = userPw;
-	}
-	
+		
 	@Setter
 	@Transient
 	private boolean isEnable = true;

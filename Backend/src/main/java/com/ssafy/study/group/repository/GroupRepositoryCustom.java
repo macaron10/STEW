@@ -7,5 +7,7 @@ import com.ssafy.study.group.model.GroupSearch;
 
 public interface GroupRepositoryCustom {
 
-//	List<Group> searchGroups(GroupSearch groupSearch);
+	public List<Group> findMyJoinGroup(long userId);
+
+
 }

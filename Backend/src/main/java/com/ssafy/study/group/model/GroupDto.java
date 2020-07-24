@@ -23,7 +23,7 @@ public class GroupDto {
 		private String gpNm;// 스터디 이름
 		@ApiModelProperty(required = true)
 		@NotNull
-		private String gpMgrId;// 팀장아이디
+		private long gpMgrId;// 팀장아이디
 		private String gpIntro;// 소개
 		private String gpTag;// 태그
 		private int gpStTm;// 선호 시작시간
@@ -36,7 +36,7 @@ public class GroupDto {
 
 		public Group toEntity() {
 			return Group.builder().gpCat(new GroupCategory(gpCatNo)).gpNm(gpNm).gpIntro(gpIntro).gpTag(gpTag)
-					.gpStTm(gpStTm).gpEndTm(gpEndTm).gpMaxNum(5).gpPublic(gpPublic).gpImg(gpImg).build();
+					.gpStTm(gpStTm).gpEndTm(gpEndTm).gpCurNum(1).gpMaxNum(5).gpPublic(gpPublic).gpImg(gpImg).build();
 		}
 	}
 
@@ -63,8 +63,8 @@ public class GroupDto {
 		private String gpImg;// 썸네일
 
 		public Group toEntity() {
-			return Group.builder().gpNo(gpNo).gpNm(gpNm).gpIntro(gpIntro).gpTag(gpTag)
-					.gpStTm(gpStTm).gpEndTm(gpEndTm).gpPublic(gpPublic).gpImg(gpImg).build();
+			return Group.builder().gpNo(gpNo).gpNm(gpNm).gpIntro(gpIntro).gpTag(gpTag).gpStTm(gpStTm).gpEndTm(gpEndTm)
+					.gpPublic(gpPublic).gpImg(gpImg).build();
 		}
 	}
 
@@ -74,7 +74,7 @@ public class GroupDto {
 
 		private int gpCatNo;// 타입 아이디
 		private String gpNm;// 스터디 이름
-		private String gpMgrId;// 팀장아이디
+		private long gpMgrId;// 팀장아이디
 		private String gpIntro;// 소개
 		private String gpTag;// 태그
 		private int gpStTm;// 선호 시작시간
@@ -98,7 +98,6 @@ public class GroupDto {
 			this.gpMaxNum = group.getGpMaxNum();
 			this.gpCurNum = group.getGpCurNum();
 		}
-
 	}
 
 }

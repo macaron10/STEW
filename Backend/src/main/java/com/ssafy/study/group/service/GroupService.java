@@ -4,8 +4,10 @@ import java.util.List;
 import java.util.Optional;
 
 import com.ssafy.study.group.model.Group;
+import com.ssafy.study.group.model.GroupReq;
 import com.ssafy.study.group.model.GroupDto.ResGroup;
 import com.ssafy.study.group.model.GroupSearch;
+import com.ssafy.study.group.model.GroupCategoryDto.ResGroupCategoryDto;
 
 public interface GroupService {
 
@@ -13,11 +15,26 @@ public interface GroupService {
 
 	void deleteGroup(long gpNo);
 
-	Optional<Group> selectGroup(long gpNo);
+	Group selectGroup(long gpNo);
 
-	List<Group> findMyGroups(String userId);
+	List<Group> findMyGroups(long userId);
 
 	List<Group> findAllGroups();
 
 	List<Group> searchGroups(GroupSearch groupSearch);
+
+	public List<ResGroupCategoryDto> selectBoxLgGroupCategory();
+
+	public List<ResGroupCategoryDto> selectBoxMdGroupCategory(String lg);
+
+	public List<ResGroupCategoryDto> selectBoxSmGroupCategory(String lg, String md);
+
+	public void requestJoinGroup(long userId, long gpNo);
+
+	public void acceptJoinGroup(long reqNo);
+
+	public void rejectJoinGroup(long reqNo);
+	
+	public void removeGroupMember(long joinNo);
+
 }

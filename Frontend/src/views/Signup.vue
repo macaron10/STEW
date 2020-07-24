@@ -1,16 +1,16 @@
 <template>
     <div id="Signup">
+      <!-- <ValidationObserver ref="observer" v-slot="{ validate, reset }"> -->
         <v-contaier>
             <h1> 회원가입 </h1>
             <form class="signup-form">
+              <!-- <ValidationProvider v-slot="{ errors }" name="Name" rules="required|max:10"> -->
 
                 <v-text-field
                     v-model="userId"
                     label="아이디"
                     required
                     :error-messages="nameErrors"
-                    @input="$v.userId.$touch()"
-                    @blur="$v.userId.$touch()"
                 ></v-text-field>
                 <!-- 아이디 확인 버튼 -->
 
@@ -19,8 +19,6 @@
                     label="비밀번호"
                     type="password"
                     required
-                    @input="$v.userPwd.$touch()"
-                    @blur="$v.userPwd.$touch()"
                 ></v-text-field>
 
                 <v-text-field
@@ -52,6 +50,7 @@
                 </v-radio-group>
 
                 <v-file-input 
+                    v-model="userImg"
                     accept="image/*" 
                     label="프로필 이미지"
                     prepend-icon="mdi-camera"
@@ -69,77 +68,78 @@
                     type="number"
                 ></v-text-field>
 
-                <v-btn class="mr-4" @click="submit">submit</v-btn>
+                <v-btn class="mr-4" @click="signupHandler">회원가입</v-btn>
+              <!-- </ValidationProvider> -->
+
             </form>
         </v-contaier>
+      <!-- </ValidationObserver> -->
     </div>
 </template>
 
 <script>
-  import { validationMixin } from 'vuelidate'
-  import { required, maxLength, email } from 'vuelidate/lib/validators'
+  import axios from 'axios';
+  import { extend } from 'vee-validate';
+  import { required, email } from 'vee-validate/dist/rules';
+
+  extend('required', {
+    ...required,
+    message: '{_filed_} 를 입력해주세요'
+  })
 
   export default {
-    mixins: [validationMixin],
-
-    validations: {
-      name: { required, maxLength: maxLength(10) },
-      email: { required, email },
-      select: { required },
-      checkbox: {
-        checked (val) {
-          return val
-        },
-      },
+    components: {
+      // ValidationProvider,
+      // ValidationObserver,
     },
-
-    data: () => ({
-      name: '',
-      email: '',
-      select: null,
-      items: [
-        'Item 1',
-        'Item 2',
-        'Item 3',
-        'Item 4',
-      ],
-      checkbox: false,
-    }),
-
-    computed: {
-      nameErrors () {
-        const errors = []
-        if (!this.$v.name.$dirty) return errors
-        !this.$v.name.maxLength && errors.push('Name must be at most 10 characters long')
-        !this.$v.name.required && errors.push('Name is required.')
-        return errors
-      },
-      emailErrors () {
-        const errors = []
-        if (!this.$v.email.$dirty) return errors
-        !this.$v.email.email && errors.push('Must be valid e-mail')
-        !this.$v.email.required && errors.push('E-mail is required')
-        return errors
-      },
+    data() {
+      return {
+        userId: '',
+        userPw: '',
+        userNm: '',
+        userEmail: '',
+        userPhone: '',
+        userGender: '',
+        userIntro: '',
+        userImg: '',
+        userGoalHr: '',
+      }
     },
 
     methods: {
-      submit () {
-        this.$v.$touch()
+      signupHandler() {
+        axios.post('http://localhost:8080/study/user/signup', {
+          userId: this.userId,
+          userPw: this.userPw,
+          userNm: this.userNm,
+          userEmail: this.userEmail,
+          userPhone: this.userPhone,
+          userGender: this.userGender,
+          userIntro: this.userIntro,
+          userImg: this.userImg,
+          userGoalHr: this.userGoalHr,
+        })
+        .then(({ data }) => {
+          let msg = '다시 시도해주세요';
+          if (data === 'success') {
+            msg = '회원가입 성공';
+          }
+          alert(msg);
+          this.moveMain();
+        })
       },
-    //   clear () {
-    //     this.$v.$reset()
-    //     this.name = ''
-    //     this.email = ''
-    //     this.select = null
-    //     this.checkbox = false
-    //   },
+      moveMain() {
+        this.$router.push('/main');
+      },
+      // submit () {
+      //   this.$refs.observer.validate()
+      // },
     },
   }
 </script>
 
 <style scoped>
     #Signup {
-        margin: 50px;
+        margin: 50px 150px;
     }
 </style>

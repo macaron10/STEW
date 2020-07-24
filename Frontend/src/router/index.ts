@@ -7,6 +7,7 @@ import StudyDetail from '../views/StudyDetail.vue';
 import Contact from '../views/Contact.vue';
 import Guide from '../views/Guide.vue';
 import UserDetail from '../views/UserDetail.vue';
+import Signup from "../views/Signup.vue";
 
 Vue.use(VueRouter);
 
@@ -46,6 +47,11 @@ const routes: Array<RouteConfig> = [
     name: 'UserDetail',
     component: UserDetail
   },
+  {
+    path: "/user/signup",
+    name: "Signup",
+    component: Signup
+  }
 ];
 
 const router = new VueRouter({

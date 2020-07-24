@@ -38,7 +38,7 @@
     <v-btn icon>
       <v-icon>mdi-account</v-icon>
     </v-btn>
-    <v-btn icon>
+    <v-btn icon :to="{ name: 'Signup' }">
       <v-icon>mdi-account-plus</v-icon>
     </v-btn>
     <v-btn

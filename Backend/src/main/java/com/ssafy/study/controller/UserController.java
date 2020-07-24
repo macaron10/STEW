@@ -34,17 +34,17 @@ public class UserController {
 //	@Autowired
 //	private UserServiceImpl userService;
 	
-	@PostMapping("/signin")
-	@ApiOperation("로그인")
-	public ResponseEntity<BasicResponse> signIn(@RequestBody UserSignInRequest sigininreq) {
-		
-		BasicResponse result = new BasicResponse();
-		
-		System.out.println("allflalqwlf" + SecurityContextHolder.getContext().getAuthentication());
-		
-		return new ResponseEntity<>(result, HttpStatus.OK);
-		
-	}
+//	@PostMapping("/signin")
+//	@ApiOperation("로그인")
+//	public ResponseEntity<BasicResponse> signIn(@RequestBody UserSignInRequest sigininreq) {
+//		
+//		BasicResponse result = new BasicResponse();
+//		
+//		System.out.println("allflalqwlf" + SecurityContextHolder.getContext().getAuthentication());
+//		
+//		return new ResponseEntity<>(result, HttpStatus.OK);
+//		
+//	}
 	
 //	테스트용
 //	@PostMapping("/hello")

@@ -7,6 +7,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -22,12 +23,16 @@ import lombok.RequiredArgsConstructor;
 
 @Configuration
 @EnableWebSecurity
+@EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
 @RequiredArgsConstructor
 public class JwtSecurityConfig extends WebSecurityConfigurerAdapter{
 	
 	private final UserPrincipalDetailsService userPrincipalDetailsService;
 	private final UserRepository userRepository;
 	private final RedisTemplate<String, Object> redisTemplate;
+	
+	@Autowired
+	private JwtAuthorizationFilter jwtAuthorizationFilter;
 	
 	@Autowired
 	private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
@@ -37,30 +42,30 @@ public class JwtSecurityConfig extends WebSecurityConfigurerAdapter{
 		http
 			.csrf().disable()
 			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-			.and()
-			.formLogin().disable()
+//			.formLogin().disable()
 //			.addFilter(jwtAuthenticationFilter(authenticationManager()))
-//			.addFilter(new JwtAuthorizationFilter(authenticationManager(), this.userRepository, this.redisTemplate))
+//			.addFilter(jwtAuthenticationFilter(authenticationManager()))
+//			.logout()
+//			.logoutUrl("/user/logout")
+//			.addLogoutHandler(jwtLogoutHandler())
+//			.and()
+			.and()
 			.addFilter(jwtAuthenticationFilter(authenticationManager()))
-			.logout()
-			.logoutUrl("/user/logout")
-			.addLogoutHandler(jwtLogoutHandler())
-			.and()
 			.authorizeRequests()
-			.antMatchers("/swagger-ui.html").permitAll()
-			.and()
-			.authorizeRequests()
+			.antMatchers("/api/test").permitAll()
+			
+//			.antMatchers("/v2/**").permitAll()
+//			.antMatchers("/swagger-resources/**").permitAll()
+//			.antMatchers("/webjars/**").permitAll()
+//			.antMatchers("/swagger-ui.html/**").permitAll()
+			
 			.antMatchers("/api/manager/*").hasRole("MANAGER")
-			.and()
-			.authorizeRequests()
 			.antMatchers("/api/admin/*").hasRole("ADMIN")
-			.and()
-			.authorizeRequests()
-			.anyRequest().permitAll()
+			.anyRequest().authenticated()
 			.and()
 			.exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint)
-			.and()
-			.addFilterBefore(new JwtAuthorizationFilter(authenticationManager(), this.userRepository, this.redisTemplate), UsernamePasswordAuthenticationFilter.class);
+			.and()	
+			.addFilterBefore(jwtAuthorizationFilter, UsernamePasswordAuthenticationFilter.class);
 	}
 
 	@Override

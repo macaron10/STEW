@@ -7,35 +7,35 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
+import org.springframework.context.annotation.Bean;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.ssafy.study.user.model.UserPrincipal;
 import com.ssafy.study.user.model.UserToken;
-import com.ssafy.study.user.repository.UserRepository;
+import com.ssafy.study.user.service.UserPrincipalDetailsService;
 import com.ssafy.study.util.JwtProperties;
 import com.ssafy.study.util.JwtUtil;
 
+@Component
 public class JwtAuthorizationFilter extends OncePerRequestFilter{
 	
+	@Autowired
 	private RedisTemplate<String, Object> redisTemplate;
-	private UserRepository userRepository;
 	
-	public JwtAuthorizationFilter(AuthenticationManager authenticationManager, UserRepository userRepository, RedisTemplate redisTemplate) {
-		super();
-		this.userRepository = userRepository;
-		this.redisTemplate = redisTemplate;
-	}
+	@Autowired
+	private UserPrincipalDetailsService userPrincipalDetailsService;
 	
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
-		
 		logger.info("Authorization Filter");
 		String token = request.getHeader(JwtProperties.HEADER_STRING);
 		
@@ -48,8 +48,17 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter{
 		
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 		
+		System.out.println("AuthorizeFilter Auth : " + authentication);
+		
 		chain.doFilter(request, response);
 	}
+	
+    @Bean
+    public FilterRegistrationBean JwtRequestFilterRegistration (JwtAuthorizationFilter filter) {
+        FilterRegistrationBean registration = new FilterRegistrationBean(filter);
+        registration.setEnabled(false);
+        return registration;
+    }
 	
 	private Authentication getUsernamePasswordAuthentication(HttpServletResponse response, String token) {
 		if(token == null || !token.startsWith(JwtProperties.TOKEN_PREFIX)) return null;
@@ -93,6 +102,6 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter{
 	}
 	
 	private UserPrincipal getUserPrincipalByUserEmail(String userEmail) {
-		return new UserPrincipal(this.userRepository.findByUserEmail(userEmail).get());
+		return (UserPrincipal) this.userPrincipalDetailsService.loadUserByUsername(userEmail);
 	}
 }

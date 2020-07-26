@@ -8,6 +8,7 @@ import Contact from '../views/Contact.vue';
 import Guide from '../views/Guide.vue';
 import UserDetail from '../views/UserDetail.vue';
 import Signup from "../views/Signup.vue";
+import Login from "../components/Login.vue";
 
 Vue.use(VueRouter);
 
@@ -51,6 +52,11 @@ const routes: Array<RouteConfig> = [
     path: "/user/signup",
     name: "Signup",
     component: Signup
+  },
+  {
+    path: "/user/login",
+    name: "Login",
+    component: Login
   }
 ];
 

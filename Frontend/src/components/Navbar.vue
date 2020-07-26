@@ -35,9 +35,13 @@
       class="hidden-sm-and-down"
     ></v-text-field>
     <v-spacer></v-spacer>
-    <v-btn icon>
+    <v-btn 
+      icon
+      @click.stop= ":true"
+    >
       <v-icon>mdi-account</v-icon>
     </v-btn>
+    <login-dialog></login-dialog>
     <v-btn icon :to="{ name: 'Signup' }">
       <v-icon>mdi-account-plus</v-icon>
     </v-btn>
@@ -50,12 +54,21 @@
 </template>
 
 <script>
+import Login from '@/components/Login.vue'
+
 export default {
     name: 'Navbar',
+    components: {
+      'login-dialog' : Login
+    },
+    
     methods: {
       drawerOnOff(event) {
         this.$emit('drawer-onoff')
       },
+      // openLoginDialog(event) {
+      //   this.$emit(':loginDialog = true')
+      // }
     }
 }
 </script>

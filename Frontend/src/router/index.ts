@@ -53,11 +53,6 @@ const routes: Array<RouteConfig> = [
     name: "Signup",
     component: Signup
   },
-  {
-    path: "/user/login",
-    name: "Login",
-    component: Login
-  }
 ];
 
 const router = new VueRouter({

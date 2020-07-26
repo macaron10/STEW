@@ -9,5 +9,6 @@ public interface GroupRepositoryCustom {
 
 	public List<Group> findMyJoinGroup(long userId);
 
+	public List<Group> searchGroup(GroupSearch search);
 
 }

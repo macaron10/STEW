@@ -64,4 +64,11 @@ public class Group {
 		this.gpImg = group.getGpImg();
 	}
 
+	public void joinGroup() {
+		gpCurNum++;
+	}
+
+	public void exitGroup() {
+		gpCurNum--;
+	}
 }

@@ -1,5 +1,7 @@
 package com.ssafy.study.controller;
 
+import java.security.Principal;
+
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +26,7 @@ import com.ssafy.study.group.model.Group;
 import com.ssafy.study.group.model.GroupDto;
 import com.ssafy.study.group.model.GroupSearch;
 import com.ssafy.study.group.service.GroupService;
+import com.ssafy.study.user.model.UserPrincipal;
 import com.ssafy.study.util.JwtUtil;
 
 import io.swagger.annotations.ApiOperation;
@@ -41,79 +44,71 @@ import io.swagger.annotations.ApiResponses;
 public class GroupController {
 	@Autowired
 	private JwtUtil jwtUtil;
-
 	@Autowired
 	private GroupService groupService;
 
 	@GetMapping("/all")
 	@ApiOperation("전체 스터디 ")
 	public Object allStudyList() {
-		ResponseEntity response;
-
 		BasicResponse result = new BasicResponse();
 		result.object = groupService.findAllGroups();
 		result.msg = "success";
 		result.status = true;
 
-		response = new ResponseEntity<>(result, HttpStatus.OK);
-
-		return response;
+		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 
 	@GetMapping("/my")
 	@ApiOperation("로그인한 회원의 스터디 목록 조회")
-	public Object findMyStudyList(@RequestHeader("Authorization") String jwt) {
-		ResponseEntity response;
-
-		long userId = 1;
+	public Object findMyStudyList(UserPrincipal principal) {
+		long userId = principal.getUserId();
 		BasicResponse result = new BasicResponse();
 		result.object = groupService.findMyGroups(userId);
 		result.msg = "success";
 		result.status = true;
 
-		response = new ResponseEntity<>(result, HttpStatus.OK);
-
-		return response;
+		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 
 	@PostMapping("/")
 	@ApiOperation("스터디 생성")
-	public Object createStudy(@RequestBody @Valid GroupDto.RegistGroup group) {
-		ResponseEntity response;
+	public Object createStudy(@RequestBody @Valid GroupDto.RegistGroup group, UserPrincipal principal) {
+		Group saveGroup = group.toEntity();
+		saveGroup.setGpMgrId(principal.getUserId());
+		groupService.saveGroup(saveGroup);
 
-		groupService.saveGroup(group.toEntity());
 		BasicResponse result = new BasicResponse();
 		result.msg = "success";
 		result.status = true;
 
-		response = new ResponseEntity<>(result, HttpStatus.OK);
-
-		return response;
+		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 
 	@GetMapping("/{no}")
 	@ApiOperation("스터디 상세 조회")
-	public Object selectStudyNo(@PathVariable long no) {
-		ResponseEntity response;
-
+	public Object selectStudyNo(@PathVariable long no, UserPrincipal principal) {
 		BasicResponse result = new BasicResponse();
+		if (!groupService.ckGroupJoin(no, principal.getUserId())) {
+			result.status = false;
+			result.msg = "not join";
+
+			return new ResponseEntity<>(result, HttpStatus.UNAUTHORIZED);
+		}
+
 		result.object = groupService.selectGroup(no);
 		result.msg = "success";
 		result.status = true;
 
-		response = new ResponseEntity<>(result, HttpStatus.OK);
-
-		return response;
+		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 
 	@PutMapping("/{no}")
 	@ApiOperation("스터디 수정")
-	public Object modifytudy(@RequestBody GroupDto.ModifyGroup modifyGroup) {
-		ResponseEntity response;
+	public Object modifytudy(@RequestBody GroupDto.ModifyGroup modifyGroup, UserPrincipal principal) {
 		BasicResponse result = new BasicResponse();
 
-		String userid = "admin";
-		ckAuth(1, modifyGroup.getGpNo());
+		long userId = principal.getUserId();
+		ckAuth(userId, modifyGroup.getGpNo());
 		Group group = groupService.selectGroup(modifyGroup.getGpNo());
 		group.update(modifyGroup);
 		groupService.saveGroup(group);
@@ -121,153 +116,141 @@ public class GroupController {
 		result.msg = "success";
 		result.status = true;
 
-		response = new ResponseEntity<>(result, HttpStatus.OK);
-
-		return response;
+		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 
 	@DeleteMapping("/{no}")
 	@ApiOperation("스터디번호로 스터디 삭제")
-	public Object deleteStudy(@PathVariable long no) {
-		ResponseEntity response;
+	public Object deleteStudy(@PathVariable long no, UserPrincipal principal) {
 		BasicResponse result = new BasicResponse();
 
-		ckAuth(1, no);
+		long userId = principal.getUserId();
+		ckAuth(userId, no);
 		groupService.deleteGroup(no);
 		result.msg = "success";
 		result.status = true;
 
-		response = new ResponseEntity<>(result, HttpStatus.OK);
-
-		return response;
+		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 
 	@GetMapping("/search")
 	@ApiOperation("스터디 검색")
-	public Object searchStudy(@RequestBody GroupSearch groupSearch) {
+	public Object searchStudy(GroupSearch groupSearch) {
+		BasicResponse result = new BasicResponse();
 
-		return null;
+		result.object = groupService.searchGroups(groupSearch);
+		result.msg = "success";
+		result.status = true;
+
+		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 
 	@PostMapping("/req")
 	@ApiOperation("스터디에 가입요청")
-	public Object reqJoinGroup(int gpNo) {
-		ResponseEntity response;
+	public Object reqJoinGroup(int gpNo, UserPrincipal principal) {
+		long userId = principal.getUserId();
+		BasicResponse result = new BasicResponse();
 
-		long userId = 1;
+		if (groupService.ckGroupJoin(gpNo, userId)) {
+			result.msg = "duplicate";
+			result.status = false;
+
+			return new ResponseEntity<>(result, HttpStatus.CONFLICT);
+		}
 		groupService.requestJoinGroup(userId, gpNo);
 
-		BasicResponse result = new BasicResponse();
 		result.msg = "success";
 		result.status = true;
 
-		response = new ResponseEntity<>(result, HttpStatus.OK);
-
-		return response;
+		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 
 	@PostMapping("/accept")
 	@ApiOperation("스터디 가입 승인")
-	public Object acceptJoinGroup(long reqNo) {
-		ResponseEntity response;
+	public Object acceptJoinGroup(long reqNo, long gpNo, UserPrincipal principal) {
 
+		long userId = principal.getUserId();
+
+		ckAuth(userId, gpNo);
 		groupService.acceptJoinGroup(reqNo);
 
 		BasicResponse result = new BasicResponse();
 		result.msg = "success";
 		result.status = true;
 
-		response = new ResponseEntity<>(result, HttpStatus.OK);
-
-		return response;
+		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 
 	@PostMapping("/reject")
 	@ApiOperation("스터디 가입 거절")
-	public Object rejectJoinGroup(long reqNo) {
-		ResponseEntity response;
+	public Object rejectJoinGroup(long reqNo, long gpNo, UserPrincipal principal) {
+		long userId = principal.getUserId();
 
+		ckAuth(userId, gpNo);
 		groupService.rejectJoinGroup(reqNo);
 
 		BasicResponse result = new BasicResponse();
 		result.msg = "success";
 		result.status = true;
 
-		response = new ResponseEntity<>(result, HttpStatus.OK);
-
-		return response;
+		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 
 	@PostMapping("/remove")
 	@ApiOperation("스터디 퇴출")
-	public Object removeGroupMember(long joinNo) {
-		ResponseEntity response;
+	public Object removeGroupMember(long joinNo, long gpNo, UserPrincipal principal) {
+		long userId = principal.getUserId();
 
+		ckAuth(userId, gpNo);
 		groupService.removeGroupMember(joinNo);
 
 		BasicResponse result = new BasicResponse();
 		result.msg = "success";
 		result.status = true;
 
-		response = new ResponseEntity<>(result, HttpStatus.OK);
-
-		return response;
+		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 
 	@GetMapping("/cate/lg")
 	@ApiOperation("카테고리 대분류 출력")
 	public Object selectBoxLg() {
-		ResponseEntity response;
-
 		BasicResponse result = new BasicResponse();
 		result.object = groupService.selectBoxLgGroupCategory();
 		result.msg = "success";
 		result.status = true;
 
-		response = new ResponseEntity<>(result, HttpStatus.OK);
-
-		return response;
+		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 
 	@GetMapping("/cate/md")
 	@ApiOperation("카테고리 중분류 출력")
 	public Object selectBoxMd(String lg) {
-		ResponseEntity response;
-
 		BasicResponse result = new BasicResponse();
 		result.object = groupService.selectBoxMdGroupCategory(lg);
 		result.msg = "success";
 		result.status = true;
 
-		response = new ResponseEntity<>(result, HttpStatus.OK);
-
-		return response;
+		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 
 	@GetMapping("/cate/sm")
 	@ApiOperation("카테고리 소분류 출력")
 	public Object selectBoxSm(String lg, String md) {
-		ResponseEntity response;
-
 		BasicResponse result = new BasicResponse();
 		result.object = groupService.selectBoxSmGroupCategory(lg, md);
 		result.msg = "success";
 		result.status = true;
 
-		response = new ResponseEntity<>(result, HttpStatus.OK);
-
-		return response;
+		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 
 	@ExceptionHandler(NoAuthException.class)
 	public @ResponseBody Object NoAuthExceptionHandler(Exception e) {
-		ResponseEntity response;
 		BasicResponse result = new BasicResponse();
 		result.msg = "권한이 없습니다";
 		result.status = false;
 
-		response = new ResponseEntity<>(result, HttpStatus.UNAUTHORIZED);
-		return response;
+		return new ResponseEntity<>(result, HttpStatus.UNAUTHORIZED);
 	}
 
 	public void ckAuth(long userId, long gpNo) {
@@ -277,4 +260,14 @@ public class GroupController {
 			throw new NoAuthException();
 	}
 
+	@GetMapping("/test")
+	public String test() {
+		GroupSearch groupSearch = new GroupSearch();
+		groupSearch.setGpCatLg("어학");
+		groupSearch.setGpPrivate(true);
+
+		System.out.println(groupService.searchGroups(groupSearch));
+
+		return "test";
+	}
 }

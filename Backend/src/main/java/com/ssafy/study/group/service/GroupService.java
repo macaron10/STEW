@@ -1,13 +1,10 @@
 package com.ssafy.study.group.service;
 
 import java.util.List;
-import java.util.Optional;
 
 import com.ssafy.study.group.model.Group;
-import com.ssafy.study.group.model.GroupReq;
-import com.ssafy.study.group.model.GroupDto.ResGroup;
 import com.ssafy.study.group.model.GroupSearch;
-import com.ssafy.study.group.model.GroupCategoryDto.ResGroupCategoryDto;
+import com.ssafy.study.group.model.ResGroupCategoryDto;
 
 public interface GroupService {
 
@@ -34,7 +31,9 @@ public interface GroupService {
 	public void acceptJoinGroup(long reqNo);
 
 	public void rejectJoinGroup(long reqNo);
-	
+
 	public void removeGroupMember(long joinNo);
+
+	public boolean ckGroupJoin(long gpNo, long userId);
 
 }

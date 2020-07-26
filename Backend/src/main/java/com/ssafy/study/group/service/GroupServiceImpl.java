@@ -7,10 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.ssafy.study.group.model.Group;
-import com.ssafy.study.group.model.GroupSearch;
-import com.ssafy.study.group.model.GroupCategoryDto.ResGroupCategoryDto;
 import com.ssafy.study.group.model.GroupJoin;
 import com.ssafy.study.group.model.GroupReq;
+import com.ssafy.study.group.model.GroupSearch;
+import com.ssafy.study.group.model.ResGroupCategoryDto;
 import com.ssafy.study.group.repository.GroupCategoryRepository;
 import com.ssafy.study.group.repository.GroupJoinRepository;
 import com.ssafy.study.group.repository.GroupRepository;
@@ -55,24 +55,24 @@ public class GroupServiceImpl implements GroupService {
 
 	@Override
 	public List<Group> searchGroups(GroupSearch groupSearch) {
-		return null;
+		return gpRepo.searchGroup(groupSearch);
 	}
 
 	@Override
 	public List<ResGroupCategoryDto> selectBoxLgGroupCategory() {
-		return cateRepo.selectBoxLgGroupCategory().stream().map(g -> new ResGroupCategoryDto(g))
+		return cateRepo.selectBoxLgGroupCategory().stream().map(cat -> new ResGroupCategoryDto(cat))
 				.collect(Collectors.toList());
 	}
 
 	@Override
 	public List<ResGroupCategoryDto> selectBoxMdGroupCategory(String lg) {
-		return cateRepo.selectBoxLgGroupCategory().stream().map(g -> new ResGroupCategoryDto(g))
+		return cateRepo.selectBoxMdGroupCategory(lg).stream().map(cat -> new ResGroupCategoryDto(cat))
 				.collect(Collectors.toList());
 	}
 
 	@Override
 	public List<ResGroupCategoryDto> selectBoxSmGroupCategory(String lg, String md) {
-		return cateRepo.selectBoxLgGroupCategory().stream().map(g -> new ResGroupCategoryDto(g))
+		return cateRepo.selectBoxSmGroupCategory(lg, md).stream().map(cat -> new ResGroupCategoryDto(cat))
 				.collect(Collectors.toList());
 	}
 
@@ -87,8 +87,10 @@ public class GroupServiceImpl implements GroupService {
 	@Override
 	public void acceptJoinGroup(long reqNo) {
 		GroupReq req = reqRepo.findByGpReqNo(reqNo);
-		GroupJoin join = new GroupJoin(req.getGp(), req.getUser());
-		
+		Group gp = req.getGp();
+		gp.joinGroup();
+		GroupJoin join = new GroupJoin(gp, req.getUser());
+
 		reqRepo.deleteByGpReqNo(reqNo);
 		joinRepo.save(join);
 	}
@@ -101,6 +103,14 @@ public class GroupServiceImpl implements GroupService {
 	@Override
 	public void removeGroupMember(long joinNo) {
 		joinRepo.deleteByGpJoinNo(joinNo);
+		Group gp = joinRepo.findByGpJoinNo(joinNo).getGp();
+
+		gp.exitGroup();
+	}
+
+	@Override
+	public boolean ckGroupJoin(long gpNo, long userId) {
+		return joinRepo.ckGroupJoin(gpNo, userId);
 	}
 
 }

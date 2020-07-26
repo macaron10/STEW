@@ -21,9 +21,6 @@ public class GroupDto {
 		@ApiModelProperty(required = true)
 		@NotNull
 		private String gpNm;// 스터디 이름
-		@ApiModelProperty(required = true)
-		@NotNull
-		private long gpMgrId;// 팀장아이디
 		private String gpIntro;// 소개
 		private String gpTag;// 태그
 		private int gpStTm;// 선호 시작시간

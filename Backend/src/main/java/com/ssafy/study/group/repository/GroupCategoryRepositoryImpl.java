@@ -20,16 +20,15 @@ public class GroupCategoryRepositoryImpl implements GroupCategoryRepositoryCusto
 
 	@Override
 	public List<GroupCategory> selectBoxLgGroupCategory() {
-		String jpql = "select distinct cat.gpCatLg from GroupCategory cat";
-		Query query = em.createQuery(jpql);
+		String jpql = "select cat from GroupCategory cat where cat.gpCatMd = null";
+		TypedQuery<GroupCategory> query = em.createQuery(jpql, GroupCategory.class);
 
-		query.getResultList().stream().map(s -> new GroupCategory((String) s)).forEach(s -> System.out.println(s));
-		return null;
+		return query.getResultList();
 	}
 
 	@Override
 	public List<GroupCategory> selectBoxMdGroupCategory(String lg) {
-		String jpql = "select distinct gp_cat_lg, gp_cat_md from gp_cat where gp_cat_lg = :lg";
+		String jpql = "select cat from GroupCategory cat where cat.gpCatLg = :lg and cat.gpCatSm = null";
 
 		TypedQuery<GroupCategory> query = em.createQuery(jpql, GroupCategory.class);
 		query.setParameter("lg", lg);
@@ -38,7 +37,7 @@ public class GroupCategoryRepositoryImpl implements GroupCategoryRepositoryCusto
 
 	@Override
 	public List<GroupCategory> selectBoxSmGroupCategory(String lg, String md) {
-		String jpql = "select distinct gp_cat_lg, gp_cat_md from gp_cat where gp_cat_lg = :lg and gp_cat_md = :md";
+		String jpql = "select cat from GroupCategory cat where cat.gpCatLg = :lg and cat.gpCatMd = :md";
 
 		TypedQuery<GroupCategory> query = em.createQuery(jpql, GroupCategory.class);
 		query.setParameter("lg", lg);

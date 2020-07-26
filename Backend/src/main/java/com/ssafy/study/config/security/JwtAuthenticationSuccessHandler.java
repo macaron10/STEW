@@ -28,10 +28,7 @@ public class JwtAuthenticationSuccessHandler extends SavedRequestAwareAuthentica
 	@Override
 	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
 			Authentication authResult) throws ServletException, IOException {
-		
 		UserPrincipal userPrincipal = (UserPrincipal) authResult.getPrincipal();
-		
-		System.out.println("이놈이다!" + authResult.getAuthorities());
 		
 		List<String> authorities = new ArrayList<>();
 		

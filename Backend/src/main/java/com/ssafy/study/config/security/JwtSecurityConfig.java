@@ -7,6 +7,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -22,6 +23,7 @@ import lombok.RequiredArgsConstructor;
 
 @Configuration
 @EnableWebSecurity
+@EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
 @RequiredArgsConstructor
 public class JwtSecurityConfig extends WebSecurityConfigurerAdapter{
 	
@@ -30,37 +32,40 @@ public class JwtSecurityConfig extends WebSecurityConfigurerAdapter{
 	private final RedisTemplate<String, Object> redisTemplate;
 	
 	@Autowired
+	private JwtAuthorizationFilter jwtAuthorizationFilter;
+	
+	@Autowired
 	private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 	
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http
+			.httpBasic().disable()
+			.cors().and()
 			.csrf().disable()
+			.formLogin().disable()
 			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 			.and()
-			.formLogin().disable()
-//			.addFilter(jwtAuthenticationFilter(authenticationManager()))
-//			.addFilter(new JwtAuthorizationFilter(authenticationManager(), this.userRepository, this.redisTemplate))
-			.addFilter(jwtAuthenticationFilter(authenticationManager()))
-			.logout()
-			.logoutUrl("/user/logout")
-			.addLogoutHandler(jwtLogoutHandler())
-			.and()
+//			.logout()
+//			.logoutUrl("/user/logout")
+//			.addLogoutHandler(jwtLogoutHandler())
 			.authorizeRequests()
-			.antMatchers("/swagger-ui.html").permitAll()
-			.and()
-			.authorizeRequests()
-			.antMatchers("/api/manager/*").hasRole("MANAGER")
-			.and()
-			.authorizeRequests()
-			.antMatchers("/api/admin/*").hasRole("ADMIN")
-			.and()
-			.authorizeRequests()
+			.antMatchers("/api/manager/**").hasRole("MANAGER")
+			.antMatchers("/api/admin/**").hasAnyRole("ADMIN")
+			
+//			.antMatchers("/v2/**").permitAll()
+//			.antMatchers("/swagger-resources/**").permitAll()
+//			.antMatchers("/webjars/**").permitAll()
+//			.antMatchers("/swagger-ui.html/**").permitAll()
+			
 			.anyRequest().permitAll()
 			.and()
 			.exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint)
-			.and()
-			.addFilterBefore(new JwtAuthorizationFilter(authenticationManager(), this.userRepository, this.redisTemplate), UsernamePasswordAuthenticationFilter.class);
+			.and()	
+			.addFilterBefore(jwtAuthorizationFilter, UsernamePasswordAuthenticationFilter.class)
+			
+//			그게그거임 이거 넣지말고 기본 필터로 
+			.addFilterBefore(jwtAuthenticationFilter(authenticationManager()), UsernamePasswordAuthenticationFilter.class);
 	}
 
 	@Override

@@ -31,11 +31,7 @@ public class TestController {
 	@GetMapping("/test")
 	@ApiOperation("아무나 요청 가능")
 	public String test1(UserPrincipal principal) {
-		
-		
-		System.out.println(principal);
-		System.out.println(SecurityContextHolder.getContext().getAuthentication());
-		return "API Test 1 " + userService.loadUserByUserId(1).getRoles();
+		return "API Test 1 ";
 	}
 	
 //	only manager

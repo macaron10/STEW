@@ -13,6 +13,7 @@ import javax.persistence.Table;
 
 import org.springframework.data.annotation.CreatedDate;
 
+import com.ssafy.study.common.model.TimeEntity;
 import com.ssafy.study.group.model.GroupDto.ModifyGroup;
 
 import lombok.AllArgsConstructor;
@@ -26,7 +27,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 @Table(name = "gp_tb")
-public class Group {
+public class Group extends TimeEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long gpNo; // 스터디 아이디
@@ -49,9 +50,6 @@ public class Group {
 	private int gpMaxNum;// 최대인원
 	@Column(columnDefinition = "integer default 1")
 	private int gpCurNum;// 현재인원
-
-	@CreatedDate
-	private LocalDateTime gpRegDate;// 등록일
 
 	public void update(ModifyGroup group) {
 		this.gpCat = new GroupCategory(group.getGpCatNo());

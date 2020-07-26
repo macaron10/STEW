@@ -40,32 +40,32 @@ public class JwtSecurityConfig extends WebSecurityConfigurerAdapter{
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http
+			.httpBasic().disable()
+			.cors().and()
 			.csrf().disable()
+			.formLogin().disable()
 			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-//			.formLogin().disable()
-//			.addFilter(jwtAuthenticationFilter(authenticationManager()))
-//			.addFilter(jwtAuthenticationFilter(authenticationManager()))
+			.and()
 //			.logout()
 //			.logoutUrl("/user/logout")
 //			.addLogoutHandler(jwtLogoutHandler())
-//			.and()
-			.and()
-			.addFilter(jwtAuthenticationFilter(authenticationManager()))
 			.authorizeRequests()
-			.antMatchers("/api/test").permitAll()
+			.antMatchers("/api/manager/**").hasRole("MANAGER")
+			.antMatchers("/api/admin/**").hasAnyRole("ADMIN")
 			
 //			.antMatchers("/v2/**").permitAll()
 //			.antMatchers("/swagger-resources/**").permitAll()
 //			.antMatchers("/webjars/**").permitAll()
 //			.antMatchers("/swagger-ui.html/**").permitAll()
 			
-			.antMatchers("/api/manager/*").hasRole("MANAGER")
-			.antMatchers("/api/admin/*").hasRole("ADMIN")
-			.anyRequest().authenticated()
+			.anyRequest().permitAll()
 			.and()
 			.exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint)
 			.and()	
-			.addFilterBefore(jwtAuthorizationFilter, UsernamePasswordAuthenticationFilter.class);
+			.addFilterBefore(jwtAuthorizationFilter, UsernamePasswordAuthenticationFilter.class)
+			
+//			그게그거임 이거 넣지말고 기본 필터로 
+			.addFilterBefore(jwtAuthenticationFilter(authenticationManager()), UsernamePasswordAuthenticationFilter.class);
 	}
 
 	@Override

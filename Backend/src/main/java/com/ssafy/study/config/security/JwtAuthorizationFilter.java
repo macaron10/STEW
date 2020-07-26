@@ -1,6 +1,7 @@
 package com.ssafy.study.config.security;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -48,7 +49,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter{
 		
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 		
-		System.out.println("AuthorizeFilter Auth : " + authentication);
+		System.out.println("AuthorizeFilter Auth : " + authentication.getAuthorities());
 		
 		chain.doFilter(request, response);
 	}
@@ -98,7 +99,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter{
 		}
 		
 		logger.info("Authorities : " + userPrincipal.getAuthorities());
-		return new UsernamePasswordAuthenticationToken(userEmail, null, userPrincipal.getAuthorities());
+		return new UsernamePasswordAuthenticationToken(userPrincipal, null, userPrincipal.getAuthorities());
 	}
 	
 	private UserPrincipal getUserPrincipalByUserEmail(String userEmail) {

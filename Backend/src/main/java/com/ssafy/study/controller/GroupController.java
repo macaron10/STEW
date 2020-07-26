@@ -1,13 +1,11 @@
 package com.ssafy.study.controller;
 
-import java.security.Principal;
-
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,7 +13,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -60,7 +57,7 @@ public class GroupController {
 
 	@GetMapping("/my")
 	@ApiOperation("로그인한 회원의 스터디 목록 조회")
-	public Object findMyStudyList(UserPrincipal principal) {
+	public Object findMyStudyList(@AuthenticationPrincipal UserPrincipal principal) {
 		long userId = principal.getUserId();
 		BasicResponse result = new BasicResponse();
 		result.object = groupService.findMyGroups(userId);
@@ -72,7 +69,8 @@ public class GroupController {
 
 	@PostMapping("/")
 	@ApiOperation("스터디 생성")
-	public Object createStudy(@RequestBody @Valid GroupDto.RegistGroup group, UserPrincipal principal) {
+	public Object createStudy(@AuthenticationPrincipal UserPrincipal principal, @RequestBody @Valid GroupDto.RegistGroup group) {
+		System.out.println(principal.getUserId() + " " + principal.getUsername() + " " + principal.getPassword() + " " + principal.getAuthorities());
 		Group saveGroup = group.toEntity();
 		saveGroup.setGpMgrId(principal.getUserId());
 		groupService.saveGroup(saveGroup);
@@ -86,7 +84,7 @@ public class GroupController {
 
 	@GetMapping("/{no}")
 	@ApiOperation("스터디 상세 조회")
-	public Object selectStudyNo(@PathVariable long no, UserPrincipal principal) {
+	public Object selectStudyNo(@PathVariable long no, @AuthenticationPrincipal UserPrincipal principal) {
 		BasicResponse result = new BasicResponse();
 		if (!groupService.ckGroupJoin(no, principal.getUserId())) {
 			result.status = false;
@@ -104,7 +102,7 @@ public class GroupController {
 
 	@PutMapping("/{no}")
 	@ApiOperation("스터디 수정")
-	public Object modifytudy(@RequestBody GroupDto.ModifyGroup modifyGroup, UserPrincipal principal) {
+	public Object modifytudy(@RequestBody GroupDto.ModifyGroup modifyGroup, @AuthenticationPrincipal UserPrincipal principal) {
 		BasicResponse result = new BasicResponse();
 
 		long userId = principal.getUserId();
@@ -121,7 +119,7 @@ public class GroupController {
 
 	@DeleteMapping("/{no}")
 	@ApiOperation("스터디번호로 스터디 삭제")
-	public Object deleteStudy(@PathVariable long no, UserPrincipal principal) {
+	public Object deleteStudy(@PathVariable long no, @AuthenticationPrincipal UserPrincipal principal) {
 		BasicResponse result = new BasicResponse();
 
 		long userId = principal.getUserId();
@@ -147,7 +145,7 @@ public class GroupController {
 
 	@PostMapping("/req")
 	@ApiOperation("스터디에 가입요청")
-	public Object reqJoinGroup(int gpNo, UserPrincipal principal) {
+	public Object reqJoinGroup(int gpNo, @AuthenticationPrincipal UserPrincipal principal) {
 		long userId = principal.getUserId();
 		BasicResponse result = new BasicResponse();
 
@@ -167,7 +165,7 @@ public class GroupController {
 
 	@PostMapping("/accept")
 	@ApiOperation("스터디 가입 승인")
-	public Object acceptJoinGroup(long reqNo, long gpNo, UserPrincipal principal) {
+	public Object acceptJoinGroup(long reqNo, long gpNo, @AuthenticationPrincipal UserPrincipal principal) {
 
 		long userId = principal.getUserId();
 
@@ -183,7 +181,7 @@ public class GroupController {
 
 	@PostMapping("/reject")
 	@ApiOperation("스터디 가입 거절")
-	public Object rejectJoinGroup(long reqNo, long gpNo, UserPrincipal principal) {
+	public Object rejectJoinGroup(long reqNo, long gpNo, @AuthenticationPrincipal UserPrincipal principal) {
 		long userId = principal.getUserId();
 
 		ckAuth(userId, gpNo);
@@ -198,7 +196,7 @@ public class GroupController {
 
 	@PostMapping("/remove")
 	@ApiOperation("스터디 퇴출")
-	public Object removeGroupMember(long joinNo, long gpNo, UserPrincipal principal) {
+	public Object removeGroupMember(long joinNo, long gpNo, @AuthenticationPrincipal UserPrincipal principal) {
 		long userId = principal.getUserId();
 
 		ckAuth(userId, gpNo);

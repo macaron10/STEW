@@ -11,9 +11,12 @@ import javax.persistence.Table;
 import com.ssafy.study.user.model.User;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 @Data
 @Entity
+@NoArgsConstructor
 @Table(name = "gp_join")
 public class GroupJoin {
 	@Id
@@ -29,5 +32,10 @@ public class GroupJoin {
 	@JoinColumn(name = "user_id")
 	private User user;
 //	private String userId;// 유저아이디
+
+	public GroupJoin(Group gp, User user) {
+		this.gp = gp;
+		this.user = user;
+	}
 
 }

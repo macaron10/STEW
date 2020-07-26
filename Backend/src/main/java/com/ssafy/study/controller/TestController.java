@@ -3,22 +3,23 @@ package com.ssafy.study.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ssafy.study.common.model.BasicResponse;
 import com.ssafy.study.user.model.User;
 import com.ssafy.study.user.model.UserPrincipal;
-import com.ssafy.study.user.repository.UserRepository;
+import com.ssafy.study.user.model.UserSignInRequest;
+import com.ssafy.study.user.service.UserService;
 
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 
 @RestController
-@RequestMapping("/api")
 @ApiResponses(value = { @ApiResponse(code = 401, message = "Unauthorized", response = BasicResponse.class),
 		@ApiResponse(code = 403, message = "Forbidden", response = BasicResponse.class),
 		@ApiResponse(code = 404, message = "Not Found", response = BasicResponse.class),
@@ -26,13 +27,19 @@ import io.swagger.annotations.ApiResponses;
 public class TestController {
 	
 	@Autowired
-	private UserRepository userRepository;
+	private UserService userService;
+	
+	@PostMapping("/user/signin")
+	@ApiOperation("로그인 테스트용")
+	public String login(@RequestBody UserSignInRequest signinRequest) {
+		return "뭘봐";
+	}
 	
 	@GetMapping("/test")
 	@ApiOperation("아무나 요청 가능")
-	public String test1(UserPrincipal principal) {
-		System.out.println(principal);
-		System.out.println(SecurityContextHolder.getContext().getAuthentication());
+	public String test1(@AuthenticationPrincipal UserPrincipal principal) {
+		System.out.println(principal.getUsername());
+		
 		return "API Test 1 ";
 	}
 	
@@ -49,6 +56,6 @@ public class TestController {
 	public List<User> allUsers(UserPrincipal userPrincipal){
 //		System.out.println("INFO : " + userPrincipal.getAuthorities());
 		
-		return this.userRepository.findAll();
+		return this.userService.findAll();
 	}
 }

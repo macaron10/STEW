@@ -65,6 +65,7 @@
 			<groupId>com.mysema.querydsl</groupId>
 			<artifactId>querydsl-apt</artifactId>
 			<version>3.6.3</version>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.json</groupId>
@@ -106,16 +107,10 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
 		</dependency>
-
 		<dependency>
 			<groupId>org.json</groupId>
 			<artifactId>json</artifactId>
 			<version>20180813</version>
-		</dependency>
-		<dependency>
-			<groupId>org.projectlombok</groupId>
-			<artifactId>lombok</artifactId>
-			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>mysql</groupId>
@@ -132,16 +127,6 @@
 					<artifactId>junit-vintage-engine</artifactId>
 				</exclusion>
 			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>io.springfox</groupId>
-			<artifactId>springfox-swagger2</artifactId>
-			<version>2.9.2</version>
-		</dependency>
-		<dependency>
-			<groupId>io.springfox</groupId>
-			<artifactId>springfox-swagger-ui</artifactId>
-			<version>2.9.2</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

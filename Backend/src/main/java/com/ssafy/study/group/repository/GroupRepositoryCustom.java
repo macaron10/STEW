@@ -5,7 +5,10 @@ import java.util.List;
 import com.ssafy.study.group.model.Group;
 import com.ssafy.study.group.model.GroupSearch;
 
-public interface CustomGroupRepository {
+public interface GroupRepositoryCustom {
 
-	List<Group> searchGroups(GroupSearch groupSearch);
+	public List<Group> findMyJoinGroup(long userId);
+
+	public List<Group> searchGroup(GroupSearch search);
+
 }

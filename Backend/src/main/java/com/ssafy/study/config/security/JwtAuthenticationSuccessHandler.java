@@ -28,7 +28,6 @@ public class JwtAuthenticationSuccessHandler extends SavedRequestAwareAuthentica
 	@Override
 	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
 			Authentication authResult) throws ServletException, IOException {
-		
 		UserPrincipal userPrincipal = (UserPrincipal) authResult.getPrincipal();
 		
 		List<String> authorities = new ArrayList<>();
@@ -37,8 +36,8 @@ public class JwtAuthenticationSuccessHandler extends SavedRequestAwareAuthentica
 			authorities.add(p.getAuthority());
 		}
 		
-		String accessToken = JwtUtil.generateAccessToken(userPrincipal);
 		String refreshToken = JwtUtil.generateRefreshToken(userPrincipal);
+		String accessToken = JwtUtil.generateAccessToken(userPrincipal);
 		
 		UserToken userToken = new UserToken(userPrincipal.getUsername(), refreshToken);
 		

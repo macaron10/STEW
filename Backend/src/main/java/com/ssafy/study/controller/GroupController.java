@@ -5,7 +5,7 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,10 +18,13 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ssafy.study.common.model.BasicResponse;
+import com.ssafy.study.group.exception.NoAuthException;
 import com.ssafy.study.group.model.Group;
 import com.ssafy.study.group.model.GroupDto;
 import com.ssafy.study.group.model.GroupSearch;
 import com.ssafy.study.group.service.GroupService;
+import com.ssafy.study.user.model.UserPrincipal;
+import com.ssafy.study.util.JwtUtil;
 
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -36,110 +39,233 @@ import io.swagger.annotations.ApiResponses;
 @RestController
 @RequestMapping("/study")
 public class GroupController {
-
 	@Autowired
-	private GroupService gpService;
+	private JwtUtil jwtUtil;
+	@Autowired
+	private GroupService groupService;
 
 	@GetMapping("/all")
 	@ApiOperation("전체 스터디 ")
 	public Object allStudyList() {
-		ResponseEntity response;
-
 		BasicResponse result = new BasicResponse();
-		result.object = gpService.findAllGroups();
+		result.object = groupService.findAllGroups();
 		result.msg = "success";
 		result.status = true;
 
-		response = new ResponseEntity<>(result, HttpStatus.OK);
-
-		return response;
+		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 
 	@GetMapping("/my")
-	@ApiOperation("회원의 스터디 목록 조회")
-	public Object findMyStudyList() {
-		ResponseEntity response;
-
+	@ApiOperation("로그인한 회원의 스터디 목록 조회")
+	public Object findMyStudyList(@AuthenticationPrincipal UserPrincipal principal) {
+		long userId = principal.getUserId();
 		BasicResponse result = new BasicResponse();
-		result.object = gpService.findMyGroups("userid");
+		result.object = groupService.findMyGroups(userId);
 		result.msg = "success";
 		result.status = true;
 
-		response = new ResponseEntity<>(result, HttpStatus.OK);
-
-		return response;
+		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 
 	@PostMapping("/")
 	@ApiOperation("스터디 생성")
-	public Object createStudy(@RequestBody @Valid GroupDto.RegistGroup group) {
-		ResponseEntity response;
+	public Object createStudy(@AuthenticationPrincipal UserPrincipal principal, @RequestBody @Valid GroupDto.RegistGroup group) {
+		System.out.println(principal.getUserId() + " " + principal.getUsername() + " " + principal.getPassword() + " " + principal.getAuthorities());
+		Group saveGroup = group.toEntity();
+		saveGroup.setGpMgrId(principal.getUserId());
+		groupService.saveGroup(saveGroup);
 
-		gpService.createGroup(group.toEntity());
 		BasicResponse result = new BasicResponse();
 		result.msg = "success";
 		result.status = true;
 
-		response = new ResponseEntity<>(result, HttpStatus.OK);
-
-		return response;
+		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 
 	@GetMapping("/{no}")
 	@ApiOperation("스터디 상세 조회")
-	public Object selectStudyNo(@PathVariable long no) {
-		ResponseEntity response;
-
+	public Object selectStudyNo(@PathVariable long no, @AuthenticationPrincipal UserPrincipal principal) {
 		BasicResponse result = new BasicResponse();
-		result.object = gpService.selectGroup(no);
+		if (!groupService.ckGroupJoin(no, principal.getUserId())) {
+			result.status = false;
+			result.msg = "not join";
+
+			return new ResponseEntity<>(result, HttpStatus.UNAUTHORIZED);
+		}
+
+		result.object = groupService.selectGroup(no);
 		result.msg = "success";
 		result.status = true;
 
-		response = new ResponseEntity<>(result, HttpStatus.OK);
-
-		return response;
+		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 
 	@PutMapping("/{no}")
 	@ApiOperation("스터디 수정")
-	public Object modifytudy(@RequestBody GroupDto.ModifyGroup group) {
-		ResponseEntity response;
-
-		gpService.modifyGroup(group.toEntity());
+	public Object modifytudy(@RequestBody GroupDto.ModifyGroup modifyGroup, @AuthenticationPrincipal UserPrincipal principal) {
 		BasicResponse result = new BasicResponse();
+
+		long userId = principal.getUserId();
+		ckAuth(userId, modifyGroup.getGpNo());
+		Group group = groupService.selectGroup(modifyGroup.getGpNo());
+		group.update(modifyGroup);
+		groupService.saveGroup(group);
+
 		result.msg = "success";
 		result.status = true;
 
-		response = new ResponseEntity<>(result, HttpStatus.OK);
-
-		return response;
+		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 
 	@DeleteMapping("/{no}")
 	@ApiOperation("스터디번호로 스터디 삭제")
-	public Object deleteStudy(@PathVariable long no) {
-		ResponseEntity response;
-
-		gpService.deleteGroup(no);
+	public Object deleteStudy(@PathVariable long no, @AuthenticationPrincipal UserPrincipal principal) {
 		BasicResponse result = new BasicResponse();
+
+		long userId = principal.getUserId();
+		ckAuth(userId, no);
+		groupService.deleteGroup(no);
 		result.msg = "success";
 		result.status = true;
 
-		response = new ResponseEntity<>(result, HttpStatus.OK);
-
-		return response;
+		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 
 	@GetMapping("/search")
 	@ApiOperation("스터디 검색")
-	public Object searchStudy(@RequestBody GroupSearch groupSearch) {
+	public Object searchStudy(GroupSearch groupSearch) {
+		BasicResponse result = new BasicResponse();
 
-		return null;
+		result.object = groupService.searchGroups(groupSearch);
+		result.msg = "success";
+		result.status = true;
+
+		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 
-	@ExceptionHandler(Exception.class)
-	public @ResponseBody String groupExceptionHandler(Exception e) {
-		return "group controller expcetion";
+	@PostMapping("/req")
+	@ApiOperation("스터디에 가입요청")
+	public Object reqJoinGroup(int gpNo, @AuthenticationPrincipal UserPrincipal principal) {
+		long userId = principal.getUserId();
+		BasicResponse result = new BasicResponse();
+
+		if (groupService.ckGroupJoin(gpNo, userId)) {
+			result.msg = "duplicate";
+			result.status = false;
+
+			return new ResponseEntity<>(result, HttpStatus.CONFLICT);
+		}
+		groupService.requestJoinGroup(userId, gpNo);
+
+		result.msg = "success";
+		result.status = true;
+
+		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 
+	@PostMapping("/accept")
+	@ApiOperation("스터디 가입 승인")
+	public Object acceptJoinGroup(long reqNo, long gpNo, @AuthenticationPrincipal UserPrincipal principal) {
+
+		long userId = principal.getUserId();
+
+		ckAuth(userId, gpNo);
+		groupService.acceptJoinGroup(reqNo);
+
+		BasicResponse result = new BasicResponse();
+		result.msg = "success";
+		result.status = true;
+
+		return new ResponseEntity<>(result, HttpStatus.OK);
+	}
+
+	@PostMapping("/reject")
+	@ApiOperation("스터디 가입 거절")
+	public Object rejectJoinGroup(long reqNo, long gpNo, @AuthenticationPrincipal UserPrincipal principal) {
+		long userId = principal.getUserId();
+
+		ckAuth(userId, gpNo);
+		groupService.rejectJoinGroup(reqNo);
+
+		BasicResponse result = new BasicResponse();
+		result.msg = "success";
+		result.status = true;
+
+		return new ResponseEntity<>(result, HttpStatus.OK);
+	}
+
+	@PostMapping("/remove")
+	@ApiOperation("스터디 퇴출")
+	public Object removeGroupMember(long joinNo, long gpNo, @AuthenticationPrincipal UserPrincipal principal) {
+		long userId = principal.getUserId();
+
+		ckAuth(userId, gpNo);
+		groupService.removeGroupMember(joinNo);
+
+		BasicResponse result = new BasicResponse();
+		result.msg = "success";
+		result.status = true;
+
+		return new ResponseEntity<>(result, HttpStatus.OK);
+	}
+
+	@GetMapping("/cate/lg")
+	@ApiOperation("카테고리 대분류 출력")
+	public Object selectBoxLg() {
+		BasicResponse result = new BasicResponse();
+		result.object = groupService.selectBoxLgGroupCategory();
+		result.msg = "success";
+		result.status = true;
+
+		return new ResponseEntity<>(result, HttpStatus.OK);
+	}
+
+	@GetMapping("/cate/md")
+	@ApiOperation("카테고리 중분류 출력")
+	public Object selectBoxMd(String lg) {
+		BasicResponse result = new BasicResponse();
+		result.object = groupService.selectBoxMdGroupCategory(lg);
+		result.msg = "success";
+		result.status = true;
+
+		return new ResponseEntity<>(result, HttpStatus.OK);
+	}
+
+	@GetMapping("/cate/sm")
+	@ApiOperation("카테고리 소분류 출력")
+	public Object selectBoxSm(String lg, String md) {
+		BasicResponse result = new BasicResponse();
+		result.object = groupService.selectBoxSmGroupCategory(lg, md);
+		result.msg = "success";
+		result.status = true;
+
+		return new ResponseEntity<>(result, HttpStatus.OK);
+	}
+
+	@ExceptionHandler(NoAuthException.class)
+	public @ResponseBody Object NoAuthExceptionHandler(Exception e) {
+		BasicResponse result = new BasicResponse();
+		result.msg = "권한이 없습니다";
+		result.status = false;
+
+		return new ResponseEntity<>(result, HttpStatus.UNAUTHORIZED);
+	}
+
+	public void ckAuth(long userId, long gpNo) {
+		long mgrId = groupService.selectGroup(gpNo).getGpMgrId();
+
+		if (userId != mgrId)
+			throw new NoAuthException();
+	}
+
+	@GetMapping("/test")
+	public String test() {
+		GroupSearch groupSearch = new GroupSearch();
+		groupSearch.setGpCatLg("어학");
+		groupSearch.setGpPrivate(true);
+
+		System.out.println(groupService.searchGroups(groupSearch));
+
+		return "test";
+	}
 }

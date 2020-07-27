@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,14 +18,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ssafy.study.common.exception.NoAuthException;
 import com.ssafy.study.common.model.BasicResponse;
-import com.ssafy.study.group.exception.NoAuthException;
 import com.ssafy.study.group.model.Group;
 import com.ssafy.study.group.model.GroupDto;
 import com.ssafy.study.group.model.GroupSearch;
 import com.ssafy.study.group.service.GroupService;
+import com.ssafy.study.user.model.User;
 import com.ssafy.study.user.model.UserPrincipal;
-import com.ssafy.study.util.JwtUtil;
+import com.ssafy.study.user.service.UserService;
 
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -35,14 +37,14 @@ import io.swagger.annotations.ApiResponses;
 		@ApiResponse(code = 404, message = "Not Found", response = BasicResponse.class),
 		@ApiResponse(code = 500, message = "Failure", response = BasicResponse.class) })
 
-//@CrossOrigin(origins = { "http://localhost:3000" })
 @RestController
 @RequestMapping("/study")
 public class GroupController {
-	@Autowired
-	private JwtUtil jwtUtil;
+
 	@Autowired
 	private GroupService groupService;
+	@Autowired
+	private UserService userSerivce;
 
 	@GetMapping("/all")
 	@ApiOperation("전체 스터디 ")
@@ -69,11 +71,14 @@ public class GroupController {
 
 	@PostMapping("/")
 	@ApiOperation("스터디 생성")
-	public Object createStudy(@AuthenticationPrincipal UserPrincipal principal, @RequestBody @Valid GroupDto.RegistGroup group) {
-		System.out.println(principal.getUserId() + " " + principal.getUsername() + " " + principal.getPassword() + " " + principal.getAuthorities());
+	public Object createStudy(@AuthenticationPrincipal UserPrincipal principal,
+			@RequestBody @Valid GroupDto.RegistGroup group) {
 		Group saveGroup = group.toEntity();
 		saveGroup.setGpMgrId(principal.getUserId());
-		groupService.saveGroup(saveGroup);
+		saveGroup = groupService.saveGroup(saveGroup);
+
+		User user = userSerivce.loadUserByUserId(saveGroup.getGpMgrId());
+		groupService.joinGroup(user, saveGroup);
 
 		BasicResponse result = new BasicResponse();
 		result.msg = "success";
@@ -102,7 +107,8 @@ public class GroupController {
 
 	@PutMapping("/{no}")
 	@ApiOperation("스터디 수정")
-	public Object modifytudy(@RequestBody GroupDto.ModifyGroup modifyGroup, @AuthenticationPrincipal UserPrincipal principal) {
+	public Object modifytudy(@RequestBody GroupDto.ModifyGroup modifyGroup,
+			@AuthenticationPrincipal UserPrincipal principal) {
 		BasicResponse result = new BasicResponse();
 
 		long userId = principal.getUserId();
@@ -166,7 +172,6 @@ public class GroupController {
 	@PostMapping("/accept")
 	@ApiOperation("스터디 가입 승인")
 	public Object acceptJoinGroup(long reqNo, long gpNo, @AuthenticationPrincipal UserPrincipal principal) {
-
 		long userId = principal.getUserId();
 
 		ckAuth(userId, gpNo);

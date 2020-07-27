@@ -5,6 +5,7 @@ import java.util.List;
 import com.ssafy.study.group.model.Group;
 import com.ssafy.study.group.model.GroupSearch;
 import com.ssafy.study.group.model.ResGroupCategoryDto;
+import com.ssafy.study.user.model.User;
 
 public interface GroupService {
 
@@ -29,6 +30,8 @@ public interface GroupService {
 	public void requestJoinGroup(long userId, long gpNo);
 
 	public void acceptJoinGroup(long reqNo);
+	
+	public void joinGroup(User user, Group gp);
 
 	public void rejectJoinGroup(long reqNo);
 

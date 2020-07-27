@@ -15,6 +15,7 @@ import com.ssafy.study.group.repository.GroupCategoryRepository;
 import com.ssafy.study.group.repository.GroupJoinRepository;
 import com.ssafy.study.group.repository.GroupRepository;
 import com.ssafy.study.group.repository.GroupReqRepository;
+import com.ssafy.study.user.model.User;
 
 @Service
 public class GroupServiceImpl implements GroupService {
@@ -87,12 +88,17 @@ public class GroupServiceImpl implements GroupService {
 	@Override
 	public void acceptJoinGroup(long reqNo) {
 		GroupReq req = reqRepo.findByGpReqNo(reqNo);
-		Group gp = req.getGp();
-		gp.joinGroup();
-		GroupJoin join = new GroupJoin(gp, req.getUser());
-
 		reqRepo.deleteByGpReqNo(reqNo);
+		
+		joinGroup(req.getUser(), req.getGp());
+	}
+
+	@Override
+	public void joinGroup(User user, Group gp) {
+		GroupJoin join = new GroupJoin(gp, user);
+
 		joinRepo.save(join);
+		gp.joinGroup();
 	}
 
 	@Override

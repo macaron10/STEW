@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,17 +18,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ssafy.study.common.exception.NoAuthException;
 import com.ssafy.study.common.model.BasicResponse;
-import com.ssafy.study.group.exception.NoAuthException;
 import com.ssafy.study.group.model.Group;
 import com.ssafy.study.group.model.GroupDto;
-import com.ssafy.study.group.model.GroupJoin;
 import com.ssafy.study.group.model.GroupSearch;
 import com.ssafy.study.group.service.GroupService;
 import com.ssafy.study.user.model.User;
 import com.ssafy.study.user.model.UserPrincipal;
 import com.ssafy.study.user.service.UserService;
-import com.ssafy.study.util.JwtUtil;
 
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -38,7 +37,6 @@ import io.swagger.annotations.ApiResponses;
 		@ApiResponse(code = 404, message = "Not Found", response = BasicResponse.class),
 		@ApiResponse(code = 500, message = "Failure", response = BasicResponse.class) })
 
-//@CrossOrigin(origins = { "http://localhost:3000" })
 @RestController
 @RequestMapping("/study")
 public class GroupController {

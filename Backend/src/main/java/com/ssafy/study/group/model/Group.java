@@ -1,7 +1,5 @@
 package com.ssafy.study.group.model;
 
-import java.time.LocalDateTime;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -10,8 +8,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-
-import org.springframework.data.annotation.CreatedDate;
 
 import com.ssafy.study.common.model.TimeEntity;
 import com.ssafy.study.group.model.GroupDto.ModifyGroup;
@@ -37,13 +33,17 @@ public class Group extends TimeEntity {
 	private GroupCategory gpCat;
 //	private int gpCatNo;// 타입 아이디
 
+	@Column(length = 128)
 	private String gpNm;// 스터디 이름
 	private long gpMgrId;// 팀장아이디
+	@Column(length = 1000)
 	private String gpIntro;// 소개
+	@Column(length = 300)
 	private String gpTag;// 태그
 	private int gpStTm;// 선호 시작시간
 	private int gpEndTm;// 선호 종료시간
 	private boolean gpPublic;// 공개여부
+	@Column(length = 255)
 	private String gpImg;// 썸네일
 
 	@Column(columnDefinition = "integer default 5")

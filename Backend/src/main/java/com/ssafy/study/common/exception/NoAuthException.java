@@ -1,4 +1,4 @@
-package com.ssafy.study.group.exception;
+package com.ssafy.study.common.exception;
 
 public class NoAuthException extends RuntimeException {
 

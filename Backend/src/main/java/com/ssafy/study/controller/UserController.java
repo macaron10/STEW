@@ -65,20 +65,20 @@ public class UserController {
 		
 	}
 	
-//	@DeleteMapping("/{userId}")
-//	@ApiOperation("회원 탈퇴")
-//	public ResponseEntity<BasicResponse> signOut(@PathVariable long userId){
-//		
-//		userService.deleteById(userId);
-//		
-//		BasicResponse result = new BasicResponse();
-//		
-//		result.status = true;
-//		result.msg = "success";
-//		result.object = true;
-//		
-//		return new ResponseEntity<>(result, HttpStatus.OK);
-//	}
+	@DeleteMapping("/{userId}")
+	@ApiOperation("회원 탈퇴")
+	public ResponseEntity<BasicResponse> signOut(@PathVariable long userId){
+		
+		userService.deleteById(userId);
+		
+		BasicResponse result = new BasicResponse();
+		
+		result.status = true;
+		result.msg = "success";
+		result.object = true;
+		
+		return new ResponseEntity<>(result, HttpStatus.OK);
+	}
 	
 	@PutMapping("/")
 	@ApiOperation("회원 수정")

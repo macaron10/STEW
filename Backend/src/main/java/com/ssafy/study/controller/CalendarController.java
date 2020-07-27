@@ -15,8 +15,9 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ssafy.study.calendar.model.CalDto;
 import com.ssafy.study.calendar.model.CalEvent;
+import com.ssafy.study.calendar.model.CalEvtDto.CreateCalEvt;
+import com.ssafy.study.calendar.model.CalEvtDto.ModifyCalEvt;
 import com.ssafy.study.calendar.service.CalendarService;
 import com.ssafy.study.common.exception.NoAuthException;
 import com.ssafy.study.common.model.BasicResponse;
@@ -42,7 +43,7 @@ public class CalendarController {
 
 	@PostMapping("/")
 	@ApiOperation("일정 생성")
-	public Object createCalEvt(@Valid CalDto.createCal cal, @AuthenticationPrincipal UserPrincipal principal) {
+	public Object createCalEvt(@Valid CreateCalEvt cal, @AuthenticationPrincipal UserPrincipal principal) {
 		BasicResponse response = new BasicResponse();
 
 		if (cal.getCType() != 'U') {
@@ -63,7 +64,7 @@ public class CalendarController {
 
 	@PutMapping("/")
 	@ApiOperation("일정 수정")
-	public Object modifyCalEvt(@Valid CalDto.modifyCal cal, @AuthenticationPrincipal UserPrincipal principal) {
+	public Object modifyCalEvt(@Valid ModifyCalEvt cal, @AuthenticationPrincipal UserPrincipal principal) {
 		BasicResponse response = new BasicResponse();
 
 		CalEvent calEvt = cal.toEntity();
@@ -92,7 +93,7 @@ public class CalendarController {
 	}
 
 	@GetMapping("/personal")
-	@ApiOperation("개인 일정 조회")
+	@ApiOperation("개인의 모든 일정 조회")
 	public Object personalCalList(@AuthenticationPrincipal UserPrincipal principal) {
 		long userId = principal.getUserId();
 		BasicResponse response = new BasicResponse();
@@ -105,12 +106,40 @@ public class CalendarController {
 	}
 
 	@GetMapping("/group")
-	@ApiOperation("가입한 그룹들의 일정 조회")
+	@ApiOperation("가입한 그룹들의 모든 일정 조회")
 	public Object groupCalList(@AuthenticationPrincipal UserPrincipal principal) {
 		long userId = principal.getUserId();
 		BasicResponse response = new BasicResponse();
 
 		response.object = calService.selectGroupCalEvt(userId);
+		response.msg = "success";
+		response.status = true;
+
+		return new ResponseEntity<>(response, HttpStatus.OK);
+	}
+
+	@GetMapping("/personal/{year}/{month}")
+	@ApiOperation("year + month 개인 일정 조회")
+	public Object personalMonthCalList(@PathVariable int year, @PathVariable int month,
+			@AuthenticationPrincipal UserPrincipal principal) {
+		long userId = principal.getUserId();
+		BasicResponse response = new BasicResponse();
+
+		response.object = calService.selectPersonalCalEvt(userId, year, month);
+		response.msg = "success";
+		response.status = true;
+
+		return new ResponseEntity<>(response, HttpStatus.OK);
+	}
+	
+	@GetMapping("/group/{year}/{month}")
+	@ApiOperation("year + month 그룹 일정 조회")
+	public Object groupMonthCalList(@PathVariable int year, @PathVariable int month,
+			@AuthenticationPrincipal UserPrincipal principal) {
+		long userId = principal.getUserId();
+		BasicResponse response = new BasicResponse();
+
+		response.object = calService.selectGroupCalEvt(userId, year, month);
 		response.msg = "success";
 		response.status = true;
 
@@ -135,5 +164,11 @@ public class CalendarController {
 		res.status = false;
 
 		return new ResponseEntity<>(res, HttpStatus.UNAUTHORIZED);
+	}
+
+	@GetMapping("/test")
+	public void test() {
+//		System.out.println(calService.selectPersonalCalEvt(1));
+		System.out.println(calService.selectPersonalCalEvt(1, 2020, 7));
 	}
 }

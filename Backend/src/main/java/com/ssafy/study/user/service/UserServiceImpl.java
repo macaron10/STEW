@@ -13,6 +13,11 @@ public class UserServiceImpl implements UserService{
 	
 	@Autowired
 	private UserRepository userRepository;
+	
+	@Override
+	public User save(User user) {
+		return userRepository.save(user);
+	}
 
 	@Override
 	public User loadUserByUserId(long userId) {
@@ -27,6 +32,11 @@ public class UserServiceImpl implements UserService{
 	@Override
 	public void deleteById(long id) {
 		userRepository.deleteById(id);
+	}
+	
+	@Override
+	public User findByUserEmail(String userEmail) {
+		return userRepository.findByUserEmail(userEmail).get();
 	}
 	
 }

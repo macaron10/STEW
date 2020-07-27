@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ssafy.study.common.model.BasicResponse;
 import com.ssafy.study.user.model.User;
 import com.ssafy.study.user.model.UserPrincipal;
-import com.ssafy.study.user.model.UserSignInRequest;
+import com.ssafy.study.user.model.UserSignIn;
 import com.ssafy.study.user.service.UserService;
 
 import io.swagger.annotations.ApiOperation;
@@ -31,7 +31,7 @@ public class TestController {
 	
 	@PostMapping("/user/signin")
 	@ApiOperation("로그인 테스트용")
-	public String login(@RequestBody UserSignInRequest signinRequest) {
+	public String login(@RequestBody UserSignIn signinRequest) {
 		return "뭘봐";
 	}
 	

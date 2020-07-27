@@ -17,7 +17,7 @@ import org.springframework.web.HttpRequestMethodNotSupportedException;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ssafy.study.user.model.UserSignInRequest;
+import com.ssafy.study.user.model.UserSignIn;
 
 import lombok.RequiredArgsConstructor;
 
@@ -28,13 +28,14 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 	@Override
 	public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
 			throws AuthenticationException{
+		System.out.println(request.getMethod());
 		if(!request.getMethod().equals("POST")) 
 			throw new AuthenticationServiceException("Authentication method not supported " + request.getMethod());
 		
-		UserSignInRequest credentials = null;
+		UserSignIn credentials = null;
 		
 		try {
-			credentials = new ObjectMapper().readValue(request.getInputStream(), UserSignInRequest.class);
+			credentials = new ObjectMapper().readValue(request.getInputStream(), UserSignIn.class);
 		} catch (JsonParseException e) {
 			e.printStackTrace();
 		} catch (JsonMappingException e) {
@@ -52,16 +53,4 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 		return authenticationManager.authenticate(authToken);
 	}
 	
-//	@Override
-//	protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
-//			Authentication authResult) throws IOException, ServletException {
-//		
-//		
-//		
-//	}
-//	
-//	@Bean
-//	RedisTemplate<String, Object> redisTemplate() {
-//		return new RedisTemplate<String, Object>();
-//	}
 }

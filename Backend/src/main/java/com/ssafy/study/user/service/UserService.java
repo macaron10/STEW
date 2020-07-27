@@ -6,8 +6,10 @@ import com.ssafy.study.user.model.User;
 
 public interface UserService {
 	
+	User save(User user);
 	User loadUserByUserId(long userId);
 	List<User> findAll(); 
 	void deleteById(long id);
+	User findByUserEmail(String userEmail);
 	
 }

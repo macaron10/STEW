@@ -1,11 +1,5 @@
 package com.ssafy.study.user.model;
 
-import java.io.Serializable;
-import java.sql.Date;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -13,8 +7,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Transient;
-
-import org.springframework.data.annotation.CreatedDate;
 
 import com.ssafy.study.common.model.TimeEntity;
 
@@ -27,14 +19,20 @@ import lombok.Setter;
 @Getter
 @Entity
 public class User extends TimeEntity{
-
+	
 	@Builder
-	public User(String userEmail, String userPw, char userGender, String roles, String userNm) {
+	public User(String userNm, String userEmail, String userPw, String userPhone, char userGender,
+			String roles, String permissions, String userIntro, String userImg, int userGoalHr) {
+		this.userNm = userNm;
 		this.userEmail = userEmail;
 		this.userPw = userPw;
+		this.userPhone = userPhone;
 		this.userGender = userGender;
 		this.roles = roles;
-		this.userNm = userNm;
+		this.permissions = permissions;
+		this.userIntro = userIntro;
+		this.userImg = userImg;
+		this.userGoalHr = userGoalHr;
 	}
 
 	@Id

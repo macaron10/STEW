@@ -61,7 +61,7 @@ public class JwtSecurityConfig extends WebSecurityConfigurerAdapter{
 			.exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint)
 			.and()	
 			.addFilterBefore(jwtAuthorizationFilter, UsernamePasswordAuthenticationFilter.class)
-//			그게그거임 이거 넣지말고 기본 필터로 ?
+//			그게그거임 이거 넣지말고 기본 필터로 ㄱㄱ?
 			.addFilterBefore(jwtAuthenticationFilter(authenticationManager()), UsernamePasswordAuthenticationFilter.class);
 	}
 

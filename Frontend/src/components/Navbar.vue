@@ -51,16 +51,20 @@
 
         <v-col>
           <v-text-field
-            label="userId"
-            placeholder="ID"
+            label="userEmail"
+            placeholder="Email"
+            type="email"
+            v-model="user.userEmail"
             solo
           ></v-text-field>
           <v-text-field
-            label="userPwd"
+            label="userPw"
             placeholder="PASSWORD"
+            type="password"
+            v-model="user.userPw"
             solo
           ></v-text-field>
-          <v-btn large color="primary" block="true">로그인</v-btn>
+          <v-btn large color="primary" block="true" @click="signIn">로그인</v-btn>
         </v-col>
 
         <v-card-actions>
@@ -75,6 +79,7 @@
           </v-btn>
 
           <v-btn
+            :to="{ name: 'Signup' }"
             color="light gray"
             text small
             @click="siginInDialog = false"
@@ -96,6 +101,7 @@
 </template>
 
 <script>
+import axios from 'axios';
 
 export default {
     name: 'Navbar',
@@ -103,10 +109,23 @@ export default {
       drawerOnOff(event) {
         this.$emit('drawer-onoff')
       },
+      signIn() {
+        axios.post('http://localhost:8399/api/user/signin', {
+          userEmail: this.user.userEmail,
+          userPw: this.user.userPw
+        })
+        .then(function (response) {
+          console.log(response);
+        }) 
+      },
     },
     data () {
       return {
         siginInDialog: false,
+        user: {
+          userId: "",
+          userPwd: "",
+        },
       }
     }
 }

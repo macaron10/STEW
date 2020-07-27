@@ -96,18 +96,18 @@ public class UserController {
 		
 	}
 	
-//	@GetMapping("/check")
-//	@ApiOperation("중복 확인")
-//	public ResponseEntity<BasicResponse> checkDuplicated(String userEmail){
-//		
-//		BasicResponse result = new BasicResponse();
-//		
-//		result.status = true;
-//		result.msg = "success";
-//		result.object = userService.findByUserEmail(userEmail);
-//		
-//		return new ResponseEntity<>(result, HttpStatus.OK);
-//		
-//	}
+	@GetMapping("/check")
+	@ApiOperation("중복 확인")
+	public ResponseEntity<BasicResponse> checkDuplicated(String userEmail){
+		
+		BasicResponse result = new BasicResponse();
+		
+		result.status = true;
+		result.msg = "success";
+		result.object = userService.findByUserEmail(userEmail);
+		
+		return new ResponseEntity<>(result, HttpStatus.OK);
+		
+	}
 	
 }

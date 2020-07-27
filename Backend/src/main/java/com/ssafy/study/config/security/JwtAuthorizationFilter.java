@@ -2,6 +2,7 @@ package com.ssafy.study.config.security;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -94,7 +95,8 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter{
 			return null;
 		}
 		
-		logger.info("Authorities : " + userPrincipal.getAuthorities());
+		redisTemplate.expire(userEmail, JwtProperties.EXPIRATION_TIME_REFRESH, TimeUnit.MILLISECONDS);
+		
 		return new UsernamePasswordAuthenticationToken(userPrincipal, null, userPrincipal.getAuthorities());
 	}
 	

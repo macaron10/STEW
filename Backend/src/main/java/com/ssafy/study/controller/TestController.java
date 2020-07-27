@@ -37,9 +37,7 @@ public class TestController {
 	
 	@GetMapping("/test")
 	@ApiOperation("아무나 요청 가능")
-	public String test1(@AuthenticationPrincipal UserPrincipal principal) {
-		System.out.println(principal.getUsername());
-		
+	public String test1() {
 		return "API Test 1 ";
 	}
 	

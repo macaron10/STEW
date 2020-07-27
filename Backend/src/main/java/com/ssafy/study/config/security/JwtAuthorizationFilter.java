@@ -27,7 +27,6 @@ import com.ssafy.study.util.JwtUtil;
 
 @Component
 public class JwtAuthorizationFilter extends OncePerRequestFilter{
-	
 	@Autowired
 	private RedisTemplate<String, Object> redisTemplate;
 	
@@ -37,10 +36,9 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter{
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
-		logger.info("Authorization Filter");
 		String token = request.getHeader(JwtProperties.HEADER_STRING);
 		
-		if(token == null || !token.startsWith(JwtProperties.TOKEN_PREFIX)) {
+		if(token == null || !token.startsWith(JwtProperties.TOKEN_PREFIX) || redisTemplate.opsForValue().get(token.replace(JwtProperties.TOKEN_PREFIX, "")) != null) {
 			chain.doFilter(request, response);
 			return;
 		}
@@ -48,8 +46,6 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter{
 		Authentication authentication = getUsernamePasswordAuthentication(response, token);
 		
 		SecurityContextHolder.getContext().setAuthentication(authentication);
-		
-		System.out.println("AuthorizeFilter Auth : " + authentication.getAuthorities());
 		
 		chain.doFilter(request, response);
 	}

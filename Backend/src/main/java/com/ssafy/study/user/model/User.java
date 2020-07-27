@@ -26,7 +26,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Entity
-public class User extends TimeEntity implements Serializable {
+public class User extends TimeEntity{
 
 	@Builder
 	public User(String userEmail, String userPw, char userGender, String roles, String userNm) {

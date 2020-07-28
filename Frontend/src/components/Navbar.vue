@@ -64,7 +64,10 @@
             v-model="user.userPw"
             solo
           ></v-text-field>
-          <v-btn large color="primary" block="true" @click="signIn">로그인</v-btn>
+          <v-btn 
+            large color="primary" block="true" 
+            @click="signIn(user.userEmail, user.userPw)"
+          >로그인</v-btn>
         </v-col>
 
         <v-card-actions>
@@ -102,22 +105,29 @@
 
 <script>
 import axios from 'axios';
+import { mapState, mapActions } from 'vuex';
 
 export default {
     name: 'Navbar',
+    computed: {
+      ...mapState(["userInfo"])
+    },
     methods: {
       drawerOnOff(event) {
         this.$emit('drawer-onoff')
       },
-      signIn() {
-        axios.post('http://localhost:8399/api/user/signin', {
-          userEmail: this.user.userEmail,
-          userPw: this.user.userPw
-        })
-        .then(function (response) {
-          console.log(response);
-        }) 
-      },
+      ...mapActions([
+        "signIn"
+        ]),
+      // signIn() {
+      //   axios.post('http://localhost:8399/api/user/signin', {
+      //     userEmail: this.user.userEmail,
+      //     userPw: this.user.userPw
+      //   })
+      //   .then(res => {
+      //     console.log(res);
+      //   }) 
+      // },
     },
     data () {
       return {

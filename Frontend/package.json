@@ -14,7 +14,7 @@
   "main": "background.js",
   "dependencies": {
     "@mdi/font": "^3.6.95",
-    "@types/node": "12.12.51",
+    "@types/node": "12.12.6",
     "axios": "^0.19.2",
     "core-js": "^3.6.5",
     "roboto-fontface": "*",

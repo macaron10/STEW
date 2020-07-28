@@ -10,6 +10,7 @@
 
 <script lang="ts">
 import Vue from "vue";
+import store from "./store";
 
 import Navbar from "./components/Navbar.vue";
 import Sidebar from "./components/Sidebar.vue";

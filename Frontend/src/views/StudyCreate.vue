@@ -125,7 +125,6 @@
           text
           color="primary"
           type="submit"
-          @click="createGroup"
         >Register</v-btn>
       </v-card-actions>
     </v-form>
@@ -184,7 +183,6 @@ export default {
     formIsValid () {
       return (
         this.form.gpNm &&
-        this.form.gpPublic &&
         this.form.gpCatNo
       )
     },
@@ -192,12 +190,8 @@ export default {
 
   methods: {
     resetForm () {
-      this.form = Object.assign({}, this.groupData)
+      this.form = Object.assign({}, this.form)
       this.$refs.form.reset()
-    },
-    submit () {
-      this.snackbar = true
-      this.resetForm()
     },
     async createGroup () {
       try {
@@ -208,12 +202,18 @@ export default {
         }
         const baseUrl = this.$store.state.baseUrl
         const apiUrl = baseUrl + '/study/'
-        const res = await axios.post(apiUrl, this.groupData, config)
+        console.log(this.form)
+        const res = await axios.post(apiUrl, this.form, config)
         this.$router.push({ name: 'Main' }) // params: { id: res.data.id } })
         console.log(res)
       } catch (err) {
         console.error(err)
       }
+    },
+    submit () {
+      this.snackbar = true
+      this.createGroup()
+      this.resetForm()
     },
     createGroup2() {
       const config = {

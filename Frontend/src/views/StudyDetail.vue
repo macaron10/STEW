@@ -4,11 +4,16 @@
       <v-row>
         <v-col class="mb-6 ">
           <div class="d-flex justify-center">
-            <img @click="enterMeetingRoom" src="https://picsum.photos/400/300?image" alt="image" />
+            <img @click="enterMeetingRoom(group.gpNo)" src="https://picsum.photos/400/300?image" alt="image" />
           </div>
           <div>
-            <h1>Algorithm Study</h1>
-            <h4>{{text}}</h4>
+            <h1>{{ group.gpNm }}</h1>
+            <h4>{{ group.gpIntro }}</h4>
+            <v-btn
+              :to="{ name:'StudyUpdate', params: { id: id }}"
+            >
+              수정 버튼!(임시)
+            </v-btn>
           </div>
         </v-col>
         <v-col class="mb-6">
@@ -58,6 +63,7 @@
 
 <script>
 import Calendar from "@/components/temp/Calendar.vue";
+import axios from "axios";
 // @ is an alias to /src
 export default {
   name: "StudyDetail",
@@ -66,9 +72,9 @@ export default {
   },
   data() {
     return {
+      group: {},
+      // 밑에는 그룹정보(나중에 활용)
       tab: null,
-      text:
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
       icons: false,
       centered: false,
       grow: false,
@@ -79,9 +85,28 @@ export default {
       tabs: 3
     };
   },
+  mounted () {
+    this.id = this.$route.params.id
+    this.getDetail()
+  },
   methods: {
-    enterMeetingRoom() {
-      this.$router.push({ name: 'MeetingRoom'})
+    enterMeetingRoom(gpNo) {
+      this.$router.push('/meetingroom/'+gpNo)
+    },
+    async getDetail () {
+      const baseUrl = this.$store.state.baseUrl
+      const apiUrl = baseUrl + '/study/' + this.id
+      try {
+        const config = {
+          headers: {
+            Authorization: `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c2VyMSIsInJvbGUiOlsic3RyaW5nIiwiUk9MRV9VU0VSIl0sImV4cCI6MTU5NTkyNjk3MywidXNlcklkIjoxLCJpYXQiOjE1OTU5MjUxNzN9.yJA-YJ_1QDVslPVcoT6xD8cad1SxP3iWR0AxT_vxkQiEB1CN-gdimy_mU96CGegEzkTy5JR0GhYQdE0ybwqqhQ `
+          }
+        }
+        const res = await axios.get(apiUrl, config)
+        this.group = res.data.object
+      } catch (err) {
+        console.error(err)
+      }
     }
   }
 };

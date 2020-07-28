@@ -30,7 +30,7 @@ const routes: Array<RouteConfig> = [
     component: StudyCreate
   },
   {
-    path: '/study/detail',
+    path: '/study/:id',
     name: 'StudyDetail',
     component: StudyDetail
   },
@@ -55,7 +55,7 @@ const routes: Array<RouteConfig> = [
     component: Signup
   },
   {
-    path: "/meetingroom",
+    path: "/meetingroom/:id",
     name: "MeetingRoom",
     component: MeetingRoom
   },

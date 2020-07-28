@@ -118,16 +118,16 @@ public class GroupController {
 		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 
-	@PutMapping("/{no}")
-	@ApiOperation("스터디 수정")
+	@PutMapping("/")
+	@ApiOperation(value = "스터디 수정", produces = "multipart/form-data")
 	public Object modifytudy(GroupDto.ModifyGroup modifyGroup, @AuthenticationPrincipal UserPrincipal principal) {
 		BasicResponse result = new BasicResponse();
 
 		long userId = principal.getUserId();
 		ckAuth(userId, modifyGroup.getGpNo());
-		
-		System.out.println(modifyGroup.getGpImg());
-		if (modifyGroup.getGpImg() != null) {
+
+		System.out.println(modifyGroup);
+		if (modifyGroup.isUpdateGpImg() && modifyGroup.getGpImg() != null) {
 			modifyGroup.setGpImgName(fileService.uploadFile(modifyGroup.getGpImg(), fileBaseUrl));
 		}
 
@@ -282,9 +282,7 @@ public class GroupController {
 	}
 
 	@PostMapping("/test")
-	public void test(GroupDto.RegistGroup group) {
-		System.out.println(group);
-//		System.out.println(group.getGpImg());
+	public void test() {
 	}
 
 }

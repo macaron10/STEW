@@ -1,7 +1,5 @@
 package com.ssafy.study.group.model;
 
-import java.io.Serializable;
-
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -14,7 +12,6 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 public class GroupDto {
 
@@ -48,13 +45,13 @@ public class GroupDto {
 	@Valid
 	@NoArgsConstructor
 	public static class ModifyGroup {
+		@ApiModelProperty(required = true)
+		@NotNull
 		private long gpNo; // 스터디 아이디
 
 		@ApiModelProperty(required = true)
 		@NotNull
 		private int gpCatNo;// 타입 아이디
-		@ApiModelProperty(required = true)
-		@NotBlank
 		private String gpNm;// 스터디 이름
 		private String gpIntro;// 소개
 		private String gpTag;// 태그
@@ -69,6 +66,9 @@ public class GroupDto {
 		
 		@JsonIgnore
 		private String gpImgName;
+		@ApiModelProperty(required = true)
+		@NotNull
+		private boolean updateGpImg;
 
 		public Group toEntity() {
 			return Group.builder().gpNo(gpNo).gpNm(gpNm).gpIntro(gpIntro).gpTag(gpTag).gpStTm(gpStTm).gpImg(gpImgName).gpEndTm(gpEndTm)

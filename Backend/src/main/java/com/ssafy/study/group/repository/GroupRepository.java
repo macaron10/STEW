@@ -13,4 +13,6 @@ public interface GroupRepository extends JpaRepository<Group, Long>, GroupReposi
 	
 	Group findByGpNo(long gpNo);
 
+	void deleteByGpNo(long gpNo);
+
 }

@@ -42,7 +42,7 @@ public class CalendarController {
 	private GroupService gpService;
 
 	@PostMapping("/")
-	@ApiOperation("일정 생성")
+	@ApiOperation("일정 생성 yyyy-MM-dd'T'HH:mm")
 	public Object createCalEvt(@Valid CreateCalEvt cal, @AuthenticationPrincipal UserPrincipal principal) {
 		BasicResponse response = new BasicResponse();
 
@@ -63,7 +63,7 @@ public class CalendarController {
 	}
 
 	@PutMapping("/")
-	@ApiOperation("일정 수정")
+	@ApiOperation("일정 수정 yyyy-MM-dd'T'HH:mm")
 	public Object modifyCalEvt(@Valid ModifyCalEvt cal, @AuthenticationPrincipal UserPrincipal principal) {
 		BasicResponse response = new BasicResponse();
 

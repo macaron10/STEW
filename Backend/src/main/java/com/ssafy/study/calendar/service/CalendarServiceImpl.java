@@ -6,8 +6,8 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.ssafy.study.calendar.model.CalDto.ResCal;
 import com.ssafy.study.calendar.model.CalEvent;
+import com.ssafy.study.calendar.model.CalEvtDto.ResCalEvt;
 import com.ssafy.study.calendar.repository.CalendarRepository;
 
 @Service
@@ -32,12 +32,24 @@ public class CalendarServiceImpl implements CalendarService {
 	}
 
 	@Override
-	public List<ResCal> selectPersonalCalEvt(long userId) {
-		return calRepo.findPersonalCalEvt(userId).stream().map(c -> new ResCal(c)).collect(Collectors.toList());
+	public List<ResCalEvt> selectPersonalCalEvt(long userId) {
+		return calRepo.findPersonalCalEvt(userId).stream().map(c -> new ResCalEvt(c)).collect(Collectors.toList());
 	}
 
 	@Override
-	public List<ResCal> selectGroupCalEvt(long userId) {
-		return calRepo.findGroupCalEvt(userId).stream().map(c -> new ResCal(c)).collect(Collectors.toList());
+	public List<ResCalEvt> selectGroupCalEvt(long userId) {
+		return calRepo.findGroupCalEvt(userId).stream().map(c -> new ResCalEvt(c)).collect(Collectors.toList());
+	}
+
+	@Override
+	public List<ResCalEvt> selectPersonalCalEvt(long userId, int year, int month) {
+		return calRepo.findPersonalCalEvt(userId, year, month).stream().map(c -> new ResCalEvt(c))
+				.collect(Collectors.toList());
+	}
+
+	@Override
+	public List<ResCalEvt> selectGroupCalEvt(long userId, int year, int month) {
+		return calRepo.findGroupCalEvt(userId, year, month).stream().map(c -> new ResCalEvt(c))
+				.collect(Collectors.toList());
 	}
 }

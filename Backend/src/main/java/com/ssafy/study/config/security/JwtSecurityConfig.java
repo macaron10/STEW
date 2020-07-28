@@ -1,9 +1,10 @@
 package com.ssafy.study.config.security;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -15,8 +16,9 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
+import org.springframework.security.web.util.matcher.RequestMatcher;
 
-import com.ssafy.study.user.repository.UserRepository;
 import com.ssafy.study.user.service.UserPrincipalDetailsService;
 
 import lombok.RequiredArgsConstructor;
@@ -28,8 +30,6 @@ import lombok.RequiredArgsConstructor;
 public class JwtSecurityConfig extends WebSecurityConfigurerAdapter{
 	
 	private final UserPrincipalDetailsService userPrincipalDetailsService;
-	private final UserRepository userRepository;
-	private final RedisTemplate<String, Object> redisTemplate;
 	
 	@Autowired
 	private JwtAuthorizationFilter jwtAuthorizationFilter;
@@ -46,25 +46,22 @@ public class JwtSecurityConfig extends WebSecurityConfigurerAdapter{
 			.formLogin().disable()
 			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 			.and()
-//			.logout()
-//			.logoutUrl("/user/logout")
-//			.addLogoutHandler(jwtLogoutHandler())
+			.logout()
+//			.logoutRequestMatcher(new RequestMatcher())
+			.logoutUrl("/user/logout")
+			.addLogoutHandler(jwtLogoutHandler())
+			.logoutSuccessHandler(jwtLogoutSuccessHandler())
+			.and()
 			.authorizeRequests()
-			.antMatchers("/api/manager/**").hasRole("MANAGER")
-			.antMatchers("/api/admin/**").hasAnyRole("ADMIN")
-			
-//			.antMatchers("/v2/**").permitAll()
-//			.antMatchers("/swagger-resources/**").permitAll()
-//			.antMatchers("/webjars/**").permitAll()
-//			.antMatchers("/swagger-ui.html/**").permitAll()
+			.antMatchers("/manager/**").hasRole("MANAGER")
+			.antMatchers("/admin/**").hasAnyRole("ADMIN")
 			
 			.anyRequest().permitAll()
 			.and()
 			.exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint)
 			.and()	
 			.addFilterBefore(jwtAuthorizationFilter, UsernamePasswordAuthenticationFilter.class)
-			
-//			그게그거임 이거 넣지말고 기본 필터로 
+//			그게그거임 이거 넣지말고 기본 필터로 ㄱㄱ?
 			.addFilterBefore(jwtAuthenticationFilter(authenticationManager()), UsernamePasswordAuthenticationFilter.class);
 	}
 
@@ -93,13 +90,17 @@ public class JwtSecurityConfig extends WebSecurityConfigurerAdapter{
 	}
 	@Bean
 	JwtLogoutHandler jwtLogoutHandler() {
-		return new JwtLogoutHandler();
+		JwtLogoutHandler jwtLogoutHandler = new JwtLogoutHandler();
+		jwtLogoutHandler.setClearAuthentication(false);
+//		jwtLogoutHandler.setInvalidateHttpSession(true);
+		
+		return jwtLogoutHandler;
 	}
 	
-//	@Bean
-//	CustomLogoutSuccessHandler customLogoutSuccessHandler() {
-//		return new CustomLogoutSuccessHandler();
-//	}
+	@Bean
+	JwtLogoutSuccessHandler jwtLogoutSuccessHandler() {
+		return new JwtLogoutSuccessHandler();
+	}
 	
 	private JwtAuthenticationFilter jwtAuthenticationFilter(AuthenticationManager authenticationManager) throws Exception {
 		JwtAuthenticationFilter authenticationFilter = new JwtAuthenticationFilter(authenticationManager);

@@ -9,6 +9,7 @@ import Guide from '../views/Guide.vue';
 import UserDetail from '../views/UserDetail.vue';
 import Signup from "../views/Signup.vue";
 import Login from "../components/Login.vue";
+import MeetingRoom from "../views/MeetingRoom.vue";
 
 Vue.use(VueRouter);
 
@@ -52,6 +53,11 @@ const routes: Array<RouteConfig> = [
     path: "/user/signup",
     name: "Signup",
     component: Signup
+  },
+  {
+    path: "/meetingroom",
+    name: "MeetingRoom",
+    component: MeetingRoom
   },
 ];
 

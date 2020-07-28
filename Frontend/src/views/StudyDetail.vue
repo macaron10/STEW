@@ -4,7 +4,7 @@
       <v-row>
         <v-col class="mb-6 ">
           <div class="d-flex justify-center">
-            <img class src="https://picsum.photos/400/300?image" alt="image" />
+            <img @click="enterMeetingRoom" src="https://picsum.photos/400/300?image" alt="image" />
           </div>
           <div>
             <h1>Algorithm Study</h1>
@@ -78,6 +78,17 @@ export default {
       right: false,
       tabs: 3
     };
+  },
+  methods: {
+    enterMeetingRoom() {
+      this.$router.push({ name: 'MeetingRoom'})
+    }
   }
 };
 </script>
+
+<style scoped>
+img:hover{
+  cursor: pointer;
+}
+</style>

@@ -3,6 +3,7 @@ package com.ssafy.study.user.service;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.ssafy.study.user.model.User;
@@ -16,6 +17,8 @@ public class UserServiceImpl implements UserService{
 	
 	@Override
 	public User save(User user) {
+		user.setUserPw(new BCryptPasswordEncoder().encode(user.getUserPw()));
+		
 		return userRepository.save(user);
 	}
 

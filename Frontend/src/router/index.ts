@@ -8,8 +8,9 @@ import StudyCreate from '../views/StudyCreate.vue';
 import StudyDetail from '../views/StudyDetail.vue';
 import Contact from '../views/Contact.vue';
 import Guide from '../views/Guide.vue';
-import UserDetail from '../views/user/UserDetail.vue';
-import Signup from "../views/user/Signup.vue";
+import UserDetail from '../views/UserDetail.vue';
+import Signup from "../views/Signup.vue";
+import MeetingRoom from "../views/MeetingRoom.vue";
 
 Vue.use(VueRouter);
 
@@ -72,6 +73,11 @@ const routes: Array<RouteConfig> = [
     path: "/user/signup",
     name: "Signup",
     component: Signup
+  },
+  {
+    path: "/meetingroom",
+    name: "MeetingRoom",
+    component: MeetingRoom
   },
 ];
 

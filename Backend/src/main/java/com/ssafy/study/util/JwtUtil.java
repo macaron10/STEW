@@ -61,11 +61,10 @@ public class JwtUtil implements Serializable{
 		
 	}
 	
-	public static String generateRefreshToken(UserPrincipal userPrincipal) {
+	public static String generateRefreshToken() {
 		
 		return
 				JWT.create()
-				.withSubject(userPrincipal.getUsername())
 				.withIssuedAt(new Date(System.currentTimeMillis()))
 				.withExpiresAt(new Date(System.currentTimeMillis() + JwtProperties.EXPIRATION_TIME_REFRESH))
 				.sign(Algorithm.HMAC512(JwtProperties.SECRET.getBytes()));

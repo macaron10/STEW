@@ -83,7 +83,7 @@ public class UserController {
 		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 	
-	@PutMapping("/")
+	@PutMapping
 	@ApiOperation("회원 수정")
 	public ResponseEntity<BasicResponse> modify(@RequestBody User user){
 		

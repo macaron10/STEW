@@ -17,6 +17,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 
 import com.ssafy.study.user.service.UserPrincipalDetailsService;
@@ -46,8 +47,10 @@ public class JwtSecurityConfig extends WebSecurityConfigurerAdapter{
 			.formLogin().disable()
 			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 			.and()
+			.oauth2Login()
+			.and()
 			.logout()
-//			.logoutRequestMatcher(new RequestMatcher())
+//			new AntPathRequestMatcher(pattern, httpMethod)
 			.logoutUrl("/user/logout")
 			.addLogoutHandler(jwtLogoutHandler())
 			.logoutSuccessHandler(jwtLogoutSuccessHandler())

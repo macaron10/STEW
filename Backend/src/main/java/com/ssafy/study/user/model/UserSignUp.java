@@ -1,6 +1,7 @@
 package com.ssafy.study.user.model;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
@@ -9,6 +10,7 @@ import lombok.Getter;
 @Valid
 public class UserSignUp {
 	@ApiModelProperty(required = true)
+	@NotNull
 	private String userNm;
 	@ApiModelProperty(required = true)
 	private String userEmail;

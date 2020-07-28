@@ -8,8 +8,8 @@ import StudyCreate from '../views/StudyCreate.vue';
 import StudyDetail from '../views/StudyDetail.vue';
 import Contact from '../views/Contact.vue';
 import Guide from '../views/Guide.vue';
-import UserDetail from '../views/UserDetail.vue';
-import Signup from "../views/Signup.vue";
+import UserDetail from '../views/user/UserDetail.vue';
+import Signup from "../views/user/Signup.vue";
 import MeetingRoom from "../views/MeetingRoom.vue";
 
 Vue.use(VueRouter);

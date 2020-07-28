@@ -3,6 +3,7 @@ package com.ssafy.study.user.service;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.ssafy.study.user.model.User;
@@ -13,6 +14,13 @@ public class UserServiceImpl implements UserService{
 	
 	@Autowired
 	private UserRepository userRepository;
+	
+	@Override
+	public User save(User user) {
+		user.setUserPw(new BCryptPasswordEncoder().encode(user.getUserPw()));
+		
+		return userRepository.save(user);
+	}
 
 	@Override
 	public User loadUserByUserId(long userId) {
@@ -22,6 +30,16 @@ public class UserServiceImpl implements UserService{
 	@Override
 	public List<User> findAll() {
 		return userRepository.findAll();
+	}
+
+	@Override
+	public void deleteById(long id) {
+		userRepository.deleteById(id);
+	}
+	
+	@Override
+	public User findByUserEmail(String userEmail) {
+		return userRepository.findByUserEmail(userEmail).get();
 	}
 	
 }

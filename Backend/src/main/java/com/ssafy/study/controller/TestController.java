@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -12,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ssafy.study.common.model.BasicResponse;
 import com.ssafy.study.user.model.User;
 import com.ssafy.study.user.model.UserPrincipal;
-import com.ssafy.study.user.model.UserSignInRequest;
+import com.ssafy.study.user.model.UserSignIn;
 import com.ssafy.study.user.service.UserService;
 
 import io.swagger.annotations.ApiOperation;
@@ -31,15 +32,13 @@ public class TestController {
 
 	@PostMapping("/user/signin")
 	@ApiOperation("로그인 테스트용")
-	public String login(@RequestBody UserSignInRequest signinRequest) {
-		return "뭘봐";
+	public String login(@RequestBody UserSignIn signinRequest) {
+		return "";
 	}
 
 	@GetMapping("/test")
 	@ApiOperation("아무나 요청 가능")
-	public String test1(@AuthenticationPrincipal UserPrincipal principal) {
-		System.out.println(principal.getUsername());
-
+	public String test1() {
 		return "API Test 1 ";
 	}
 

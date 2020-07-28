@@ -7,7 +7,7 @@
       right
       color="success"
     >
-      <span>스터디그룹 생성 완료!</span>
+      <span>스터디그룹 수정 완료!</span>
       <v-icon dark>mdi-checkbox-marked-circle</v-icon>
     </v-snackbar>
     <v-form ref="form" @submit.prevent="submit">
@@ -119,7 +119,7 @@
       <v-card-actions>
         <v-btn text @click="resetForm">Cancel</v-btn>
         <v-spacer></v-spacer>
-        <!-- 생성버튼!! -->
+        <!-- 수정버튼!! -->
         <v-btn
           :disabled="!formIsValid"
           text
@@ -136,7 +136,7 @@
 import axios from 'axios'
 
 export default {
-  name: "StudyCreate",
+  name: "StudyUpdate",
   components: {
   },
   data () {
@@ -151,7 +151,7 @@ export default {
       gpTag: "" //스터디 태그 (임시)
     })
     return {
-      form: Object.assign({}, groupData),
+      form: Object.assign({}, this.groupData),
       rules: {
         time: [
           val => val > 6 || `잠을 자세요!`,
@@ -178,7 +178,10 @@ export default {
     },
   }
   },
-
+  mounted () {
+    this.id = this.$route.params.id
+    this.getDetail()
+  },
   computed: {
     formIsValid () {
       return (
@@ -187,51 +190,47 @@ export default {
       )
     },
   },
-
   methods: {
+    async getDetail () {
+      const baseUrl = this.$store.state.baseUrl
+      const apiUrl = baseUrl + '/study/' + this.id
+      try {
+        const config = {
+          headers: {
+            Authorization: `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c2VyMSIsInJvbGUiOlsic3RyaW5nIiwiUk9MRV9VU0VSIl0sImV4cCI6MTU5NTkyNjk3MywidXNlcklkIjoxLCJpYXQiOjE1OTU5MjUxNzN9.yJA-YJ_1QDVslPVcoT6xD8cad1SxP3iWR0AxT_vxkQiEB1CN-gdimy_mU96CGegEzkTy5JR0GhYQdE0ybwqqhQ `
+          }
+        }
+        const res = await axios.get(apiUrl, config)
+        this.groupData = res.data.object
+        this.form = this.groupData
+      } catch (err) {
+        console.error(err)
+      }
+    },
     resetForm () {
       this.form = Object.assign({}, this.form)
       this.$refs.form.reset()
     },
-    async createGroup () {
+    async updateGroup () {
       try {
         const config = {
           headers: {
-            Authorization: `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c2VyMSIsInJvbGUiOlsic3RyaW5nIiwiUk9MRV9VU0VSIl0sImV4cCI6MTU5NTk0NTcxMywidXNlcklkIjoxLCJpYXQiOjE1OTU5NDM5MTN9.0_BAem0WkpJeCYYwcO_EMkBENvpbWBTPWs-IAWB6u3-epZ0_WOQTn4CRGjxchPf80ge1pThh_JB_Q0IMddLdTA `
+            Authorization: `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c2VyMSIsInJvbGUiOlsic3RyaW5nIiwiUk9MRV9VU0VSIl0sImV4cCI6MTU5NTkxMTY2NSwidXNlcklkIjoxLCJpYXQiOjE1OTU5MDk4NjV9.PuVmFIk-PRCb0DhxcaiL4UMoMT1X4Vuw-mOMmv1INkC3eW6natkq2JG_peh8HxGVzH06JHHftxjb7LMqy1sgAA `
           }
         }
         const baseUrl = this.$store.state.baseUrl
-        const apiUrl = baseUrl + '/study/'
-        console.log(this.form)
+        const apiUrl = baseUrl + '/study/' + this.id
         const res = await axios.post(apiUrl, this.form, config)
-        this.$router.push({ name: 'Main' })
-        // 아직 res 에서 id 번호가 주는게 없기때문에 디테일로 보내는게 안됨
-        // this.$router.push({ name: 'StudyDetail', params: { id: this.form.gpNo } })
+        this.$router.push({ name: 'Main' }) // params: { id: res.data.id } })
       } catch (err) {
         console.error(err)
       }
     },
     submit () {
       this.snackbar = true
-      this.createGroup()
+      this.updateGroup()
       this.resetForm()
     },
-    createGroup2() {
-      const config = {
-        headers: {
-          Authorization: `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c2VyMSIsInJvbGUiOlsic3RyaW5nIiwiUk9MRV9VU0VSIl0sImV4cCI6MTU5NTkxMTY2NSwidXNlcklkIjoxLCJpYXQiOjE1OTU5MDk4NjV9.PuVmFIk-PRCb0DhxcaiL4UMoMT1X4Vuw-mOMmv1INkC3eW6natkq2JG_peh8HxGVzH06JHHftxjb7LMqy1sgAA `
-        }
-      }
-      const baseUrl = this.$store.state.baseUrl
-      const apiUrl = baseUrl + '/study/'
-      axios.post(apiUrl, this.groupData, config)
-        .then((res) => {
-          console.log(res)
-          console.log(this)
-          this.$router.push({ name: 'StudyDetail', params: { id: res.data.id } })
-        })
-        .catch(err => console.log(err))
-    }
   },
 };
 </script>

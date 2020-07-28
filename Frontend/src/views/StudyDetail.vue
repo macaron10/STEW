@@ -9,6 +9,11 @@
           <div>
             <h1>{{ group.gpNm }}</h1>
             <h4>{{ group.gpIntro }}</h4>
+            <v-btn
+              :to="{ name:'StudyUpdate', params: { id: id }}"
+            >
+              수정 버튼!(임시)
+            </v-btn>
           </div>
         </v-col>
         <v-col class="mb-6">

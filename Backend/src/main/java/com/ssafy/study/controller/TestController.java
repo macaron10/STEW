@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -32,7 +33,7 @@ public class TestController {
 	@PostMapping("/user/signin")
 	@ApiOperation("로그인 테스트용")
 	public String login(@RequestBody UserSignIn signinRequest) {
-		return "뭘봐";
+		return "";
 	}
 
 	@GetMapping("/test")

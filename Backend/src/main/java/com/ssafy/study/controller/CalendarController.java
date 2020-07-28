@@ -19,7 +19,7 @@ import com.ssafy.study.calendar.model.CalEvent;
 import com.ssafy.study.calendar.model.CalEvtDto.CreateCalEvt;
 import com.ssafy.study.calendar.model.CalEvtDto.ModifyCalEvt;
 import com.ssafy.study.calendar.service.CalendarService;
-import com.ssafy.study.common.exception.NoAuthException;
+import com.ssafy.study.common.exception.GroupNoAuthException;
 import com.ssafy.study.common.model.BasicResponse;
 import com.ssafy.study.group.service.GroupService;
 import com.ssafy.study.user.model.UserPrincipal;
@@ -49,7 +49,7 @@ public class CalendarController {
 		if (cal.getCType() != 'U') {
 			long gpMgrId = gpService.selectGroup(cal.getCOwn()).getGpMgrId();
 			if (gpMgrId != principal.getUserId())
-				throw new NoAuthException();
+				throw new GroupNoAuthException();
 		} else {
 			cal.setCOwn(principal.getUserId());
 		}
@@ -153,10 +153,10 @@ public class CalendarController {
 
 		long gpMgrId = gpService.selectGroup(cal.getCOwn()).getGpMgrId();
 		if (gpMgrId != userId)
-			throw new NoAuthException();
+			throw new GroupNoAuthException();
 	}
 
-	@ExceptionHandler(NoAuthException.class)
+	@ExceptionHandler(GroupNoAuthException.class)
 	public Object noAuthExceptionHandler() {
 		BasicResponse res = new BasicResponse();
 

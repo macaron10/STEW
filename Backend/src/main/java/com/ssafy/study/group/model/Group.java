@@ -59,7 +59,7 @@ public class Group extends TimeEntity {
 		this.gpStTm = group.getGpStTm();
 		this.gpEndTm = group.getGpEndTm();
 		this.gpPublic = group.isGpPublic();
-		this.gpImg = group.getGpImg();
+		this.gpImg = group.getGpImgName();
 	}
 
 	public void joinGroup() {

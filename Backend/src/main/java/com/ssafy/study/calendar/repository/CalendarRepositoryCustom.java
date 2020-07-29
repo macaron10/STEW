@@ -9,4 +9,9 @@ public interface CalendarRepositoryCustom {
 	List<CalEvent> findPersonalCalEvt(long userId);
 
 	List<CalEvent> findGroupCalEvt(long userId);
+
+	List<CalEvent> findPersonalCalEvt(long userId, int year, int month);
+	
+	List<CalEvent> findGroupCalEvt(long userId, int year, int month);
+
 }

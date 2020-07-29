@@ -263,14 +263,4 @@ public class GroupController {
 			throw new NoAuthException();
 	}
 
-	@GetMapping("/test")
-	public String test() {
-		GroupSearch groupSearch = new GroupSearch();
-		groupSearch.setGpCatLg("어학");
-		groupSearch.setGpPrivate(true);
-
-		System.out.println(groupService.searchGroups(groupSearch));
-
-		return "test";
-	}
 }

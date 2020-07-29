@@ -12,13 +12,13 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-public class CalDto {
+public class CalEvtDto {
 
 	@Getter
 	@ToString
 	@NoArgsConstructor
 	@Valid
-	public static class createCal {
+	public static class CreateCalEvt {
 		@ApiModelProperty(required = true)
 		@NotNull
 		private char cType;
@@ -45,7 +45,7 @@ public class CalDto {
 	@ToString
 	@NoArgsConstructor
 	@Valid
-	public static class modifyCal {
+	public static class ModifyCalEvt {
 		@ApiModelProperty(required = true)
 		@NotNull
 		private long cNo;
@@ -71,7 +71,8 @@ public class CalDto {
 	@Setter
 	@AllArgsConstructor
 	@NoArgsConstructor
-	public static class ResCal {
+	@ToString
+	public static class ResCalEvt {
 		private long cNo;
 		private char cType;
 		private long cOwn;
@@ -80,7 +81,7 @@ public class CalDto {
 		private String cEvtNm;
 		private String cEvtDsc;
 
-		public ResCal(CalEvent c) {
+		public ResCalEvt(CalEvent c) {
 			this.cNo = c.getCNo();
 			this.cType = c.getCType();
 			this.cOwn = c.getCOwn();

@@ -37,6 +37,7 @@
     <v-spacer></v-spacer>
     <v-btn 
       icon
+      v-if="!isLogin"
       @click.stop= "siginInDialog = true"
     >
       <v-icon>mdi-account</v-icon>
@@ -64,7 +65,10 @@
             v-model="user.userPw"
             solo
           ></v-text-field>
-          <v-btn large color="primary" block="true" @click="signIn">로그인</v-btn>
+          <v-btn 
+            large color="primary" block="true" 
+            @click="signIn({'userEmail': user.userEmail, 'userPw':user.userPw}), siginInDialog = false"
+          >로그인</v-btn>
         </v-col>
 
         <v-card-actions>
@@ -89,11 +93,15 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-    <v-btn icon :to="{ name: 'Signup' }">
+    <v-btn icon v-if="!isLogin" :to="{ name: 'Signup' }">
       <v-icon>mdi-account-plus</v-icon>
+    </v-btn>
+    <v-btn icon v-if="isLogin" @click="logout">
+      로그아웃
     </v-btn>
     <v-btn
       icon
+      v-if="isLogin"
       :to="{ name: 'UserDetail' }"
     ><v-icon>mdi-account-circle</v-icon>
     </v-btn>
@@ -102,29 +110,31 @@
 
 <script>
 import axios from 'axios';
+import { mapState, mapActions } from 'vuex';
 
 export default {
     name: 'Navbar',
+    computed: {
+      ...mapState([ 
+        "userInfo",
+        "isLogin"
+        ])
+    },
     methods: {
       drawerOnOff(event) {
         this.$emit('drawer-onoff')
       },
-      signIn() {
-        axios.post('http://localhost:8399/api/user/signin', {
-          userEmail: this.user.userEmail,
-          userPw: this.user.userPw
-        })
-        .then(function (response) {
-          console.log(response);
-        }) 
-      },
+      ...mapActions([
+        "signIn",
+        "logout"
+        ]),
     },
     data () {
       return {
         siginInDialog: false,
         user: {
-          userId: "",
-          userPwd: "",
+          userEmail: "",
+          userPw: "",
         },
       }
     }

@@ -87,11 +87,35 @@
     <v-btn icon :to="{ name: 'Signup' }">
       <v-icon>mdi-account-plus</v-icon>
     </v-btn>
-    <v-btn
-      icon
-      :to="{ name: 'UserDetail' }"
-    ><v-icon>mdi-account-circle</v-icon>
-    </v-btn>
+    <!-- 개인 메뉴 -->
+    <div class="text-center">
+      <v-menu offset-y>
+        <template v-slot:activator="{ on, attrs }">
+            <v-btn
+              icon
+              :to="{ name: 'UserDetail' }"
+              v-bind="attrs"
+              v-on="on"
+            ><v-icon>mdi-account-circle</v-icon>
+            </v-btn>
+        </template>
+          <v-list>
+            <v-list-item-group v-model="model">
+              <v-list-item
+                v-for="(item, i) in items"
+                :key="i"
+              >
+                <v-list-item-icon>
+                  <v-icon v-text="item.icon"></v-icon>
+                </v-list-item-icon>
+                <v-list-item-content>
+                  <v-list-item-title v-text="item.text"></v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
+            </v-list-item-group>
+          </v-list>
+      </v-menu>
+    </div>
   </v-app-bar>
 </template>
 
@@ -107,7 +131,26 @@ export default {
     data () {
       return {
         siginInDialog: false,
-      }
+        items: [
+          {
+            icon: 'mdi-inbox',
+            text: 'Inbox',
+          },
+          {
+            icon: 'mdi-star',
+            text: 'Star',
+          },
+          {
+            icon: 'mdi-send',
+            text: 'Send',
+          },
+          {
+            icon: 'mdi-email-open',
+            text: 'Drafts',
+          },
+        ],
+        model: 1,
+        }
     }
 }
 </script>

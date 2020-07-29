@@ -68,34 +68,10 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter{
 		
 		try {
 			JwtUtil.verify(token);
-		} catch (TokenExpiredException accessExpiredException) {
-			logger.error("AccessToken Expired");
-			UserToken userToken = (UserToken) redisTemplate.opsForValue().get(userEmail);
-			
-			try {
-				JwtUtil.verify(userToken.getRefreshToken());
-				
-				response.setHeader(
-						JwtProperties.HEADER_STRING,
-						JwtProperties.TOKEN_PREFIX + JwtUtil.generateAccessToken(userPrincipal));
-				logger.info("AccessToken Regenerated");
-				
-			} catch (TokenExpiredException refreshExpiredException) {
-				logger.error("RefreshToken Expired");
-				return null;
-			} catch (NullPointerException e) {
-				logger.error("RefreshToken Expired");
-				return null;
-			} catch (Exception e) {
-				e.printStackTrace();
-				return null;
-			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			response.addHeader("error", e.getMessage());
 			return null;
 		}
-		
-		redisTemplate.expire(userEmail, JwtProperties.EXPIRATION_TIME_REFRESH, TimeUnit.MILLISECONDS);
 		
 		return new UsernamePasswordAuthenticationToken(userPrincipal, null, userPrincipal.getAuthorities());
 	}

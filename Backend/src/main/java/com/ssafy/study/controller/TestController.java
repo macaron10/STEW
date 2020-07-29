@@ -2,9 +2,11 @@ package com.ssafy.study.controller;
 
 import java.util.List;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -38,8 +40,42 @@ public class TestController {
 
 	@GetMapping("/test")
 	@ApiOperation("아무나 요청 가능")
-	public String test1() {
+	public String test1(HttpServletRequest request, HttpServletResponse response) {
+		for(Cookie c : request.getCookies()) {
+			System.out.println(c.getName() + " " + c.getValue());
+		}
+		
 		return "API Test 1 ";
+	}
+	
+	@GetMapping("/user/test")
+	@ApiOperation("아무나 요청 가능")
+	public String test4(HttpServletRequest request, HttpServletResponse response) {
+		for(Cookie c : request.getCookies()) {
+			System.out.println(c.getName() + " " + c.getValue());
+		}
+		
+		return "API Test 1 ";
+	}
+	
+	@GetMapping("/user/tokeninit")
+	@ApiOperation("토큰 지워보기")
+	public String test2(HttpServletRequest request, HttpServletResponse response) {
+		for(Cookie c : request.getCookies()) {
+			if(c.getName().equals("accessToken")) {
+				System.out.println("이놈인데");
+				System.out.println(c.getName() + " " + c.getValue());
+				System.out.println(c.getPath() + " " + c.isHttpOnly() + " " + c.getSecure());
+				
+				Cookie token = new Cookie(c.getName(), null);
+				token.setPath("/api");
+				token.setMaxAge(0);
+					
+				response.addCookie(token);
+			}
+		}
+		
+		return "지워짐??";
 	}
 
 //	only manager
@@ -54,7 +90,7 @@ public class TestController {
 	@ApiOperation("어드민만")
 	public List<User> allUsers(UserPrincipal userPrincipal) {
 //		System.out.println("INFO : " + userPrincipal.getAuthorities());
-
+		
 		return this.userService.findAll();
 	}
 

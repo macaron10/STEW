@@ -1,6 +1,5 @@
 package com.ssafy.study.user.model;
 
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -18,11 +17,11 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Entity
-public class User extends TimeEntity{
-	
+public class User extends TimeEntity {
+
 	@Builder
-	public User(String userNm, String userEmail, String userPw, String userPhone, char userGender,
-			String roles, String permissions, String userIntro, String userImg, int userGoalHr) {
+	public User(String userNm, String userEmail, String userPw, String userPhone, char userGender, String roles,
+			String permissions, String userIntro, String userImg, int userGoalHr) {
 		this.userNm = userNm;
 		this.userEmail = userEmail;
 		this.userPw = userPw;
@@ -33,6 +32,10 @@ public class User extends TimeEntity{
 		this.userIntro = userIntro;
 		this.userImg = userImg;
 		this.userGoalHr = userGoalHr;
+	}
+
+	public User(long userId) {
+		this.userId = userId;
 	}
 
 	@Id

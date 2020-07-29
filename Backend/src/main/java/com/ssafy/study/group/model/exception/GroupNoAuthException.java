@@ -1,7 +1,6 @@
-package com.ssafy.study.common.exception;
+package com.ssafy.study.group.model.exception;
 
 public class GroupNoAuthException extends RuntimeException {
-
 	public GroupNoAuthException() {
 	}
 }

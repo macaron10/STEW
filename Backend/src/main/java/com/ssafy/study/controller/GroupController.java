@@ -1,39 +1,29 @@
 package com.ssafy.study.controller;
 
-import javax.servlet.http.HttpSession;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
 
-import com.ssafy.study.common.exception.GroupNoAuthException;
 import com.ssafy.study.common.model.BasicResponse;
 import com.ssafy.study.common.service.FileService;
 import com.ssafy.study.group.model.Group;
 import com.ssafy.study.group.model.GroupDto;
 import com.ssafy.study.group.model.GroupSearch;
+import com.ssafy.study.group.model.exception.GroupNoAuthException;
 import com.ssafy.study.group.service.GroupService;
-import com.ssafy.study.user.model.User;
 import com.ssafy.study.user.model.UserPrincipal;
-import com.ssafy.study.user.service.UserService;
 
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 
@@ -48,8 +38,6 @@ public class GroupController {
 
 	@Autowired
 	private GroupService groupService;
-	@Autowired
-	private UserService userSerivce;
 	@Autowired
 	private FileService fileService;
 
@@ -79,7 +67,7 @@ public class GroupController {
 	}
 
 	@PostMapping("/")
-	@ApiOperation("스터디 생성")
+	@ApiOperation(value = "스터디 생성", produces = "multipart/form-data")
 	public Object createStudy(@AuthenticationPrincipal UserPrincipal principal, GroupDto.RegistGroup group) {
 		Group saveGroup = group.toEntity();
 		saveGroup.setGpMgrId(principal.getUserId());
@@ -90,10 +78,10 @@ public class GroupController {
 
 		saveGroup = groupService.saveGroup(saveGroup);
 
-		User user = userSerivce.loadUserByUserId(saveGroup.getGpMgrId());
-		groupService.joinGroup(user, saveGroup);
+		groupService.joinGroup(principal.getUserId(), saveGroup.getGpNo());
 
 		BasicResponse result = new BasicResponse();
+		result.object = saveGroup;
 		result.msg = "success";
 		result.status = true;
 
@@ -124,31 +112,16 @@ public class GroupController {
 		BasicResponse result = new BasicResponse();
 
 		long userId = principal.getUserId();
-		ckAuth(userId, modifyGroup.getGpNo());
+		ckGroupAuth(userId, modifyGroup.getGpNo());
 
-		System.out.println(modifyGroup);
 		if (modifyGroup.isUpdateGpImg() && modifyGroup.getGpImg() != null) {
 			modifyGroup.setGpImgName(fileService.uploadFile(modifyGroup.getGpImg(), fileBaseUrl));
 		}
 
 		Group group = groupService.selectGroup(modifyGroup.getGpNo());
 		group.update(modifyGroup);
-		groupService.saveGroup(group);
 
-		result.msg = "success";
-		result.status = true;
-
-		return new ResponseEntity<>(result, HttpStatus.OK);
-	}
-
-	@DeleteMapping("/{no}")
-	@ApiOperation("스터디번호로 스터디 삭제")
-	public Object deleteStudy(@PathVariable long no, @AuthenticationPrincipal UserPrincipal principal) {
-		BasicResponse result = new BasicResponse();
-
-		long userId = principal.getUserId();
-		ckAuth(userId, no);
-		groupService.deleteGroup(no);
+		result.object = groupService.saveGroup(group);
 		result.msg = "success";
 		result.status = true;
 
@@ -169,9 +142,15 @@ public class GroupController {
 
 	@PostMapping("/req")
 	@ApiOperation("스터디에 가입요청")
-	public Object reqJoinGroup(int gpNo, @AuthenticationPrincipal UserPrincipal principal) {
+	public Object reqJoinGroup(@ApiParam(required = true) int gpNo, @AuthenticationPrincipal UserPrincipal principal) {
 		long userId = principal.getUserId();
 		BasicResponse result = new BasicResponse();
+
+		if (groupService.isGroupFull(gpNo)) {
+			result.msg = "group is full";
+			result.status = false;
+			return new ResponseEntity<>(result, HttpStatus.OK);
+		}
 
 		if (groupService.ckGroupJoin(gpNo, userId)) {
 			result.msg = "duplicate";
@@ -189,13 +168,21 @@ public class GroupController {
 
 	@PostMapping("/accept")
 	@ApiOperation("스터디 가입 승인")
-	public Object acceptJoinGroup(long reqNo, long gpNo, @AuthenticationPrincipal UserPrincipal principal) {
+	public Object acceptJoinGroup(@ApiParam(required = true) long reqNo, @ApiParam(required = true) long gpNo,
+			@AuthenticationPrincipal UserPrincipal principal) {
 		long userId = principal.getUserId();
 
-		ckAuth(userId, gpNo);
-		groupService.acceptJoinGroup(reqNo);
+		ckGroupAuth(userId, gpNo);
 
 		BasicResponse result = new BasicResponse();
+		if (groupService.isGroupFull(gpNo)) {
+			result.msg = "group is full";
+			result.status = false;
+			return new ResponseEntity<>(result, HttpStatus.OK);
+		}
+
+		groupService.acceptJoinGroup(reqNo);
+
 		result.msg = "success";
 		result.status = true;
 
@@ -204,10 +191,11 @@ public class GroupController {
 
 	@PostMapping("/reject")
 	@ApiOperation("스터디 가입 거절")
-	public Object rejectJoinGroup(long reqNo, long gpNo, @AuthenticationPrincipal UserPrincipal principal) {
+	public Object rejectJoinGroup(@ApiParam(required = true) long reqNo, @ApiParam(required = true) long gpNo,
+			@AuthenticationPrincipal UserPrincipal principal) {
 		long userId = principal.getUserId();
 
-		ckAuth(userId, gpNo);
+		ckGroupAuth(userId, gpNo);
 		groupService.rejectJoinGroup(reqNo);
 
 		BasicResponse result = new BasicResponse();
@@ -219,13 +207,42 @@ public class GroupController {
 
 	@PostMapping("/remove")
 	@ApiOperation("스터디 퇴출")
-	public Object removeGroupMember(long joinNo, long gpNo, @AuthenticationPrincipal UserPrincipal principal) {
+	public Object removeGroupMember(@ApiParam(required = true) long joinNo, @ApiParam(required = true) long gpNo,
+			@AuthenticationPrincipal UserPrincipal principal) {
 		long userId = principal.getUserId();
 
-		ckAuth(userId, gpNo);
+		ckGroupAuth(userId, gpNo);
 		groupService.removeGroupMember(joinNo);
 
 		BasicResponse result = new BasicResponse();
+		result.msg = "success";
+		result.status = true;
+
+		return new ResponseEntity<>(result, HttpStatus.OK);
+	}
+
+	@PostMapping("/exit")
+	@ApiOperation("그룹 나가기")
+	public Object exitGroup(@ApiParam(required = true) long gpNo, @AuthenticationPrincipal UserPrincipal principal) {
+		long userId = principal.getUserId();
+		BasicResponse result = new BasicResponse();
+
+		if (!groupService.ckGroupJoin(gpNo, userId)) {
+			return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+		}
+
+		if (isGroupMgr(userId, gpNo)) {
+			if (groupService.selectGroup(gpNo).getGpCurNum() <= 1) {
+				groupService.deleteGroup(gpNo);
+			} else {
+				result.msg = "매니저 탈퇴 불가";
+				result.status = false;
+
+				return new ResponseEntity<>(result, HttpStatus.OK);
+			}
+		}
+
+		groupService.exitGroup(gpNo, userId);
 		result.msg = "success";
 		result.status = true;
 
@@ -274,15 +291,20 @@ public class GroupController {
 		return new ResponseEntity<>(result, HttpStatus.UNAUTHORIZED);
 	}
 
-	public void ckAuth(long userId, long gpNo) {
-		long mgrId = groupService.selectGroup(gpNo).getGpMgrId();
-
-		if (userId != mgrId)
+	public void ckGroupAuth(long userId, long gpNo) {
+		if (!isGroupMgr(userId, gpNo))
 			throw new GroupNoAuthException();
 	}
 
+	public boolean isGroupMgr(long userId, long gpNo) {
+		long mgrId = groupService.selectGroup(gpNo).getGpMgrId();
+
+		return userId == mgrId ? true : false;
+	}
+
 	@PostMapping("/test")
-	public void test() {
+	public void test(int no) {
+		groupService.deleteGroup(no);
 	}
 
 }

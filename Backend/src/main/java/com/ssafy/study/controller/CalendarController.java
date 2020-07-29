@@ -19,8 +19,8 @@ import com.ssafy.study.calendar.model.CalEvent;
 import com.ssafy.study.calendar.model.CalEvtDto.CreateCalEvt;
 import com.ssafy.study.calendar.model.CalEvtDto.ModifyCalEvt;
 import com.ssafy.study.calendar.service.CalendarService;
-import com.ssafy.study.common.exception.GroupNoAuthException;
 import com.ssafy.study.common.model.BasicResponse;
+import com.ssafy.study.group.model.exception.GroupNoAuthException;
 import com.ssafy.study.group.service.GroupService;
 import com.ssafy.study.user.model.UserPrincipal;
 

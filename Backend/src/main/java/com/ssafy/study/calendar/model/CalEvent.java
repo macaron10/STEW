@@ -37,5 +37,7 @@ public class CalEvent {
 	private String cEvtNm;
 	@Column(length = 300)
 	private String cEvtDsc;
+	
+	private boolean useTime;
 
 }

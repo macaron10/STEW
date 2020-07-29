@@ -12,6 +12,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 public class GroupDto {
 
@@ -61,18 +62,18 @@ public class GroupDto {
 		@ApiModelProperty(required = true)
 		@NotNull
 		private boolean gpPublic;// 공개여부
-		
+
 		private MultipartFile gpImg;
-		
+
 		@JsonIgnore
-		private String gpImgName;
+		private String gpImgPath;
 		@ApiModelProperty(required = true)
 		@NotNull
 		private boolean updateGpImg;
 
 		public Group toEntity() {
-			return Group.builder().gpNo(gpNo).gpNm(gpNm).gpIntro(gpIntro).gpTag(gpTag).gpStTm(gpStTm).gpImg(gpImgName).gpEndTm(gpEndTm)
-					.gpPublic(gpPublic).build();
+			return Group.builder().gpNo(gpNo).gpNm(gpNm).gpIntro(gpIntro).gpTag(gpTag).gpStTm(gpStTm).gpImg(gpImgPath)
+					.gpEndTm(gpEndTm).gpPublic(gpPublic).build();
 		}
 	}
 
@@ -88,7 +89,7 @@ public class GroupDto {
 		private int gpStTm;// 선호 시작시간
 		private int gpEndTm;// 선호 종료시간
 		private boolean gpPublic;// 공개여부
-		private String gpImg;// 썸네일
+		private String gpImg;
 		private int gpMaxNum;// 최대인원
 		private int gpCurNum;// 현재인원
 
@@ -102,9 +103,9 @@ public class GroupDto {
 			this.gpStTm = group.getGpStTm();
 			this.gpEndTm = group.getGpEndTm();
 			this.gpPublic = group.isGpPublic();
-			this.gpImg = group.getGpImg();
 			this.gpMaxNum = group.getGpMaxNum();
 			this.gpCurNum = group.getGpCurNum();
+			this.gpImg = group.getGpImg();
 		}
 	}
 

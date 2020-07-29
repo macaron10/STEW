@@ -1,6 +1,8 @@
 package com.ssafy.study.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.CacheControl;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -11,14 +13,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ssafy.study.common.model.BasicResponse;
-import com.ssafy.study.common.service.FileService;
+import com.ssafy.study.common.util.FileUtils;
 import com.ssafy.study.group.model.Group;
 import com.ssafy.study.group.model.GroupDto;
+import com.ssafy.study.group.model.GroupDto.ResGroup;
 import com.ssafy.study.group.model.GroupSearch;
 import com.ssafy.study.group.model.exception.GroupNoAuthException;
 import com.ssafy.study.group.service.GroupService;
@@ -41,7 +43,7 @@ public class GroupController {
 	@Autowired
 	private GroupService groupService;
 	@Autowired
-	private FileService fileService;
+	private FileUtils fileUtil;
 
 	private final String fileBaseUrl = "C:\\Users\\multicampus\\Desktop\\group_thumb";
 
@@ -69,22 +71,21 @@ public class GroupController {
 	}
 
 	@PostMapping("/")
-//	@RequestMapping(value = "/", method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	@ApiOperation(value = "스터디 생성", produces = "multipart/form-data")
 	public Object createStudy(@AuthenticationPrincipal UserPrincipal principal, GroupDto.RegistGroup group) {
 		Group saveGroup = group.toEntity();
 		saveGroup.setGpMgrId(principal.getUserId());
 
 		if (group.getGpImg() != null) {
-			saveGroup.setGpImg(fileService.uploadFile(group.getGpImg(), fileBaseUrl));
+			saveGroup.setGpImg(fileUtil.uploadFile(group.getGpImg(), fileBaseUrl));
 		}
 
-		saveGroup = groupService.saveGroup(saveGroup);
+		ResGroup responseGroup = groupService.saveGroup(saveGroup);
 
-		groupService.joinGroup(principal.getUserId(), saveGroup.getGpNo());
+		groupService.joinGroup(principal.getUserId(), responseGroup.getGpNo());
 
 		BasicResponse result = new BasicResponse();
-		result.object = saveGroup;
+		result.object = responseGroup;
 		result.msg = "success";
 		result.status = true;
 
@@ -102,11 +103,19 @@ public class GroupController {
 			return new ResponseEntity<>(result, HttpStatus.UNAUTHORIZED);
 		}
 
-		result.object = groupService.selectGroup(no);
+		ResGroup group = groupService.selectGroup(no);
+
+		result.object = group;
 		result.msg = "success";
 		result.status = true;
 
 		return new ResponseEntity<>(result, HttpStatus.OK);
+	}
+
+	@GetMapping(value = "/thumb/{path}", produces = MediaType.IMAGE_JPEG_VALUE)
+	@ApiOperation("그룹의 썸네일 출력 <img src='http://localhost:8399/api/study/thumb/{gpImg}'>")
+	public byte[] showThumbnail(@PathVariable String path) {
+		return fileUtil.downloadFile(fileBaseUrl, path);
 	}
 
 	@PutMapping("/")
@@ -118,13 +127,12 @@ public class GroupController {
 		ckGroupAuth(userId, modifyGroup.getGpNo());
 
 		if (modifyGroup.isUpdateGpImg() && modifyGroup.getGpImg() != null) {
-			modifyGroup.setGpImgName(fileService.uploadFile(modifyGroup.getGpImg(), fileBaseUrl));
+			modifyGroup.setGpImgPath(fileUtil.uploadFile(modifyGroup.getGpImg(), fileBaseUrl));
 		}
 
-		Group group = groupService.selectGroup(modifyGroup.getGpNo());
-		group.update(modifyGroup);
+		ResGroup group = groupService.updateGroup(modifyGroup);
 
-		result.object = groupService.saveGroup(group);
+		result.object = group;
 		result.msg = "success";
 		result.status = true;
 
@@ -303,11 +311,6 @@ public class GroupController {
 		long mgrId = groupService.selectGroup(gpNo).getGpMgrId();
 
 		return userId == mgrId ? true : false;
-	}
-
-	@PostMapping("/test")
-	public void test(int no) {
-		groupService.deleteGroup(no);
 	}
 
 }

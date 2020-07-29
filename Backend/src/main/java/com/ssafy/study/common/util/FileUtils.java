@@ -1,6 +1,8 @@
-package com.ssafy.study.common.service;
+package com.ssafy.study.common.util;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -8,13 +10,15 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.UUID;
 
+import org.apache.commons.io.IOUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
-public class FileServiceImpl implements FileService {
+public class FileUtils {
 
-	@Override
+	private final char CHANGE_CHAR = '_';
+
 	public String uploadFile(MultipartFile file, String basePath) {
 		String saveName;
 		try {
@@ -33,8 +37,32 @@ public class FileServiceImpl implements FileService {
 			return null;
 		}
 
-		return saveName;
+		return getChangePath(saveName);
+	}
 
+	public byte[] downloadFile(String baseUrl, String path) {
+		path = getOriginPath(path);
+
+		FileInputStream fis = null;
+		byte[] images = null;
+		try {
+			fis = new FileInputStream(baseUrl + path);
+			images = IOUtils.toByteArray(fis);
+
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			if (fis != null)
+				try {
+					fis.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+		}
+
+		return images;
 	}
 
 	private String calDatePath(String basePath) {
@@ -59,8 +87,18 @@ public class FileServiceImpl implements FileService {
 		SimpleDateFormat smf = new SimpleDateFormat("HHmmss");
 		String dateFormat = smf.format(new Date(System.currentTimeMillis()));
 
-		String saveName = uuid.toString().replaceAll("-", "") + "_" + dateFormat;
+		String saveName = uuid.toString().replaceAll("-", "") + dateFormat;
 
 		return saveName;
 	}
+
+	public String getOriginPath(String path) {
+		return path.replace(CHANGE_CHAR, File.separatorChar);
+	}
+
+	public String getChangePath(String path) {
+		return path.replace(File.separatorChar, CHANGE_CHAR);
+	}
+	
+	
 }

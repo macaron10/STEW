@@ -44,40 +44,9 @@ public class TestController {
 		for(Cookie c : request.getCookies()) {
 			System.out.println(c.getName() + " " + c.getValue());
 		}
-		
 		return "API Test 1 ";
 	}
 	
-	@GetMapping("/user/test")
-	@ApiOperation("아무나 요청 가능")
-	public String test4(HttpServletRequest request, HttpServletResponse response) {
-		for(Cookie c : request.getCookies()) {
-			System.out.println(c.getName() + " " + c.getValue());
-		}
-		
-		return "API Test 1 ";
-	}
-	
-	@GetMapping("/user/tokeninit")
-	@ApiOperation("토큰 지워보기")
-	public String test2(HttpServletRequest request, HttpServletResponse response) {
-		for(Cookie c : request.getCookies()) {
-			if(c.getName().equals("accessToken")) {
-				System.out.println("이놈인데");
-				System.out.println(c.getName() + " " + c.getValue());
-				System.out.println(c.getPath() + " " + c.isHttpOnly() + " " + c.getSecure());
-				
-				Cookie token = new Cookie(c.getName(), null);
-				token.setPath("/api");
-				token.setMaxAge(0);
-					
-				response.addCookie(token);
-			}
-		}
-		
-		return "지워짐??";
-	}
-
 //	only manager
 	@GetMapping("/manager")
 	@ApiOperation("매니저만")

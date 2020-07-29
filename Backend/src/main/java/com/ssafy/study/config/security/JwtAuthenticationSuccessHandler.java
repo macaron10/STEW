@@ -40,8 +40,6 @@ public class JwtAuthenticationSuccessHandler extends SavedRequestAwareAuthentica
 		String refreshToken = JwtUtil.generateRefreshToken();
 		String accessToken = JwtUtil.generateAccessToken(userPrincipal);
 		
-		System.out.println(accessToken);
-		
 		Cookie token = new Cookie("accessToken", accessToken);
 		
 //		https가 아니면 전송하지 않는 옵션

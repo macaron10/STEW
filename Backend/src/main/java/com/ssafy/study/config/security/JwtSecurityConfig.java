@@ -58,7 +58,6 @@ public class JwtSecurityConfig extends WebSecurityConfigurerAdapter{
 			.authorizeRequests()
 			.antMatchers("/manager/**").hasRole("MANAGER")
 			.antMatchers("/admin/**").hasAnyRole("ADMIN")
-			
 			.anyRequest().permitAll()
 			.and()
 			.exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint)

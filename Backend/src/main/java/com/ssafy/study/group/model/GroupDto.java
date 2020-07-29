@@ -37,7 +37,7 @@ public class GroupDto {
 
 		public Group toEntity() {
 			return Group.builder().gpCat(new GroupCategory(gpCatNo)).gpNm(gpNm).gpIntro(gpIntro).gpTag(gpTag)
-					.gpStTm(gpStTm).gpEndTm(gpEndTm).gpCurNum(1).gpMaxNum(5).gpPublic(gpPublic).build();
+					.gpStTm(gpStTm).gpEndTm(gpEndTm).gpCurNum(0).gpMaxNum(5).gpPublic(gpPublic).build();
 		}
 	}
 

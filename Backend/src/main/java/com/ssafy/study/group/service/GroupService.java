@@ -21,22 +21,26 @@ public interface GroupService {
 
 	List<Group> searchGroups(GroupSearch groupSearch);
 
-	public List<ResGroupCategoryDto> selectBoxLgGroupCategory();
+	List<ResGroupCategoryDto> selectBoxLgGroupCategory();
 
-	public List<ResGroupCategoryDto> selectBoxMdGroupCategory(String lg);
+	List<ResGroupCategoryDto> selectBoxMdGroupCategory(String lg);
 
-	public List<ResGroupCategoryDto> selectBoxSmGroupCategory(String lg, String md);
+	List<ResGroupCategoryDto> selectBoxSmGroupCategory(String lg, String md);
 
-	public void requestJoinGroup(long userId, long gpNo);
+	void requestJoinGroup(long userId, long gpNo);
 
-	public void acceptJoinGroup(long reqNo);
-	
-	public void joinGroup(User user, Group gp);
+	void acceptJoinGroup(long reqNo);
 
-	public void rejectJoinGroup(long reqNo);
+	void joinGroup(long userId, long gpNo);
 
-	public void removeGroupMember(long joinNo);
+	void rejectJoinGroup(long reqNo);
 
-	public boolean ckGroupJoin(long gpNo, long userId);
+	void removeGroupMember(long joinNo);
+
+	boolean ckGroupJoin(long gpNo, long userId);
+
+	void exitGroup(long gpNo, long userId);
+
+	boolean isGroupFull(long gpNo);
 
 }

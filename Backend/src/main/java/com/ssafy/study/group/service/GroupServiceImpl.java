@@ -36,6 +36,8 @@ public class GroupServiceImpl implements GroupService {
 
 	@Override
 	public void deleteGroup(long gpNo) {
+		joinRepo.deleteByGpNo(gpNo);
+		reqRepo.deleteByGpNo(gpNo);
 		gpRepo.deleteByGpNo(gpNo);
 	}
 
@@ -79,8 +81,7 @@ public class GroupServiceImpl implements GroupService {
 
 	@Override
 	public void requestJoinGroup(long userId, long gpNo) {
-		GroupReq req = new GroupReq();
-		req.setGp(gpRepo.findByGpNo(gpNo));
+		GroupReq req = new GroupReq(userId, gpNo);
 
 		reqRepo.save(req);
 	}
@@ -89,16 +90,16 @@ public class GroupServiceImpl implements GroupService {
 	public void acceptJoinGroup(long reqNo) {
 		GroupReq req = reqRepo.findByGpReqNo(reqNo);
 		reqRepo.deleteByGpReqNo(reqNo);
-		
-		joinGroup(req.getUser(), req.getGp());
+
+		joinGroup(req.getUser().getUserId(), req.getGp().getGpNo());
 	}
 
 	@Override
-	public void joinGroup(User user, Group gp) {
-		GroupJoin join = new GroupJoin(gp, user);
+	public void joinGroup(long userId, long gpNo) {
+		GroupJoin join = new GroupJoin(gpNo, userId);
 
 		joinRepo.save(join);
-		gp.joinGroup();
+		gpRepo.increaseMemberCnt(gpNo);
 	}
 
 	@Override
@@ -108,15 +109,25 @@ public class GroupServiceImpl implements GroupService {
 
 	@Override
 	public void removeGroupMember(long joinNo) {
+		long gpNo = joinRepo.findByGpJoinNo(joinNo).getGp().getGpNo();
 		joinRepo.deleteByGpJoinNo(joinNo);
-		Group gp = joinRepo.findByGpJoinNo(joinNo).getGp();
 
-		gp.exitGroup();
+		gpRepo.decreaseMemberCnt(gpNo);
 	}
 
 	@Override
 	public boolean ckGroupJoin(long gpNo, long userId) {
 		return joinRepo.ckGroupJoin(gpNo, userId);
+	}
+
+	@Override
+	public void exitGroup(long gpNo, long userId) {
+		joinRepo.deleteByGpNoAndUserId(gpNo, userId);
+	}
+
+	@Override
+	public boolean isGroupFull(long gpNo) {
+		return gpRepo.isGroupFull(gpNo);
 	}
 
 }

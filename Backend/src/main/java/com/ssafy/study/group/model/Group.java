@@ -66,17 +66,13 @@ public class Group extends TimeEntity {
 			this.gpImg = group.getGpImgName();
 	}
 
-	public void joinGroup() {
-		gpCurNum++;
-	}
-
-	public void exitGroup() {
-		gpCurNum--;
-	}
-
 	public boolean isEmptyString(String str) {
 		if (str == null || str.equals(""))
 			return true;
 		return false;
+	}
+
+	public Group(long gpNo) {
+		this.gpNo = gpNo;
 	}
 }

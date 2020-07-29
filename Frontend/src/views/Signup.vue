@@ -7,63 +7,68 @@
               <!-- <ValidationProvider v-slot="{ errors }" name="Name" rules="required|max:10"> -->
 
                 <v-text-field
-                    v-model="userId"
-                    label="아이디"
-                    required
-                    :error-messages="nameErrors"
-                ></v-text-field>
-                <!-- 아이디 확인 버튼 -->
-
-                <v-text-field
-                    v-model="userPwd"
-                    label="비밀번호"
-                    type="password"
-                    required
-                ></v-text-field>
-
-                <v-text-field
-                    v-model="userNm"
-                    label="이름"
-                    required
-                ></v-text-field>
-
-                <v-text-field
-                    v-model="email"
+                    v-model="user.email" name="email"
                     :error-messages="emailErrors"
                     label="이메일"
                     required
                     @input="$v.email.$touch()"
                     @blur="$v.email.$touch()"
-                ></v-text-field>
+                />
+
+                <v-btn>
+                  이메일 확인
+                </v-btn>
 
                 <v-text-field
-                    v-model="userPhone"
+                    v-model="user.pwd" name="pwd"
+                    label="비밀번호"
+                    type="password"
+                    required
+                />
+
+                <v-text-field
+                  v-model="user.pwdCheck" name="pwdCheck"
+                  label="비밀번호 확인"
+                  type="password"
+                  required
+                />
+
+                <!-- {{ computedCheckPwd }} -->
+
+                <v-text-field
+                    v-model="user.name" name="name"
+                    label="이름"
+                    required
+                />
+
+                <v-text-field
+                    v-model="user.phone" name="phone"
                     label="연락처"
                     type="tel"
-                ></v-text-field>
+                />
 
                 <!-- <v-divider></v-divider> -->
 
-                <v-radio-group v-model="userGender" row>
-                    <v-radio class="user-gender" label="여자" value="female" />
-                    <v-radio class="user-gender" label="남자" value="male" />
+                <v-radio-group v-model="user.gender" row>
+                    <v-radio class="user-gender" label="여자" value="F" />
+                    <v-radio class="user-gender" label="남자" value="M" />
                 </v-radio-group>
 
                 <v-file-input 
-                    v-model="userImg"
+                    v-model="user.img"
                     accept="image/*" 
                     label="프로필 이미지"
                     prepend-icon="mdi-camera"
                 ></v-file-input>
 
                 <v-text-field
-                    v-model="userIntro"
+                    v-model="user.intro"
                     label="자기소개"
                     :counter="100"
                 ></v-text-field>
 
                 <v-text-field
-                    v-model="userGoalHr"
+                    v-model="user.goalHr"
                     label="하루 목표 시간"
                     type="number"
                 ></v-text-field>
@@ -79,13 +84,16 @@
 
 <script>
   import axios from 'axios';
-  import { extend } from 'vee-validate';
-  import { required, email } from 'vee-validate/dist/rules';
+  import VeeValidate, { Validator } from 'vee-validate';
+  import KoreanValidate from 'vee-validate/dist/locale/ko';
 
-  extend('required', {
-    ...required,
-    message: '{_filed_} 를 입력해주세요'
-  })
+  // Validator.localize('ko', KoreanValidate);
+  // Vue.use(VeeValidate, { locale: KoreanValidate })
+  
+  // extend('required', {
+  //   ...required,
+  //   message: '{_filed_} 를 입력해주세요'
+  // })
 
   export default {
     components: {
@@ -94,30 +102,50 @@
     },
     data() {
       return {
-        userId: '',
-        userPw: '',
-        userNm: '',
-        userEmail: '',
-        userPhone: '',
-        userGender: '',
-        userIntro: '',
-        userImg: '',
-        userGoalHr: '',
+        user: {
+          email: '',
+          pwd: '',
+          pwdCheck: '',
+          name: '',
+          phone: '',
+          gender: '',
+          img: '',
+          intro: '',
+          goalHr: ''
+        },
+        idCheck: false,
+        pwdCheck: false,
       }
     },
-
+    computed: {
+      // computedCheckPwd() {
+      //   if (this.user.pwd === this.user.pwdCheck) {
+      //     this.pwdCheck = true;
+      //     return "비밀번호가 확인되었습니다.";
+      //   } else {
+      //     return "비밀번호를 확인해주세요.";
+      //   }
+      // }
+    },
     methods: {
+      formCheck() {
+        if (this.idCheck && this.pwdCheck) {
+          this.signupHandler();
+        }
+      },
+
       signupHandler() {
-        axios.post('http://localhost:8080/study/user/signup', {
-          userId: this.userId,
-          userPw: this.userPw,
-          userNm: this.userNm,
-          userEmail: this.userEmail,
-          userPhone: this.userPhone,
-          userGender: this.userGender,
-          userIntro: this.userIntro,
-          userImg: this.userImg,
-          userGoalHr: this.userGoalHr,
+        console.log(this.user);
+        axios.post('http://localhost:8399/api/user/signup', {
+          userEmail: this.user.email,
+          userPw: this.user.pwd,
+          userNm: this.user.name,
+          userPhone: this.user.phone,
+          userGender: this.user.gender,
+          userImg: this.user.img,
+          userIntro: this.user.intro,
+          userGoalHr: this.user.goalHr,
+          roles: "USER"
         })
         .then(({ data }) => {
           let msg = '다시 시도해주세요';

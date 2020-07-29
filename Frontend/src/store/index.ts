@@ -2,39 +2,48 @@ import Vue from "vue";
 import Vuex from "vuex";
 import router from "../router";
 import axios from "axios";
+import createPersistedState from 'vuex-persistedstate';
+
 import { isNull } from 'util';
+import { userInfo } from 'os';
 
 Vue.use(Vuex);
 
+interface UserInfo {
+  refreshToken: string,
+  userId: number,
+}
+
 export default new Vuex.Store({
   state: {
-    userInfo: null,
+    userInfo: {
+      refreshToken: "",
+      userId: 0
+    },
     isLogin: false,
   },
 
   mutations: {
     loginSuccess(state, payload) {
       state.isLogin = true;
-      state.userInfo = payload;
+      state.userInfo.refreshToken = payload;
     },
 
     logoutSuccess(state) {
       state.isLogin = false;
-      state.userInfo = null;
+      state.userInfo.refreshToken = "";
     }
   },  
 
   actions: {
-    // access-tocken 유효한지 검사하는 부분 만들어야됨
-
-    // 로그인
+    // 로그인 (refreshToken만 저장, accessToken은 쿠키에서 확인)
     signIn({ commit }, userObj ) {
       axios.post('http://localhost:8399/api/user/signin', userObj)
         .then(res => {
           // console.log(res);
-          console.log("로그인함;");
+          console.log("로그인 됐습니당");
           const userInfo = {
-            'authorization': res.headers.authorization
+            'refreshToken': res.headers.authorization
           }
           commit("loginSuccess", userInfo);
         })
@@ -43,7 +52,11 @@ export default new Vuex.Store({
           console.log(err)
         })
     },
+
+    // 로그아웃
     logout({commit}) {
+      // 쿠키에서 엑세스 토큰 지우고, 내꺼에서 리프레쉬 토큰 지우기
+
       // let token = isNull(this.state.userInfo)? "" : this.state.userInfo.authorization;
       
       // let token = this.state.userInfo.authorization;
@@ -55,11 +68,21 @@ export default new Vuex.Store({
       // axios.post('')
       //   .then()
       // commit('logout')
-      console.log("로그아웃됐니?");
+      console.log("로그아웃합니당");
       commit("logoutSuccess");
       router.push({name: "Home"}) // @click="$store.dispatch('logout')"" ($store.commit('logout')해도 되지만 우리는 logout커밋 후 이동을 해야되서)
+    },
+
+    // accessToken 확인
+    validateAccessToken() {
+      console.log("해야돼요...");
+      // 쿠키에서 가져온 토큰을 복호화 한 후 exptime 비교 (ms)
     }
   },
 
-  modules: {}
+  modules: {},
+
+  plugins: [
+    createPersistedState(),
+  ]
 });

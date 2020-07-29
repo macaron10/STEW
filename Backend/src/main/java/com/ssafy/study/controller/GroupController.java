@@ -1,11 +1,9 @@
 package com.ssafy.study.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Required;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,11 +20,10 @@ import com.ssafy.study.group.model.GroupDto;
 import com.ssafy.study.group.model.GroupSearch;
 import com.ssafy.study.group.model.exception.GroupNoAuthException;
 import com.ssafy.study.group.service.GroupService;
-import com.ssafy.study.user.model.User;
 import com.ssafy.study.user.model.UserPrincipal;
-import com.ssafy.study.user.service.UserService;
 
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 
@@ -41,8 +38,6 @@ public class GroupController {
 
 	@Autowired
 	private GroupService groupService;
-	@Autowired
-	private UserService userSerivce;
 	@Autowired
 	private FileService fileService;
 
@@ -147,7 +142,7 @@ public class GroupController {
 
 	@PostMapping("/req")
 	@ApiOperation("스터디에 가입요청")
-	public Object reqJoinGroup(int gpNo, @AuthenticationPrincipal UserPrincipal principal) {
+	public Object reqJoinGroup(@ApiParam(required = true) int gpNo, @AuthenticationPrincipal UserPrincipal principal) {
 		long userId = principal.getUserId();
 		BasicResponse result = new BasicResponse();
 
@@ -173,7 +168,8 @@ public class GroupController {
 
 	@PostMapping("/accept")
 	@ApiOperation("스터디 가입 승인")
-	public Object acceptJoinGroup(long reqNo, long gpNo, @AuthenticationPrincipal UserPrincipal principal) {
+	public Object acceptJoinGroup(@ApiParam(required = true) long reqNo, @ApiParam(required = true) long gpNo,
+			@AuthenticationPrincipal UserPrincipal principal) {
 		long userId = principal.getUserId();
 
 		ckGroupAuth(userId, gpNo);
@@ -195,7 +191,8 @@ public class GroupController {
 
 	@PostMapping("/reject")
 	@ApiOperation("스터디 가입 거절")
-	public Object rejectJoinGroup(long reqNo, long gpNo, @AuthenticationPrincipal UserPrincipal principal) {
+	public Object rejectJoinGroup(@ApiParam(required = true) long reqNo, @ApiParam(required = true) long gpNo,
+			@AuthenticationPrincipal UserPrincipal principal) {
 		long userId = principal.getUserId();
 
 		ckGroupAuth(userId, gpNo);
@@ -210,7 +207,8 @@ public class GroupController {
 
 	@PostMapping("/remove")
 	@ApiOperation("스터디 퇴출")
-	public Object removeGroupMember(long joinNo, long gpNo, @AuthenticationPrincipal UserPrincipal principal) {
+	public Object removeGroupMember(@ApiParam(required = true) long joinNo, @ApiParam(required = true) long gpNo,
+			@AuthenticationPrincipal UserPrincipal principal) {
 		long userId = principal.getUserId();
 
 		ckGroupAuth(userId, gpNo);
@@ -225,7 +223,7 @@ public class GroupController {
 
 	@PostMapping("/exit")
 	@ApiOperation("그룹 나가기")
-	public Object exitGroup(long gpNo, @AuthenticationPrincipal UserPrincipal principal) {
+	public Object exitGroup(@ApiParam(required = true) long gpNo, @AuthenticationPrincipal UserPrincipal principal) {
 		long userId = principal.getUserId();
 		BasicResponse result = new BasicResponse();
 

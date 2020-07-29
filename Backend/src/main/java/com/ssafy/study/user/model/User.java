@@ -22,14 +22,13 @@ public class User extends TimeEntity{
 	
 	@Builder
 	public User(String userNm, String userEmail, String userPw, String userPhone, char userGender,
-			String roles, String permissions, String userIntro, String userImg, int userGoalHr) {
+			String roles, String userIntro, String userImg, int userGoalHr) {
 		this.userNm = userNm;
 		this.userEmail = userEmail;
 		this.userPw = userPw;
 		this.userPhone = userPhone;
 		this.userGender = userGender;
 		this.roles = roles;
-		this.permissions = permissions;
 		this.userIntro = userIntro;
 		this.userImg = userImg;
 		this.userGoalHr = userGoalHr;
@@ -60,9 +59,6 @@ public class User extends TimeEntity{
 	@Setter
 	@Column(nullable = false)
 	private String roles;
-
-	@Setter
-	private String permissions;
 
 	@Setter
 	@Column(length = 200)

@@ -1,7 +1,6 @@
 package com.ssafy.study.config.security;
 
 import java.io.IOException;
-import java.util.Date;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -13,17 +12,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.http.HttpStatus;
+import org.springframework.security.access.AuthorizationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import com.auth0.jwt.exceptions.TokenExpiredException;
+import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.ssafy.study.user.model.UserPrincipal;
 import com.ssafy.study.user.service.UserPrincipalDetailsService;
-import com.ssafy.study.util.JwtProperties;
 import com.ssafy.study.util.JwtUtil;
 
 @Component
@@ -40,20 +38,24 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter{
 		
 		String token = null;
 		
-		for(Cookie c : request.getCookies()) {
-			if(c.getName().equals("accessToken")) {
-				token = c.getValue();
+		if(request.getCookies() != null) {
+			for(Cookie c : request.getCookies()) {
+				if(c.getName().equals("accessToken")) {
+					token = c.getValue();
+				}
 			}
 		}
 		
+//		토큰이 없는 경우
 		if(token == null ||
-//				!token.startsWith(JwtProperties.TOKEN_PREFIX) || 
-				redisTemplate.opsForValue().get(token.replace(JwtProperties.TOKEN_PREFIX, "")) != null) {
+//				!token.startsWith(JwtProperties.TOKEN_PREFIX) ||
+//				블랙리스트 
+				redisTemplate.opsForValue().get(token) != null) {
 			chain.doFilter(request, response);
 			return;
 		}
 		
-		Authentication authentication = getUsernamePasswordAuthentication(request, response, token);
+		Authentication authentication = JwtUtil.verify(token, request) ? getUsernamePasswordAuthentication(request, response, token) : null;
 		
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 		
@@ -73,23 +75,11 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter{
 		
 		UserPrincipal userPrincipal = getUserPrincipalByUserEmail(userEmail);
 		
-		try {
-			JwtUtil.verify(token);
-		} catch (TokenExpiredException e) {
-			try {
-				response.sendError(HttpStatus.UNAUTHORIZED.value(), "Expired");
-				logger.error("Token Expired");
-			} catch (IOException e1) {
-				
-			}
-		} catch(Exception e) {
-			return null;
-		}
-		
 		return new UsernamePasswordAuthenticationToken(userPrincipal, null, userPrincipal.getAuthorities());
 	}
 	
 	private UserPrincipal getUserPrincipalByUserEmail(String userEmail) {
 		return (UserPrincipal) this.userPrincipalDetailsService.loadUserByUsername(userEmail);
 	}
+	
 }

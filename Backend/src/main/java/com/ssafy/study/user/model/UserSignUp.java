@@ -22,7 +22,6 @@ public class UserSignUp {
 	private String roles;
 	
 	private String userPhone;
-	private String permissions;
 	private String userIntro;
 	private String userImg;
 	private int userGoalHr;
@@ -35,7 +34,6 @@ public class UserSignUp {
 				.userNm(this.userNm)
 				.userPw(this.userPw)
 				.roles(this.roles)
-				.permissions(this.permissions)
 				.userGoalHr(this.userGoalHr)
 				.userImg(this.userImg)
 				.userIntro(this.userIntro)

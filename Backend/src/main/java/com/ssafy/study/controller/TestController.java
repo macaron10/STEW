@@ -41,9 +41,6 @@ public class TestController {
 	@GetMapping("/test")
 	@ApiOperation("아무나 요청 가능")
 	public String test1(HttpServletRequest request, HttpServletResponse response) {
-		for(Cookie c : request.getCookies()) {
-			System.out.println(c.getName() + " " + c.getValue());
-		}
 		return "API Test 1 ";
 	}
 	
@@ -63,4 +60,16 @@ public class TestController {
 		return this.userService.findAll();
 	}
 
+	@GetMapping("/init")
+	public String removeToken(HttpServletRequest req, HttpServletResponse res) {
+
+		Cookie c = new Cookie("accessToken", null);
+		c.setMaxAge(0);
+		
+		res.addCookie(c);
+		
+		return "";
+		
+	}
+	
 }

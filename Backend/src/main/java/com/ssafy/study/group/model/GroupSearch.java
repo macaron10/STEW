@@ -1,24 +1,31 @@
 package com.ssafy.study.group.model;
 
+import java.util.List;
+
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
 @Builder
 @AllArgsConstructor
+@Valid
 public class GroupSearch {
 
 	private String gpNm;
 	private int gpStTm;
 	private int gpEndTm;
-	private String gpTag;
+	@NotNull
 	private boolean gpPrivate;
 
 	private String gpCatLg;
 	private String gpCatMd;
 	private String gpCatSm;
+
+	private List<String> gpTagList;
 
 	public GroupSearch() {
 		gpStTm = -1;

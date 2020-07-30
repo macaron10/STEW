@@ -12,7 +12,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ssafy.study.calendar.model.CalEvent;
@@ -25,6 +27,7 @@ import com.ssafy.study.group.service.GroupService;
 import com.ssafy.study.user.model.UserPrincipal;
 
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 
@@ -42,8 +45,8 @@ public class CalendarController {
 	private GroupService gpService;
 
 	@PostMapping("/")
-	@ApiOperation("일정 생성 yyyy-MM-dd'T'HH:mm")
-	public Object createCalEvt(@Valid CreateCalEvt cal, @AuthenticationPrincipal UserPrincipal principal) {
+	@ApiOperation(value = "일정 생성 yyyy-MM-dd'T'HH:mm ex)2020-12-12T12:12")
+	public Object createCalEvt(@RequestBody CreateCalEvt cal, @AuthenticationPrincipal UserPrincipal principal) {
 		BasicResponse response = new BasicResponse();
 
 		if (cal.getCType() != 'U') {
@@ -64,7 +67,7 @@ public class CalendarController {
 
 	@PutMapping("/")
 	@ApiOperation("일정 수정 yyyy-MM-dd'T'HH:mm")
-	public Object modifyCalEvt(@Valid ModifyCalEvt cal, @AuthenticationPrincipal UserPrincipal principal) {
+	public Object modifyCalEvt(@RequestBody @Valid ModifyCalEvt cal, @AuthenticationPrincipal UserPrincipal principal) {
 		BasicResponse response = new BasicResponse();
 
 		CalEvent calEvt = cal.toEntity();
@@ -131,7 +134,7 @@ public class CalendarController {
 
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
-	
+
 	@GetMapping("/group/{year}/{month}")
 	@ApiOperation("year + month 그룹 일정 조회")
 	public Object groupMonthCalList(@PathVariable int year, @PathVariable int month,

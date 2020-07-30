@@ -239,19 +239,23 @@ export default {
         }
       }
       if (this.newSchedule.name===""){
-        alert("스케줄 이름을 입력해 주세요.")
+        alert("스케줄 내용을 입력해 주세요.")
         return
       }
       const schedule = {
-        start: `${this.newSchedule.dates[0]}T00:00:00`,
-        end: `${this.newSchedule.dates[1]}T00:00:00`,
+        cstTm: `${this.newSchedule.dates[0]}T${this.newSchedule.startTime}:00`,
+        cendTm: `${this.newSchedule.dates[1]}T${this.newSchedule.endTime}:00`,
         useTime: this.newSchedule.useTime,
-        title: this.newSchedule.name,
-        content: this.newSchedule.details
+        cevtNm: this.newSchedule.name,
+        cevtDsc: this.newSchedule.details,
+        cown: 1, //id number
+        ctype: 'G'  //or 'U' 
       };
+
       // 등록 axios
       this.dialog = false
       this.updateRange()
+      this.reset()
     },
     sortDate() {
       this.newSchedule.dates.sort();

@@ -26,7 +26,7 @@ public class User extends TimeEntity {
 			String userIntro, String userImg, int userGoalHr) {
 		this.userNm = userNm;
 		this.userEmail = userEmail;
-		this.setUserPw(userPw);
+		this.userPw = userPw;
 		this.userIntro = userIntro;
 		this.userImg = userImg;
 		this.userGoalHr = userGoalHr;
@@ -47,13 +47,10 @@ public class User extends TimeEntity {
 	@Column(nullable = false, unique = true, length = 128)
 	private String userEmail;
 
+	@Setter
 	@Column(nullable = false, length = 128)
 	private String userPw;
 
-	public void setUserPw(String userPw) {
-		this.userPw = new BCryptPasswordEncoder().encode(userPw);
-	}
-	
 	@Setter
 	@Column(nullable = false)
 	private String roles = "USER";

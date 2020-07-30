@@ -22,6 +22,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.ssafy.study.user.model.UserPrincipal;
 import com.ssafy.study.user.service.UserPrincipalDetailsService;
+import com.ssafy.study.util.JwtProperties;
 import com.ssafy.study.util.JwtUtil;
 
 @Component
@@ -36,26 +37,28 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter{
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
 		
-		String token = null;
+		String token = request.getHeader(JwtProperties.HEADER_STRING);
 		
-		if(request.getCookies() != null) {
-			for(Cookie c : request.getCookies()) {
-				if(c.getName().equals("accessToken")) {
-					token = c.getValue();
-				}
-			}
-		}
+//		if(request.getCookies() != null) {
+//			for(Cookie c : request.getCookies()) {
+//				if(c.getName().equals("accessToken")) {
+//					token = c.getValue();
+//				}
+//			}
+//		}
 		
 //		토큰이 없는 경우
 		if(token == null ||
-//				!token.startsWith(JwtProperties.TOKEN_PREFIX) ||
+				!token.startsWith(JwtProperties.TOKEN_PREFIX) ||
 //				블랙리스트 
-				redisTemplate.opsForValue().get(token) != null) {
+				redisTemplate.opsForValue().get(token.replace(JwtProperties.TOKEN_PREFIX, "")) != null) {
 			chain.doFilter(request, response);
 			return;
 		}
 		
-		Authentication authentication = JwtUtil.verify(token, request) ? getUsernamePasswordAuthentication(request, response, token) : null;
+		token = token.replace(JwtProperties.TOKEN_PREFIX, "");
+		
+		Authentication authentication = JwtUtil.verify(token) ? getUsernamePasswordAuthentication(request, response, token) : null;
 		
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 		

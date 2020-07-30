@@ -38,30 +38,35 @@ public class JwtSecurityConfig extends WebSecurityConfigurerAdapter{
 	protected void configure(HttpSecurity http) throws Exception {
 		http
 			.httpBasic().disable()
-			.cors().and()
+			.cors()
+			.and()
 			.csrf().disable()
-			.formLogin().disable()
 			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 			.and()
+			
+			.formLogin()
+				.disable()
+				
 			.oauth2Login()
 			.and()
+			
 			.logout()
-//			new AntPathRequestMatcher(pattern, httpMethod)
-			.logoutUrl("/user/logout")
-			.addLogoutHandler(jwtLogoutHandler())
-			.logoutSuccessHandler(jwtLogoutSuccessHandler())
+				.logoutUrl("/user/logout")
+				.addLogoutHandler(jwtLogoutHandler())
+				.logoutSuccessHandler(jwtLogoutSuccessHandler())
 			.and()
+			
 			.authorizeRequests()
-			.antMatchers("/test").permitAll()
-			.antMatchers("/manager/**").hasRole("MANAGER")
-			.antMatchers("/admin/**").hasAnyRole("ADMIN")
-			.anyRequest().authenticated()
+				.antMatchers(permittedPaths()).permitAll()
+				.antMatchers("/manager/**").hasRole("MANAGER")
+				.antMatchers("/admin/**").hasAnyRole("ADMIN")
+				.anyRequest().authenticated()
 			.and()
-			.exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint)
-			.and()
-			.addFilterBefore(jwtAuthorizationFilter, UsernamePasswordAuthenticationFilter.class)
+			
 //			그게그거임 이거 넣지말고 기본 필터로 ㄱㄱ?
-			.addFilterBefore(jwtAuthenticationFilter(authenticationManager()), UsernamePasswordAuthenticationFilter.class);
+			.addFilterBefore(jwtAuthenticationFilter(authenticationManager()), UsernamePasswordAuthenticationFilter.class)
+			.addFilterBefore(jwtAuthorizationFilter, UsernamePasswordAuthenticationFilter.class)
+			.exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint);
 	}
 
 	@Override
@@ -121,5 +126,16 @@ public class JwtSecurityConfig extends WebSecurityConfigurerAdapter{
                                    "/swagger-ui.html",
                                    "/webjars/**");
     }
+	
+	private String[] permittedPaths() {
+		return new String[] {
+				"/test",
+				"/user/signin",
+				"/user/signup",
+				"/user/check",
+//				리프레쉬토큰만 멀쩡하면 허용.. 하는게 맞나?
+				"/user/refresh"
+		};
+	}
 	
 }

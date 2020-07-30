@@ -45,7 +45,7 @@ public class JwtUtil implements Serializable{
 		return authorities;
 	}
 	
-	public static boolean verify(String token, HttpServletRequest request) {
+	public static boolean verify(String token) {
 		try {
 			JWT.require(Algorithm.HMAC512(JwtProperties.SECRET.getBytes()))
 			.build()

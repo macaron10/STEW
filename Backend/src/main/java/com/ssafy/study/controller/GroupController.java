@@ -3,8 +3,6 @@ package com.ssafy.study.controller;
 import java.io.File;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.CacheControl;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -14,17 +12,17 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ssafy.study.common.model.BasicResponse;
 import com.ssafy.study.common.util.FileUtils;
-import com.ssafy.study.group.model.Group;
-import com.ssafy.study.group.model.GroupDto;
-import com.ssafy.study.group.model.GroupDto.ResGroup;
-import com.ssafy.study.group.model.GroupSearch;
+import com.ssafy.study.group.model.dto.GroupSearchDto;
+import com.ssafy.study.group.model.dto.ModifyGroupDto;
+import com.ssafy.study.group.model.dto.RegistGroupDto;
+import com.ssafy.study.group.model.dto.ResGroupDto;
+import com.ssafy.study.group.model.entity.Group;
 import com.ssafy.study.group.model.exception.GroupNoAuthException;
 import com.ssafy.study.group.service.GroupService;
 import com.ssafy.study.user.model.UserPrincipal;
@@ -75,7 +73,7 @@ public class GroupController {
 
 	@PostMapping("/")
 	@ApiOperation(value = "스터디 생성", produces = "multipart/form-data")
-	public Object createStudy(@AuthenticationPrincipal UserPrincipal principal, GroupDto.RegistGroup group) {
+	public Object createStudy(@AuthenticationPrincipal UserPrincipal principal, RegistGroupDto group) {
 		Group saveGroup = group.toEntity();
 		saveGroup.setGpMgrId(principal.getUserId());
 
@@ -83,8 +81,7 @@ public class GroupController {
 			saveGroup.setGpImg(fileUtil.uploadFile(group.getGpImg(), fileBaseUrl));
 		}
 
-		ResGroup responseGroup = groupService.saveGroup(saveGroup);
-		
+		ResGroupDto responseGroup = groupService.saveGroup(saveGroup);
 
 		groupService.joinGroup(principal.getUserId(), responseGroup.getGpNo());
 
@@ -107,7 +104,7 @@ public class GroupController {
 			return new ResponseEntity<>(result, HttpStatus.UNAUTHORIZED);
 		}
 
-		ResGroup group = groupService.selectGroup(no);
+		ResGroupDto group = groupService.selectGroup(no);
 
 		result.object = group;
 		result.msg = "success";
@@ -126,7 +123,7 @@ public class GroupController {
 
 	@PutMapping("/")
 	@ApiOperation(value = "스터디 수정", produces = "multipart/form-data")
-	public Object modifytudy(GroupDto.ModifyGroup modifyGroup, @AuthenticationPrincipal UserPrincipal principal) {
+	public Object modifytudy(ModifyGroupDto modifyGroup, @AuthenticationPrincipal UserPrincipal principal) {
 		BasicResponse result = new BasicResponse();
 
 		long userId = principal.getUserId();
@@ -136,7 +133,7 @@ public class GroupController {
 			modifyGroup.setGpImgPath(fileUtil.uploadFile(modifyGroup.getGpImg(), fileBaseUrl));
 		}
 
-		ResGroup group = groupService.updateGroup(modifyGroup);
+		ResGroupDto group = groupService.updateGroup(modifyGroup);
 
 		result.object = group;
 		result.msg = "success";
@@ -147,7 +144,7 @@ public class GroupController {
 
 	@GetMapping("/search")
 	@ApiOperation("스터디 검색")
-	public Object searchStudy(GroupSearch groupSearch) {
+	public Object searchStudy(GroupSearchDto groupSearch) {
 		System.out.println(groupSearch);
 		BasicResponse result = new BasicResponse();
 
@@ -320,6 +317,11 @@ public class GroupController {
 		long mgrId = groupService.selectGroup(gpNo).getGpMgrId();
 
 		return userId == mgrId ? true : false;
+	}
+
+	@GetMapping("/test")
+	public void test() {
+		System.out.println(groupService.selectAllGroups());
 	}
 
 }

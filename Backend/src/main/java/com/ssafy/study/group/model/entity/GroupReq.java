@@ -1,4 +1,4 @@
-package com.ssafy.study.group.model;
+package com.ssafy.study.group.model.entity;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -18,11 +18,12 @@ import lombok.NoArgsConstructor;
 @Data
 @Entity
 @NoArgsConstructor
-@Table(name = "gp_join", uniqueConstraints = { @UniqueConstraint(columnNames = { "gp_no", "user_id" }) })
-public class GroupJoin {
+@Table(name = "gp_req", uniqueConstraints = { @UniqueConstraint(columnNames = { "gp_no", "user_id" }) })
+public class GroupReq {
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private long gpJoinNo;// 소속 아이디
+	private long gpReqNo;// 요청 아이디
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "gp_no")
@@ -34,7 +35,7 @@ public class GroupJoin {
 	private User user;
 //	private String userId;// 유저아이디
 
-	public GroupJoin(long gpNo, long userId) {
+	public GroupReq(long userId, long gpNo) {
 		gp = new Group(gpNo);
 		user = new User(userId);
 	}

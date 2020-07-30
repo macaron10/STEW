@@ -1,4 +1,4 @@
-package com.ssafy.study.group.model;
+package com.ssafy.study.group.model.entity;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;

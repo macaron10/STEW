@@ -1,4 +1,4 @@
-package com.ssafy.study.group.model;
+package com.ssafy.study.group.model.dto;
 
 import java.util.List;
 
@@ -13,7 +13,7 @@ import lombok.Data;
 @Builder
 @AllArgsConstructor
 @Valid
-public class GroupSearch {
+public class GroupSearchDto {
 
 	private String gpNm;
 	private int gpStTm;
@@ -27,7 +27,7 @@ public class GroupSearch {
 
 	private List<String> gpTagList;
 
-	public GroupSearch() {
+	public GroupSearchDto() {
 		gpStTm = -1;
 		gpEndTm = -1;
 		gpPrivate = false;

@@ -4,13 +4,11 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
 import org.springframework.stereotype.Repository;
 
-import com.ssafy.study.group.model.Group;
-import com.ssafy.study.group.model.GroupCategory;
+import com.ssafy.study.group.model.entity.GroupCategory;
 
 @Repository
 public class GroupCategoryRepositoryImpl implements GroupCategoryRepositoryCustom {

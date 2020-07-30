@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import com.ssafy.study.group.model.Group;
+import com.ssafy.study.group.model.entity.Group;
 
 public interface GroupRepository extends JpaRepository<Group, Long>, GroupRepositoryCustom {
 

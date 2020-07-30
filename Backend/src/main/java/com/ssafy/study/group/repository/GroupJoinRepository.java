@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
-import com.ssafy.study.group.model.GroupJoin;
+import com.ssafy.study.group.model.entity.GroupJoin;
 
 import io.lettuce.core.dynamic.annotation.Param;
 

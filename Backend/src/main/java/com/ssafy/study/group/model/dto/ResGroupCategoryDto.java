@@ -1,4 +1,6 @@
-package com.ssafy.study.group.model;
+package com.ssafy.study.group.model.dto;
+
+import com.ssafy.study.group.model.entity.GroupCategory;
 
 import lombok.Getter;
 import lombok.ToString;

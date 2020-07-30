@@ -4,19 +4,28 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
 import org.springframework.stereotype.Repository;
 
-import com.ssafy.study.group.model.Group;
-import com.ssafy.study.group.model.GroupSearch;
+import com.ssafy.study.group.model.dto.GroupSearchDto;
+import com.ssafy.study.group.model.dto.ResGroupDto;
+import com.ssafy.study.group.model.entity.Group;
 
 @Repository
 public class GroupRepositoryImpl /* extends QuerydslRepositorySupport */ implements GroupRepositoryCustom {
 
 	@PersistenceContext
 	private EntityManager em;
+
+	@Override
+	public List<ResGroupDto> selectAllGroups() {
+		String jpql = "SELECT new com.ssafy.study.group.model.dto.ResGroupDto(gp,  group_concat(gt.gpTagNm) as gpImg)"
+				+ "FROM Group gp, GroupTagMap gm, GroupTag gt "
+				+ "WHERE gp.gpNo = gm.gp.gpNo AND gm.gpTag.gpTagNo = gt.gpTagNo group by gp.gpNo";
+
+		return em.createQuery(jpql, ResGroupDto.class).getResultList();
+	}
 
 	@Override
 	public List<Group> findMyJoinGroup(long userId) {
@@ -29,7 +38,7 @@ public class GroupRepositoryImpl /* extends QuerydslRepositorySupport */ impleme
 	}
 
 	@Override
-	public List<Group> searchGroup(GroupSearch search) {
+	public List<Group> searchGroup(GroupSearchDto search) {
 		String jpql = "select g from Group g where 1 = 1 ";
 
 		if (!isEmpty(search.getGpNm()))
@@ -74,25 +83,5 @@ public class GroupRepositoryImpl /* extends QuerydslRepositorySupport */ impleme
 
 		return query.getSingleResult();
 	}
-
-//	@Override
-//	public void increaseMemberCnt(long gpNo) {
-//		String jpql = "update Group gp set gp.gpCurNum = gp.gpCurNum + 1 where gp.gpNo = :gpNo";
-//		Query query = em.createQuery(jpql);
-//
-//		query.setParameter("gpNo", gpNo);
-//
-//		query.getSingleResult();
-//	}
-//
-//	@Override
-//	public void decreaseMemberCnt(long gpNo) {
-//		String jpql = "update Group gp set gp.gpCurNum = gp.gpCurNum - 1 where gp.gpNo = :gpNo";
-//		Query query = em.createQuery(jpql);
-//
-//		query.setParameter("gpNo", gpNo);
-//
-//		query.getSingleResult();
-//	}
 
 }

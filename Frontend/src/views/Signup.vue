@@ -118,18 +118,17 @@
             email: this.user.email
           }
         })
-        .then( res => {
-          console.log(res);
-          if (res.msg === 'success' && res.object === 'true') {
+        .then(({ data }) => {
+          console.log(data);
+          if (data.msg === "success" && data.object) {
             this.idCheck = true;
           }
         })
       },
 
       formCheckHandler() {
-        console.log("체크핸들러에염");
-        console.log(this.$refs.form.validate());
-        console.log(this.$refs.form.$children[0].validate());
+        // console.log(this.$refs.form.validate());
+        // console.log(this.$refs.form.$children[0].validate());
 
         if (this.$refs.form.validate()) {
           if (this.idCheck) {

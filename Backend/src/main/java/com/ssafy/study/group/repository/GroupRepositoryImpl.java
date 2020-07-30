@@ -53,7 +53,7 @@ public class GroupRepositoryImpl /* extends QuerydslRepositorySupport */ impleme
 			jpql += "and g.gpEndTm >= " + search.getGpEndTm() + " ";
 
 		if (search.isGpPrivate())
-			jpql += "and g.gpPublic = " + false;
+			jpql += "and g.gpPublic = " + false + " ";
 
 		TypedQuery<Group> query = em.createQuery(jpql, Group.class);
 

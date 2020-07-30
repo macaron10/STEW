@@ -17,8 +17,6 @@ import org.springframework.web.multipart.MultipartFile;
 @Service
 public class FileUtils {
 
-	private final char CHANGE_CHAR = '_';
-
 	public String uploadFile(MultipartFile file, String basePath) {
 		String saveName;
 		try {
@@ -37,11 +35,10 @@ public class FileUtils {
 			return null;
 		}
 
-		return getChangePath(saveName);
+		return saveName;
 	}
 
 	public byte[] downloadFile(String baseUrl, String path) {
-		path = getOriginPath(path);
 
 		FileInputStream fis = null;
 		byte[] images = null;
@@ -92,13 +89,8 @@ public class FileUtils {
 		return saveName;
 	}
 
-	public String getOriginPath(String path) {
-		return path.replace(CHANGE_CHAR, File.separatorChar);
+	private String getExtension(String file) {
+		return file.substring(file.lastIndexOf(".") + 1);
 	}
 
-	public String getChangePath(String path) {
-		return path.replace(File.separatorChar, CHANGE_CHAR);
-	}
-	
-	
 }

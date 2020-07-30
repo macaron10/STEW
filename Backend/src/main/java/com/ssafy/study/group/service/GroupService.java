@@ -5,6 +5,8 @@ import java.util.List;
 import com.ssafy.study.group.model.Group;
 import com.ssafy.study.group.model.GroupDto.ModifyGroup;
 import com.ssafy.study.group.model.GroupDto.ResGroup;
+import com.ssafy.study.group.model.GroupTagDto.RegistGroupTag;
+import com.ssafy.study.group.model.GroupTagDto.ResGroupTag;
 import com.ssafy.study.group.model.GroupSearch;
 import com.ssafy.study.group.model.ResGroupCategoryDto;
 
@@ -45,5 +47,9 @@ public interface GroupService {
 	boolean isGroupFull(long gpNo);
 
 	ResGroup updateGroup(ModifyGroup modifyGroup);
+
+	ResGroupTag insertGroupTag(RegistGroupTag tag);
+	
+	boolean checkGroupTagExist(String tagNm);
 
 }

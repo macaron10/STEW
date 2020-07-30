@@ -12,11 +12,14 @@ import com.ssafy.study.group.model.GroupDto.ResGroup;
 import com.ssafy.study.group.model.GroupJoin;
 import com.ssafy.study.group.model.GroupReq;
 import com.ssafy.study.group.model.GroupSearch;
+import com.ssafy.study.group.model.GroupTagDto.RegistGroupTag;
+import com.ssafy.study.group.model.GroupTagDto.ResGroupTag;
 import com.ssafy.study.group.model.ResGroupCategoryDto;
 import com.ssafy.study.group.repository.GroupCategoryRepository;
 import com.ssafy.study.group.repository.GroupJoinRepository;
 import com.ssafy.study.group.repository.GroupRepository;
 import com.ssafy.study.group.repository.GroupReqRepository;
+import com.ssafy.study.group.repository.GroupTagRepository;
 
 @Service
 public class GroupServiceImpl implements GroupService {
@@ -28,6 +31,8 @@ public class GroupServiceImpl implements GroupService {
 	private GroupJoinRepository joinRepo;
 	@Autowired
 	private GroupReqRepository reqRepo;
+	@Autowired
+	private GroupTagRepository tagRepo;
 
 	@Override
 	public ResGroup saveGroup(Group group) {
@@ -136,6 +141,16 @@ public class GroupServiceImpl implements GroupService {
 		group.update(modifyGroup);
 
 		return new ResGroup(gpRepo.save(group));
+	}
+
+	@Override
+	public ResGroupTag insertGroupTag(RegistGroupTag tag) {
+		return new ResGroupTag(tagRepo.save(tag.toEntity()));
+	}
+
+	@Override
+	public boolean checkGroupTagExist(String tagNm) {
+		return tagRepo.checkGroupTagExist(tagNm);
 	}
 
 }

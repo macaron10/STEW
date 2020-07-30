@@ -1,5 +1,7 @@
 package com.ssafy.study.group.model;
 
+import java.util.List;
+
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -7,6 +9,7 @@ import javax.validation.constraints.NotNull;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.ssafy.study.group.model.GroupTagDto.RegistGroupTag;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -35,6 +38,8 @@ public class GroupDto {
 		private boolean gpPublic;// 공개여부
 
 		private MultipartFile gpImg;
+		
+		private List<RegistGroupTag> gpTagList;
 
 		public Group toEntity() {
 			return Group.builder().gpCat(new GroupCategory(gpCatNo)).gpNm(gpNm).gpIntro(gpIntro).gpTag(gpTag)

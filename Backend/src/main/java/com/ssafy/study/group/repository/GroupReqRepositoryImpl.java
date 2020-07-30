@@ -6,8 +6,7 @@ import javax.persistence.Query;
 
 public class GroupReqRepositoryImpl implements GroupReqRepositoryCustom {
 
-	@PersistenceContext
-	private EntityManager em;
+
 
 //	@Override
 //	public void deleteByGpNo(long gpNo) {

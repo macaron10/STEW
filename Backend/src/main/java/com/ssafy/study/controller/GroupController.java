@@ -1,5 +1,7 @@
 package com.ssafy.study.controller;
 
+import java.io.File;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.CacheControl;
 import org.springframework.http.HttpHeaders;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -81,6 +84,7 @@ public class GroupController {
 		}
 
 		ResGroup responseGroup = groupService.saveGroup(saveGroup);
+		
 
 		groupService.joinGroup(principal.getUserId(), responseGroup.getGpNo());
 
@@ -112,9 +116,11 @@ public class GroupController {
 		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 
-	@GetMapping(value = "/thumb/{path}", produces = MediaType.IMAGE_JPEG_VALUE)
+	@GetMapping(value = "/thumb/{year}/{month}/{date}/{file}", produces = MediaType.IMAGE_JPEG_VALUE)
 	@ApiOperation("그룹의 썸네일 출력 <img src='http://localhost:8399/api/study/thumb/{gpImg}'>")
-	public byte[] showThumbnail(@PathVariable String path) {
+	public byte[] showThumbnail(@PathVariable String year, @PathVariable String month, @PathVariable String date,
+			@PathVariable String file) {
+		String path = File.separator + year + File.separator + month + File.separator + date + File.separator + file;
 		return fileUtil.downloadFile(fileBaseUrl, path);
 	}
 
@@ -142,6 +148,7 @@ public class GroupController {
 	@GetMapping("/search")
 	@ApiOperation("스터디 검색")
 	public Object searchStudy(GroupSearch groupSearch) {
+		System.out.println(groupSearch);
 		BasicResponse result = new BasicResponse();
 
 		result.object = groupService.searchGroups(groupSearch);
@@ -292,6 +299,8 @@ public class GroupController {
 
 		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
+
+	// GROUP TAG******************************************
 
 	@ExceptionHandler(GroupNoAuthException.class)
 	public @ResponseBody Object NoAuthExceptionHandler(Exception e) {

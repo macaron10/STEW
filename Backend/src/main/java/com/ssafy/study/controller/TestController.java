@@ -2,9 +2,11 @@ package com.ssafy.study.controller;
 
 import java.util.List;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -38,10 +40,10 @@ public class TestController {
 
 	@GetMapping("/test")
 	@ApiOperation("아무나 요청 가능")
-	public String test1() {
+	public String test1(HttpServletRequest request, HttpServletResponse response) {
 		return "API Test 1 ";
 	}
-
+	
 //	only manager
 	@GetMapping("/manager")
 	@ApiOperation("매니저만")
@@ -54,8 +56,20 @@ public class TestController {
 	@ApiOperation("어드민만")
 	public List<User> allUsers(UserPrincipal userPrincipal) {
 //		System.out.println("INFO : " + userPrincipal.getAuthorities());
-
+		
 		return this.userService.findAll();
 	}
 
+	@GetMapping("/init")
+	public String removeToken(HttpServletRequest req, HttpServletResponse res) {
+
+		Cookie c = new Cookie("accessToken", null);
+		c.setMaxAge(0);
+		
+		res.addCookie(c);
+		
+		return "";
+		
+	}
+	
 }

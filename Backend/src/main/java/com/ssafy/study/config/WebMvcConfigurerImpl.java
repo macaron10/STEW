@@ -11,6 +11,7 @@ public class WebMvcConfigurerImpl implements WebMvcConfigurer {
         registry.addMapping("/**")
         		.allowedOrigins("*")
 //                .allowedOrigins("http://localhost:8080")
+        		.allowedMethods("HEAD", "GET", "PUT", "POST", "DELETE", "PATCH")
                 .exposedHeaders("Authorization"); 
     }
 }

@@ -68,7 +68,7 @@
             solo
           ></v-text-field>
           <v-btn 
-            large color="primary" block="true" 
+            large color="primary" block=true 
             @click="signIn({'userEmail': user.userEmail, 'userPw':user.userPw}), siginInDialog = false"
           >로그인</v-btn>
         </v-col>
@@ -95,21 +95,16 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+
     <v-btn icon v-if="!isLogin" :to="{ name: 'Signup' }">
       <v-icon>mdi-account-plus</v-icon>
     </v-btn>
     <v-btn icon v-if="isLogin" @click="logout">
       로그아웃
     </v-btn>
-    <v-btn
-      icon
-      v-if="isLogin"
-      :to="{ name: 'UserDetail' }"
-    ><v-icon>mdi-account-circle</v-icon>
-    </v-btn>
     <!-- 개인 메뉴 -->
     <div class="text-center">
-      <v-menu offset-y>
+      <v-menu v-if="isLogin" offset-y>
         <template v-slot:activator="{ on, attrs }">
             <v-btn
               icon

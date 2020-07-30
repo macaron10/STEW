@@ -10,8 +10,8 @@ import { userInfo } from 'os';
 Vue.use(Vuex);
 
 interface UserInfo {
+  accessToken: string,
   refreshToken: string,
-  userId: number,
 }
 
 export default new Vuex.Store({
@@ -19,8 +19,8 @@ export default new Vuex.Store({
     baseUrl: 'http://localhost:8399/api',
     drawer: false,
     userInfo: {
-      refreshToken: "",
-      userId: 0
+      accessToken: "",
+      refreshToken: ""
     },
     isLogin: false,
   },
@@ -36,24 +36,26 @@ export default new Vuex.Store({
 
     loginSuccess(state, payload) {
       state.isLogin = true;
-      state.userInfo.refreshToken = payload;
+      state.userInfo = payload;
     },
 
     logoutSuccess(state) {
       state.isLogin = false;
+      state.userInfo.accessToken = "";
       state.userInfo.refreshToken = "";
     }
   },  
 
   actions: {
-    // 로그인 (refreshToken만 저장, accessToken은 쿠키에서 확인)
+    // 로그인
     signIn({ commit }, userObj ) {
-      axios.post('http://localhost:8399/api/user/signin', userObj)
+      axios.post(this.state.baseUrl+'/user/signin', userObj)
         .then(res => {
-          // console.log(res);
+          console.log(res);
           console.log("로그인 됐습니당");
           const userInfo = {
-            'refreshToken': res.headers.authorization
+            'accessToken': res.headers.accesstoken,
+            'refreshToken': res.headers.refreshtoken
           }
           commit("loginSuccess", userInfo);
         })

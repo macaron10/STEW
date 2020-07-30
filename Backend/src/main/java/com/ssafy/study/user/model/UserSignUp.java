@@ -1,6 +1,7 @@
 package com.ssafy.study.user.model;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
@@ -9,18 +10,13 @@ import lombok.Getter;
 @Valid
 public class UserSignUp {
 	@ApiModelProperty(required = true)
+	@NotNull
 	private String userNm;
 	@ApiModelProperty(required = true)
 	private String userEmail;
 	@ApiModelProperty(required = true)
 	private String userPw;
-	@ApiModelProperty(required = true)
-	private char userGender;
-	@ApiModelProperty(required = true)
-	private String roles;
 	
-	private String userPhone;
-	private String permissions;
 	private String userIntro;
 	private String userImg;
 	private int userGoalHr;
@@ -29,15 +25,11 @@ public class UserSignUp {
 		return
 				User.builder()
 				.userEmail(this.userEmail)
-				.userGender(this.userGender)
 				.userNm(this.userNm)
 				.userPw(this.userPw)
-				.roles(this.roles)
-				.permissions(this.permissions)
 				.userGoalHr(this.userGoalHr)
 				.userImg(this.userImg)
 				.userIntro(this.userIntro)
-				.userPhone(this.userPhone)
 				.build();
 	}
 }

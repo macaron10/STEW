@@ -2,6 +2,7 @@ package com.ssafy.study.group.repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
 public class GroupJoinRepositoryImpl implements GroupJoinRepositoryCustom {
@@ -19,5 +20,25 @@ public class GroupJoinRepositoryImpl implements GroupJoinRepositoryCustom {
 
 		return query.getSingleResult() > 0 ? true : false;
 	}
+
+//	@Override
+//	public void deleteByGpNoAndUserId(long gpNo, long userId) {
+//		String jpql = "delete from GroupJoin gj where gj.gp.gpNo = :gpNo and gj.user.userId = :userId";
+//		Query query = em.createQuery(jpql);
+//
+//		query.setParameter("gpNo", gpNo);
+//		query.setParameter("userId", userId);
+//
+//		query.getSingleResult();
+//	}
+
+//	@Override
+//	public void deleteByGpNo(long gpNo) {
+//		String jpql = "delete from GroupJoin gj where gj.gp.gpNo = :gpNo";
+//		Query query = em.createQuery(jpql);
+//
+//		query.setParameter("gpNo", gpNo);
+//		query.getSingleResult();
+//	}
 
 }

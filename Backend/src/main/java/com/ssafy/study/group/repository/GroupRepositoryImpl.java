@@ -20,7 +20,8 @@ public class GroupRepositoryImpl /* extends QuerydslRepositorySupport */ impleme
 
 	@Override
 	public List<Group> findMyJoinGroup(long userId) {
-		String jpql = "select g from Group g where g.gpNo in (select gj.gpNo from GroupJoin gj where gj.userId = :userId)";
+		String jpql = "select g from Group g where g.gpNo in (select gj.gp.gpNo from GroupJoin gj where gj.user.userId = :userId)";
+//		String jpql = "select gj from GroupJoin gj where gj.user.userId = :userId";
 		TypedQuery<Group> query = em.createQuery(jpql, Group.class);
 		query.setParameter("userId", userId);
 
@@ -52,7 +53,7 @@ public class GroupRepositoryImpl /* extends QuerydslRepositorySupport */ impleme
 			jpql += "and g.gpEndTm >= " + search.getGpEndTm() + " ";
 
 		if (search.isGpPrivate())
-			jpql += "and g.gpPublic = " + false;
+			jpql += "and g.gpPublic = " + false + " ";
 
 		TypedQuery<Group> query = em.createQuery(jpql, Group.class);
 
@@ -64,5 +65,34 @@ public class GroupRepositoryImpl /* extends QuerydslRepositorySupport */ impleme
 			return true;
 		return false;
 	}
+
+	@Override
+	public boolean isGroupFull(long gpNo) {
+		String jpql = "select gp.gpCurNum = gp.gpMaxNum from Group gp where gp.gpNo = :gpNo";
+		TypedQuery<Boolean> query = em.createQuery(jpql, Boolean.class);
+		query.setParameter("gpNo", gpNo);
+
+		return query.getSingleResult();
+	}
+
+//	@Override
+//	public void increaseMemberCnt(long gpNo) {
+//		String jpql = "update Group gp set gp.gpCurNum = gp.gpCurNum + 1 where gp.gpNo = :gpNo";
+//		Query query = em.createQuery(jpql);
+//
+//		query.setParameter("gpNo", gpNo);
+//
+//		query.getSingleResult();
+//	}
+//
+//	@Override
+//	public void decreaseMemberCnt(long gpNo) {
+//		String jpql = "update Group gp set gp.gpCurNum = gp.gpCurNum - 1 where gp.gpNo = :gpNo";
+//		Query query = em.createQuery(jpql);
+//
+//		query.setParameter("gpNo", gpNo);
+//
+//		query.getSingleResult();
+//	}
 
 }

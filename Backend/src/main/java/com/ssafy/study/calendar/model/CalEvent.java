@@ -1,6 +1,6 @@
 package com.ssafy.study.calendar.model;
 
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -26,15 +26,18 @@ public class CalEvent {
 	private long cNo;
 
 //	@Column(columnDefinition = "char(1) not null check (c_type in ('U', 'G'))")
+	@Column(nullable = false)
 	private char cType;
 	private long cOwn;
-	@Column(columnDefinition = "timestamp default current_timestamp()")
-	private Timestamp cStTm;
-	private Timestamp cEndTm;
+	@Column(nullable = false)
+	private LocalDateTime cStTm;
+	private LocalDateTime cEndTm;
 
 	@Column(length = 100)
 	private String cEvtNm;
 	@Column(length = 300)
 	private String cEvtDsc;
+	
+	private boolean useTime;
 
 }

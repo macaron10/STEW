@@ -1,9 +1,18 @@
 package com.ssafy.study.user.model;
 
-import lombok.Data;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
-@Data
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+
+@Getter
+@Valid
 public class UserSignIn {	
+	@ApiModelProperty(required = true)
+	@NotNull
 	private String userEmail;
+	@ApiModelProperty(required = true)
+	@NotNull
 	private String userPw;
 }

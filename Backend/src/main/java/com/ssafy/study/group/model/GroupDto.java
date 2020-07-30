@@ -1,20 +1,26 @@
 package com.ssafy.study.group.model;
 
+import java.util.List;
+
 import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
+import org.springframework.web.multipart.MultipartFile;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.ssafy.study.group.model.GroupTagDto.RegistGroupTag;
+
 import io.swagger.annotations.ApiModelProperty;
-import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.Setter;
 
 public class GroupDto {
 
-	@Getter
-	@Valid
+	@Data
 	@NoArgsConstructor
-	@ToString
 	public static class RegistGroup {
 		@ApiModelProperty(required = true)
 		@NotNull
@@ -30,25 +36,28 @@ public class GroupDto {
 		@ApiModelProperty(required = true)
 		@NotNull
 		private boolean gpPublic;// 공개여부
-		private String gpImg;// 썸네일
+
+		private MultipartFile gpImg;
+		
+		private List<RegistGroupTag> gpTagList;
 
 		public Group toEntity() {
 			return Group.builder().gpCat(new GroupCategory(gpCatNo)).gpNm(gpNm).gpIntro(gpIntro).gpTag(gpTag)
-					.gpStTm(gpStTm).gpEndTm(gpEndTm).gpCurNum(1).gpMaxNum(5).gpPublic(gpPublic).gpImg(gpImg).build();
+					.gpStTm(gpStTm).gpEndTm(gpEndTm).gpCurNum(0).gpMaxNum(5).gpPublic(gpPublic).build();
 		}
 	}
 
-	@Getter
+	@Data
 	@Valid
 	@NoArgsConstructor
 	public static class ModifyGroup {
+		@ApiModelProperty(required = true)
+		@NotNull
 		private long gpNo; // 스터디 아이디
 
 		@ApiModelProperty(required = true)
 		@NotNull
 		private int gpCatNo;// 타입 아이디
-		@ApiModelProperty(required = true)
-		@NotNull
 		private String gpNm;// 스터디 이름
 		private String gpIntro;// 소개
 		private String gpTag;// 태그
@@ -58,11 +67,18 @@ public class GroupDto {
 		@ApiModelProperty(required = true)
 		@NotNull
 		private boolean gpPublic;// 공개여부
-		private String gpImg;// 썸네일
+
+		private MultipartFile gpImg;
+
+		@JsonIgnore
+		private String gpImgPath;
+		@ApiModelProperty(required = true)
+		@NotNull
+		private boolean updateGpImg;
 
 		public Group toEntity() {
-			return Group.builder().gpNo(gpNo).gpNm(gpNm).gpIntro(gpIntro).gpTag(gpTag).gpStTm(gpStTm).gpEndTm(gpEndTm)
-					.gpPublic(gpPublic).gpImg(gpImg).build();
+			return Group.builder().gpNo(gpNo).gpNm(gpNm).gpIntro(gpIntro).gpTag(gpTag).gpStTm(gpStTm).gpImg(gpImgPath)
+					.gpEndTm(gpEndTm).gpPublic(gpPublic).build();
 		}
 	}
 
@@ -78,7 +94,7 @@ public class GroupDto {
 		private int gpStTm;// 선호 시작시간
 		private int gpEndTm;// 선호 종료시간
 		private boolean gpPublic;// 공개여부
-		private String gpImg;// 썸네일
+		private String gpImg;
 		private int gpMaxNum;// 최대인원
 		private int gpCurNum;// 현재인원
 
@@ -92,9 +108,9 @@ public class GroupDto {
 			this.gpStTm = group.getGpStTm();
 			this.gpEndTm = group.getGpEndTm();
 			this.gpPublic = group.isGpPublic();
-			this.gpImg = group.getGpImg();
 			this.gpMaxNum = group.getGpMaxNum();
 			this.gpCurNum = group.getGpCurNum();
+			this.gpImg = group.getGpImg();
 		}
 	}
 

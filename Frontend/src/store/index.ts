@@ -16,6 +16,8 @@ interface UserInfo {
 
 export default new Vuex.Store({
   state: {
+    baseUrl: 'http://localhost:8399/api',
+    drawer: false,
     userInfo: {
       refreshToken: "",
       userId: 0
@@ -24,6 +26,14 @@ export default new Vuex.Store({
   },
 
   mutations: {
+    drawerOnOff(state) {
+      if (state.drawer) {
+        state.drawer = false
+      } else {
+        state.drawer = true
+      }
+    },
+
     loginSuccess(state, payload) {
       state.isLogin = true;
       state.userInfo.refreshToken = payload;

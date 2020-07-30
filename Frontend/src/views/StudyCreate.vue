@@ -7,7 +7,7 @@
       right
       color="success"
     >
-      <span>Registration successful!</span>
+      <span>스터디그룹 생성 완료!</span>
       <v-icon dark>mdi-checkbox-marked-circle</v-icon>
     </v-snackbar>
     <v-form ref="form" @submit.prevent="submit">
@@ -16,15 +16,23 @@
           <v-col cols="12" sm="6">
             <v-text-field
               v-model="form.gpNm"
-              :rules="rules.name"
+              :rules="rules.groupName"
               color="blue darken-2"
               label="스터디 그룹 이름"
               required
             ></v-text-field>
           </v-col>
+          <v-col cols="12" sm="6">
+            <v-file-input
+              label="사진 넣기"
+              v-model="form.gpImg"
+              filled
+              prepend-icon="mdi-camera"
+            ></v-file-input>
+          </v-col>
           <v-col cols="12">
             <v-textarea
-              v-model="form.bio"
+              v-model="form.gpIntro"
               color="teal"
             >
               <template v-slot:label>
@@ -36,46 +44,81 @@
           </v-col>
           <v-col cols="12" sm="6">
             <v-select
-              v-model="form.favoriteAnimal"
-              :items="animals"
-              :rules="rules.animal"
+              v-model="form.gpCatNo"
+              :items="groupTypes"
+              :rules="rules.types"
               color="pink"
               label="스터디 타입"
               required
             ></v-select>
           </v-col>
           <v-col cols="12" sm="6">
+          </v-col>
+          <v-col cols="12" sm="6">
             <v-slider
-              v-model="form.age"
-              :rules="rules.age"
+              v-model="form.gpStTm"
+              :rules="rules.time"
               color="orange"
-              label="Age"
+              label="선호 시작 시간"
               hint="Be honest"
-              min="1"
-              max="100"
+              min="0"
+              max="23"
+              thumb-label
+            ></v-slider>
+          </v-col>
+          <v-col cols="12" sm="6">
+            <v-slider
+              v-model="form.gpEndTm"
+              :rules="rules.time"
+              color="orange"
+              label="선호 종료 시간"
+              hint="Be honest"
+              min="0"
+              max="23"
               thumb-label
             ></v-slider>
           </v-col>
           <v-col cols="12">
             <v-checkbox
-              v-model="form.terms"
+              v-model="form.gpPublic"
               color="green"
             >
               <template v-slot:label>
                 <div @click.stop="">
-                  Do you accept the
-                  <a href="javascript:;" @click.stop="terms = true">terms</a>
-                  and
-                  <a href="javascript:;" @click.stop="conditions = true">conditions?</a>
+                  스터디 공개, 비공개 여부
                 </div>
               </template>
             </v-checkbox>
+          </v-col>
+          <v-col cols="12">
+            <v-combobox
+              v-model="model"
+              :items="tagItems"
+              :search-input.sync="search"
+              hide-selected
+              hint="Maximum of 5 tags"
+              label="Add some tags"
+              multiple
+              persistent-hint
+              small-chips
+            >
+              <template v-slot:no-data>
+                <v-list-item>
+                  <v-list-item-content>
+                    <v-list-item-title>
+                      No results matching "<strong>{{ search }}</strong>". Press <kbd>enter</kbd> to create a new one
+                    </v-list-item-title>
+                  </v-list-item-content>
+                </v-list-item>
+              </template>
+            </v-combobox>
           </v-col>
         </v-row>
       </v-container>
       <v-card-actions>
         <v-btn text @click="resetForm">Cancel</v-btn>
         <v-spacer></v-spacer>
+        <!-- 생성버튼!! -->
         <v-btn
           :disabled="!formIsValid"
           text
@@ -84,43 +127,12 @@
         >Register</v-btn>
       </v-card-actions>
     </v-form>
-    <v-dialog v-model="terms" width="70%">
-      <v-card>
-        <v-card-title class="title">Terms</v-card-title>
-        <v-card-text v-for="n in 5" :key="n">
-          {{ content }}
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn
-            text
-            color="purple"
-            @click="terms = false"
-          >Ok</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-    <v-dialog v-model="conditions" width="70%">
-      <v-card>
-        <v-card-title class="title">Conditions</v-card-title>
-        <v-card-text v-for="n in 5" :key="n">
-          {{ content }}
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn
-            text
-            color="purple"
-            @click="conditions = false"
-          >Ok</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
   </v-card>
 </template>
 
 <script>
 // @ is an alias to /src
+import axios from 'axios'
 
 export default {
   name: "StudyCreate",
@@ -128,53 +140,107 @@ export default {
   },
   data () {
     const groupData = Object.freeze({
-      gpCatNo: 0, // 타입 아이디
-      gpEndTm: 0, // 선호 종료 시간
-      gpImg: "",  // 스터디 썸네일
+      gpCatNo: 0, // 타입 아이디 ㅇ
+      gpEndTm: 0, // 선호 종료 시간 ㅇ
+      gpImg: "",  // 스터디 썸네일 ㅇ
       gpIntro: "",  //스터디 소개ㅇ
       gpNm: "",     //스터디 이름ㅇ
-      gpPublic: true, //스터디 공개
-      gpStTm: 0,    // 선호 시작 시간
-      gpTag: "" //스터디 태그
+      gpPublic: true, //스터디 공개 ㅇ
+      gpStTm: 0,    // 선호 시작 시간 ㅇ
+      gpTag: "" //스터디 태그 (임시)
     })
+    const formData = new FormData()
     return {
       form: Object.assign({}, groupData),
       rules: {
-        age: [
-          val => val < 80 || `I don't believe you!`,
+        time: [
+          val => val > 6 || `잠을 자세요!`,
         ],
-        animal: [val => (val || '').length > 0 || 'This field is required'],
-        name: [val => (val || '').length > 0 || 'This field is required'],
+        types: [val => (val || '').length > 0 || 'This field is required'],
+        groupName: [val => (val || '').length > 0 || 'This field is required'],
       },
-      animals: ['Dog', 'Cat', 'Rabbit', 'Turtle', 'Snake'],
+      groupTypes: ['1', '2', '3', '4', '5'],
       conditions: false,
-      content: `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero. Sed cursus ante dapibus diam. Sed nisi. Nulla quis sem at nibh elementum imperdiet. Duis sagittis ipsum. Praesent mauris. Fusce nec tellus sed augue semper porta. Mauris massa. Vestibulum lacinia arcu eget nulla. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Curabitur sodales ligula in libero. Sed dignissim lacinia nunc.`,
+      content: `로렌입섬`,
       snackbar: false,
       terms: false,
       groupData,
-    }
+      formData,
+    // 해쉬태그 데이터
+    tagItems: ['Gaming', 'Programming', 'Vue', 'Vuetify'],
+    model: ['Vuetify'],
+      search: null,
+    watch: {
+      model (val) {
+        if (val.length > 5) {
+          this.$nextTick(() => this.model.pop())
+        }
+      },
+    },
+  }
   },
-
   computed: {
     formIsValid () {
       return (
-        this.form.first &&
-        this.form.last &&
-        this.form.favoriteAnimal &&
-        this.form.terms
+        this.form.gpNm &&
+        this.form.gpCatNo
       )
     },
   },
 
   methods: {
     resetForm () {
-      this.form = Object.assign({}, this.groupData)
+      this.form = Object.assign({}, this.form)
       this.$refs.form.reset()
+    },
+    makeFormData () {
+      this.formData.append('gpCatNo', Number(this.form.gpCatNo))
+      this.formData.append('gpEndTm', Number(this.form.gpEndTm))
+      this.formData.append('gpImg', this.form.gpImg)
+      this.formData.append('gpIntro', this.form.gpIntro)
+      this.formData.append('gpNm', this.form.gpNm)
+      this.formData.append('gpPublic', Boolean(this.form.gpPublic))
+      this.formData.append('gpStTm', Number(this.form.gpStTm))
+      this.formData.append('gpTag', this.form.gpTag)
+    },
+    async createGroup () {
+      try {
+        const config = {
+          headers: {
+            Authorization: `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c2VyMSIsInJvbGUiOlsic3RyaW5nIiwiUk9MRV9VU0VSIl0sImV4cCI6MTU5NjAxNDMzNSwidXNlcklkIjoxLCJpYXQiOjE1OTYwMTI1MzV9.JkRWjfgbMLYwlE8UVpfiNRInO6lRXzTj2dliaqnDKICfVcvMbC87-fZuNRvWSIcKI4CyY3X22wSvXj8WH_fv1w `,
+            'Content-Type': 'multipart/form-data',
+          }
+        }
+        const baseUrl = this.$store.state.baseUrl
+        const apiUrl = baseUrl + '/study/'
+        const res = await axios.post(apiUrl, this.formData, config)
+        this.$router.push({ name: 'StudyDetail', params: { id: res.data.object.gpNo } })
+      } catch (err) {
+        console.error(err)
+      }
     },
     submit () {
       this.snackbar = true
+      this.makeFormData()
+      this.createGroup()
       this.resetForm()
     },
+    // createGroup2() {
+    //   const config = {
+    //     headers: {
+    //       Authorization: `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c2VyMSIsInJvbGUiOlsic3RyaW5nIiwiUk9MRV9VU0VSIl0sImV4cCI6MTU5NTkxMTY2NSwidXNlcklkIjoxLCJpYXQiOjE1OTU5MDk4NjV9.PuVmFIk-PRCb0DhxcaiL4UMoMT1X4Vuw-mOMmv1INkC3eW6natkq2JG_peh8HxGVzH06JHHftxjb7LMqy1sgAA `
+    //     }
+    //   }
+    //   const baseUrl = this.$store.state.baseUrl
+    //   const apiUrl = baseUrl + '/study/'
+    //   axios.post(apiUrl, this.groupData, config)
+    //     .then((res) => {
+    //       console.log(res)
+    //       console.log(this)
+    //       this.$router.push({ name: 'StudyDetail', params: { id: res.data.id } })
+    //     })
+    //     .catch(err => console.log(err))
+    // }
   },
 };
 </script>

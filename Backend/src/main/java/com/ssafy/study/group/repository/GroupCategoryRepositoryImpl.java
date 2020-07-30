@@ -1,7 +1,6 @@
 package com.ssafy.study.group.repository;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -10,6 +9,7 @@ import javax.persistence.TypedQuery;
 
 import org.springframework.stereotype.Repository;
 
+import com.ssafy.study.group.model.Group;
 import com.ssafy.study.group.model.GroupCategory;
 
 @Repository

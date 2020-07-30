@@ -3,40 +3,53 @@ package com.ssafy.study.group.service;
 import java.util.List;
 
 import com.ssafy.study.group.model.Group;
+import com.ssafy.study.group.model.GroupDto.ModifyGroup;
+import com.ssafy.study.group.model.GroupDto.ResGroup;
+import com.ssafy.study.group.model.GroupTagDto.RegistGroupTag;
+import com.ssafy.study.group.model.GroupTagDto.ResGroupTag;
 import com.ssafy.study.group.model.GroupSearch;
 import com.ssafy.study.group.model.ResGroupCategoryDto;
-import com.ssafy.study.user.model.User;
 
 public interface GroupService {
 
-	Group saveGroup(Group group);
+	ResGroup saveGroup(Group group);
 
 	void deleteGroup(long gpNo);
 
-	Group selectGroup(long gpNo);
+	ResGroup selectGroup(long gpNo);
 
-	List<Group> findMyGroups(long userId);
+	List<ResGroup> findMyGroups(long userId);
 
-	List<Group> findAllGroups();
+	List<ResGroup> findAllGroups();
 
-	List<Group> searchGroups(GroupSearch groupSearch);
+	List<ResGroup> searchGroups(GroupSearch groupSearch);
 
-	public List<ResGroupCategoryDto> selectBoxLgGroupCategory();
+	List<ResGroupCategoryDto> selectBoxLgGroupCategory();
 
-	public List<ResGroupCategoryDto> selectBoxMdGroupCategory(String lg);
+	List<ResGroupCategoryDto> selectBoxMdGroupCategory(String lg);
 
-	public List<ResGroupCategoryDto> selectBoxSmGroupCategory(String lg, String md);
+	List<ResGroupCategoryDto> selectBoxSmGroupCategory(String lg, String md);
 
-	public void requestJoinGroup(long userId, long gpNo);
+	void requestJoinGroup(long userId, long gpNo);
 
-	public void acceptJoinGroup(long reqNo);
+	void acceptJoinGroup(long reqNo);
+
+	void joinGroup(long userId, long gpNo);
+
+	void rejectJoinGroup(long reqNo);
+
+	void removeGroupMember(long joinNo);
+
+	boolean ckGroupJoin(long gpNo, long userId);
+
+	void exitGroup(long gpNo, long userId);
+
+	boolean isGroupFull(long gpNo);
+
+	ResGroup updateGroup(ModifyGroup modifyGroup);
+
+	ResGroupTag insertGroupTag(RegistGroupTag tag);
 	
-	public void joinGroup(User user, Group gp);
-
-	public void rejectJoinGroup(long reqNo);
-
-	public void removeGroupMember(long joinNo);
-
-	public boolean ckGroupJoin(long gpNo, long userId);
+	boolean checkGroupTagExist(String tagNm);
 
 }

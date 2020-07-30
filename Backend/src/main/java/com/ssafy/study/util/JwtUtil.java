@@ -6,13 +6,20 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
-import com.ssafy.study.user.model.User;
+import com.auth0.jwt.exceptions.AlgorithmMismatchException;
+import com.auth0.jwt.exceptions.InvalidClaimException;
+import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.auth0.jwt.exceptions.SignatureVerificationException;
+import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.ssafy.study.user.model.UserPrincipal;
 
 @Component
@@ -38,10 +45,22 @@ public class JwtUtil implements Serializable{
 		return authorities;
 	}
 	
-	public static void verify(String token) throws Exception{
-		JWT.require(Algorithm.HMAC512(JwtProperties.SECRET.getBytes()))
+	public static boolean verify(String token) {
+		try {
+			JWT.require(Algorithm.HMAC512(JwtProperties.SECRET.getBytes()))
 			.build()
 			.verify(token.replace(JwtProperties.TOKEN_PREFIX, ""));
+			
+			return true;
+			
+		} catch (AlgorithmMismatchException e) {
+		} catch (SignatureVerificationException e) {
+		} catch (TokenExpiredException e) {
+		} catch (InvalidClaimException e) {
+		} catch (JWTVerificationException e) {
+		}
+		
+		return false;
 	}
 	
 	public static String generateAccessToken(UserPrincipal userPrincipal) {
@@ -61,11 +80,10 @@ public class JwtUtil implements Serializable{
 		
 	}
 	
-	public static String generateRefreshToken(UserPrincipal userPrincipal) {
+	public static String generateRefreshToken() {
 		
 		return
 				JWT.create()
-				.withSubject(userPrincipal.getUsername())
 				.withIssuedAt(new Date(System.currentTimeMillis()))
 				.withExpiresAt(new Date(System.currentTimeMillis() + JwtProperties.EXPIRATION_TIME_REFRESH))
 				.sign(Algorithm.HMAC512(JwtProperties.SECRET.getBytes()));

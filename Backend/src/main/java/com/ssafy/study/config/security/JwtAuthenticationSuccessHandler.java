@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -36,17 +37,27 @@ public class JwtAuthenticationSuccessHandler extends SavedRequestAwareAuthentica
 			authorities.add(p.getAuthority());
 		}
 		
-		String refreshToken = JwtUtil.generateRefreshToken(userPrincipal);
+		String refreshToken = JwtUtil.generateRefreshToken();
 		String accessToken = JwtUtil.generateAccessToken(userPrincipal);
 		
-		UserToken userToken = new UserToken(userPrincipal.getUsername(), refreshToken);
+//		Cookie token = new Cookie("accessToken", accessToken);
 		
-		redisTemplate.opsForValue().set(userToken.getUsername(), userToken);
-		redisTemplate.expire(userToken.getUsername(), JwtProperties.EXPIRATION_TIME_REFRESH, TimeUnit.MILLISECONDS);
+//		https가 아니면 전송하지 않는 옵션
+//		token.setSecure(true);
+		
+//		브라우저가 쿠키에 접근 못하게
+//		token.setHttpOnly(true);
+//		token.setPath("/api");
+		
+//		response.addCookie(token);
+		
+		redisTemplate.opsForValue().set(userPrincipal.getUsername(), refreshToken);
+		redisTemplate.expire(userPrincipal.getUsername(), JwtProperties.EXPIRATION_TIME_REFRESH, TimeUnit.MILLISECONDS);
 		
 		SecurityContextHolder.getContext().setAuthentication(authResult);
 		
-		response.addHeader(JwtProperties.HEADER_STRING, JwtProperties.TOKEN_PREFIX + accessToken);
+		response.addHeader("accessToken", JwtProperties.TOKEN_PREFIX + accessToken);
+		response.addHeader("refreshToken", JwtProperties.TOKEN_PREFIX + refreshToken);
 	}
 	
 }

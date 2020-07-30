@@ -4,12 +4,17 @@ import store from "../store";
 
 import Home from '../views/Home.vue';
 import Main from '../views/Main.vue';
+// Study Group 관련
 import StudyCreate from '../views/StudyCreate.vue';
 import StudyDetail from '../views/StudyDetail.vue';
+import StudyUpdate from '../views/StudyUpdate.vue';
+// Contact & Guide
 import Contact from '../views/Contact.vue';
 import Guide from '../views/Guide.vue';
+// User 관련
 import UserDetail from '../views/user/UserDetail.vue';
 import Signup from "../views/user/Signup.vue";
+// MeetingRoom
 import MeetingRoom from "../views/MeetingRoom.vue";
 
 Vue.use(VueRouter);
@@ -50,9 +55,14 @@ const routes: Array<RouteConfig> = [
     component: StudyCreate
   },
   {
-    path: '/study/detail',
+    path: '/study/:id',
     name: 'StudyDetail',
     component: StudyDetail
+  },
+  {
+    path: '/study/:id',
+    name: 'StudyUpdate',
+    component: StudyUpdate
   },
   {
     path: '/contact',
@@ -75,7 +85,7 @@ const routes: Array<RouteConfig> = [
     component: Signup
   },
   {
-    path: "/meetingroom",
+    path: "/meetingroom/:id",
     name: "MeetingRoom",
     component: MeetingRoom
   },

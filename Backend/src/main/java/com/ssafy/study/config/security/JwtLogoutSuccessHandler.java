@@ -3,6 +3,7 @@ package com.ssafy.study.config.security;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -25,6 +26,11 @@ public class JwtLogoutSuccessHandler extends HttpStatusReturningLogoutSuccessHan
 		
 		String accessToken = request.getHeader(JwtProperties.HEADER_STRING).replace(JwtProperties.TOKEN_PREFIX, "");
 		
+//		String accessToken = null;
+		
+//		for(Cookie c : request.getCookies()) 
+//			if(c.getName().equals("accessToken")) accessToken = c.getValue();
+		
 		long remains = JwtUtil.getExpiringTime(accessToken) - System.currentTimeMillis();
 		
 //		BlackListing
@@ -33,5 +39,12 @@ public class JwtLogoutSuccessHandler extends HttpStatusReturningLogoutSuccessHan
 		
 //		Delete RefreshToken
 		redisTemplate.delete(JwtUtil.getUsernameFromToken(accessToken));
+		
+//		Delete Cookie
+//		Cookie c = new Cookie("accessToken", null);
+//		c.setPath("/api");
+//		c.setMaxAge(0);
+//		
+//		response.addCookie(c);
 	}
 }

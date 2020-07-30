@@ -53,20 +53,31 @@ public class Group extends TimeEntity {
 
 	public void update(ModifyGroup group) {
 		this.gpCat = new GroupCategory(group.getGpCatNo());
-		this.gpNm = group.getGpNm();
-		this.gpIntro = group.getGpIntro();
-		this.gpTag = group.getGpTag();
+
+		if (!isEmptyString(group.getGpNm()))
+			this.gpNm = group.getGpNm();
+
+		if (!isEmptyString(group.getGpIntro()))
+			this.gpIntro = group.getGpIntro();
+
+		if (!isEmptyString(group.getGpTag()))
+			this.gpTag = group.getGpTag();
+
 		this.gpStTm = group.getGpStTm();
 		this.gpEndTm = group.getGpEndTm();
 		this.gpPublic = group.isGpPublic();
-		this.gpImg = group.getGpImg();
+
+		if (group.isUpdateGpImg())
+			this.gpImg = group.getGpImgPath();
 	}
 
-	public void joinGroup() {
-		gpCurNum++;
+	public boolean isEmptyString(String str) {
+		if (str == null || str.equals(""))
+			return true;
+		return false;
 	}
 
-	public void exitGroup() {
-		gpCurNum--;
+	public Group(long gpNo) {
+		this.gpNo = gpNo;
 	}
 }

@@ -5,7 +5,7 @@
     color="blue darken-3"
     dark
   >
-    <v-app-bar-nav-icon @click.stop="drawerOnOff"></v-app-bar-nav-icon>
+    <v-app-bar-nav-icon @click.stop="$store.commit('drawerOnOff')"></v-app-bar-nav-icon>
     <v-toolbar-title
       style="width: 300px"
       class="ml-0 pl-4"
@@ -33,6 +33,8 @@
       prepend-inner-icon="mdi-magnify"
       label="Search"
       class="hidden-sm-and-down"
+      v-model="wordForSearching"
+      @keypress.enter="searchingWord(wordForSearching)"
     ></v-text-field>
     <v-spacer></v-spacer>
     <v-btn 
@@ -105,12 +107,41 @@
       :to="{ name: 'UserDetail' }"
     ><v-icon>mdi-account-circle</v-icon>
     </v-btn>
+    <!-- 개인 메뉴 -->
+    <div class="text-center">
+      <v-menu offset-y>
+        <template v-slot:activator="{ on, attrs }">
+            <v-btn
+              icon
+              :to="{ name: 'UserDetail' }"
+              v-bind="attrs"
+              v-on="on"
+            ><v-icon>mdi-account-circle</v-icon>
+            </v-btn>
+        </template>
+          <v-list>
+            <v-list-item-group v-model="model">
+              <v-list-item
+                v-for="(item, i) in items"
+                :key="i"
+              >
+                <v-list-item-icon>
+                  <v-icon v-text="item.icon"></v-icon>
+                </v-list-item-icon>
+                <v-list-item-content>
+                  <v-list-item-title v-text="item.text"></v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
+            </v-list-item-group>
+          </v-list>
+      </v-menu>
+    </div>
   </v-app-bar>
 </template>
 
 <script>
 import axios from 'axios';
-import { mapState, mapActions } from 'vuex';
+import { mapState, mapActions, mapMutations} from 'vuex';
 
 export default {
     name: 'Navbar',
@@ -121,9 +152,6 @@ export default {
         ])
     },
     methods: {
-      drawerOnOff(event) {
-        this.$emit('drawer-onoff')
-      },
       ...mapActions([
         "signIn",
         "logout"
@@ -131,11 +159,31 @@ export default {
     },
     data () {
       return {
+        wordForSearching: "",
         siginInDialog: false,
         user: {
           userEmail: "",
           userPw: "",
         },
+        items: [
+          {
+            icon: 'mdi-inbox',
+            text: 'Inbox',
+          },
+          {
+            icon: 'mdi-star',
+            text: 'Star',
+          },
+          {
+            icon: 'mdi-send',
+            text: 'Send',
+          },
+          {
+            icon: 'mdi-email-open',
+            text: 'Drafts',
+          },
+        ],
+        model: 1,
       }
     }
 }

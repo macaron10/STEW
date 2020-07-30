@@ -33,6 +33,8 @@
       prepend-inner-icon="mdi-magnify"
       label="Search"
       class="hidden-sm-and-down"
+      v-model="wordForSearching"
+      @keypress.enter="searchingWord(wordForSearching)"
     ></v-text-field>
     <v-spacer></v-spacer>
     <v-btn 
@@ -127,9 +129,13 @@ export default {
       drawerOnOff(event) {
         this.$emit('drawer-onoff')
       },
+      searchingWord(wordForSearching) {
+        console.log(wordForSearching)
+      }
     },
     data () {
       return {
+        wordForSearching: "",
         siginInDialog: false,
         items: [
           {

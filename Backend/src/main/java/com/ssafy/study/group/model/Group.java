@@ -53,17 +53,22 @@ public class Group extends TimeEntity {
 
 	public void update(ModifyGroup group) {
 		this.gpCat = new GroupCategory(group.getGpCatNo());
+
 		if (!isEmptyString(group.getGpNm()))
 			this.gpNm = group.getGpNm();
+
 		if (!isEmptyString(group.getGpIntro()))
 			this.gpIntro = group.getGpIntro();
+
 		if (!isEmptyString(group.getGpTag()))
 			this.gpTag = group.getGpTag();
+
 		this.gpStTm = group.getGpStTm();
 		this.gpEndTm = group.getGpEndTm();
 		this.gpPublic = group.isGpPublic();
+
 		if (group.isUpdateGpImg())
-			this.gpImg = group.getGpImgName();
+			this.gpImg = group.getGpImgPath();
 	}
 
 	public boolean isEmptyString(String str) {

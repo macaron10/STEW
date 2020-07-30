@@ -87,8 +87,8 @@ export default {
     //   this.sortedBy = prop
     //   this.movies.sort((a, b) => (a[prop] > b[prop] ? -1 : 1))
     // }
-    moveToDetail () {
-      return console.log('ㅎㅇㅎㅇ')
+    getSearchedGroup() {
+      return {}
     }
   },
   mounted () {

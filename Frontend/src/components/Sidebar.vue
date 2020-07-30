@@ -1,6 +1,6 @@
 <template>
   <v-navigation-drawer
-    v-model="drawer"
+    v-model="$store.state.drawer"
     :clipped="$vuetify.breakpoint.lgAndUp"
     app
   >
@@ -80,9 +80,6 @@
 <script>
 export default {
     name: 'Sidebar',
-    props: {
-      drawer: Boolean
-    },
     data: () => ({
       items: [
         { icon: 'mdi-home', text: 'HOME', page: 'Home' },

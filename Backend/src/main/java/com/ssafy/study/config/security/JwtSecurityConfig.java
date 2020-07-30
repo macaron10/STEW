@@ -1,7 +1,5 @@
 package com.ssafy.study.config.security;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,14 +8,13 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
-import org.springframework.security.web.util.matcher.RequestMatcher;
 
 import com.ssafy.study.user.service.UserPrincipalDetailsService;
 
@@ -41,28 +38,35 @@ public class JwtSecurityConfig extends WebSecurityConfigurerAdapter{
 	protected void configure(HttpSecurity http) throws Exception {
 		http
 			.httpBasic().disable()
-			.cors().and()
+			.cors()
+			.and()
 			.csrf().disable()
-			.formLogin().disable()
 			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 			.and()
-			.logout()
-//			.logoutRequestMatcher(new RequestMatcher())
-			.logoutUrl("/user/logout")
-			.addLogoutHandler(jwtLogoutHandler())
-			.logoutSuccessHandler(jwtLogoutSuccessHandler())
-			.and()
-			.authorizeRequests()
-			.antMatchers("/manager/**").hasRole("MANAGER")
-			.antMatchers("/admin/**").hasAnyRole("ADMIN")
 			
-			.anyRequest().permitAll()
+			.formLogin()
+				.disable()
+				
+			.oauth2Login()
 			.and()
-			.exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint)
-			.and()	
-			.addFilterBefore(jwtAuthorizationFilter, UsernamePasswordAuthenticationFilter.class)
+			
+			.logout()
+				.logoutUrl("/user/logout")
+				.addLogoutHandler(jwtLogoutHandler())
+				.logoutSuccessHandler(jwtLogoutSuccessHandler())
+			.and()
+			
+			.authorizeRequests()
+				.antMatchers(permittedPaths()).permitAll()
+				.antMatchers("/manager/**").hasRole("MANAGER")
+				.antMatchers("/admin/**").hasAnyRole("ADMIN")
+				.anyRequest().authenticated()
+			.and()
+			
 //			그게그거임 이거 넣지말고 기본 필터로 ㄱㄱ?
-			.addFilterBefore(jwtAuthenticationFilter(authenticationManager()), UsernamePasswordAuthenticationFilter.class);
+			.addFilterBefore(jwtAuthenticationFilter(authenticationManager()), UsernamePasswordAuthenticationFilter.class)
+			.addFilterBefore(jwtAuthorizationFilter, UsernamePasswordAuthenticationFilter.class)
+			.exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint);
 	}
 
 	@Override
@@ -109,6 +113,29 @@ public class JwtSecurityConfig extends WebSecurityConfigurerAdapter{
 		authenticationFilter.setAuthenticationSuccessHandler(jwtAuthenticationSuccessHandler());
 		
 		return authenticationFilter;
+	}
+
+	@Override
+    public void configure(WebSecurity web) throws Exception {
+		
+//		swagger ignore authenticating
+        web.ignoring().antMatchers("/v2/api-docs",
+                                   "/configuration/ui",
+                                   "/swagger-resources/**",
+                                   "/configuration/security",
+                                   "/swagger-ui.html",
+                                   "/webjars/**");
+    }
+	
+	private String[] permittedPaths() {
+		return new String[] {
+				"/test",
+				"/user/signin",
+				"/user/signup",
+				"/user/check",
+//				리프레쉬토큰만 멀쩡하면 허용.. 하는게 맞나?
+				"/user/refresh"
+		};
 	}
 	
 }

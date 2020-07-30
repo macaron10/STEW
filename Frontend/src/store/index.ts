@@ -5,9 +5,18 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
-    baseUrl: 'http://localhost:8399/api'
+    baseUrl: 'http://localhost:8399/api',
+    drawer: false
   },
-  mutations: {},
+  mutations: {
+    drawerOnOff(state) {
+      if (state.drawer) {
+        state.drawer = false
+      } else {
+        state.drawer = true
+      }
+    }
+  },
   actions: {},
   modules: {}
 });

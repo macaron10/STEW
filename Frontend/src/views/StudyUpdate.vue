@@ -23,13 +23,12 @@
             ></v-text-field>
           </v-col>
           <v-col cols="12" sm="6">
-            <v-text-field
+            <v-file-input
+              label="사진 넣기"
               v-model="form.gpImg"
-              :rules="rules.groupName"
-              color="blue darken-2"
-              label="스터디 이미지 들어갈 자리"
-              required
-            ></v-text-field>
+              filled
+              prepend-icon="mdi-camera"
+            ></v-file-input>
           </v-col>
           <v-col cols="12">
             <v-textarea
@@ -150,6 +149,7 @@ export default {
       gpStTm: 0,    // 선호 시작 시간 ㅇ
       gpTag: "" //스터디 태그 (임시)
     })
+    const formData = new FormData()
     return {
       form: Object.assign({}, this.groupData),
       rules: {
@@ -165,6 +165,7 @@ export default {
       snackbar: false,
       terms: false,
       groupData,
+      formData,
     // 해쉬태그 데이터
     tagItems: ['Gaming', 'Programming', 'Vue', 'Vuetify'],
     model: ['Vuetify'],
@@ -197,7 +198,7 @@ export default {
       try {
         const config = {
           headers: {
-            Authorization: `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c2VyMSIsInJvbGUiOlsic3RyaW5nIiwiUk9MRV9VU0VSIl0sImV4cCI6MTU5NTkyNjk3MywidXNlcklkIjoxLCJpYXQiOjE1OTU5MjUxNzN9.yJA-YJ_1QDVslPVcoT6xD8cad1SxP3iWR0AxT_vxkQiEB1CN-gdimy_mU96CGegEzkTy5JR0GhYQdE0ybwqqhQ `
+            Authorization: `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c2VyMSIsInJvbGUiOlsic3RyaW5nIiwiUk9MRV9VU0VSIl0sImV4cCI6MTU5NjAxNDMzNSwidXNlcklkIjoxLCJpYXQiOjE1OTYwMTI1MzV9.JkRWjfgbMLYwlE8UVpfiNRInO6lRXzTj2dliaqnDKICfVcvMbC87-fZuNRvWSIcKI4CyY3X22wSvXj8WH_fv1w `
           }
         }
         const res = await axios.get(apiUrl, config)
@@ -211,16 +212,27 @@ export default {
       this.form = Object.assign({}, this.form)
       this.$refs.form.reset()
     },
+    makeFormData () {
+    this.formData.append('gpCatNo', Number(this.form.gpCatNo))
+    this.formData.append('gpEndTm', Number(this.form.gpEndTm))
+    this.formData.append('gpImg', this.form.gpImg)
+    this.formData.append('gpIntro', this.form.gpIntro)
+    this.formData.append('gpNm', this.form.gpNm)
+    this.formData.append('gpPublic', Boolean(this.form.gpPublic))
+    this.formData.append('gpStTm', Number(this.form.gpStTm))
+    this.formData.append('gpTag', this.form.gpTag)
+    },
     async updateGroup () {
       try {
         const config = {
           headers: {
-            Authorization: `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c2VyMSIsInJvbGUiOlsic3RyaW5nIiwiUk9MRV9VU0VSIl0sImV4cCI6MTU5NTkxMTY2NSwidXNlcklkIjoxLCJpYXQiOjE1OTU5MDk4NjV9.PuVmFIk-PRCb0DhxcaiL4UMoMT1X4Vuw-mOMmv1INkC3eW6natkq2JG_peh8HxGVzH06JHHftxjb7LMqy1sgAA `
+            Authorization: `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c2VyMSIsInJvbGUiOlsic3RyaW5nIiwiUk9MRV9VU0VSIl0sImV4cCI6MTU5NjAxNDMzNSwidXNlcklkIjoxLCJpYXQiOjE1OTYwMTI1MzV9.JkRWjfgbMLYwlE8UVpfiNRInO6lRXzTj2dliaqnDKICfVcvMbC87-fZuNRvWSIcKI4CyY3X22wSvXj8WH_fv1w `,
+            'Content-Type': 'multipart/form-data',
           }
         }
         const baseUrl = this.$store.state.baseUrl
         const apiUrl = baseUrl + '/study/' + this.id
-        const res = await axios.post(apiUrl, this.form, config)
+        const res = await axios.post(apiUrl, this.formData, config)
         this.$router.push({ name: 'Main' }) // params: { id: res.data.id } })
       } catch (err) {
         console.error(err)
@@ -228,6 +240,7 @@ export default {
     },
     submit () {
       this.snackbar = true
+      this.makeFormData()
       this.updateGroup()
       this.resetForm()
     },

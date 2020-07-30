@@ -1,4 +1,4 @@
-package com.ssafy.study.exception;
+package com.ssafy.study.common.exception;
 
 public class JwtNotFoundException extends RuntimeException{
 	

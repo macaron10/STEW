@@ -5,7 +5,7 @@
     color="blue darken-3"
     dark
   >
-    <v-app-bar-nav-icon @click.stop="drawerOnOff"></v-app-bar-nav-icon>
+    <v-app-bar-nav-icon @click.stop="$store.commit('drawerOnOff')"></v-app-bar-nav-icon>
     <v-toolbar-title
       style="width: 300px"
       class="ml-0 pl-4"
@@ -33,6 +33,8 @@
       prepend-inner-icon="mdi-magnify"
       label="Search"
       class="hidden-sm-and-down"
+      v-model="wordForSearching"
+      @keypress.enter="searchingWord(wordForSearching)"
     ></v-text-field>
     <v-spacer></v-spacer>
     <v-btn 
@@ -120,16 +122,15 @@
 </template>
 
 <script>
+import { mapMutations } from 'vuex'
 
 export default {
     name: 'Navbar',
     methods: {
-      drawerOnOff(event) {
-        this.$emit('drawer-onoff')
-      },
     },
     data () {
       return {
+        wordForSearching: "",
         siginInDialog: false,
         items: [
           {

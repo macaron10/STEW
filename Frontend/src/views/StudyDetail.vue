@@ -4,7 +4,7 @@
       <v-row>
         <v-col class="mb-6 ">
           <div class="d-flex justify-center">
-            <img @click="enterMeetingRoom(group.gpNo)" src="https://picsum.photos/400/300?image" alt="image" />
+            <img @click="enterMeetingRoom(group.gpNo)" :src="group.gpImg" alt="image" />
           </div>
           <div>
             <h1>{{ group.gpNm }}</h1>

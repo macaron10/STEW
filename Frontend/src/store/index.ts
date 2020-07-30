@@ -77,13 +77,11 @@ export default new Vuex.Store({
       })
     },
 
-    // accessToken 확인
-    validateAccessToken() {
-      // let decode = jwt.decode(this.state.userInfo.accessToken);
-
-      console.log("해야돼요...");
-      console.log(jwt.decode(this.state.userInfo.accessToken));
-      // 쿠키에서 가져온 토큰을 복호화 한 후 exptime 비교 (ms)
+    // accessToken 정보 확인
+    tokenInformation() {
+      const token = this.state.userInfo.accessToken.split(" ")[1];
+      const decode = jwt.decode(token);
+      console.log(decode);
     }
   },
 

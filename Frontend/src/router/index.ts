@@ -1,5 +1,7 @@
 import Vue from 'vue';
 import VueRouter, { RouteConfig } from 'vue-router';
+import store from "../store";
+
 import Home from '../views/Home.vue';
 import Main from '../views/Main.vue';
 // Study Group 관련
@@ -10,13 +12,31 @@ import StudyUpdate from '../views/StudyUpdate.vue';
 import Contact from '../views/Contact.vue';
 import Guide from '../views/Guide.vue';
 // User 관련
-import Signup from "../views/Signup.vue";
-import UserDetail from '../views/UserDetail.vue';
-import Login from "../components/Login.vue";
+import UserDetail from '../views/user/UserDetail.vue';
+import Signup from "../views/user/Signup.vue";
 // MeetingRoom
 import MeetingRoom from "../views/MeetingRoom.vue";
 
 Vue.use(VueRouter);
+
+const rejectAuthUser = (to: any, from: any, next: (arg0: string) => void) => {
+  if (store.state.isLogin === true) {
+    alert("로그인됨");
+    next("/");
+  } else {
+    next("");
+  }
+}
+// beforeEnter: rejectAuthUser, 해당 라우터에 이부분 써주기
+
+const onlyAuthUser = (to: any, from: any, next: (arg0: string | undefined) => void) => {
+  if (store.state.isLogin === false) {
+    alert("로그인됨") // 아직 로그인 안 된 유저여서 막아야됨
+    next("/")
+  } else {
+    next("");
+  }
+}
 
 const routes: Array<RouteConfig> = [
   {

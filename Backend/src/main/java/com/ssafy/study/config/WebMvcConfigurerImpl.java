@@ -12,6 +12,7 @@ public class WebMvcConfigurerImpl implements WebMvcConfigurer {
         		.allowedOrigins("*")
 //                .allowedOrigins("http://localhost:8080")
         		.allowedMethods("HEAD", "GET", "PUT", "POST", "DELETE", "PATCH")
-                .exposedHeaders("Authorization"); 
+        		.exposedHeaders("accessToken", "refreshToken");
+//                .exposedHeaders("Authorization"); 
     }
 }

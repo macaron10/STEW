@@ -39,6 +39,7 @@
     <v-spacer></v-spacer>
     <v-btn 
       icon
+      v-if="!isLogin"
       @click.stop= "siginInDialog = true"
     >
       <v-icon>mdi-account</v-icon>
@@ -53,16 +54,23 @@
 
         <v-col>
           <v-text-field
-            label="userId"
-            placeholder="ID"
+            label="userEmail"
+            placeholder="Email"
+            type="email"
+            v-model="user.userEmail"
             solo
           ></v-text-field>
           <v-text-field
-            label="userPwd"
+            label="userPw"
             placeholder="PASSWORD"
+            type="password"
+            v-model="user.userPw"
             solo
           ></v-text-field>
-          <v-btn large color="primary" block="true">로그인</v-btn>
+          <v-btn 
+            large color="primary" block=true 
+            @click="signIn({'userEmail': user.userEmail, 'userPw':user.userPw}), siginInDialog = false"
+          >로그인</v-btn>
         </v-col>
 
         <v-card-actions>
@@ -77,6 +85,7 @@
           </v-btn>
 
           <v-btn
+            :to="{ name: 'Signup' }"
             color="light gray"
             text small
             @click="siginInDialog = false"
@@ -86,12 +95,16 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-    <v-btn icon :to="{ name: 'Signup' }">
+
+    <v-btn icon v-if="!isLogin" :to="{ name: 'Signup' }">
       <v-icon>mdi-account-plus</v-icon>
+    </v-btn>
+    <v-btn icon v-if="isLogin" @click="logout">
+      로그아웃
     </v-btn>
     <!-- 개인 메뉴 -->
     <div class="text-center">
-      <v-menu offset-y>
+      <v-menu v-if="isLogin" offset-y>
         <template v-slot:activator="{ on, attrs }">
             <v-btn
               icon
@@ -122,16 +135,31 @@
 </template>
 
 <script>
-import { mapMutations } from 'vuex'
+import axios from 'axios';
+import { mapState, mapActions, mapMutations} from 'vuex';
 
 export default {
     name: 'Navbar',
+    computed: {
+      ...mapState([ 
+        "userInfo",
+        "isLogin"
+        ])
+    },
     methods: {
+      ...mapActions([
+        "signIn",
+        "logout"
+        ]),
     },
     data () {
       return {
         wordForSearching: "",
         siginInDialog: false,
+        user: {
+          userEmail: "",
+          userPw: "",
+        },
         items: [
           {
             icon: 'mdi-inbox',
@@ -151,7 +179,7 @@ export default {
           },
         ],
         model: 1,
-        }
+      }
     }
 }
 </script>

@@ -12,7 +12,7 @@
           :to="'/study/' + group.gpNo"
         >
           <v-img
-            src="https://cdn.vuetifyjs.com/images/cards/mountain.jpg"
+            :src="$store.state.baseUrl + '/study/thumb' + group.gpImg"
             height="150"
           >
             <v-row align="end" class="my-3 lightbox white--text pa-2 fill-height">
@@ -25,7 +25,7 @@
             <!-- 제목, 간단한설명, 태그, 썸네일, 인원수 -->
             <v-list-item-content>
               <v-list-item-title class="headline">{{ group.gpNm }}</v-list-item-title>
-              <v-list-item-subtitle>추가할거면 하고(기능)</v-list-item-subtitle>
+              <v-list-item-subtitle></v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
           <v-card-text>

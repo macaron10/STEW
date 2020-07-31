@@ -142,7 +142,7 @@ export default {
     const groupData = Object.freeze({
       gpCatNo: 0, // 타입 아이디 ㅇ
       gpEndTm: 0, // 선호 종료 시간 ㅇ
-      gpImg: "",  // 스터디 썸네일 ㅇ
+      gpImg: this.$store.state.baseUrl + '/study/thumb/base.png',
       gpIntro: "",  //스터디 소개ㅇ
       gpNm: "",     //스터디 이름ㅇ
       gpPublic: true, //스터디 공개 ㅇ
@@ -207,7 +207,7 @@ export default {
       try {
         const config = {
           headers: {
-            Authorization: `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c2VyMSIsInJvbGUiOlsic3RyaW5nIiwiUk9MRV9VU0VSIl0sImV4cCI6MTU5NjAxNDMzNSwidXNlcklkIjoxLCJpYXQiOjE1OTYwMTI1MzV9.JkRWjfgbMLYwlE8UVpfiNRInO6lRXzTj2dliaqnDKICfVcvMbC87-fZuNRvWSIcKI4CyY3X22wSvXj8WH_fv1w `,
+            Authorization: `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c2VyMSIsInJvbGUiOlsic3RyaW5nIiwiUk9MRV9VU0VSIl0sImV4cCI6MTU5NjEwMTQ5MywidXNlcklkIjoxLCJpYXQiOjE1OTYwOTk2OTN9.KB03CsT5oQuX0yuXUeX5anuglURQd7y291DZ-mwr3NX8x6KRaAgWjbdB1eAMKd53XB4TkqcXZDa38eIWgTDHzQ `,
             'Content-Type': 'multipart/form-data',
           }
         }

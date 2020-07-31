@@ -1,12 +1,32 @@
 <template>
   <div>
-    <h1>Meeting Room</h1>
-    <div class="videos-container"></div>
-    <v-btn @click="unmute">소리켜기</v-btn>
-    <v-btn @click="mute">음소거</v-btn>
-    <v-btn @click="onVideo">비디오켜기</v-btn>
-    <v-btn @click="offVideo">비디오끄기</v-btn>
-    <v-btn @click="outRoom" :to="{ name: 'StudyDetail' }">퇴장</v-btn>
+      <div class="mx-10 my-10 videos-container"></div>
+    <!-- footer -->
+    <v-footer
+    color="#ffffff"
+    padless
+    >
+      <v-row
+        justify="center"
+        no-gutters
+      >
+        <v-btn class="mx-1" fab dark color="indigo" @click="unmute">
+          <v-icon dark>mdi-volume-high</v-icon>
+        </v-btn>
+        <v-btn class="mx-1" fab dark color="blue lighten-1" @click="mute">
+          <v-icon dark>mdi-volume-off</v-icon>
+        </v-btn>
+        <v-btn class="mx-1" fab dark color="teal lighten-1" @click="onVideo">
+          <v-icon dark>mdi-video</v-icon>
+        </v-btn>
+        <v-btn class="mx-1" fab dark color="teal accent-1" @click="offVideo">
+          <v-icon dark>mdi-video-off</v-icon>
+        </v-btn>
+        <v-btn class="mx-1" fab dark color="red" @click="outRoom" :to="{ name: 'StudyDetail' }">
+          <v-icon dark>mdi-account-arrow-right-outline</v-icon>
+        </v-btn>
+      </v-row>
+    </v-footer>
   </div>
 </template>
 <script src="https://cdn.jsdelivr.net/npm/rtcmulticonnection@latest/dist/RTCMultiConnection.min.js"></script>

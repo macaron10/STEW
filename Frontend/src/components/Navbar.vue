@@ -2,34 +2,35 @@
   <v-app-bar
     :clipped-left="$vuetify.breakpoint.lgAndUp"
     app
-    color="blue darken-3"
+    color="#FFFFFF"
     dark
   >
-    <v-app-bar-nav-icon @click.stop="$store.commit('drawerOnOff')"></v-app-bar-nav-icon>
+    <v-app-bar-nav-icon @click.stop="$store.commit('drawerOnOff')" color="blue lighten-2"></v-app-bar-nav-icon>
     <v-toolbar-title
       style="width: 300px"
-      class="ml-0 pl-4"
+      class="ml-0 pl-10"
     >
       <v-btn
       icon
       large
       :to="{ name: 'Main' }"
+      
     >
-      <v-avatar
-        size="32px"
-        item
-      >
         <v-img
-          src="https://cdn.vuetifyjs.com/images/logos/logo.svg"
+          :src="$store.state.baseUrl + '/study/thumb/2020/00/00/stew.png'"
           alt="Vuetify"
-        ></v-img></v-avatar>
+          :aspect-ratio="200"
+          :min-height="30"
+          :min-width="100"
+        ></v-img>
     </v-btn>
-      <span class="hidden-sm-and-down">Cam Study</span>
+      <span class="hidden-sm-and-down blue--text text--lighten-3"></span>
     </v-toolbar-title>
     <v-text-field
-      flat
       solo-inverted
       hide-details
+      color="blue lighten-2"
+      outlined
       prepend-inner-icon="mdi-magnify"
       label="Search"
       class="hidden-sm-and-down"
@@ -41,6 +42,7 @@
       icon
       v-if="!isLogin"
       @click.stop= "siginInDialog = true"
+      color="blue lighten-2"
     >
       <v-icon>mdi-account</v-icon>
     </v-btn>
@@ -111,6 +113,7 @@
               :to="{ name: 'UserDetail' }"
               v-bind="attrs"
               v-on="on"
+              color="blue lighten-2"
             ><v-icon>mdi-account-circle</v-icon>
             </v-btn>
         </template>

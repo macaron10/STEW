@@ -4,15 +4,17 @@
       <v-row>
         <v-col class="mb-6 ">
           <div class="d-flex justify-center">
-            <img @click="enterMeetingRoom(group.gpNo)" :src="group.gpImg" alt="image" />
+            <img @click="enterMeetingRoom(group.gpNo)" :src="$store.state.baseUrl + '/study/thumb' + group.gpImg" alt="그룹 이미지">
           </div>
-          <div>
-            <h1>{{ group.gpNm }}</h1>
-            <h4>{{ group.gpIntro }}</h4>
+          <div class="text-center">
+            <h1 class="my-3">{{ group.gpNm }}</h1>
+            <h4 class="mb-2">{{ group.gpIntro }}</h4>
             <v-btn
               :to="{ name:'StudyUpdate', params: { id: id }}"
+              color="blue accent-1"
+              class="white--text font-weight-bold"
             >
-              수정 버튼!(임시)
+              수정
             </v-btn>
           </div>
         </v-col>
@@ -82,7 +84,8 @@ export default {
       prevIcon: false,
       nextIcon: false,
       right: false,
-      tabs: 3
+      tabs: 3,
+      text: "내용이 들어가야 할 곳"
     };
   },
   mounted () {

@@ -138,15 +138,55 @@ export default {
     selectedOpen: false,
     events: [
       {
-        name: "캘린더",
+        name: "카카오 코딩 테스트 준비",
+        details: "안녕",
+        // start: "2020-07-23 15:00",
+        start: new Date(2020, 6, 5, 15),
+        // end: "2020-09-23 11:30",
+        end: new Date(2020, 6, 11, 19),
+        timed: false,
+        color: "yellow"
+      },
+      {
+        name: "네이버 코딩 테스트 준비",
+        details: "안녕",
+        // start: "2020-07-23 15:00",
+        start: new Date(2020, 6, 16, 15),
+        // end: "2020-09-23 11:30",
+        end: new Date(2020, 6, 21, 19),
+        timed: false,
+        color: "green"
+      },
+      {
+        name: "Toss 코딩 테스트 준비",
         details: "안녕",
         // start: "2020-07-23 15:00",
         start: new Date(2020, 6, 23, 15),
         // end: "2020-09-23 11:30",
-        end: new Date(2020, 8, 24, 19),
+        end: new Date(2020, 6, 31, 19),
         timed: false,
         color: "blue"
-      }
+      },
+      {
+        name: "모의 코딩 테스트",
+        details: "안녕",
+        // start: "2020-07-23 15:00",
+        start: new Date(2020, 6, 25, 15),
+        // end: "2020-09-23 11:30",
+        end: new Date(2020, 6, 25, 19),
+        timed: false,
+        color: "orange"
+      },
+      {
+        name: "모의 코테 분석",
+        details: "안녕",
+        // start: "2020-07-23 15:00",
+        start: new Date(2020, 6, 26, 15),
+        // end: "2020-09-23 11:30",
+        end: new Date(2020, 6, 26, 19),
+        timed: false,
+        color: "indigo"
+      },
     ],
     colors: [
       "blue",

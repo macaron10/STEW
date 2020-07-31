@@ -17,7 +17,7 @@ export default {
     return {
       items: [
         {
-          src: 'https://cdn.vuetifyjs.com/images/carousel/squirrel.jpg',
+          src: this.$store.state.baseUrl + '/study/thumb/2020/00/00/cafe.jpg',
         },
         {
           src: 'https://cdn.vuetifyjs.com/images/carousel/sky.jpg',

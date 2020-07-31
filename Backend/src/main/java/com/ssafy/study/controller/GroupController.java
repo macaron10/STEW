@@ -1,10 +1,7 @@
 package com.ssafy.study.controller;
 
-import java.io.File;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -18,17 +15,15 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ssafy.study.common.model.BasicResponse;
 import com.ssafy.study.common.util.FileUtils;
-import com.ssafy.study.group.model.dto.GroupSearchDto;
+import com.ssafy.study.group.model.dto.GroupDto;
 import com.ssafy.study.group.model.dto.ModifyGroupDto;
 import com.ssafy.study.group.model.dto.RegistGroupDto;
-import com.ssafy.study.group.model.dto.ResGroupDto;
 import com.ssafy.study.group.model.entity.Group;
 import com.ssafy.study.group.model.exception.GroupNoAuthException;
 import com.ssafy.study.group.service.GroupService;
 import com.ssafy.study.user.model.UserPrincipal;
 
 import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 
@@ -38,7 +33,7 @@ import io.swagger.annotations.ApiResponses;
 		@ApiResponse(code = 500, message = "Failure", response = BasicResponse.class) })
 
 @RestController
-@RequestMapping("/study")
+@RequestMapping("/study/user")
 public class GroupController {
 
 	@Autowired
@@ -47,17 +42,6 @@ public class GroupController {
 	private FileUtils fileUtil;
 
 	private final String fileBaseUrl = "C:\\Users\\multicampus\\Desktop\\group_thumb";
-
-	@GetMapping("/all")
-	@ApiOperation("전체 스터디 ")
-	public Object allStudyList() {
-		BasicResponse result = new BasicResponse();
-		result.object = groupService.findAllGroups();
-		result.msg = "success";
-		result.status = true;
-
-		return new ResponseEntity<>(result, HttpStatus.OK);
-	}
 
 	@GetMapping("/my")
 	@ApiOperation("로그인한 회원의 스터디 목록 조회")
@@ -73,7 +57,7 @@ public class GroupController {
 
 	@PostMapping("/")
 	@ApiOperation(value = "스터디 생성", produces = "multipart/form-data")
-	public Object createStudy(@AuthenticationPrincipal UserPrincipal principal, RegistGroupDto group) {
+	public Object createStudy(RegistGroupDto group, @AuthenticationPrincipal UserPrincipal principal) {
 		Group saveGroup = group.toEntity();
 		saveGroup.setGpMgrId(principal.getUserId());
 
@@ -81,7 +65,7 @@ public class GroupController {
 			saveGroup.setGpImg(fileUtil.uploadFile(group.getGpImg(), fileBaseUrl));
 		}
 
-		ResGroupDto responseGroup = groupService.saveGroup(saveGroup);
+		GroupDto responseGroup = groupService.saveGroup(saveGroup);
 
 		groupService.joinGroup(principal.getUserId(), responseGroup.getGpNo());
 
@@ -104,21 +88,13 @@ public class GroupController {
 			return new ResponseEntity<>(result, HttpStatus.UNAUTHORIZED);
 		}
 
-		ResGroupDto group = groupService.selectGroup(no);
+		GroupDto group = groupService.selectGroup(no);
 
 		result.object = group;
 		result.msg = "success";
 		result.status = true;
 
 		return new ResponseEntity<>(result, HttpStatus.OK);
-	}
-
-	@GetMapping(value = "/thumb/{year}/{month}/{date}/{file}", produces = MediaType.IMAGE_JPEG_VALUE)
-	@ApiOperation("그룹의 썸네일 출력 <img src='http://localhost:8399/api/study/thumb/{gpImg}'>")
-	public byte[] showThumbnail(@PathVariable String year, @PathVariable String month, @PathVariable String date,
-			@PathVariable String file) {
-		String path = File.separator + year + File.separator + month + File.separator + date + File.separator + file;
-		return fileUtil.downloadFile(fileBaseUrl, path);
 	}
 
 	@PutMapping("/")
@@ -133,7 +109,7 @@ public class GroupController {
 			modifyGroup.setGpImgPath(fileUtil.uploadFile(modifyGroup.getGpImg(), fileBaseUrl));
 		}
 
-		ResGroupDto group = groupService.updateGroup(modifyGroup);
+		GroupDto group = groupService.updateGroup(modifyGroup);
 
 		result.object = group;
 		result.msg = "success";
@@ -142,22 +118,9 @@ public class GroupController {
 		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 
-	@GetMapping("/search")
-	@ApiOperation("스터디 검색")
-	public Object searchStudy(GroupSearchDto groupSearch) {
-		System.out.println(groupSearch);
-		BasicResponse result = new BasicResponse();
-
-		result.object = groupService.searchGroups(groupSearch);
-		result.msg = "success";
-		result.status = true;
-
-		return new ResponseEntity<>(result, HttpStatus.OK);
-	}
-
 	@PostMapping("/req")
 	@ApiOperation("스터디에 가입요청")
-	public Object reqJoinGroup(@ApiParam(required = true) int gpNo, @AuthenticationPrincipal UserPrincipal principal) {
+	public Object reqJoinGroup(int gpNo, @AuthenticationPrincipal UserPrincipal principal) {
 		long userId = principal.getUserId();
 		BasicResponse result = new BasicResponse();
 
@@ -183,8 +146,7 @@ public class GroupController {
 
 	@PostMapping("/accept")
 	@ApiOperation("스터디 가입 승인")
-	public Object acceptJoinGroup(@ApiParam(required = true) long reqNo, @ApiParam(required = true) long gpNo,
-			@AuthenticationPrincipal UserPrincipal principal) {
+	public Object acceptJoinGroup(long reqNo, long gpNo, @AuthenticationPrincipal UserPrincipal principal) {
 		long userId = principal.getUserId();
 
 		ckGroupAuth(userId, gpNo);
@@ -206,8 +168,7 @@ public class GroupController {
 
 	@PostMapping("/reject")
 	@ApiOperation("스터디 가입 거절")
-	public Object rejectJoinGroup(@ApiParam(required = true) long reqNo, @ApiParam(required = true) long gpNo,
-			@AuthenticationPrincipal UserPrincipal principal) {
+	public Object rejectJoinGroup(long reqNo, long gpNo, @AuthenticationPrincipal UserPrincipal principal) {
 		long userId = principal.getUserId();
 
 		ckGroupAuth(userId, gpNo);
@@ -222,8 +183,7 @@ public class GroupController {
 
 	@PostMapping("/remove")
 	@ApiOperation("스터디 퇴출")
-	public Object removeGroupMember(@ApiParam(required = true) long joinNo, @ApiParam(required = true) long gpNo,
-			@AuthenticationPrincipal UserPrincipal principal) {
+	public Object removeGroupMember(long joinNo, long gpNo, @AuthenticationPrincipal UserPrincipal principal) {
 		long userId = principal.getUserId();
 
 		ckGroupAuth(userId, gpNo);
@@ -238,7 +198,7 @@ public class GroupController {
 
 	@PostMapping("/exit")
 	@ApiOperation("그룹 나가기")
-	public Object exitGroup(@ApiParam(required = true) long gpNo, @AuthenticationPrincipal UserPrincipal principal) {
+	public Object exitGroup(long gpNo, @AuthenticationPrincipal UserPrincipal principal) {
 		long userId = principal.getUserId();
 		BasicResponse result = new BasicResponse();
 
@@ -258,39 +218,6 @@ public class GroupController {
 		}
 
 		groupService.exitGroup(gpNo, userId);
-		result.msg = "success";
-		result.status = true;
-
-		return new ResponseEntity<>(result, HttpStatus.OK);
-	}
-
-	@GetMapping("/cate/lg")
-	@ApiOperation("카테고리 대분류 출력")
-	public Object selectBoxLg() {
-		BasicResponse result = new BasicResponse();
-		result.object = groupService.selectBoxLgGroupCategory();
-		result.msg = "success";
-		result.status = true;
-
-		return new ResponseEntity<>(result, HttpStatus.OK);
-	}
-
-	@GetMapping("/cate/md")
-	@ApiOperation("카테고리 중분류 출력")
-	public Object selectBoxMd(String lg) {
-		BasicResponse result = new BasicResponse();
-		result.object = groupService.selectBoxMdGroupCategory(lg);
-		result.msg = "success";
-		result.status = true;
-
-		return new ResponseEntity<>(result, HttpStatus.OK);
-	}
-
-	@GetMapping("/cate/sm")
-	@ApiOperation("카테고리 소분류 출력")
-	public Object selectBoxSm(String lg, String md) {
-		BasicResponse result = new BasicResponse();
-		result.object = groupService.selectBoxSmGroupCategory(lg, md);
 		result.msg = "success";
 		result.status = true;
 
@@ -317,11 +244,6 @@ public class GroupController {
 		long mgrId = groupService.selectGroup(gpNo).getGpMgrId();
 
 		return userId == mgrId ? true : false;
-	}
-
-	@GetMapping("/test")
-	public void test() {
-		System.out.println(groupService.selectAllGroups());
 	}
 
 }

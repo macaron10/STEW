@@ -7,11 +7,11 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class ResGroupTagDto {
+public class GroupTagDto {
 	private long gpTagNo;
 	private String gpTagNm;
 
-	public ResGroupTagDto(GroupTag tag) {
+	public GroupTagDto(GroupTag tag) {
 		this.gpTagNo = tag.getGpTagNo();
 		this.gpTagNm = tag.getGpTagNm();
 	}

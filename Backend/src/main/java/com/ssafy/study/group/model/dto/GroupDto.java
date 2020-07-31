@@ -13,7 +13,7 @@ import lombok.ToString;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ResGroupDto {
+public class GroupDto {
 	private long gpNo; // 스터디 아이디
 
 	private int gpCatNo;// 타입 아이디
@@ -28,7 +28,7 @@ public class ResGroupDto {
 	private int gpMaxNum;// 최대인원
 	private int gpCurNum;// 현재인원
 	
-	public ResGroupDto(Group group) {
+	public GroupDto(Group group) {
 		this.gpNo = group.getGpNo();
 		this.gpCatNo = group.getGpCat().getGpCatNo();
 		this.gpNm = group.getGpNm();
@@ -42,7 +42,7 @@ public class ResGroupDto {
 		this.gpImg = group.getGpImg();
 	}
 
-	public ResGroupDto(Group group, String gpTag) {
+	public GroupDto(Group group, String gpTag) {
 		this.gpNo = group.getGpNo();
 		this.gpCatNo = group.getGpCat().getGpCatNo();
 		this.gpNm = group.getGpNm();

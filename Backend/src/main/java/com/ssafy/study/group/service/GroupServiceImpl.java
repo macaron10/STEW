@@ -6,12 +6,12 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.ssafy.study.group.model.dto.GroupCategoryDto;
+import com.ssafy.study.group.model.dto.GroupDto;
 import com.ssafy.study.group.model.dto.GroupSearchDto;
+import com.ssafy.study.group.model.dto.GroupTagDto;
 import com.ssafy.study.group.model.dto.ModifyGroupDto;
 import com.ssafy.study.group.model.dto.RegistGroupTagDto;
-import com.ssafy.study.group.model.dto.ResGroupCategoryDto;
-import com.ssafy.study.group.model.dto.ResGroupDto;
-import com.ssafy.study.group.model.dto.ResGroupTagDto;
 import com.ssafy.study.group.model.entity.Group;
 import com.ssafy.study.group.model.entity.GroupJoin;
 import com.ssafy.study.group.model.entity.GroupReq;
@@ -35,8 +35,8 @@ public class GroupServiceImpl implements GroupService {
 	private GroupTagRepository tagRepo;
 
 	@Override
-	public ResGroupDto saveGroup(Group group) {
-		return new ResGroupDto(gpRepo.save(group));
+	public GroupDto saveGroup(Group group) {
+		return new GroupDto(gpRepo.save(group));
 	}
 
 	@Override
@@ -47,47 +47,40 @@ public class GroupServiceImpl implements GroupService {
 	}
 
 	@Override
-	public List<ResGroupDto> selectAllGroups() {
+	public List<GroupDto> selectAllGroups() {
 		return gpRepo.selectAllGroups();
 	}
 
 	@Override
-	public ResGroupDto selectGroup(long gpNo) {
-		ResGroupDto group = new ResGroupDto(gpRepo.findByGpNo(gpNo));
-
-		return group;
+	public GroupDto selectGroup(long gpNo) {
+		return gpRepo.selectByGpNo(gpNo);
 	}
 
 	@Override
-	public List<ResGroupDto> findMyGroups(long userId) {
-		return gpRepo.findMyJoinGroup(userId).stream().map(g -> new ResGroupDto(g)).collect(Collectors.toList());
+	public List<GroupDto> findMyGroups(long userId) {
+		return gpRepo.findMyJoinGroup(userId);
 	}
 
 	@Override
-	public List<ResGroupDto> findAllGroups() {
-		return gpRepo.findAll().stream().map(g -> new ResGroupDto(g)).collect(Collectors.toList());
+	public List<GroupDto> searchGroups(GroupSearchDto groupSearch) {
+		return gpRepo.searchGroup(groupSearch);
 	}
 
 	@Override
-	public List<ResGroupDto> searchGroups(GroupSearchDto groupSearch) {
-		return gpRepo.searchGroup(groupSearch).stream().map(g -> new ResGroupDto(g)).collect(Collectors.toList());
-	}
-
-	@Override
-	public List<ResGroupCategoryDto> selectBoxLgGroupCategory() {
-		return cateRepo.selectBoxLgGroupCategory().stream().map(cat -> new ResGroupCategoryDto(cat))
+	public List<GroupCategoryDto> selectBoxLgGroupCategory() {
+		return cateRepo.selectBoxLgGroupCategory().stream().map(cat -> new GroupCategoryDto(cat))
 				.collect(Collectors.toList());
 	}
 
 	@Override
-	public List<ResGroupCategoryDto> selectBoxMdGroupCategory(String lg) {
-		return cateRepo.selectBoxMdGroupCategory(lg).stream().map(cat -> new ResGroupCategoryDto(cat))
+	public List<GroupCategoryDto> selectBoxMdGroupCategory(String lg) {
+		return cateRepo.selectBoxMdGroupCategory(lg).stream().map(cat -> new GroupCategoryDto(cat))
 				.collect(Collectors.toList());
 	}
 
 	@Override
-	public List<ResGroupCategoryDto> selectBoxSmGroupCategory(String lg, String md) {
-		return cateRepo.selectBoxSmGroupCategory(lg, md).stream().map(cat -> new ResGroupCategoryDto(cat))
+	public List<GroupCategoryDto> selectBoxSmGroupCategory(String lg, String md) {
+		return cateRepo.selectBoxSmGroupCategory(lg, md).stream().map(cat -> new GroupCategoryDto(cat))
 				.collect(Collectors.toList());
 	}
 
@@ -143,11 +136,11 @@ public class GroupServiceImpl implements GroupService {
 	}
 
 	@Override
-	public ResGroupDto updateGroup(ModifyGroupDto modifyGroup) {
+	public GroupDto updateGroup(ModifyGroupDto modifyGroup) {
 		Group group = gpRepo.findByGpNo(modifyGroup.getGpNo());
 		group.update(modifyGroup);
 
-		return new ResGroupDto(gpRepo.save(group));
+		return new GroupDto(gpRepo.save(group));
 	}
 
 	@Override
@@ -161,13 +154,13 @@ public class GroupServiceImpl implements GroupService {
 	}
 
 	@Override
-	public List<ResGroupTagDto> selectAllGroupTags() {
-		return tagRepo.findAll().stream().map(t -> new ResGroupTagDto(t)).collect(Collectors.toList());
+	public List<GroupTagDto> selectAllGroupTags() {
+		return tagRepo.findAll().stream().map(t -> new GroupTagDto(t)).collect(Collectors.toList());
 	}
 
 	@Override
-	public List<ResGroupTagDto> selectGroupTagList(long gpNo) {
-		return tagRepo.selectGroupTagList(gpNo).stream().map(t -> new ResGroupTagDto(t)).collect(Collectors.toList());
+	public List<GroupTagDto> selectGroupTagList(long gpNo) {
+		return tagRepo.selectGroupTagList(gpNo).stream().map(t -> new GroupTagDto(t)).collect(Collectors.toList());
 	}
 
 }

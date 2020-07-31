@@ -21,7 +21,6 @@ public class RegistGroupDto {
 	@NotNull
 	private String gpNm;// 스터디 이름
 	private String gpIntro;// 소개
-	private String gpTag;// 태그
 	private int gpStTm;// 선호 시작시간
 	private int gpEndTm;// 선호 종료시간
 
@@ -30,6 +29,8 @@ public class RegistGroupDto {
 	private boolean gpPublic;// 공개여부
 
 	private MultipartFile gpImg;
+	
+	private String gpTag;// 태그
 
 	public Group toEntity() {
 		return Group.builder().gpCat(new GroupCategory(gpCatNo)).gpNm(gpNm).gpIntro(gpIntro).gpStTm(gpStTm)

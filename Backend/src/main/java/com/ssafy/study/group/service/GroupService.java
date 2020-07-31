@@ -2,33 +2,33 @@ package com.ssafy.study.group.service;
 
 import java.util.List;
 
-import com.ssafy.study.group.model.Group;
-import com.ssafy.study.group.model.GroupDto.ModifyGroup;
-import com.ssafy.study.group.model.GroupDto.ResGroup;
-import com.ssafy.study.group.model.GroupTagDto.RegistGroupTag;
-import com.ssafy.study.group.model.GroupTagDto.ResGroupTag;
-import com.ssafy.study.group.model.GroupSearch;
-import com.ssafy.study.group.model.ResGroupCategoryDto;
+import com.ssafy.study.group.model.dto.GroupSearchDto;
+import com.ssafy.study.group.model.dto.ModifyGroupDto;
+import com.ssafy.study.group.model.dto.RegistGroupTagDto;
+import com.ssafy.study.group.model.dto.GroupCategoryDto;
+import com.ssafy.study.group.model.dto.GroupDto;
+import com.ssafy.study.group.model.dto.GroupTagDto;
+import com.ssafy.study.group.model.entity.Group;
 
 public interface GroupService {
 
-	ResGroup saveGroup(Group group);
+	GroupDto saveGroup(Group group);
 
 	void deleteGroup(long gpNo);
 
-	ResGroup selectGroup(long gpNo);
+	GroupDto selectGroup(long gpNo);
 
-	List<ResGroup> findMyGroups(long userId);
+	List<GroupDto> selectAllGroups();
 
-	List<ResGroup> findAllGroups();
+	List<GroupDto> findMyGroups(long userId);
 
-	List<ResGroup> searchGroups(GroupSearch groupSearch);
+	List<GroupDto> searchGroups(GroupSearchDto groupSearch);
 
-	List<ResGroupCategoryDto> selectBoxLgGroupCategory();
+	List<GroupCategoryDto> selectBoxLgGroupCategory();
 
-	List<ResGroupCategoryDto> selectBoxMdGroupCategory(String lg);
+	List<GroupCategoryDto> selectBoxMdGroupCategory(String lg);
 
-	List<ResGroupCategoryDto> selectBoxSmGroupCategory(String lg, String md);
+	List<GroupCategoryDto> selectBoxSmGroupCategory(String lg, String md);
 
 	void requestJoinGroup(long userId, long gpNo);
 
@@ -46,10 +46,14 @@ public interface GroupService {
 
 	boolean isGroupFull(long gpNo);
 
-	ResGroup updateGroup(ModifyGroup modifyGroup);
+	GroupDto updateGroup(ModifyGroupDto modifyGroup);
 
-	ResGroupTag insertGroupTag(RegistGroupTag tag);
-	
+	long addGroupTag(RegistGroupTagDto tag);
+
 	boolean checkGroupTagExist(String tagNm);
+
+	List<GroupTagDto> selectAllGroupTags();
+
+	List<GroupTagDto> selectGroupTagList(long gpNo);
 
 }

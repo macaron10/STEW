@@ -2,7 +2,7 @@ package com.ssafy.study.group.repository;
 
 import java.util.List;
 
-import com.ssafy.study.group.model.GroupCategory;
+import com.ssafy.study.group.model.entity.GroupCategory;
 
 public interface GroupCategoryRepositoryCustom {
 

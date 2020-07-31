@@ -1,16 +1,17 @@
 package com.ssafy.study.group.repository;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
 import org.springframework.stereotype.Repository;
 
-import com.ssafy.study.group.model.Group;
-import com.ssafy.study.group.model.GroupSearch;
+import com.ssafy.study.group.model.dto.GroupSearchDto;
+import com.ssafy.study.group.model.dto.GroupDto;
+import com.ssafy.study.group.model.entity.Group;
 
 @Repository
 public class GroupRepositoryImpl /* extends QuerydslRepositorySupport */ implements GroupRepositoryCustom {
@@ -19,17 +20,44 @@ public class GroupRepositoryImpl /* extends QuerydslRepositorySupport */ impleme
 	private EntityManager em;
 
 	@Override
-	public List<Group> findMyJoinGroup(long userId) {
-		String jpql = "select g from Group g where g.gpNo in (select gj.gp.gpNo from GroupJoin gj where gj.user.userId = :userId)";
-//		String jpql = "select gj from GroupJoin gj where gj.user.userId = :userId";
-		TypedQuery<Group> query = em.createQuery(jpql, Group.class);
+	public List<GroupDto> selectAllGroups() {
+		String jpql = "SELECT new com.ssafy.study.group.model.dto.GroupDto(gp,  group_concat(gt.gpTagNm) as gpTag)"
+				+ "FROM Group gp, GroupTagMap gm, GroupTag gt "
+				+ "WHERE gp.gpNo = gm.gp.gpNo AND gm.gpTag.gpTagNo = gt.gpTagNo group by gp.gpNo";
+
+		return em.createQuery(jpql, GroupDto.class).getResultList();
+	}
+
+	@Override
+	public List<GroupDto> findMyJoinGroup(long userId) {
+		String jpql = "SELECT new com.ssafy.study.group.model.dto.GroupDto(gp,  group_concat(gt.gpTagNm) as gpTag) "
+				+ "FROM Group gp, GroupTagMap gm, GroupTag gt "
+				+ "WHERE gp.gpNo = gm.gp.gpNo AND gm.gpTag.gpTagNo = gt.gpTagNo "
+				+ "and gp.gpNo in (select gj.gp.gpNo from GroupJoin gj where gj.user.userId = :userId)  "
+				+ "group by gp.gpNo";
+
+		TypedQuery<GroupDto> query = em.createQuery(jpql, GroupDto.class);
 		query.setParameter("userId", userId);
 
 		return query.getResultList();
 	}
 
 	@Override
-	public List<Group> searchGroup(GroupSearch search) {
+	public GroupDto selectByGpNo(long gpNo) {
+		String jpql = "SELECT new com.ssafy.study.group.model.dto.GroupDto(gp,  group_concat(gt.gpTagNm) as gpTag) "
+				+ "FROM Group gp, GroupTagMap gm, GroupTag gt "
+				+ "WHERE gp.gpNo = gm.gp.gpNo AND gm.gpTag.gpTagNo = gt.gpTagNo "
+				+ "and gp.gpNo = :gpNo "
+				+ "group by gp.gpNo";
+
+		TypedQuery<GroupDto> query = em.createQuery(jpql, GroupDto.class);
+		query.setParameter("gpNo", gpNo);
+
+		return query.getSingleResult();
+	}
+
+	@Override
+	public List<GroupDto> searchGroup(GroupSearchDto search) {
 		String jpql = "select g from Group g where 1 = 1 ";
 
 		if (!isEmpty(search.getGpNm()))
@@ -57,7 +85,7 @@ public class GroupRepositoryImpl /* extends QuerydslRepositorySupport */ impleme
 
 		TypedQuery<Group> query = em.createQuery(jpql, Group.class);
 
-		return query.getResultList();
+		return query.getResultStream().map(g -> new GroupDto(g)).collect(Collectors.toList());
 	}
 
 	public boolean isEmpty(String str) {
@@ -74,25 +102,5 @@ public class GroupRepositoryImpl /* extends QuerydslRepositorySupport */ impleme
 
 		return query.getSingleResult();
 	}
-
-//	@Override
-//	public void increaseMemberCnt(long gpNo) {
-//		String jpql = "update Group gp set gp.gpCurNum = gp.gpCurNum + 1 where gp.gpNo = :gpNo";
-//		Query query = em.createQuery(jpql);
-//
-//		query.setParameter("gpNo", gpNo);
-//
-//		query.getSingleResult();
-//	}
-//
-//	@Override
-//	public void decreaseMemberCnt(long gpNo) {
-//		String jpql = "update Group gp set gp.gpCurNum = gp.gpCurNum - 1 where gp.gpNo = :gpNo";
-//		Query query = em.createQuery(jpql);
-//
-//		query.setParameter("gpNo", gpNo);
-//
-//		query.getSingleResult();
-//	}
 
 }

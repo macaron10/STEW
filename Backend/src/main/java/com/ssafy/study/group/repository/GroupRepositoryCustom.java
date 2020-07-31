@@ -2,20 +2,20 @@ package com.ssafy.study.group.repository;
 
 import java.util.List;
 
-import javax.transaction.Transactional;
-
-import org.springframework.data.jpa.repository.Modifying;
-
-import com.ssafy.study.group.model.Group;
-import com.ssafy.study.group.model.GroupSearch;
+import com.ssafy.study.group.model.dto.GroupSearchDto;
+import com.ssafy.study.group.model.dto.GroupDto;
+import com.ssafy.study.group.model.entity.Group;
 
 public interface GroupRepositoryCustom {
+	
+	GroupDto selectByGpNo(long gpNo);
 
-	List<Group> findMyJoinGroup(long userId);
+	List<GroupDto> findMyJoinGroup(long userId);
 
-	List<Group> searchGroup(GroupSearch search);
+	List<GroupDto> searchGroup(GroupSearchDto search);
 
 	boolean isGroupFull(long gpNo);
 
+	List<GroupDto> selectAllGroups();
 
 }

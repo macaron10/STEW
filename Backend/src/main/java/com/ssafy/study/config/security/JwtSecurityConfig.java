@@ -14,6 +14,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.client.web.OAuth2LoginAuthenticationFilter;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.ssafy.study.oauth2.KakaoOauth2User;
@@ -127,7 +128,6 @@ public class JwtSecurityConfig extends WebSecurityConfigurerAdapter{
                                    "/swagger-ui.html",
                                    "/webjars/**");
     }
-	
 	private String[] permittedPaths() {
 		return new String[] {
 				"/test",

@@ -24,7 +24,7 @@ import lombok.ToString;
 public class MatterMostSender {
 	private Logger log = LoggerFactory.getLogger(MatterMostSender.class);
 
-	private boolean mmEnabled = false;
+	private boolean mmEnabled = true;
 	private String webhookUrl = "https://meeting.ssafy.com/hooks/7mpjmu3ubi87pfo8eo6kuxkniy";
 
 	public void sendMessage(Attachment attach) {

@@ -97,15 +97,15 @@ export default {
       this.$router.push('/meetingroom/'+gpNo)
     },
     async getDetail () {
-      const baseUrl = this.$store.state.baseUrl
-      const apiUrl = baseUrl + '/study/' + this.id
+      // const baseUrl = this.$store.state.baseUrl
+      const apiUrl = '/study/user/' + this.id
       try {
-        const config = {
-          headers: {
-            Authorization: `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c2VyMSIsInJvbGUiOlsic3RyaW5nIiwiUk9MRV9VU0VSIl0sImV4cCI6MTU5NTkyNjk3MywidXNlcklkIjoxLCJpYXQiOjE1OTU5MjUxNzN9.yJA-YJ_1QDVslPVcoT6xD8cad1SxP3iWR0AxT_vxkQiEB1CN-gdimy_mU96CGegEzkTy5JR0GhYQdE0ybwqqhQ `
-          }
-        }
-        const res = await axios.get(apiUrl, config)
+        // const config = {
+        //   headers: {
+        //     Authorization: `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c2VyMSIsInJvbGUiOlsic3RyaW5nIiwiUk9MRV9VU0VSIl0sImV4cCI6MTU5NTkyNjk3MywidXNlcklkIjoxLCJpYXQiOjE1OTU5MjUxNzN9.yJA-YJ_1QDVslPVcoT6xD8cad1SxP3iWR0AxT_vxkQiEB1CN-gdimy_mU96CGegEzkTy5JR0GhYQdE0ybwqqhQ `
+        //   }
+        // }
+        const res = await axios.get(apiUrl)
         this.group = res.data.object
       } catch (err) {
         console.error(err)

@@ -140,11 +140,11 @@ export default {
   },
   data () {
     const groupData = Object.freeze({
+      gpNm: "",     //스터디 이름ㅇ
       gpCatNo: 0, // 타입 아이디 ㅇ
       gpEndTm: 0, // 선호 종료 시간 ㅇ
       gpImg: this.$store.state.baseUrl + '/study/thumb/base.png',
       gpIntro: "",  //스터디 소개ㅇ
-      gpNm: "",     //스터디 이름ㅇ
       gpPublic: true, //스터디 공개 ㅇ
       gpStTm: 0,    // 선호 시작 시간 ㅇ
       gpTag: "" //스터디 태그 (임시)
@@ -194,11 +194,11 @@ export default {
       this.$refs.form.reset()
     },
     makeFormData () {
+      this.formData.append('gpNm', this.form.gpNm) // 순서는 상관 없음
       this.formData.append('gpCatNo', Number(this.form.gpCatNo))
       this.formData.append('gpEndTm', Number(this.form.gpEndTm))
       this.formData.append('gpImg', this.form.gpImg)
       this.formData.append('gpIntro', this.form.gpIntro)
-      this.formData.append('gpNm', this.form.gpNm)
       this.formData.append('gpPublic', Boolean(this.form.gpPublic))
       this.formData.append('gpStTm', Number(this.form.gpStTm))
       this.formData.append('gpTag', this.form.gpTag)
@@ -207,12 +207,12 @@ export default {
       try {
         const config = {
           headers: {
-            Authorization: `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c2VyMSIsInJvbGUiOlsic3RyaW5nIiwiUk9MRV9VU0VSIl0sImV4cCI6MTU5NjEwMTQ5MywidXNlcklkIjoxLCJpYXQiOjE1OTYwOTk2OTN9.KB03CsT5oQuX0yuXUeX5anuglURQd7y291DZ-mwr3NX8x6KRaAgWjbdB1eAMKd53XB4TkqcXZDa38eIWgTDHzQ `,
+            // Authorization: `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c2VyMSIsInJvbGUiOlsic3RyaW5nIiwiUk9MRV9VU0VSIl0sImV4cCI6MTU5NjEwMTQ5MywidXNlcklkIjoxLCJpYXQiOjE1OTYwOTk2OTN9.KB03CsT5oQuX0yuXUeX5anuglURQd7y291DZ-mwr3NX8x6KRaAgWjbdB1eAMKd53XB4TkqcXZDa38eIWgTDHzQ `,
             'Content-Type': 'multipart/form-data',
           }
         }
-        const baseUrl = this.$store.state.baseUrl
-        const apiUrl = baseUrl + '/study/'
+        // const baseUrl = this.$store.state.baseUrl
+        const apiUrl = '/study/user/'
         const res = await axios.post(apiUrl, this.formData, config)
         this.$router.push({ name: 'StudyDetail', params: { id: res.data.object.gpNo } })
       } catch (err) {

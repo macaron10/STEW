@@ -90,6 +90,18 @@
               </template>
             </v-checkbox>
           </v-col>
+                    <v-col cols="12">
+            <v-checkbox
+              v-model="form.updateGpImg"
+              color="green"
+            >
+              <template v-slot:label>
+                <div @click.stop="">
+                  사진변경 여부
+                </div>
+              </template>
+            </v-checkbox>
+          </v-col>
           <v-col cols="12">
             <v-combobox
               v-model="model"
@@ -147,7 +159,10 @@ export default {
       gpNm: "",     //스터디 이름ㅇ
       gpPublic: true, //스터디 공개 ㅇ
       gpStTm: 0,    // 선호 시작 시간 ㅇ
-      gpTag: "" //스터디 태그 (임시)
+      gpTag: "", //스터디 태그 (임시)
+      updateGpImg: true // 사진 변경 여부 - 수정시에 gpImg 값이 변경이 없으면 "" 로 그대로 날아가기 때문에 기존의 사진이 변경시에 지워질 수 있다
+                        // 그러므로 사진 변경 여부를 확인하여 변경 없을 시 기존의 사진을 그대로 두고, 변경 시에는 null 로 넣으면 null, 다른 사진을 넣으면 다른 사진으로
+                        // 변경되게끔 구현(아직 미구현) 
     })
     const formData = new FormData()
     return {
@@ -193,15 +208,15 @@ export default {
   },
   methods: {
     async getDetail () {
-      const baseUrl = this.$store.state.baseUrl
-      const apiUrl = baseUrl + '/study/' + this.id
+      // const baseUrl = this.$store.state.baseUrl
+      const apiUrl = '/study/user/' + this.id
       try {
-        const config = {
-          headers: {
-            Authorization: `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c2VyMSIsInJvbGUiOlsic3RyaW5nIiwiUk9MRV9VU0VSIl0sImV4cCI6MTU5NjAxNDMzNSwidXNlcklkIjoxLCJpYXQiOjE1OTYwMTI1MzV9.JkRWjfgbMLYwlE8UVpfiNRInO6lRXzTj2dliaqnDKICfVcvMbC87-fZuNRvWSIcKI4CyY3X22wSvXj8WH_fv1w `
-          }
-        }
-        const res = await axios.get(apiUrl, config)
+        // const config = {
+        //   headers: {
+        //     Authorization: `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c2VyMSIsInJvbGUiOlsic3RyaW5nIiwiUk9MRV9VU0VSIl0sImV4cCI6MTU5NjAxNDMzNSwidXNlcklkIjoxLCJpYXQiOjE1OTYwMTI1MzV9.JkRWjfgbMLYwlE8UVpfiNRInO6lRXzTj2dliaqnDKICfVcvMbC87-fZuNRvWSIcKI4CyY3X22wSvXj8WH_fv1w `
+        //   }
+        // }
+        const res = await axios.get(apiUrl)
         this.groupData = res.data.object
         this.form = this.groupData
       } catch (err) {
@@ -213,27 +228,28 @@ export default {
       this.$refs.form.reset()
     },
     makeFormData () {
+    this.formData.append('gpNm', this.form.gpNm)
     this.formData.append('gpCatNo', Number(this.form.gpCatNo))
     this.formData.append('gpEndTm', Number(this.form.gpEndTm))
     this.formData.append('gpImg', this.form.gpImg)
     this.formData.append('gpIntro', this.form.gpIntro)
-    this.formData.append('gpNm', this.form.gpNm)
     this.formData.append('gpPublic', Boolean(this.form.gpPublic))
     this.formData.append('gpStTm', Number(this.form.gpStTm))
     this.formData.append('gpTag', this.form.gpTag)
+    this.formData.append('updateGpImg', this.form.updateGpimg)
     },
     async updateGroup () {
       try {
         const config = {
           headers: {
-            Authorization: `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c2VyMSIsInJvbGUiOlsic3RyaW5nIiwiUk9MRV9VU0VSIl0sImV4cCI6MTU5NjAxNDMzNSwidXNlcklkIjoxLCJpYXQiOjE1OTYwMTI1MzV9.JkRWjfgbMLYwlE8UVpfiNRInO6lRXzTj2dliaqnDKICfVcvMbC87-fZuNRvWSIcKI4CyY3X22wSvXj8WH_fv1w `,
+            // Authorization: `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c2VyMSIsInJvbGUiOlsic3RyaW5nIiwiUk9MRV9VU0VSIl0sImV4cCI6MTU5NjAxNDMzNSwidXNlcklkIjoxLCJpYXQiOjE1OTYwMTI1MzV9.JkRWjfgbMLYwlE8UVpfiNRInO6lRXzTj2dliaqnDKICfVcvMbC87-fZuNRvWSIcKI4CyY3X22wSvXj8WH_fv1w `,
             'Content-Type': 'multipart/form-data',
           }
         }
-        const baseUrl = this.$store.state.baseUrl
-        const apiUrl = baseUrl + '/study/' + this.id
-        const res = await axios.post(apiUrl, this.formData, config)
-        this.$router.push({ name: 'Main' }) // params: { id: res.data.id } })
+        // const baseUrl = this.$store.state.baseUrl
+        const apiUrl = '/study/user/' + this.id
+        const res = await axios.put(apiUrl, this.formData, config)
+        this.$router.push({ name: 'StudyDetail', params: { id: res.data.object.gpNo } })
       } catch (err) {
         console.error(err)
       }

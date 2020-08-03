@@ -128,6 +128,7 @@ public class GroupServiceImpl implements GroupService {
 	@Override
 	public void exitGroup(long gpNo, long userId) {
 		joinRepo.deleteByGpNoAndUserId(gpNo, userId);
+		gpRepo.decreaseMemberCnt(gpNo);
 	}
 
 	@Override

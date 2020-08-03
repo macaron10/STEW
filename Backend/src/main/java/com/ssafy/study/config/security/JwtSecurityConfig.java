@@ -16,6 +16,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import com.ssafy.study.oauth2.KakaoOauth2User;
 import com.ssafy.study.user.service.UserPrincipalDetailsService;
 
 import lombok.RequiredArgsConstructor;
@@ -47,9 +48,6 @@ public class JwtSecurityConfig extends WebSecurityConfigurerAdapter{
 			.formLogin()
 				.disable()
 				
-			.oauth2Login()
-			.and()
-			
 			.logout()
 				.logoutUrl("/user/logout")
 				.addLogoutHandler(jwtLogoutHandler())
@@ -66,7 +64,11 @@ public class JwtSecurityConfig extends WebSecurityConfigurerAdapter{
 //			그게그거임 이거 넣지말고 기본 필터로 ㄱㄱ?
 			.addFilterBefore(jwtAuthenticationFilter(authenticationManager()), UsernamePasswordAuthenticationFilter.class)
 			.addFilterBefore(jwtAuthorizationFilter, UsernamePasswordAuthenticationFilter.class)
-			.exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint);
+			.exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint)
+			
+			.and()
+				.oauth2Login()
+				.userInfoEndpoint().customUserType(KakaoOauth2User.class, "kakao");
 	}
 
 	@Override
@@ -96,7 +98,6 @@ public class JwtSecurityConfig extends WebSecurityConfigurerAdapter{
 	JwtLogoutHandler jwtLogoutHandler() {
 		JwtLogoutHandler jwtLogoutHandler = new JwtLogoutHandler();
 		jwtLogoutHandler.setClearAuthentication(false);
-//		jwtLogoutHandler.setInvalidateHttpSession(true);
 		
 		return jwtLogoutHandler;
 	}
@@ -140,7 +141,8 @@ public class JwtSecurityConfig extends WebSecurityConfigurerAdapter{
 				"/study/cate/*",
 				"/user/check",
 //				리프레쉬토큰만 멀쩡하면 허용.. 하는게 맞나?
-				"/user/refresh"
+				"/user/refresh",
+				"/login/oauth2/**"
 		};
 	}
 	

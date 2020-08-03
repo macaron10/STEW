@@ -21,9 +21,11 @@ public class GroupRepositoryImpl /* extends QuerydslRepositorySupport */ impleme
 
 	@Override
 	public List<GroupDto> selectAllGroups() {
-		String jpql = "SELECT new com.ssafy.study.group.model.dto.GroupDto(gp,  group_concat(gt.gpTagNm) as gpTag)"
-				+ "FROM Group gp, GroupTagMap gm, GroupTag gt "
-				+ "WHERE gp.gpNo = gm.gp.gpNo AND gm.gpTag.gpTagNo = gt.gpTagNo group by gp.gpNo";
+		String jpql = "SELECT new com.ssafy.study.group.model.dto.GroupDto(gp,  group_concat(gt.gpTagNm) as gpTag) "
+				+ "FROM Group gp "
+				+ "left join GroupTagMap gm on gp.gpNo = gm.gp.gpNo "
+				+ "left join GroupTag gt on gm.gpTag.gpTagNo = gt.gpTagNo "
+				+ "group by gp.gpNo";
 
 		return em.createQuery(jpql, GroupDto.class).getResultList();
 	}
@@ -31,8 +33,9 @@ public class GroupRepositoryImpl /* extends QuerydslRepositorySupport */ impleme
 	@Override
 	public List<GroupDto> findMyJoinGroup(long userId) {
 		String jpql = "SELECT new com.ssafy.study.group.model.dto.GroupDto(gp,  group_concat(gt.gpTagNm) as gpTag) "
-				+ "FROM Group gp, GroupTagMap gm, GroupTag gt "
-				+ "WHERE gp.gpNo = gm.gp.gpNo AND gm.gpTag.gpTagNo = gt.gpTagNo "
+				+ "FROM Group gp "
+				+ "left join GroupTagMap gm on gp.gpNo = gm.gp.gpNo "
+				+ "left join GroupTag gt on gm.gpTag.gpTagNo = gt.gpTagNo "
 				+ "and gp.gpNo in (select gj.gp.gpNo from GroupJoin gj where gj.user.userId = :userId)  "
 				+ "group by gp.gpNo";
 
@@ -45,9 +48,10 @@ public class GroupRepositoryImpl /* extends QuerydslRepositorySupport */ impleme
 	@Override
 	public GroupDto selectByGpNo(long gpNo) {
 		String jpql = "SELECT new com.ssafy.study.group.model.dto.GroupDto(gp,  group_concat(gt.gpTagNm) as gpTag) "
-				+ "FROM Group gp, GroupTagMap gm, GroupTag gt "
-				+ "WHERE gp.gpNo = gm.gp.gpNo AND gm.gpTag.gpTagNo = gt.gpTagNo "
-				+ "and gp.gpNo = :gpNo "
+				+ "FROM Group gp "
+				+ "left join GroupTagMap gm on gp.gpNo = gm.gp.gpNo "
+				+ "left join GroupTag gt on gm.gpTag.gpTagNo = gt.gpTagNo "
+				+ "WHERE gp.gpNo = :gpNo "
 				+ "group by gp.gpNo";
 
 		TypedQuery<GroupDto> query = em.createQuery(jpql, GroupDto.class);

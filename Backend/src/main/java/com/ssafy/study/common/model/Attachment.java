@@ -40,7 +40,7 @@ public class Attachment {
 		this();
 
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-		this.title = e.getMessage();
+		this.title = e.getLocalizedMessage();
 
 		StringWriter sw = new StringWriter();
 		e.printStackTrace(new PrintWriter(sw));

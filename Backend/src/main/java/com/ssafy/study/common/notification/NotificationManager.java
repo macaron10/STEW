@@ -19,7 +19,6 @@ public class NotificationManager {
 		log.info("#### send Notification.");
 		Attachment attach = new Attachment(e);
 		mmSender.sendMessage(attach);
-		System.out.println(attach);
 	}
 
 }

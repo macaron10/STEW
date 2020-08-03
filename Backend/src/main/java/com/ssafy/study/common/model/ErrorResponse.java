@@ -1,9 +1,20 @@
 package com.ssafy.study.common.model;
 
-import lombok.NoArgsConstructor;
+import java.time.LocalDateTime;
 
-@NoArgsConstructor
+import io.swagger.annotations.ApiModelProperty;
+
 public class ErrorResponse {
-	private String msg;
+	@ApiModelProperty(value = "timestamp", position = 1)
+	private LocalDateTime timestamp;
+	@ApiModelProperty(value = "status", position = 2)
+	public int status;
+	@ApiModelProperty(value = "error", position = 3)
+	public String error;
+	@ApiModelProperty(value = "msg", position = 4)
+	public String msg;
 
+	public ErrorResponse() {
+		timestamp = LocalDateTime.now();
+	}
 }

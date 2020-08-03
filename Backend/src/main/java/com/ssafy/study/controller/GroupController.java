@@ -10,16 +10,16 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ssafy.study.common.model.BasicResponse;
+import com.ssafy.study.common.model.ErrorResponse;
 import com.ssafy.study.common.util.FileUtils;
 import com.ssafy.study.group.model.dto.GroupDto;
 import com.ssafy.study.group.model.dto.ModifyGroupDto;
 import com.ssafy.study.group.model.dto.RegistGroupDto;
 import com.ssafy.study.group.model.entity.Group;
-import com.ssafy.study.group.model.exception.GroupNoAuthException;
+import com.ssafy.study.group.model.exception.GroupUnAuthException;
 import com.ssafy.study.group.service.GroupService;
 import com.ssafy.study.user.model.UserPrincipal;
 
@@ -226,24 +226,26 @@ public class GroupController {
 
 	// GROUP TAG******************************************
 
-	@ExceptionHandler(GroupNoAuthException.class)
-	public @ResponseBody Object NoAuthExceptionHandler(Exception e) {
-		BasicResponse result = new BasicResponse();
-		result.msg = "권한이 없습니다";
-		result.status = false;
-
-		return new ResponseEntity<>(result, HttpStatus.UNAUTHORIZED);
-	}
-
 	public void ckGroupAuth(long userId, long gpNo) {
 		if (!isGroupMgr(userId, gpNo))
-			throw new GroupNoAuthException();
+			throw new GroupUnAuthException();
 	}
 
 	public boolean isGroupMgr(long userId, long gpNo) {
 		long mgrId = groupService.selectGroup(gpNo).getGpMgrId();
 
 		return userId == mgrId ? true : false;
+	}
+
+	// EXCPETION **********************************
+	@ExceptionHandler(GroupUnAuthException.class)
+	public Object unAuthExceptionHandler(Exception e) {
+		ErrorResponse result = new ErrorResponse();
+		result.error = "Unauthorized about group";
+		result.status = 403;
+		result.msg = "해당 그룹에 대한 권한이 없습니다";
+
+		return new ResponseEntity<>(result, HttpStatus.FORBIDDEN);
 	}
 
 }

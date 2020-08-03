@@ -38,13 +38,12 @@ public class JwtLogoutHandler extends SecurityContextLogoutHandler{
 //		else accessToken = accessToken.replace(JwtProperties.TOKEN_PREFIX, "");
 		
 		if(!JwtUtil.verify(accessToken))
-			try {
-				response.sendError(HttpStatus.UNAUTHORIZED.value(), "Invalid Token");
+//			try {
+//				response.sendError(HttpStatus.UNAUTHORIZED.value(), "Invalid Token");
 				throw new TokenExpiredException("Token Expired");
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+//			} catch (IOException e) {
+//				e.printStackTrace();
+//			}
 		
 		accessToken = accessToken.replace(JwtProperties.TOKEN_PREFIX, "");
 		

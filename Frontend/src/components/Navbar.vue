@@ -101,7 +101,7 @@
     <v-btn icon v-if="!isLogin" :to="{ name: 'Signup' }">
       <v-icon>mdi-account-plus</v-icon>
     </v-btn>
-    <v-btn icon v-if="isLogin" @click="logout">
+    <v-btn icon v-if="isLogin" @click="logout" color="#000" >
       로그아웃
     </v-btn>
     <!-- 개인 메뉴 -->

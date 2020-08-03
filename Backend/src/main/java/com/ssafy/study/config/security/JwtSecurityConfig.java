@@ -130,6 +130,9 @@ public class JwtSecurityConfig extends WebSecurityConfigurerAdapter{
 	private String[] permittedPaths() {
 		return new String[] {
 				"/test",
+				"/study/*",
+				"/study/thumb/**",
+				"/study/cate/*",
 				"/user/signin",
 				"/user/signup",
 				"/study/*",

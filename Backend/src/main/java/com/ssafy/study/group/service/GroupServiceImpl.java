@@ -163,4 +163,9 @@ public class GroupServiceImpl implements GroupService {
 		return tagRepo.selectGroupTagList(gpNo).stream().map(t -> new GroupTagDto(t)).collect(Collectors.toList());
 	}
 
+	@Override
+	public boolean ckGroupExist(long no) {
+		return gpRepo.existsById(no);
+	}
+
 }

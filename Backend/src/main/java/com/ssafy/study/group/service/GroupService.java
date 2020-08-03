@@ -56,4 +56,6 @@ public interface GroupService {
 
 	List<GroupTagDto> selectGroupTagList(long gpNo);
 
+	boolean ckGroupExist(long no);
+
 }

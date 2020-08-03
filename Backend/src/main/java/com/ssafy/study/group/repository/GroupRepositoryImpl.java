@@ -22,10 +22,8 @@ public class GroupRepositoryImpl /* extends QuerydslRepositorySupport */ impleme
 	@Override
 	public List<GroupDto> selectAllGroups() {
 		String jpql = "SELECT new com.ssafy.study.group.model.dto.GroupDto(gp,  group_concat(gt.gpTagNm) as gpTag) "
-				+ "FROM Group gp "
-				+ "left join GroupTagMap gm on gp.gpNo = gm.gp.gpNo "
-				+ "left join GroupTag gt on gm.gpTag.gpTagNo = gt.gpTagNo "
-				+ "group by gp.gpNo";
+				+ "FROM Group gp " + "left join GroupTagMap gm on gp.gpNo = gm.gp.gpNo "
+				+ "left join GroupTag gt on gm.gpTag.gpTagNo = gt.gpTagNo " + "group by gp.gpNo";
 
 		return em.createQuery(jpql, GroupDto.class).getResultList();
 	}
@@ -33,8 +31,7 @@ public class GroupRepositoryImpl /* extends QuerydslRepositorySupport */ impleme
 	@Override
 	public List<GroupDto> findMyJoinGroup(long userId) {
 		String jpql = "SELECT new com.ssafy.study.group.model.dto.GroupDto(gp,  group_concat(gt.gpTagNm) as gpTag) "
-				+ "FROM Group gp "
-				+ "left join GroupTagMap gm on gp.gpNo = gm.gp.gpNo "
+				+ "FROM Group gp " + "left join GroupTagMap gm on gp.gpNo = gm.gp.gpNo "
 				+ "left join GroupTag gt on gm.gpTag.gpTagNo = gt.gpTagNo "
 				+ "and gp.gpNo in (select gj.gp.gpNo from GroupJoin gj where gj.user.userId = :userId)  "
 				+ "group by gp.gpNo";
@@ -48,10 +45,8 @@ public class GroupRepositoryImpl /* extends QuerydslRepositorySupport */ impleme
 	@Override
 	public GroupDto selectByGpNo(long gpNo) {
 		String jpql = "SELECT new com.ssafy.study.group.model.dto.GroupDto(gp,  group_concat(gt.gpTagNm) as gpTag) "
-				+ "FROM Group gp "
-				+ "left join GroupTagMap gm on gp.gpNo = gm.gp.gpNo "
-				+ "left join GroupTag gt on gm.gpTag.gpTagNo = gt.gpTagNo "
-				+ "WHERE gp.gpNo = :gpNo "
+				+ "FROM Group gp " + "left join GroupTagMap gm on gp.gpNo = gm.gp.gpNo "
+				+ "left join GroupTag gt on gm.gpTag.gpTagNo = gt.gpTagNo " + "WHERE gp.gpNo = :gpNo "
 				+ "group by gp.gpNo";
 
 		TypedQuery<GroupDto> query = em.createQuery(jpql, GroupDto.class);
@@ -62,34 +57,42 @@ public class GroupRepositoryImpl /* extends QuerydslRepositorySupport */ impleme
 
 	@Override
 	public List<GroupDto> searchGroup(GroupSearchDto search) {
-		String jpql = "select g from Group g where 1 = 1 ";
+		StringBuilder jpql = new StringBuilder();
+		jpql.append("SELECT new com.ssafy.study.group.model.dto.GroupDto(gp,  group_concat(gt.gpTagNm) as gpTag) ");
+		jpql.append("FROM Group gp ");
+		jpql.append("left join GroupTagMap gm on gp.gpNo = gm.gp.gpNo ");
+		jpql.append("left join GroupTag gt on gm.gpTag.gpTagNo = gt.gpTagNo ");
+		
+		jpql.append(" where 1 = 1 ");
 
 		if (!isEmpty(search.getGpNm()))
-			jpql += "and g.gpNm like concat('%', '" + search.getGpNm() + "', '%') ";
+			jpql.append("and gp.gpNm like concat('%', '" + search.getGpNm() + "', '%') ");
 
 		if (!isEmpty(search.getGpCatLg())) {
-			jpql += "and g.gpCat.gpCatLg = '" + search.getGpCatLg() + "' ";
+			jpql.append("and gp.gpCat.gpCatLg = '" + search.getGpCatLg() + "' ");
 
 			if (!isEmpty(search.getGpCatMd())) {
-				jpql += "and g.gpCat.gpCatMd = '" + search.getGpCatMd() + "' ";
+				jpql.append("and gp.gpCat.gpCatMd = '" + search.getGpCatMd() + "' ");
 
 				if (!isEmpty(search.getGpCatSm())) {
-					jpql += "and g.gpCat.gpCatSm = '" + search.getGpCatSm() + "' ";
+					jpql.append("and gp.gpCat.gpCatSm = '" + search.getGpCatSm() + "' ");
 				}
 			}
 		}
 
 		if (search.getGpStTm() != -1)
-			jpql += "and g.gpStTm >= " + search.getGpStTm() + " ";
+			jpql.append("and gp.gpStTm >= ").append(search.getGpStTm()).append(" ");
 		if (search.getGpEndTm() != -1)
-			jpql += "and g.gpEndTm >= " + search.getGpEndTm() + " ";
+			jpql.append("and gp.gpEndTm >= ").append(search.getGpEndTm()).append(" ");
 
 		if (search.isGpPrivate())
-			jpql += "and g.gpPublic = " + false + " ";
+			jpql.append("and gp.gpPublic = ").append(false).append(" ");
 
-		TypedQuery<Group> query = em.createQuery(jpql, Group.class);
+		jpql.append("group by gp.gpNo");
 
-		return query.getResultStream().map(g -> new GroupDto(g)).collect(Collectors.toList());
+		TypedQuery<GroupDto> query = em.createQuery(jpql.toString(), GroupDto.class);
+
+		return query.getResultList();
 	}
 
 	public boolean isEmpty(String str) {

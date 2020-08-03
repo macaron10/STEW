@@ -1,6 +1,7 @@
 package com.ssafy.study.controller;
 
 import java.io.File;
+import java.io.IOException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -44,7 +45,7 @@ public class PublicGroupController {
 	@GetMapping(value = "/thumb/{year}/{month}/{date}/{file}", produces = MediaType.IMAGE_JPEG_VALUE)
 	@ApiOperation("그룹의 썸네일 출력 <img src='http://localhost:8399/api/study/thumb/{gpImg}'>")
 	public byte[] showThumbnail(@PathVariable String year, @PathVariable String month, @PathVariable String date,
-			@PathVariable String file) {
+			@PathVariable String file) throws IOException {
 		String path = File.separator + year + File.separator + month + File.separator + date + File.separator + file;
 		return fileUtil.downloadFile(fileBaseUrl, path);
 	}
@@ -96,7 +97,6 @@ public class PublicGroupController {
 	}
 
 	@GetMapping("/test")
-	public void test() {
-//		throw new NumberFormatException();
+	public void test(int no) {
 	}
 }

@@ -39,7 +39,7 @@ public class GroupController {
 	@Autowired
 	private GroupService groupService;
 	@Autowired
-	private FileUtils fileUtil;	
+	private FileUtils fileUtil;
 
 	private final String fileBaseUrl = "C:\\Users\\multicampus\\Desktop\\group_thumb";
 
@@ -47,6 +47,7 @@ public class GroupController {
 	@ApiOperation("로그인한 회원의 스터디 목록 조회")
 	public ResponseEntity findMyStudyList(@AuthenticationPrincipal UserPrincipal principal) {
 		long userId = principal.getUserId();
+		System.out.println(userId);
 		BasicResponse result = new BasicResponse();
 		result.object = groupService.findMyGroups(userId);
 		result.msg = "success";
@@ -57,7 +58,7 @@ public class GroupController {
 
 	@PostMapping("/")
 	@ApiOperation(value = "스터디 생성", produces = "multipart/form-data")
-	public ResponseEntity createStudy(RegistGroupDto group, @AuthenticationPrincipal UserPrincipal principal){
+	public ResponseEntity createStudy(RegistGroupDto group, @AuthenticationPrincipal UserPrincipal principal) {
 		Group saveGroup = group.toEntity();
 		saveGroup.setGpMgrId(principal.getUserId());
 
@@ -103,12 +104,13 @@ public class GroupController {
 
 	@PutMapping("/{no}")
 	@ApiOperation(value = "스터디 수정", produces = "multipart/form-data")
-	public ResponseEntity modifytudy(@PathVariable long no, ModifyGroupDto modifyGroup, @AuthenticationPrincipal UserPrincipal principal){
+	public ResponseEntity modifytudy(@PathVariable long no, ModifyGroupDto modifyGroup,
+			@AuthenticationPrincipal UserPrincipal principal) {
 		BasicResponse result = new BasicResponse();
 
 		long userId = principal.getUserId();
 		ckGroupAuth(userId, no);
-		
+
 		modifyGroup.setGpNo(no);
 
 		if (modifyGroup.isUpdateGpImg() && modifyGroup.getGpImg() != null) {
@@ -135,7 +137,7 @@ public class GroupController {
 		long userId = principal.getUserId();
 		BasicResponse result = new BasicResponse();
 
-		if (groupService.isGroupFull(gpNo)) 
+		if (groupService.isGroupFull(gpNo))
 			throw new GroupFullException();
 
 		if (groupService.ckGroupJoin(gpNo, userId)) {
@@ -160,7 +162,7 @@ public class GroupController {
 		ckGroupAuth(userId, gpNo);
 
 		BasicResponse result = new BasicResponse();
-		if (groupService.isGroupFull(gpNo)) 
+		if (groupService.isGroupFull(gpNo))
 			throw new GroupFullException();
 
 		groupService.acceptJoinGroup(reqNo);
@@ -207,9 +209,8 @@ public class GroupController {
 		long userId = principal.getUserId();
 		BasicResponse result = new BasicResponse();
 
-		if (!groupService.ckGroupJoin(gpNo, userId)) 
+		if (!groupService.ckGroupJoin(gpNo, userId))
 			throw new GroupNotJoinedExcpetion();
-		
 
 		if (isGroupMgr(userId, gpNo)) {
 			if (groupService.selectGroup(gpNo).getGpCurNum() <= 1) {
@@ -229,7 +230,7 @@ public class GroupController {
 		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 
-	// GROUP TAG******************************************
+	// Group Function******************************************
 
 	public void ckGroupAuth(long userId, long gpNo) {
 		if (!isGroupMgr(userId, gpNo))
@@ -241,57 +242,5 @@ public class GroupController {
 
 		return userId == mgrId ? true : false;
 	}
-
-	// EXCPETION HANDLER **********************************
-	
-	@ExceptionHandler(GroupUnAuthException.class)
-	public ResponseEntity unAuthExceptionHandler(Exception e) {
-		ErrorResponse result = new ErrorResponse();
-		result.error = "Unauthorized";
-		result.status = false;
-		result.msg = "해당 그룹에 대한 권한이 없습니다";
-
-		return new ResponseEntity<>(result, HttpStatus.FORBIDDEN);
-	}
-
-	@ExceptionHandler(GroupNotJoinedExcpetion.class)
-	public ResponseEntity groupNotJoinHandler(Exception e) {
-		ErrorResponse result = new ErrorResponse();
-		result.error = "Not Joined";
-		result.status = false;
-		result.msg = "해당 그룹에 가입한 회원이 아닙니다";
-
-		return new ResponseEntity<>(result, HttpStatus.FORBIDDEN);
-	}
-	
-	@ExceptionHandler(GroupNotExistException.class)
-	public ResponseEntity groupNotExistHandler(Exception e) {
-		ErrorResponse result = new ErrorResponse();
-		result.error = "Not Exist";
-		result.status = false;
-		result.msg = "존재하지 않는 그룹입니다";
-
-		return new ResponseEntity<>(result, HttpStatus.NOT_FOUND);
-	}
-	
-	@ExceptionHandler(GroupFullException.class)
-	public ResponseEntity groupFullHandler(Exception e) {
-		ErrorResponse result = new ErrorResponse();
-		result.status = false;
-		result.msg = "정원 초과입니다!";
-
-		return new ResponseEntity<>(result, HttpStatus.ACCEPTED);
-	}
-	
-	@ExceptionHandler(FileUploadExcpetion.class)
-	public ResponseEntity groupFileUploadHandler(Exception e) {
-		ErrorResponse result = new ErrorResponse();
-		result.status = false;
-		result.msg = "사진 첨부에 실패하셨습니다";
-
-		return new ResponseEntity<>(result, HttpStatus.ACCEPTED);
-	}
-	
-	
 
 }

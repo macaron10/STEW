@@ -24,7 +24,6 @@ import io.swagger.annotations.ApiOperation;
 public class PublicGroupController {
 	@Autowired
 	private GroupService groupService;
-	
 
 	@Autowired
 	private FileUtils fileUtil;
@@ -45,9 +44,27 @@ public class PublicGroupController {
 	@GetMapping(value = "/thumb/{year}/{month}/{date}/{file}", produces = MediaType.IMAGE_JPEG_VALUE)
 	@ApiOperation("그룹의 썸네일 출력 <img src='http://localhost:8399/api/study/thumb/{gpImg}'>")
 	public byte[] showThumbnail(@PathVariable String year, @PathVariable String month, @PathVariable String date,
-			@PathVariable String file) throws IOException {
+			@PathVariable String file) {
 		String path = File.separator + year + File.separator + month + File.separator + date + File.separator + file;
-		return fileUtil.downloadFile(fileBaseUrl, path);
+		byte[] img = null;
+		try {
+			img = fileUtil.downloadFile(fileBaseUrl, path);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	@GetMapping(value = "/thumb/{path}", produces = MediaType.IMAGE_JPEG_VALUE)
+	@ApiOperation("그룹의 썸네일 출력 <img src='http://localhost:8399/api/study/thumb/{gpImg}'>")
+	public byte[] showThumbnailSinglePath(@PathVariable String path) {
+		byte[] img = null;
+		try {
+			img = fileUtil.downloadFile(fileBaseUrl,  File.separator + path);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 	@GetMapping("/search")

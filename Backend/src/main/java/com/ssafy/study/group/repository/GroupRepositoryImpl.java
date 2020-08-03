@@ -33,7 +33,7 @@ public class GroupRepositoryImpl /* extends QuerydslRepositorySupport */ impleme
 		String jpql = "SELECT new com.ssafy.study.group.model.dto.GroupDto(gp,  group_concat(gt.gpTagNm) as gpTag) "
 				+ "FROM Group gp " + "left join GroupTagMap gm on gp.gpNo = gm.gp.gpNo "
 				+ "left join GroupTag gt on gm.gpTag.gpTagNo = gt.gpTagNo "
-				+ "and gp.gpNo in (select gj.gp.gpNo from GroupJoin gj where gj.user.userId = :userId)  "
+				+ "where gp.gpNo in (select gj.gp.gpNo from GroupJoin gj where gj.user.userId = :userId)  "
 				+ "group by gp.gpNo";
 
 		TypedQuery<GroupDto> query = em.createQuery(jpql, GroupDto.class);

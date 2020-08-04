@@ -44,33 +44,32 @@ public class PublicGroupController {
 	@GetMapping(value = "/thumb/{year}/{month}/{date}/{file}", produces = MediaType.IMAGE_JPEG_VALUE)
 	@ApiOperation("그룹의 썸네일 출력 <img src='http://localhost:8399/api/study/thumb/{gpImg}'>")
 	public byte[] showThumbnail(@PathVariable String year, @PathVariable String month, @PathVariable String date,
-			@PathVariable String file) {
+			@PathVariable String file){
 		String path = File.separator + year + File.separator + month + File.separator + date + File.separator + file;
-		byte[] img = null;
+		byte[] img = {};
 		try {
 			img = fileUtil.downloadFile(fileBaseUrl, path);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		return null;
+		return img;
 	}
 	
 	@GetMapping(value = "/thumb/{path}", produces = MediaType.IMAGE_JPEG_VALUE)
 	@ApiOperation("그룹의 썸네일 출력 <img src='http://localhost:8399/api/study/thumb/{gpImg}'>")
 	public byte[] showThumbnailSinglePath(@PathVariable String path) {
-		byte[] img = null;
+		byte[] img = {};
 		try {
 			img = fileUtil.downloadFile(fileBaseUrl,  File.separator + path);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		return null;
+		return img;
 	}
 
 	@GetMapping("/search")
 	@ApiOperation("스터디 검색")
 	public Object searchStudy(GroupSearchDto groupSearch) {
-		System.out.println(groupSearch);
 		BasicResponse result = new BasicResponse();
 
 		result.object = groupService.searchGroups(groupSearch);

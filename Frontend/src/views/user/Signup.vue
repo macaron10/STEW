@@ -3,8 +3,10 @@
         <h1> 회원가입 </h1>
 
         <v-row justify="center">
-          <v-col cols="12" sm="10" md="8" lg="6">
-            <v-form ref="form">
+           <!-- sm="10" md="8" lg="6" -->
+          <v-col cols="6">
+            <v-form ref="form" id="form">
+              <v-cols cols="1">
                 <v-text-field
                     v-model="user.email"
                     :rules="[
@@ -16,13 +18,16 @@
                     :clearable=false
                     required
                 />
-
+              </v-cols>
+              <v-row rows="2">
                   <!-- :disabled="!disableCheck" -->
                 <v-btn 
                   @click="idCheckHandler" 
                 >
                   이메일 확인
                 </v-btn>
+              </v-row>
+
 
                 <v-text-field
                     v-model="user.pwd"
@@ -93,6 +98,8 @@
   export default {
     components: {},
     data() {
+      const formData = new FormData();
+
       return {
         user: {
           email: '',
@@ -104,6 +111,7 @@
           goalHr: ''
         },
         idCheck: false,
+        formData,
       }
     },
     computed: {
@@ -113,7 +121,7 @@
     },
     methods: {
       idCheckHandler() {
-        axios.get('http://localhost:8399/api/user/check', {
+        axios.get('/user/check', {
           params: {
             email: this.user.email
           }
@@ -141,16 +149,24 @@
         }
       },
 
+      makeFormData() {
+        this.formData.append('userEmail', this.user.email);
+        this.formData.append('userPw', this.user.pwd);
+        this.formData.append('userNm', this.user.name);
+        this.formData.append('userImg', this.user.img);
+        this.formData.append('userIntro', this.user.intro);
+        this.formData.append('userGoalHr', this.user.goalHr);
+      },
+
       signupHandler() {
         // console.log(this.user);
-        axios.post('http://localhost:8399/api/user/signup', {
-          userEmail: this.user.email,
-          userPw: this.user.pwd,
-          userNm: this.user.name,
-          userImg: this.user.img,
-          userIntro: this.user.intro,
-          userGoalHr: this.user.goalHr,
-        })
+        const config = {
+          headers: {
+            'Content-Type' : 'multipart/form-data',
+          }
+        }
+
+        axios.post('user/signup', this.formData, config)
         .then(({ data }) => {
           let msg = '다시 시도해주세요';
           console.log("로그인결과임다");

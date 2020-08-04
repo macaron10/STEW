@@ -1,6 +1,6 @@
 package com.ssafy.study.controller;
 
-import java.util.Scanner;
+import java.io.IOException;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -20,7 +20,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ssafy.study.common.exception.FileUploadException;
 import com.ssafy.study.common.model.BasicResponse;
+import com.ssafy.study.common.util.FileUtils;
 import com.ssafy.study.user.model.User;
 import com.ssafy.study.user.model.UserModify;
 import com.ssafy.study.user.model.UserPrincipal;
@@ -44,13 +46,26 @@ public class UserController {
 	private RedisTemplate<String, Object> redisTemplate;
 	@Autowired
 	private UserService userService;
+	@Autowired
+	private FileUtils fileUtil;
+	
+	private final String fileBaseUrl = "C:\\Users\\multicampus\\Desktop\\group_thumb";
 	
 //	테스트용
 	@PostMapping("/signup")
-	@ApiOperation("회원가입 테스트")
+	@ApiOperation("회원가입")
 	public ResponseEntity<BasicResponse> signUp(@RequestBody UserSignUp signUpInfo){
 		
 		User user = signUpInfo.toEntity();
+		
+		if(signUpInfo.getUserImg() != null) {
+			try {
+				user.setUserImg(fileUtil.uploadFile(signUpInfo.getUserImg(), fileBaseUrl));
+			} catch (IOException e) {
+				e.printStackTrace();
+				throw new FileUploadException();
+			}
+		}
 		
 		userService.save(user);
 		

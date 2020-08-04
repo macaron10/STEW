@@ -48,7 +48,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['getGroups']),
+    ...mapActions('sg', ['getGroups']),
     // 솔팅 함수
     // sortBy (prop) {
     //   if (prop === 'popularity') {

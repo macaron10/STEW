@@ -17,7 +17,7 @@
       
     >
         <v-img
-          :src="this.$store.state.baseUrl + '/study/thumb/2020/00/00/stew.png'"
+          :src="$store.state.baseUrl + '/study/thumb/2020/00/00/stew.png'"
           alt="Vuetify"
           :aspect-ratio="200"
           :min-height="30"

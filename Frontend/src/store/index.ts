@@ -66,6 +66,7 @@ const studyGroups = {
 
 export default new Vuex.Store({
   state: {
+    baseUrl: "http://localhost:8399/api",
     drawer: false,
     isLogin: false,
     userInfo: {

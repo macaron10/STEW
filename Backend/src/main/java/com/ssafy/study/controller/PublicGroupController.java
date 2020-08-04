@@ -32,7 +32,7 @@ public class PublicGroupController {
 
 	@GetMapping("/all")
 	@ApiOperation("전체 스터디 ")
-	public Object allStudyList() {
+	public ResponseEntity allStudyList() {
 		BasicResponse result = new BasicResponse();
 		result.object = groupService.selectAllGroups();
 		result.msg = "success";
@@ -44,7 +44,7 @@ public class PublicGroupController {
 	@GetMapping(value = "/thumb/{year}/{month}/{date}/{file}", produces = MediaType.IMAGE_JPEG_VALUE)
 	@ApiOperation("그룹의 썸네일 출력 <img src='http://localhost:8399/api/study/thumb/{gpImg}'>")
 	public byte[] showThumbnail(@PathVariable String year, @PathVariable String month, @PathVariable String date,
-			@PathVariable String file){
+			@PathVariable String file) {
 		String path = File.separator + year + File.separator + month + File.separator + date + File.separator + file;
 		byte[] img = {};
 		try {
@@ -54,13 +54,13 @@ public class PublicGroupController {
 		}
 		return img;
 	}
-	
+
 	@GetMapping(value = "/thumb/{path}", produces = MediaType.IMAGE_JPEG_VALUE)
 	@ApiOperation("그룹의 썸네일 출력 <img src='http://localhost:8399/api/study/thumb/{gpImg}'>")
 	public byte[] showThumbnailSinglePath(@PathVariable String path) {
 		byte[] img = {};
 		try {
-			img = fileUtil.downloadFile(fileBaseUrl,  File.separator + path);
+			img = fileUtil.downloadFile(fileBaseUrl, File.separator + path);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -79,33 +79,44 @@ public class PublicGroupController {
 		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 
-	@GetMapping("/cate/lg")
-	@ApiOperation("카테고리 대분류 출력")
-	public Object selectBoxLg() {
+//	@GetMapping("/cate/lg")
+//	@ApiOperation("카테고리 대분류 출력")
+//	public Object selectBoxLg() {
+//		BasicResponse result = new BasicResponse();
+//		result.object = groupService.selectBoxLgGroupCategory();
+//		result.msg = "success";
+//		result.status = true;
+//
+//		return new ResponseEntity<>(result, HttpStatus.OK);
+//	}
+//
+//	@GetMapping("/cate/md")
+//	@ApiOperation("카테고리 중분류 출력")
+//	public Object selectBoxMd(String lg) {
+//		BasicResponse result = new BasicResponse();
+//		result.object = groupService.selectBoxMdGroupCategory(lg);
+//		result.msg = "success";
+//		result.status = true;
+//
+//		return new ResponseEntity<>(result, HttpStatus.OK);
+//	}
+//
+//	@GetMapping("/cate/sm")
+//	@ApiOperation("카테고리 소분류 출력")
+//	public Object selectBoxSm(String lg, String md) {
+//		BasicResponse result = new BasicResponse();
+//		result.object = groupService.selectBoxSmGroupCategory(lg, md);
+//		result.msg = "success";
+//		result.status = true;
+//
+//		return new ResponseEntity<>(result, HttpStatus.OK);
+//	}
+
+	@GetMapping("/cate")
+	@ApiOperation("전체 카테고리 출력")
+	public ResponseEntity selectBoxGroupCategory() {
 		BasicResponse result = new BasicResponse();
-		result.object = groupService.selectBoxLgGroupCategory();
-		result.msg = "success";
-		result.status = true;
-
-		return new ResponseEntity<>(result, HttpStatus.OK);
-	}
-
-	@GetMapping("/cate/md")
-	@ApiOperation("카테고리 중분류 출력")
-	public Object selectBoxMd(String lg) {
-		BasicResponse result = new BasicResponse();
-		result.object = groupService.selectBoxMdGroupCategory(lg);
-		result.msg = "success";
-		result.status = true;
-
-		return new ResponseEntity<>(result, HttpStatus.OK);
-	}
-
-	@GetMapping("/cate/sm")
-	@ApiOperation("카테고리 소분류 출력")
-	public Object selectBoxSm(String lg, String md) {
-		BasicResponse result = new BasicResponse();
-		result.object = groupService.selectBoxSmGroupCategory(lg, md);
+		result.object = groupService.selecBoxAllGroupCategory();
 		result.msg = "success";
 		result.status = true;
 

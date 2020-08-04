@@ -1,6 +1,10 @@
 package com.ssafy.study.config.security;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -14,10 +18,12 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.client.web.OAuth2LoginAuthenticationFilter;
+import org.springframework.security.oauth2.client.registration.ClientRegistration;
+import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
+import org.springframework.security.oauth2.client.registration.InMemoryClientRegistrationRepository;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import com.ssafy.study.oauth2.KakaoOauth2User;
+import com.ssafy.study.oauth2.CustomOAuth2Provider;
 import com.ssafy.study.user.service.UserPrincipalDetailsService;
 
 import lombok.RequiredArgsConstructor;
@@ -68,8 +74,7 @@ public class JwtSecurityConfig extends WebSecurityConfigurerAdapter{
 			.exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint)
 			
 			.and()
-				.oauth2Login()
-				.userInfoEndpoint().customUserType(KakaoOauth2User.class, "kakao");
+				.oauth2Login();
 	}
 
 	@Override
@@ -86,7 +91,6 @@ public class JwtSecurityConfig extends WebSecurityConfigurerAdapter{
 		return daoProvider;
 	}
 	
-	@Bean
 	PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
 	}
@@ -117,6 +121,17 @@ public class JwtSecurityConfig extends WebSecurityConfigurerAdapter{
 		return authenticationFilter;
 	}
 
+    public ClientRegistrationRepository clientRegistrationRepository(
+        @Value("${spring.security.oauth2.client.registration.kakao.client-id}") String kakaoClientId,
+        @Value("${spring.security.oauth2.client.registration.kakao.client-secret}") String kakaoClientSecret) {
+        List<ClientRegistration> registrations = new ArrayList<>();
+        registrations.add(CustomOAuth2Provider.KAKAO.getBuilder("kakao")
+                            .clientId(kakaoClientId)
+                            .clientSecret(kakaoClientSecret)
+                            .jwkSetUri("temp")
+                            .build());
+        return new InMemoryClientRegistrationRepository(registrations);
+    }
 	@Override
     public void configure(WebSecurity web) throws Exception {
 		

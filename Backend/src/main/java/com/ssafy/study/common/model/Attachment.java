@@ -40,11 +40,34 @@ public class Attachment {
 		this();
 
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-		this.title = e.getMessage();
+		this.title = e.getLocalizedMessage();
 
 		StringWriter sw = new StringWriter();
 		e.printStackTrace(new PrintWriter(sw));
 		this.text = sw.toString();
+
+		this.footer = format.format(System.currentTimeMillis());
+	}
+
+	public Attachment(Exception e, String uri) {
+		this();
+
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+		this.title = e.getClass().getSimpleName();
+
+		StringBuilder text = new StringBuilder();
+		text.append("**Error Message**").append('\n');
+		text.append(e.getMessage()).append('\n').append('\n');
+		
+		text.append("**Reqeust URL**").append('\n');
+		text.append(uri).append('\n').append('\n');
+
+		StringWriter sw = new StringWriter();
+		e.printStackTrace(new PrintWriter(sw));
+		text.append("**Stack Trace**").append("\n");
+		text.append(sw.toString());
+		
+		this.text = text.toString();
 
 		this.footer = format.format(System.currentTimeMillis());
 	}

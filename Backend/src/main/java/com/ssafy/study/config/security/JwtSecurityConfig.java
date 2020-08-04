@@ -130,8 +130,14 @@ public class JwtSecurityConfig extends WebSecurityConfigurerAdapter{
 	private String[] permittedPaths() {
 		return new String[] {
 				"/test",
+				"/study/*",
+				"/study/thumb/**",
+				"/study/cate/*",
 				"/user/signin",
 				"/user/signup",
+				"/study/*",
+				"/study/thumb/**",
+				"/study/cate/*",
 				"/user/check",
 //				리프레쉬토큰만 멀쩡하면 허용.. 하는게 맞나?
 				"/user/refresh"

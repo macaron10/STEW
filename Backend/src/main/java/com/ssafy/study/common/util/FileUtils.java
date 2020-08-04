@@ -17,28 +17,23 @@ import org.springframework.web.multipart.MultipartFile;
 @Service
 public class FileUtils {
 
-	public String uploadFile(MultipartFile file, String basePath) {
+	public String uploadFile(MultipartFile file, String basePath) throws IOException {
 		String saveName;
-		try {
-			makeDir(basePath);
 
-			String oriName = file.getOriginalFilename();
-			String ext = oriName.substring(oriName.lastIndexOf("."));
-			saveName = calDatePath(basePath);
-			saveName += File.separator + fileRandomFileName(file.getBytes()) + ext;
-			String filePath = basePath + File.separator + saveName;
+		makeDir(basePath);
 
-			file.transferTo(new File(filePath));
+		String oriName = file.getOriginalFilename();
+		String ext = oriName.substring(oriName.lastIndexOf("."));
+		saveName = calDatePath(basePath);
+		saveName += File.separator + fileRandomFileName(file.getBytes()) + ext;
+		String filePath = basePath + File.separator + saveName;
 
-		} catch (IOException e) {
-			e.printStackTrace();
-			return null;
-		}
+		file.transferTo(new File(filePath));
 
 		return saveName;
 	}
 
-	public byte[] downloadFile(String baseUrl, String path) {
+	public byte[] downloadFile(String baseUrl, String path) throws IOException {
 
 		FileInputStream fis = null;
 		byte[] images = null;
@@ -46,10 +41,6 @@ public class FileUtils {
 			fis = new FileInputStream(baseUrl + path);
 			images = IOUtils.toByteArray(fis);
 
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
 		} finally {
 			if (fis != null)
 				try {

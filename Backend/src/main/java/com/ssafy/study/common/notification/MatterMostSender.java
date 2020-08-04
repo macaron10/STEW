@@ -41,7 +41,6 @@ public class MatterMostSender {
 				headers.set("Content-type", MediaType.APPLICATION_JSON_VALUE);
 
 				HttpEntity<String> entity = new HttpEntity<>(payload, headers);
-				System.out.println(entity);
 				restTemplate.postForEntity(webhookUrl, entity, String.class);
 			} catch (Exception e) {
 				log.error("ERROR!! While send MatterMost Message : " + e.getMessage());

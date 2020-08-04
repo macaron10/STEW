@@ -1,5 +1,8 @@
 package com.ssafy.study.controller;
 
+import java.io.IOException;
+
+import org.apache.commons.fileupload.FileUploadException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +15,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ssafy.study.common.exception.FileUploadExcpetion;
 import com.ssafy.study.common.model.BasicResponse;
 import com.ssafy.study.common.model.ErrorResponse;
 import com.ssafy.study.common.util.FileUtils;
@@ -19,18 +23,14 @@ import com.ssafy.study.group.model.dto.GroupDto;
 import com.ssafy.study.group.model.dto.ModifyGroupDto;
 import com.ssafy.study.group.model.dto.RegistGroupDto;
 import com.ssafy.study.group.model.entity.Group;
+import com.ssafy.study.group.model.exception.GroupFullException;
+import com.ssafy.study.group.model.exception.GroupNotExistException;
+import com.ssafy.study.group.model.exception.GroupNotJoinedExcpetion;
 import com.ssafy.study.group.model.exception.GroupUnAuthException;
 import com.ssafy.study.group.service.GroupService;
 import com.ssafy.study.user.model.UserPrincipal;
 
 import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
-
-@ApiResponses(value = { @ApiResponse(code = 401, message = "Unauthorized", response = BasicResponse.class),
-		@ApiResponse(code = 403, message = "Forbidden", response = BasicResponse.class),
-		@ApiResponse(code = 404, message = "Not Found", response = BasicResponse.class),
-		@ApiResponse(code = 500, message = "Failure", response = BasicResponse.class) })
 
 @RestController
 @RequestMapping("/study/user")
@@ -45,8 +45,9 @@ public class GroupController {
 
 	@GetMapping("/my")
 	@ApiOperation("로그인한 회원의 스터디 목록 조회")
-	public Object findMyStudyList(@AuthenticationPrincipal UserPrincipal principal) {
+	public ResponseEntity findMyStudyList(@AuthenticationPrincipal UserPrincipal principal) {
 		long userId = principal.getUserId();
+		System.out.println(userId);
 		BasicResponse result = new BasicResponse();
 		result.object = groupService.findMyGroups(userId);
 		result.msg = "success";
@@ -57,12 +58,17 @@ public class GroupController {
 
 	@PostMapping("/")
 	@ApiOperation(value = "스터디 생성", produces = "multipart/form-data")
-	public Object createStudy(RegistGroupDto group, @AuthenticationPrincipal UserPrincipal principal) {
+	public ResponseEntity createStudy(RegistGroupDto group, @AuthenticationPrincipal UserPrincipal principal) {
 		Group saveGroup = group.toEntity();
 		saveGroup.setGpMgrId(principal.getUserId());
 
 		if (group.getGpImg() != null) {
-			saveGroup.setGpImg(fileUtil.uploadFile(group.getGpImg(), fileBaseUrl));
+			try {
+				saveGroup.setGpImg(fileUtil.uploadFile(group.getGpImg(), fileBaseUrl));
+			} catch (IOException e) {
+				e.printStackTrace();
+				throw new FileUploadExcpetion();
+			}
 		}
 
 		GroupDto responseGroup = groupService.saveGroup(saveGroup);
@@ -79,14 +85,13 @@ public class GroupController {
 
 	@GetMapping("/{no}")
 	@ApiOperation("스터디 상세 조회")
-	public Object selectStudyNo(@PathVariable long no, @AuthenticationPrincipal UserPrincipal principal) {
+	public ResponseEntity selectStudyNo(@PathVariable long no, @AuthenticationPrincipal UserPrincipal principal) {
 		BasicResponse result = new BasicResponse();
-		if (!groupService.ckGroupJoin(no, principal.getUserId())) {
-			result.status = false;
-			result.msg = "not join";
+		if (!groupService.ckGroupExist(no))
+			throw new GroupNotExistException();
 
-			return new ResponseEntity<>(result, HttpStatus.UNAUTHORIZED);
-		}
+		if (!groupService.ckGroupJoin(no, principal.getUserId()))
+			throw new GroupNotJoinedExcpetion();
 
 		GroupDto group = groupService.selectGroup(no);
 
@@ -97,16 +102,24 @@ public class GroupController {
 		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 
-	@PutMapping("/")
+	@PutMapping("/{no}")
 	@ApiOperation(value = "스터디 수정", produces = "multipart/form-data")
-	public Object modifytudy(ModifyGroupDto modifyGroup, @AuthenticationPrincipal UserPrincipal principal) {
+	public ResponseEntity modifytudy(@PathVariable long no, ModifyGroupDto modifyGroup,
+			@AuthenticationPrincipal UserPrincipal principal) {
 		BasicResponse result = new BasicResponse();
 
 		long userId = principal.getUserId();
-		ckGroupAuth(userId, modifyGroup.getGpNo());
+		ckGroupAuth(userId, no);
+
+		modifyGroup.setGpNo(no);
 
 		if (modifyGroup.isUpdateGpImg() && modifyGroup.getGpImg() != null) {
-			modifyGroup.setGpImgPath(fileUtil.uploadFile(modifyGroup.getGpImg(), fileBaseUrl));
+			try {
+				modifyGroup.setGpImgPath(fileUtil.uploadFile(modifyGroup.getGpImg(), fileBaseUrl));
+			} catch (IOException e) {
+				e.printStackTrace();
+				throw new FileUploadExcpetion();
+			}
 		}
 
 		GroupDto group = groupService.updateGroup(modifyGroup);
@@ -120,15 +133,12 @@ public class GroupController {
 
 	@PostMapping("/req")
 	@ApiOperation("스터디에 가입요청")
-	public Object reqJoinGroup(int gpNo, @AuthenticationPrincipal UserPrincipal principal) {
+	public ResponseEntity reqJoinGroup(int gpNo, @AuthenticationPrincipal UserPrincipal principal) {
 		long userId = principal.getUserId();
 		BasicResponse result = new BasicResponse();
 
-		if (groupService.isGroupFull(gpNo)) {
-			result.msg = "group is full";
-			result.status = false;
-			return new ResponseEntity<>(result, HttpStatus.OK);
-		}
+		if (groupService.isGroupFull(gpNo))
+			throw new GroupFullException();
 
 		if (groupService.ckGroupJoin(gpNo, userId)) {
 			result.msg = "duplicate";
@@ -146,17 +156,14 @@ public class GroupController {
 
 	@PostMapping("/accept")
 	@ApiOperation("스터디 가입 승인")
-	public Object acceptJoinGroup(long reqNo, long gpNo, @AuthenticationPrincipal UserPrincipal principal) {
+	public ResponseEntity acceptJoinGroup(long reqNo, long gpNo, @AuthenticationPrincipal UserPrincipal principal) {
 		long userId = principal.getUserId();
 
 		ckGroupAuth(userId, gpNo);
 
 		BasicResponse result = new BasicResponse();
-		if (groupService.isGroupFull(gpNo)) {
-			result.msg = "group is full";
-			result.status = false;
-			return new ResponseEntity<>(result, HttpStatus.OK);
-		}
+		if (groupService.isGroupFull(gpNo))
+			throw new GroupFullException();
 
 		groupService.acceptJoinGroup(reqNo);
 
@@ -168,7 +175,7 @@ public class GroupController {
 
 	@PostMapping("/reject")
 	@ApiOperation("스터디 가입 거절")
-	public Object rejectJoinGroup(long reqNo, long gpNo, @AuthenticationPrincipal UserPrincipal principal) {
+	public ResponseEntity rejectJoinGroup(long reqNo, long gpNo, @AuthenticationPrincipal UserPrincipal principal) {
 		long userId = principal.getUserId();
 
 		ckGroupAuth(userId, gpNo);
@@ -183,7 +190,7 @@ public class GroupController {
 
 	@PostMapping("/remove")
 	@ApiOperation("스터디 퇴출")
-	public Object removeGroupMember(long joinNo, long gpNo, @AuthenticationPrincipal UserPrincipal principal) {
+	public ResponseEntity removeGroupMember(long joinNo, long gpNo, @AuthenticationPrincipal UserPrincipal principal) {
 		long userId = principal.getUserId();
 
 		ckGroupAuth(userId, gpNo);
@@ -198,13 +205,12 @@ public class GroupController {
 
 	@PostMapping("/exit")
 	@ApiOperation("그룹 나가기")
-	public Object exitGroup(long gpNo, @AuthenticationPrincipal UserPrincipal principal) {
+	public ResponseEntity exitGroup(long gpNo, @AuthenticationPrincipal UserPrincipal principal) {
 		long userId = principal.getUserId();
 		BasicResponse result = new BasicResponse();
 
-		if (!groupService.ckGroupJoin(gpNo, userId)) {
-			return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
-		}
+		if (!groupService.ckGroupJoin(gpNo, userId))
+			throw new GroupNotJoinedExcpetion();
 
 		if (isGroupMgr(userId, gpNo)) {
 			if (groupService.selectGroup(gpNo).getGpCurNum() <= 1) {
@@ -224,7 +230,7 @@ public class GroupController {
 		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 
-	// GROUP TAG******************************************
+	// Group Function******************************************
 
 	public void ckGroupAuth(long userId, long gpNo) {
 		if (!isGroupMgr(userId, gpNo))
@@ -235,17 +241,6 @@ public class GroupController {
 		long mgrId = groupService.selectGroup(gpNo).getGpMgrId();
 
 		return userId == mgrId ? true : false;
-	}
-
-	// EXCPETION **********************************
-	@ExceptionHandler(GroupUnAuthException.class)
-	public Object unAuthExceptionHandler(Exception e) {
-		ErrorResponse result = new ErrorResponse();
-		result.error = "Unauthorized about group";
-		result.status = 403;
-		result.msg = "해당 그룹에 대한 권한이 없습니다";
-
-		return new ResponseEntity<>(result, HttpStatus.FORBIDDEN);
 	}
 
 }

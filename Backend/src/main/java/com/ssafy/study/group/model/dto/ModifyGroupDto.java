@@ -16,8 +16,6 @@ import lombok.NoArgsConstructor;
 @Valid
 @NoArgsConstructor
 public class ModifyGroupDto {
-	@ApiModelProperty(required = true)
-	@NotNull
 	private long gpNo; // 스터디 아이디
 
 	@ApiModelProperty(required = true)

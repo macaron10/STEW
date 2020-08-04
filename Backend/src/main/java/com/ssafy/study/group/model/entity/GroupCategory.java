@@ -19,9 +19,7 @@ public class GroupCategory {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int gpCatNo;// 타입 아이디
 
-	private String gpCatLg;// 대분류
-	private String gpCatMd;// 중분류
-	private String gpCatSm;// 소분류
+	private String gpCatNm; //카테고리
 
 	public GroupCategory(int gpCatNo) {
 		this.gpCatNo = gpCatNo;

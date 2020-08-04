@@ -17,7 +17,7 @@
       
     >
         <v-img
-          :src="$store.state.baseUrl + '/study/thumb/2020/00/00/stew.png'"
+          :src="this.$store.state.baseUrl + '/study/thumb/2020/00/00/stew.png'"
           alt="Vuetify"
           :aspect-ratio="200"
           :min-height="30"
@@ -98,10 +98,10 @@
       </v-card>
     </v-dialog>
 
-    <v-btn icon v-if="!isLogin" :to="{ name: 'Signup' }">
+    <v-btn icon v-if="!isLogin" :to="{ name: 'Signup' }" color="blue lighten-2">
       <v-icon>mdi-account-plus</v-icon>
     </v-btn>
-    <v-btn icon v-if="isLogin" @click="logout">
+    <v-btn icon v-if="isLogin" @click="logout" color="#000" >
       로그아웃
     </v-btn>
     <!-- 개인 메뉴 -->

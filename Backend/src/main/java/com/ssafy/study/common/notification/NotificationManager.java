@@ -15,11 +15,10 @@ public class NotificationManager {
 		this.mmSender = mmSender;
 	}
 
-	public void sendNotification(Exception e) {
+	public void sendNotification(Exception e, String uri) {
 		log.info("#### send Notification.");
-		Attachment attach = new Attachment(e);
+		Attachment attach = new Attachment(e, uri);
 		mmSender.sendMessage(attach);
-		System.out.println(attach);
 	}
 
 }

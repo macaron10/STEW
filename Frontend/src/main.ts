@@ -23,7 +23,7 @@ axios.interceptors.request.use(config => {
 
 axios.interceptors.response.use(
   function (res) {
-    // console.log("res 응답");
+    // console.log("res 응답");
     // console.log(res);
     return res;
   },

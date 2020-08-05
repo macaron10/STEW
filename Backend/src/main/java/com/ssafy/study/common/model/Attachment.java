@@ -3,6 +3,7 @@ package com.ssafy.study.common.model;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.text.SimpleDateFormat;
+import java.util.Map;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -58,7 +59,7 @@ public class Attachment {
 		StringBuilder text = new StringBuilder();
 		text.append("**Error Message**").append('\n');
 		text.append(e.getMessage()).append('\n').append('\n');
-		
+
 		text.append("**Reqeust URL**").append('\n');
 		text.append(uri).append('\n').append('\n');
 
@@ -66,7 +67,33 @@ public class Attachment {
 		e.printStackTrace(new PrintWriter(sw));
 		text.append("**Stack Trace**").append("\n");
 		text.append(sw.toString());
-		
+
+		this.text = text.toString();
+
+		this.footer = format.format(System.currentTimeMillis());
+	}
+
+	public Attachment(Exception e, String uri, Map params) {
+		this();
+
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+		this.title = e.getClass().getSimpleName();
+
+		StringBuilder text = new StringBuilder();
+		text.append("**Error Message**").append('\n');
+		text.append(e.getMessage()).append('\n').append('\n');
+
+		text.append("**Parameters**").append('\n');
+		text.append(params.toString()).append('\n').append('\n');
+
+		text.append("**Reqeust URL**").append('\n');
+		text.append(uri).append('\n').append('\n');
+
+		StringWriter sw = new StringWriter();
+		e.printStackTrace(new PrintWriter(sw));
+		text.append("**Stack Trace**").append("\n");
+		text.append(sw.toString());
+
 		this.text = text.toString();
 
 		this.footer = format.format(System.currentTimeMillis());

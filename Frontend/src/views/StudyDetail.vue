@@ -16,6 +16,13 @@
             >
               수정
             </v-btn>
+            <v-btn
+              color="red accent-1"
+              class="white--text font-weight-bold"
+              @click="quitGroup(group.gpNo)"
+            >
+              탈퇴
+            </v-btn>
           </div>
         </v-col>
         <v-col class="mb-6">
@@ -107,6 +114,16 @@ export default {
         console.error(err)
       }
     },
+    async quitGroup(gpNo) {
+      const apiUrl = '/study/user/exit?no=' + gpNo
+      try {
+        const res = await axios.post(apiUrl)
+        this.$router.push('/main/')
+        console.log(res)
+      } catch (err) {
+        console.error(err)
+      }
+    }
 
   }
 };

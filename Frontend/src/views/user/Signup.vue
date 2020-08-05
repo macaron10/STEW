@@ -68,7 +68,10 @@
                     v-model="user.img"
                     accept="image/*" 
                     label="프로필 이미지"
-                    prepend-icon="mdi-camera"
+                    prepend-icon="mdi-camera" show-size
+                    :rules="[
+                      () => !!user.img.size <= 1000000 || '10MB 이하의 파일만 등록 가능합니다.',
+                    ]"
                 ></v-file-input>
 
                 <v-textarea
@@ -107,7 +110,7 @@
           pwd: '',
           pwdCheck: '',
           name: '',
-          img: [],
+          img: File,
           intro: '',
           goalHr: ''
         },
@@ -124,7 +127,7 @@
       idCheckHandler() {
         axios.get('/user/check', {
           params: {
-            email: this.user.email
+            userEmail: this.user.email
           }
         })
         .then(({ data }) => {
@@ -156,7 +159,9 @@
         this.formData.append('userEmail', this.user.email);
         this.formData.append('userPw', this.user.pwd);
         this.formData.append('userNm', this.user.name);
-        this.formData.append('userImg', this.user.img);
+        if (this.user.img instanceof File) {
+          this.formData.append('userImg', this.user.img);
+        }
         this.formData.append('userIntro', this.user.intro);
         this.formData.append('userGoalHr', Number(this.user.goalHr));
       },
@@ -181,7 +186,7 @@
             this.formData = new FormData();
           }
           alert(msg);
-        })
+        })s
       },
 
       moveMain() {

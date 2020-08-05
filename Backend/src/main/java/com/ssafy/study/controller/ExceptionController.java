@@ -8,7 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-import com.ssafy.study.common.exception.FileUploadExcpetion;
+import com.ssafy.study.common.exception.FileUploadException;
 import com.ssafy.study.common.model.ErrorResponse;
 import com.ssafy.study.common.notification.NotificationManager;
 import com.ssafy.study.group.model.exception.GroupFullException;
@@ -60,7 +60,7 @@ public class ExceptionController {
 		return new ResponseEntity<>(result, HttpStatus.ACCEPTED);
 	}
 
-	@ExceptionHandler(FileUploadExcpetion.class)
+	@ExceptionHandler(FileUploadException.class)
 	public ResponseEntity groupFileUploadHandler(Exception e) {
 		ErrorResponse result = new ErrorResponse();
 		result.status = false;

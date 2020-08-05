@@ -177,6 +177,8 @@
           if (data.msg === 'success') {
             msg = '회원가입 성공';
             this.moveMain();
+          } else {
+            this.formData = new FormData();
           }
           alert(msg);
         })

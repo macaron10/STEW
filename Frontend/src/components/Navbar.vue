@@ -70,7 +70,8 @@
             solo
           ></v-text-field>
           <v-btn 
-            large color="primary" block=true 
+            large color="primary" 
+            :block=true 
             @click="signIn({'userEmail': user.userEmail, 'userPw':user.userPw}), siginInDialog = false"
           >로그인</v-btn>
         </v-col>
@@ -176,6 +177,7 @@
               <v-list-item
                 v-for="(item, i) in items"
                 :key="i"
+                @click="goToPage(item.text)"
               >
                 <v-list-item-icon>
                   <v-icon v-text="item.icon"></v-icon>
@@ -197,6 +199,7 @@
 <script>
 import axios from 'axios';
 import { mapState, mapActions, mapMutations} from 'vuex';
+import router from '../router';
 
 export default {
     name: 'Navbar',
@@ -232,7 +235,15 @@ export default {
         console.log(res)
         } catch (err) {
           console.error(err)
-        }
+      }
+      },
+      goToPage(nextPage) {
+        switch(nextPage) {
+          case "My Schedule":
+            this.$router.push('MySchedule')
+            break
+        }  
+        
       }
     },
     data () {
@@ -249,8 +260,8 @@ export default {
             text: 'Inbox',
           },
           {
-            icon: 'mdi-star',
-            text: 'Star',
+            icon: 'mdi-calendar',
+            text: 'My Schedule',
           },
           {
             icon: 'mdi-send',

@@ -21,12 +21,15 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.config.oauth2.client.CommonOAuth2Provider;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.oauth2.client.registration.InMemoryClientRegistrationRepository;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.ssafy.study.config.oauth2.CustomOAuth2Provider;
+import com.ssafy.study.config.oauth2.KakaoOAuth2AuthenticationSuccessHandler;
+import com.ssafy.study.config.oauth2.KakaoOAuth2AuthorizedClientService;
 import com.ssafy.study.user.service.CustomOAuth2UserService;
 import com.ssafy.study.user.service.UserPrincipalDetailsService;
 
@@ -79,6 +82,7 @@ public class JwtSecurityConfig extends WebSecurityConfigurerAdapter{
 			
 			.and()
 				.oauth2Login()
+				.successHandler(new KakaoOAuth2AuthenticationSuccessHandler())
 				.userInfoEndpoint().userService(new CustomOAuth2UserService()); // for naver user info 
 	}
 
@@ -126,6 +130,12 @@ public class JwtSecurityConfig extends WebSecurityConfigurerAdapter{
 		return authenticationFilter;
 	}
 
+//	------ oauth2 authentication
+	
+	@Bean
+	public OAuth2AuthorizedClientService authorizedClientService() {
+		return new KakaoOAuth2AuthorizedClientService();
+	}
 	
 	@Bean
     public ClientRegistrationRepository clientRegistrationRepository(

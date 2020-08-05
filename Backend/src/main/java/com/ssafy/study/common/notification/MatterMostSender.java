@@ -25,7 +25,7 @@ public class MatterMostSender {
 	private Logger log = LoggerFactory.getLogger(MatterMostSender.class);
 
 	private boolean mmEnabled = true;
-	private String webhookUrl = "https://meeting.ssafy.com/hooks/7mpjmu3ubi87pfo8eo6kuxkniy";
+	private String webhookUrl = "https://meeting.ssafy.com/hooks/ou9oee6tq3ytuyzwnid1gmzkar";
 
 	public void sendMessage(Attachment attach) {
 		if (mmEnabled) {

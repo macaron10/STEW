@@ -71,8 +71,8 @@ public class GroupRepositoryImpl /* extends QuerydslRepositorySupport */ impleme
 //				}
 //			}
 //		}
-		if (search.getGpTagArr() != null) {
-			Arrays.stream(search.getGpTagArr()).forEach(t -> {
+		if (search.getGpTag() != null && search.getGpTag().size() != 0) {
+			search.getGpTag().stream().forEach(t -> {
 				jpql.append(" and gp.gpTag like concat('%', '").append(t).append("', '%') ");
 			});
 		}

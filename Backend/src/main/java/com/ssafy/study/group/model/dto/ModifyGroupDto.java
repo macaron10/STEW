@@ -1,5 +1,7 @@
 package com.ssafy.study.group.model.dto;
 
+import java.util.List;
+
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
@@ -23,7 +25,6 @@ public class ModifyGroupDto {
 	private int gpCatNo;// 타입 아이디
 	private String gpNm;// 스터디 이름
 	private String gpIntro;// 소개
-	private String gpTag;// 태그
 	private int gpStTm;// 선호 시작시간
 	private int gpEndTm;// 선호 종료시간
 
@@ -38,9 +39,11 @@ public class ModifyGroupDto {
 	@ApiModelProperty(required = true)
 	@NotNull
 	private boolean updateGpImg;
+	
+	private List<String> gpTag;
 
 	public Group toEntity() {
 		return Group.builder().gpNo(gpNo).gpNm(gpNm).gpIntro(gpIntro).gpStTm(gpStTm).gpImg(gpImgPath).gpEndTm(gpEndTm)
-				.gpPublic(gpPublic).build();
+				.gpPublic(gpPublic).gpTag(String.join(",", gpTag)).build();
 	}
 }

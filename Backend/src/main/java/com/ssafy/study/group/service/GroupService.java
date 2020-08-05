@@ -56,4 +56,8 @@ public interface GroupService {
 
 	GroupReqDto selectGroupReqByReqnNo(long gpReqNo);
 
+	List<GroupReqDto> selectGroupReq(long userId);
+
+	List<GroupReqDto> selectGroupReqByGpNo(long gpNo);
+
 }

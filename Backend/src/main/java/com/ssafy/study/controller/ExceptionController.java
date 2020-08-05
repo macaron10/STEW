@@ -1,5 +1,10 @@
 package com.ssafy.study.controller;
 
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import com.ssafy.study.common.exception.FileUploadException;
 import com.ssafy.study.common.model.ErrorResponse;
@@ -70,8 +76,19 @@ public class ExceptionController {
 	}
 
 	@ExceptionHandler(Exception.class)
-	public void exceptionTest(Exception e, HttpServletRequest req) {
+	public ResponseEntity exceptionTest(Exception e, HttpServletRequest req) {
+		Map<String, Object> params = new HashMap<>();
+		Enumeration<String> keys = req.getParameterNames();
+		while (keys.hasMoreElements()) {
+			String key = keys.nextElement();
+			params.put(key, req.getParameter(key));
+		}
+		ErrorResponse result = new ErrorResponse();
 		e.printStackTrace();
-		notificationManager.sendNotification(e, req.getRequestURI());
+		notificationManager.sendNotification(e, req.getRequestURI(), params);
+
+		result.status = false;
+		result.msg = "잘못된 요청입니다!";
+		return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
 	}
 }

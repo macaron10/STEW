@@ -154,8 +154,9 @@ export default {
   },
   mounted () {
     this.getGroups()
-    if (this.$store.is)
-    this.getMyGroups()
+    if (this.$store.state.isLogin) {
+      this.getMyGroups()
+    }
   }
 
 }

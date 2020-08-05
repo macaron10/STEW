@@ -141,11 +141,10 @@ export default {
     //     })
     // },
     async signUpGroup(gpNo) {
-      const apiUrl = '/study/user/req'
+      const apiUrl = '/study/user/req?no='+gpNo
       this.gpNoData.gpNo = gpNo
-      console.log(typeof this.gpNoData.gpNo)
       try {
-        const res = await axios.post(apiUrl, this.gpNoData)
+        const res = await axios.post(apiUrl)
         console.log(res)
         this.dialog = false
         this.snackbar = true

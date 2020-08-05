@@ -4,6 +4,8 @@ import java.util.List;
 
 import com.ssafy.study.group.model.dto.GroupCategoryDto;
 import com.ssafy.study.group.model.dto.GroupDto;
+import com.ssafy.study.group.model.dto.GroupJoinDto;
+import com.ssafy.study.group.model.dto.GroupReqDto;
 import com.ssafy.study.group.model.dto.GroupSearchDto;
 import com.ssafy.study.group.model.dto.ModifyGroupDto;
 import com.ssafy.study.group.model.entity.Group;
@@ -27,7 +29,7 @@ public interface GroupService {
 //	List<GroupCategoryDto> selectBoxMdGroupCategory(String lg);
 //
 //	List<GroupCategoryDto> selectBoxSmGroupCategory(String lg, String md);
-	
+
 	List<GroupCategoryDto> selecBoxAllGroupCategory();
 
 	void requestJoinGroup(long userId, long gpNo);
@@ -49,5 +51,9 @@ public interface GroupService {
 	GroupDto updateGroup(ModifyGroupDto modifyGroup);
 
 	boolean ckGroupExist(long no);
+
+	GroupJoinDto selectGroupJoinByJoinNo(long gpJoinNo);
+
+	GroupReqDto selectGroupReqByReqnNo(long gpReqNo);
 
 }

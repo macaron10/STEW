@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 
 import com.ssafy.study.group.model.dto.GroupCategoryDto;
 import com.ssafy.study.group.model.dto.GroupDto;
+import com.ssafy.study.group.model.dto.GroupJoinDto;
+import com.ssafy.study.group.model.dto.GroupReqDto;
 import com.ssafy.study.group.model.dto.GroupSearchDto;
 import com.ssafy.study.group.model.dto.ModifyGroupDto;
 import com.ssafy.study.group.model.entity.Group;
@@ -147,6 +149,16 @@ public class GroupServiceImpl implements GroupService {
 	@Override
 	public boolean ckGroupExist(long no) {
 		return gpRepo.existsById(no);
+	}
+
+	@Override
+	public GroupJoinDto selectGroupJoinByJoinNo(long gpJoinNo) {
+		return new GroupJoinDto(joinRepo.findByGpJoinNo(gpJoinNo));
+	}
+
+	@Override
+	public GroupReqDto selectGroupReqByReqnNo(long gpReqNo) {
+		return new GroupReqDto(reqRepo.findByGpReqNo(gpReqNo));
 	}
 
 }

@@ -1,5 +1,6 @@
 package com.ssafy.study.group.model.dto;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -21,16 +22,23 @@ public class GroupSearchDto {
 	@NotNull
 	private boolean gpPrivate;
 
-	private String gpCatLg;
-	private String gpCatMd;
-	private String gpCatSm;
+	private int gpCatNo;
 
-	private List<String> gpTagList;
+	private String gpTag;
+
+	private String[] gpTagArr;
 
 	public GroupSearchDto() {
+		gpCatNo = 0;
 		gpStTm = -1;
 		gpEndTm = -1;
 		gpPrivate = false;
+
+		gpTagArr = null;
+	}
+
+	public void setGpTag(String tag) {
+		gpTagArr = gpTag.split(",");
 	}
 
 }

@@ -70,8 +70,10 @@
                     label="프로필 이미지"
                     prepend-icon="mdi-camera" show-size
                     :rules="[
-                      () => !!user.img.size <= 1000000 || '10MB 이하의 파일만 등록 가능합니다.',
+                        () => user.img.size <= 10000000 || '10MB 이하의 파일만 등록 가능합니다.',
+                        () => correctExt || '지원하지 않는 확장자입니다.'
                     ]"
+                    @change="confirmExt"
                 ></v-file-input>
 
                 <v-textarea
@@ -110,11 +112,12 @@
           pwd: '',
           pwdCheck: '',
           name: '',
-          img: File,
+          img: [],
           intro: '',
           goalHr: ''
         },
         idCheck: false,
+        correctExt: false,
         formData,
       }
     },
@@ -124,6 +127,17 @@
       }
     },
     methods: {
+      confirmExt() {
+        this.correctExt = false;
+        const ext = this.user.img.name.substring(this.user.img.name.lastIndexOf(".")+1, this.user.img.name.length).toLowerCase();
+        const imgExts = "xbm,tif,pjp,pjpeg,svgz,jpg,jpeg,ico,tiff,gif,svg,bmp,png,gfif,webp";
+        const eachExts = imgExts.split(",");
+
+        for (let i = 0; i < eachExts.length; i++) {
+          if (ext == eachExts[i]) this.correctExt = true;
+        }
+      },
+
       idCheckHandler() {
         axios.get('/user/check', {
           params: {
@@ -186,7 +200,7 @@
             this.formData = new FormData();
           }
           alert(msg);
-        })s
+        })
       },
 
       moveMain() {

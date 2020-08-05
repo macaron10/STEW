@@ -8,10 +8,10 @@ import org.springframework.stereotype.Service;
 
 import com.ssafy.study.group.model.dto.GroupCategoryDto;
 import com.ssafy.study.group.model.dto.GroupDto;
+import com.ssafy.study.group.model.dto.GroupJoinDto;
+import com.ssafy.study.group.model.dto.GroupReqDto;
 import com.ssafy.study.group.model.dto.GroupSearchDto;
-import com.ssafy.study.group.model.dto.GroupTagDto;
 import com.ssafy.study.group.model.dto.ModifyGroupDto;
-import com.ssafy.study.group.model.dto.RegistGroupTagDto;
 import com.ssafy.study.group.model.entity.Group;
 import com.ssafy.study.group.model.entity.GroupJoin;
 import com.ssafy.study.group.model.entity.GroupReq;
@@ -19,7 +19,6 @@ import com.ssafy.study.group.repository.GroupCategoryRepository;
 import com.ssafy.study.group.repository.GroupJoinRepository;
 import com.ssafy.study.group.repository.GroupRepository;
 import com.ssafy.study.group.repository.GroupReqRepository;
-import com.ssafy.study.group.repository.GroupTagRepository;
 
 @Service
 public class GroupServiceImpl implements GroupService {
@@ -31,8 +30,6 @@ public class GroupServiceImpl implements GroupService {
 	private GroupJoinRepository joinRepo;
 	@Autowired
 	private GroupReqRepository reqRepo;
-	@Autowired
-	private GroupTagRepository tagRepo;
 
 	@Override
 	public GroupDto saveGroup(Group group) {
@@ -66,22 +63,27 @@ public class GroupServiceImpl implements GroupService {
 		return gpRepo.searchGroup(groupSearch);
 	}
 
-	@Override
-	public List<GroupCategoryDto> selectBoxLgGroupCategory() {
-		return cateRepo.selectBoxLgGroupCategory().stream().map(cat -> new GroupCategoryDto(cat))
-				.collect(Collectors.toList());
-	}
+//	@Override
+//	public List<GroupCategoryDto> selectBoxLgGroupCategory() {
+//		return cateRepo.selectBoxLgGroupCategory().stream().map(cat -> new GroupCategoryDto(cat))
+//				.collect(Collectors.toList());
+//	}
+//
+//	@Override
+//	public List<GroupCategoryDto> selectBoxMdGroupCategory(String lg) {
+//		return cateRepo.selectBoxMdGroupCategory(lg).stream().map(cat -> new GroupCategoryDto(cat))
+//				.collect(Collectors.toList());
+//	}
+//
+//	@Override
+//	public List<GroupCategoryDto> selectBoxSmGroupCategory(String lg, String md) {
+//		return cateRepo.selectBoxSmGroupCategory(lg, md).stream().map(cat -> new GroupCategoryDto(cat))
+//				.collect(Collectors.toList());
+//	}
 
 	@Override
-	public List<GroupCategoryDto> selectBoxMdGroupCategory(String lg) {
-		return cateRepo.selectBoxMdGroupCategory(lg).stream().map(cat -> new GroupCategoryDto(cat))
-				.collect(Collectors.toList());
-	}
-
-	@Override
-	public List<GroupCategoryDto> selectBoxSmGroupCategory(String lg, String md) {
-		return cateRepo.selectBoxSmGroupCategory(lg, md).stream().map(cat -> new GroupCategoryDto(cat))
-				.collect(Collectors.toList());
+	public List<GroupCategoryDto> selecBoxAllGroupCategory() {
+		return cateRepo.findAll().stream().map(cat -> new GroupCategoryDto(cat)).collect(Collectors.toList());
 	}
 
 	@Override
@@ -145,28 +147,18 @@ public class GroupServiceImpl implements GroupService {
 	}
 
 	@Override
-	public long addGroupTag(RegistGroupTagDto tag) {
-		return tagRepo.save(tag.toEntity()).getGpTagNo();
-	}
-
-	@Override
-	public boolean checkGroupTagExist(String tagNm) {
-		return tagRepo.checkGroupTagExist(tagNm);
-	}
-
-	@Override
-	public List<GroupTagDto> selectAllGroupTags() {
-		return tagRepo.findAll().stream().map(t -> new GroupTagDto(t)).collect(Collectors.toList());
-	}
-
-	@Override
-	public List<GroupTagDto> selectGroupTagList(long gpNo) {
-		return tagRepo.selectGroupTagList(gpNo).stream().map(t -> new GroupTagDto(t)).collect(Collectors.toList());
-	}
-
-	@Override
 	public boolean ckGroupExist(long no) {
 		return gpRepo.existsById(no);
+	}
+
+	@Override
+	public GroupJoinDto selectGroupJoinByJoinNo(long gpJoinNo) {
+		return new GroupJoinDto(joinRepo.findByGpJoinNo(gpJoinNo));
+	}
+
+	@Override
+	public GroupReqDto selectGroupReqByReqnNo(long gpReqNo) {
+		return new GroupReqDto(reqRepo.findByGpReqNo(gpReqNo));
 	}
 
 }

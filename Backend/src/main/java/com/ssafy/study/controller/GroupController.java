@@ -2,25 +2,25 @@ package com.ssafy.study.controller;
 
 import java.io.IOException;
 
-import org.apache.commons.fileupload.FileUploadException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ssafy.study.common.exception.FileUploadExcpetion;
+import com.ssafy.study.common.exception.FileUploadException;
 import com.ssafy.study.common.model.BasicResponse;
-import com.ssafy.study.common.model.ErrorResponse;
 import com.ssafy.study.common.util.FileUtils;
 import com.ssafy.study.group.model.dto.GroupDto;
+import com.ssafy.study.group.model.dto.GroupJoinDto;
+import com.ssafy.study.group.model.dto.GroupReqDto;
 import com.ssafy.study.group.model.dto.ModifyGroupDto;
 import com.ssafy.study.group.model.dto.RegistGroupDto;
 import com.ssafy.study.group.model.entity.Group;
@@ -32,6 +32,7 @@ import com.ssafy.study.group.service.GroupService;
 import com.ssafy.study.user.model.UserPrincipal;
 
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 
 @RestController
 @RequestMapping("/study/user")
@@ -68,7 +69,7 @@ public class GroupController {
 				saveGroup.setGpImg(fileUtil.uploadFile(group.getGpImg(), fileBaseUrl));
 			} catch (IOException e) {
 				e.printStackTrace();
-				throw new FileUploadExcpetion();
+				throw new FileUploadException();
 			}
 		}
 
@@ -119,7 +120,7 @@ public class GroupController {
 				modifyGroup.setGpImgPath(fileUtil.uploadFile(modifyGroup.getGpImg(), fileBaseUrl));
 			} catch (IOException e) {
 				e.printStackTrace();
-				throw new FileUploadExcpetion();
+				throw new FileUploadException();
 			}
 		}
 
@@ -134,7 +135,8 @@ public class GroupController {
 
 	@PostMapping("/req")
 	@ApiOperation("스터디에 가입요청")
-	public ResponseEntity reqJoinGroup(int gpNo, @AuthenticationPrincipal UserPrincipal principal) {
+	public ResponseEntity reqJoinGroup(@RequestParam("no") @ApiParam(value = "gpNo", required = true) int gpNo,
+			@AuthenticationPrincipal UserPrincipal principal) {
 		long userId = principal.getUserId();
 		BasicResponse result = new BasicResponse();
 
@@ -157,13 +159,15 @@ public class GroupController {
 
 	@PostMapping("/accept")
 	@ApiOperation("스터디 가입 승인")
-	public ResponseEntity acceptJoinGroup(long reqNo, long gpNo, @AuthenticationPrincipal UserPrincipal principal) {
+	public ResponseEntity acceptJoinGroup(@RequestParam("no") @ApiParam(value = "reqNo", required = true) long reqNo,
+			@AuthenticationPrincipal UserPrincipal principal) {
 		long userId = principal.getUserId();
 
-		ckGroupAuth(userId, gpNo);
+		GroupReqDto req = groupService.selectGroupReqByReqnNo(reqNo);
+		ckGroupAuth(userId, req.getGpGpNo());
 
 		BasicResponse result = new BasicResponse();
-		if (groupService.isGroupFull(gpNo))
+		if (groupService.isGroupFull(req.getGpGpNo()))
 			throw new GroupFullException();
 
 		groupService.acceptJoinGroup(reqNo);
@@ -176,10 +180,12 @@ public class GroupController {
 
 	@PostMapping("/reject")
 	@ApiOperation("스터디 가입 거절")
-	public ResponseEntity rejectJoinGroup(long reqNo, long gpNo, @AuthenticationPrincipal UserPrincipal principal) {
+	public ResponseEntity rejectJoinGroup(@RequestParam("no") @ApiParam(value = "reqNo", required = true) long reqNo,
+			@AuthenticationPrincipal UserPrincipal principal) {
 		long userId = principal.getUserId();
 
-		ckGroupAuth(userId, gpNo);
+		GroupReqDto req = groupService.selectGroupReqByReqnNo(reqNo);
+		ckGroupAuth(userId, req.getGpGpNo());
 		groupService.rejectJoinGroup(reqNo);
 
 		BasicResponse result = new BasicResponse();
@@ -191,10 +197,12 @@ public class GroupController {
 
 	@PostMapping("/remove")
 	@ApiOperation("스터디 퇴출")
-	public ResponseEntity removeGroupMember(long joinNo, long gpNo, @AuthenticationPrincipal UserPrincipal principal) {
+	public ResponseEntity removeGroupMember(@RequestParam("no") @ApiParam(value = "joinNo", required = true) long joinNo,
+			@AuthenticationPrincipal UserPrincipal principal) {
 		long userId = principal.getUserId();
 
-		ckGroupAuth(userId, gpNo);
+		GroupJoinDto join = groupService.selectGroupJoinByJoinNo(joinNo);
+		ckGroupAuth(userId, join.getGpGpNo());
 		groupService.removeGroupMember(joinNo);
 
 		BasicResponse result = new BasicResponse();
@@ -206,7 +214,8 @@ public class GroupController {
 
 	@PostMapping("/exit")
 	@ApiOperation("그룹 나가기")
-	public ResponseEntity exitGroup(long gpNo, @AuthenticationPrincipal UserPrincipal principal) {
+	public ResponseEntity exitGroup(@RequestParam("no") @ApiParam(value = "gpNo", required = true) long gpNo,
+			@AuthenticationPrincipal UserPrincipal principal) {
 		long userId = principal.getUserId();
 		BasicResponse result = new BasicResponse();
 

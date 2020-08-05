@@ -27,14 +27,14 @@ const studyGroups = {
   },
 
   mutations: {
-    setGroups (state: any, groups: any) {
+    setGroups(state: any, groups: any) {
       state.groups = groups
     }
-  },  
+  },
 
   actions: {
     // 그룹들 불러오기
-    async getGroups ({ state }:any, event:any) {
+    async getGroups({ state }: any, event: any) {
       // const baseUrl = this.$store.state.baseUrl
       const apiUrl = '/study/all'
       try {
@@ -56,9 +56,9 @@ const studyGroups = {
         console.log(state.groups)
       } catch (err) {
         console.error(err)
-      // } finally {
-      //   this.sortBy(this.sortedBy)
-      //   this.showPagination = true
+        // } finally {
+        //   this.sortBy(this.sortedBy)
+        //   this.showPagination = true
       }
     },
   },
@@ -98,11 +98,11 @@ export default new Vuex.Store({
     refreshSuccess(state, payload) {
       state.userInfo.accessToken = payload;
     },
-  },  
+  },
 
   actions: {
     // 로그인
-    signIn({ commit }, userObj ) {
+    signIn({ commit }, userObj) {
       axios.post('/user/signin', userObj)
         .then(res => {
           console.log(res);
@@ -121,29 +121,36 @@ export default new Vuex.Store({
     },
 
     // 로그아웃
-    logout({commit}) {
+    logout({ commit }) {
       axios.get('/user/logout')
-      .then(res => {
-        console.log(res);
-        console.log("로그아웃합니당");
-        commit("logoutSuccess");
-        router.push({name: "Home"}) 
-      })
+        .then(res => {
+          console.log(res);
+          console.log("로그아웃합니당");
+          commit("logoutSuccess");
+          router.push({ name: "Home" })
+        })
     },
 
     // 토큰 갱신
-    tokenRefresh({commit}) {
-      const config = {
-        headers: {
-          "refreshToken" : this.state.userInfo.refreshToken
+    tokenRefresh({ commit }) {
+      return new Promise(resolve => {
+        const config = {
+          headers: {
+            "refreshToken": this.state.userInfo.refreshToken
+          }
         }
-      }
+        const origin = this.state.userInfo.accessToken;
 
-      axios.get('/user/refresh', config)
-      .then(res => {
-        console.log("토큰 재발급 요청 응답");
-        console.log(res);
-        // commit("refreshSuccess",)
+        axios.get('/user/refresh', config)
+          .then(res => {
+            console.log("토큰 재발급 요청 응답");
+            commit("refreshSuccess", res.headers.accesstoken);
+            console.log("origin : " + origin);
+            console.log("new : " + this.state.userInfo.accessToken);
+            if (origin !== this.state.userInfo.accessToken) {
+              resolve();
+            }
+          })
       })
     },
 

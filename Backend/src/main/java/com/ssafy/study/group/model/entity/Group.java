@@ -41,10 +41,10 @@ public class Group extends TimeEntity {
 	private long gpMgrId;// 팀장아이디
 	@Column(length = 1000)
 	private String gpIntro;// 소개
-
-	@Transient
-	@JsonInclude
+	
+	@Column(length = 500)
 	private String gpTag;// 태그
+	
 	private int gpStTm;// 선호 시작시간
 	private int gpEndTm;// 선호 종료시간
 	private boolean gpPublic;// 공개여부
@@ -55,6 +55,7 @@ public class Group extends TimeEntity {
 	private int gpMaxNum;// 최대인원
 	@Column(columnDefinition = "integer default 1")
 	private int gpCurNum;// 현재인원
+	
 
 	public void update(ModifyGroupDto group) {
 		this.gpCat = new GroupCategory(group.getGpCatNo());

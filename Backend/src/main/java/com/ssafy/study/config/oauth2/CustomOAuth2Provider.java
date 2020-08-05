@@ -6,6 +6,7 @@ import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
 
 public enum CustomOAuth2Provider {
 
+//	http://lcoalhost:8399/api/oauth2/authorization/kakao
     KAKAO {
         @Override
         public ClientRegistration.Builder getBuilder(String registrationId) {

@@ -13,7 +13,7 @@ Vue.config.productionTip = false;
 
 axios.defaults.baseURL = "http://localhost:8399/api"
 
-axios.interceptors.request.use( config => {
+axios.interceptors.request.use(config => {
   const token = store.state.userInfo.accessToken;
   if (token != "") {
     config.headers.Authorization = token;
@@ -22,26 +22,38 @@ axios.interceptors.request.use( config => {
 })
 
 axios.interceptors.response.use(
-  function(res) {
-    // console.log("res 응답 : " + res);
+  function (res) {
+    // console.log("res 응답");
+    // console.log(res);
     return res;
   },
-  function(err) {
-    // console.log("err 응답 : " + err);
 
-    if (err.response.status === 401) {
+  function (err) {
+    const originalRequest = err.config;
+    console.log("err 응답");
+    console.log(err);
+    
+    if (err.response.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true;
+      
       const refreshInfo: any = jwt.decode(store.state.userInfo.refreshToken.replace("Bearer ", ""));
-
-      if (Date.now()-refreshInfo.exp*1000 < 0) {
-        console.log("토큰 재발급 고고");
-        store.dispatch('tokenRefresh');
+      
+      if (Date.now() - refreshInfo.exp * 1000 < 0) {
+        console.log("토큰 재발급 고고");
+        
+        store.dispatch('tokenRefresh').then(() => {
+          console.log("토큰 재발급 완료");
+          
+          originalRequest.headers.Authorization = store.state.userInfo.accessToken;
+          return axios(originalRequest);
+        });
       } else {
-        console.log("로그아웃 해야됨");
+        console.log("로그아웃 해야됨");
+        
         store.commit("logoutSuccess");
+        return Promise.reject(err);
       }
     }
-
-    return Promise.reject(err);
   }
 )
 
@@ -51,6 +63,3 @@ new Vue({
   vuetify,
   render: h => h(App)
 }).$mount("#app");
-
-
-

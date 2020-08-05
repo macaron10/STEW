@@ -6,10 +6,10 @@ import com.ssafy.study.group.model.entity.GroupCategory;
 
 public interface GroupCategoryRepositoryCustom {
 
-	public List<GroupCategory> selectBoxLgGroupCategory();
-
-	public List<GroupCategory> selectBoxMdGroupCategory(String lg);
-
-	public List<GroupCategory> selectBoxSmGroupCategory(String lg, String md);
+//	public List<GroupCategory> selectBoxLgGroupCategory();
+//
+//	public List<GroupCategory> selectBoxMdGroupCategory(String lg);
+//
+//	public List<GroupCategory> selectBoxSmGroupCategory(String lg, String md);
 
 }

@@ -236,7 +236,8 @@ export default {
     this.formData.append('gpPublic', Boolean(this.form.gpPublic))
     this.formData.append('gpStTm', Number(this.form.gpStTm))
     this.formData.append('gpTag', this.form.gpTag)
-    this.formData.append('updateGpImg', this.form.updateGpimg)
+    this.formData.append('updateGpImg', this.form.updateGpImg)
+    this.formData.append('gpNo', this.id)
     },
     async updateGroup () {
       try {

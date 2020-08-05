@@ -107,7 +107,7 @@
           pwd: '',
           pwdCheck: '',
           name: '',
-          img: '',
+          img: [],
           intro: '',
           goalHr: ''
         },
@@ -143,7 +143,6 @@
         if (this.$refs.form.validate()) {
           if (this.idCheck) {
             this.makeFormData();
-            console.log("아이디를 확인했군여 사인업핸들러로 넘어갑니다");
             this.signupHandler();
           } else {
             alert("이메일 확인을 눌러주세요!!")
@@ -154,25 +153,22 @@
       },
 
       makeFormData() {
-        console.log("폼데이터로 바꿈");
-        console.log(this.user);
         this.formData.append('userEmail', this.user.email);
         this.formData.append('userPw', this.user.pwd);
         this.formData.append('userNm', this.user.name);
         this.formData.append('userImg', this.user.img);
         this.formData.append('userIntro', this.user.intro);
-        this.formData.append('userGoalHr', this.user.goalHr);
+        this.formData.append('userGoalHr', Number(this.user.goalHr));
       },
 
       signupHandler() {
-        // console.log(this.user);
         const config = {
           headers: {
             'Content-Type' : 'multipart/form-data',
           }
         }
 
-        axios.post('user/signup', this.formData, config)
+        axios.post('/user/signup', this.formData, config)
         .then(({ data }) => {
           let msg = '다시 시도해주세요';
           console.log("회원가입 결과임다");

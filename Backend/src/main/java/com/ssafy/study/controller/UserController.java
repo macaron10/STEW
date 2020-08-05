@@ -53,7 +53,7 @@ public class UserController {
 	
 	@PostMapping("/signup")
 	@ApiOperation("회원가입")
-	public ResponseEntity<BasicResponse> signUp(@RequestBody UserSignUp signUpInfo){
+	public ResponseEntity<BasicResponse> signUp(UserSignUp signUpInfo){
 		
 		User user = signUpInfo.toEntity();
 		
@@ -65,6 +65,9 @@ public class UserController {
 				throw new FileUploadException();
 			}
 		}
+		
+		System.out.println(signUpInfo.getUserPw());
+		System.out.println(user.getUserPw());
 		
 		userService.save(user);
 		

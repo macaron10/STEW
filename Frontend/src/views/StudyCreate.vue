@@ -143,7 +143,7 @@ export default {
       gpNm: "",     //스터디 이름ㅇ
       gpCatNo: 0, // 타입 아이디 ㅇ
       gpEndTm: 0, // 선호 종료 시간 ㅇ
-      gpImg: this.$store.state.baseUrl + '/study/thumb/base.png',
+      gpImg: [],
       gpIntro: "",  //스터디 소개ㅇ
       gpPublic: true, //스터디 공개 ㅇ
       gpStTm: 0,    // 선호 시작 시간 ㅇ

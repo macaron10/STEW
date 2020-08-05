@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ssafy.study.calendar.model.CalEvent;
@@ -27,14 +26,7 @@ import com.ssafy.study.group.service.GroupService;
 import com.ssafy.study.user.model.UserPrincipal;
 
 import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
-
-@ApiResponses(value = { @ApiResponse(code = 401, message = "Unauthorized", response = BasicResponse.class),
-		@ApiResponse(code = 403, message = "Forbidden", response = BasicResponse.class),
-		@ApiResponse(code = 404, message = "Not Found", response = BasicResponse.class),
-		@ApiResponse(code = 500, message = "Failure", response = BasicResponse.class) })
+import springfox.documentation.annotations.ApiIgnore;
 
 @RestController
 @RequestMapping("/cal")
@@ -46,7 +38,8 @@ public class CalendarController {
 
 	@PostMapping("/")
 	@ApiOperation(value = "일정 생성 yyyy-MM-dd'T'HH:mm ex)2020-12-12T12:12")
-	public Object createCalEvt(@RequestBody CreateCalEvt cal, @AuthenticationPrincipal UserPrincipal principal) {
+	public Object createCalEvt(@RequestBody CreateCalEvt cal,
+			@ApiIgnore @AuthenticationPrincipal UserPrincipal principal) {
 		BasicResponse response = new BasicResponse();
 
 		if (cal.getCType() != 'U') {
@@ -67,7 +60,8 @@ public class CalendarController {
 
 	@PutMapping("/")
 	@ApiOperation("일정 수정 yyyy-MM-dd'T'HH:mm")
-	public Object modifyCalEvt(@RequestBody @Valid ModifyCalEvt cal, @AuthenticationPrincipal UserPrincipal principal) {
+	public Object modifyCalEvt(@RequestBody @Valid ModifyCalEvt cal,
+			@ApiIgnore @AuthenticationPrincipal UserPrincipal principal) {
 		BasicResponse response = new BasicResponse();
 
 		CalEvent calEvt = cal.toEntity();
@@ -83,7 +77,7 @@ public class CalendarController {
 
 	@DeleteMapping("/{no}")
 	@ApiOperation("일정 삭제")
-	public Object deleteCalEvt(@PathVariable long no, @AuthenticationPrincipal UserPrincipal principal) {
+	public Object deleteCalEvt(@PathVariable long no, @ApiIgnore @AuthenticationPrincipal UserPrincipal principal) {
 		long userId = principal.getUserId();
 		BasicResponse response = new BasicResponse();
 
@@ -97,7 +91,7 @@ public class CalendarController {
 
 	@GetMapping("/personal")
 	@ApiOperation("개인의 모든 일정 조회")
-	public Object personalCalList(@AuthenticationPrincipal UserPrincipal principal) {
+	public Object personalCalList(@ApiIgnore @AuthenticationPrincipal UserPrincipal principal) {
 		long userId = principal.getUserId();
 		BasicResponse response = new BasicResponse();
 
@@ -110,7 +104,7 @@ public class CalendarController {
 
 	@GetMapping("/group")
 	@ApiOperation("가입한 그룹들의 모든 일정 조회")
-	public Object groupCalList(@AuthenticationPrincipal UserPrincipal principal) {
+	public Object groupCalList(@ApiIgnore @AuthenticationPrincipal UserPrincipal principal) {
 		long userId = principal.getUserId();
 		BasicResponse response = new BasicResponse();
 
@@ -124,7 +118,7 @@ public class CalendarController {
 	@GetMapping("/personal/{year}/{month}")
 	@ApiOperation("year + month 개인 일정 조회")
 	public Object personalMonthCalList(@PathVariable int year, @PathVariable int month,
-			@AuthenticationPrincipal UserPrincipal principal) {
+			@ApiIgnore @AuthenticationPrincipal UserPrincipal principal) {
 		long userId = principal.getUserId();
 		BasicResponse response = new BasicResponse();
 
@@ -138,7 +132,7 @@ public class CalendarController {
 	@GetMapping("/group/{year}/{month}")
 	@ApiOperation("year + month 그룹 일정 조회")
 	public Object groupMonthCalList(@PathVariable int year, @PathVariable int month,
-			@AuthenticationPrincipal UserPrincipal principal) {
+			@ApiIgnore @AuthenticationPrincipal UserPrincipal principal) {
 		long userId = principal.getUserId();
 		BasicResponse response = new BasicResponse();
 
@@ -169,9 +163,4 @@ public class CalendarController {
 		return new ResponseEntity<>(res, HttpStatus.UNAUTHORIZED);
 	}
 
-	@GetMapping("/test")
-	public void test() {
-//		System.out.println(calService.selectPersonalCalEvt(1));
-		System.out.println(calService.selectPersonalCalEvt(1, 2020, 7));
-	}
 }

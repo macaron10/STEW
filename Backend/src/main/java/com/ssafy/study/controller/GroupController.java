@@ -33,6 +33,7 @@ import com.ssafy.study.user.model.UserPrincipal;
 
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import springfox.documentation.annotations.ApiIgnore;
 
 @RestController
 @RequestMapping("/study/user")
@@ -47,7 +48,7 @@ public class GroupController {
 
 	@GetMapping("/my")
 	@ApiOperation("로그인한 회원의 스터디 목록 조회")
-	public ResponseEntity findMyStudyList(@AuthenticationPrincipal UserPrincipal principal) {
+	public ResponseEntity findMyStudyList(@ApiIgnore @AuthenticationPrincipal UserPrincipal principal) {
 		long userId = principal.getUserId();
 		System.out.println(userId);
 		BasicResponse result = new BasicResponse();
@@ -60,7 +61,8 @@ public class GroupController {
 
 	@PostMapping("/")
 	@ApiOperation(value = "스터디 생성", produces = "multipart/form-data")
-	public ResponseEntity createStudy(RegistGroupDto group, @AuthenticationPrincipal UserPrincipal principal) {
+	public ResponseEntity createStudy(RegistGroupDto group,
+			@ApiIgnore @AuthenticationPrincipal UserPrincipal principal) {
 		Group saveGroup = group.toEntity();
 		saveGroup.setGpMgrId(principal.getUserId());
 
@@ -87,7 +89,8 @@ public class GroupController {
 
 	@GetMapping("/{no}")
 	@ApiOperation("스터디 상세 조회")
-	public ResponseEntity selectStudyNo(@PathVariable long no, @AuthenticationPrincipal UserPrincipal principal) {
+	public ResponseEntity selectStudyNo(@PathVariable long no,
+			@ApiIgnore @AuthenticationPrincipal UserPrincipal principal) {
 		BasicResponse result = new BasicResponse();
 		if (!groupService.ckGroupExist(no))
 			throw new GroupNotExistException();
@@ -107,7 +110,7 @@ public class GroupController {
 	@PutMapping("/{no}")
 	@ApiOperation(value = "스터디 수정", produces = "multipart/form-data")
 	public ResponseEntity modifytudy(@PathVariable long no, ModifyGroupDto modifyGroup,
-			@AuthenticationPrincipal UserPrincipal principal) {
+			@ApiIgnore @AuthenticationPrincipal UserPrincipal principal) {
 		BasicResponse result = new BasicResponse();
 
 		long userId = principal.getUserId();
@@ -136,7 +139,7 @@ public class GroupController {
 	@PostMapping("/req")
 	@ApiOperation("스터디에 가입요청")
 	public ResponseEntity reqJoinGroup(@RequestParam("no") @ApiParam(value = "gpNo", required = true) int gpNo,
-			@AuthenticationPrincipal UserPrincipal principal) {
+			@ApiIgnore @AuthenticationPrincipal UserPrincipal principal) {
 		long userId = principal.getUserId();
 		BasicResponse result = new BasicResponse();
 
@@ -160,14 +163,14 @@ public class GroupController {
 	@PostMapping("/accept")
 	@ApiOperation("스터디 가입 승인")
 	public ResponseEntity acceptJoinGroup(@RequestParam("no") @ApiParam(value = "reqNo", required = true) long reqNo,
-			@AuthenticationPrincipal UserPrincipal principal) {
+			@ApiIgnore @AuthenticationPrincipal UserPrincipal principal) {
 		long userId = principal.getUserId();
 
 		GroupReqDto req = groupService.selectGroupReqByReqnNo(reqNo);
-		ckGroupAuth(userId, req.getGpGpNo());
+		ckGroupAuth(userId, req.getGp().getGpNo());
 
 		BasicResponse result = new BasicResponse();
-		if (groupService.isGroupFull(req.getGpGpNo()))
+		if (groupService.isGroupFull(req.getGp().getGpNo()))
 			throw new GroupFullException();
 
 		groupService.acceptJoinGroup(reqNo);
@@ -181,11 +184,11 @@ public class GroupController {
 	@PostMapping("/reject")
 	@ApiOperation("스터디 가입 거절")
 	public ResponseEntity rejectJoinGroup(@RequestParam("no") @ApiParam(value = "reqNo", required = true) long reqNo,
-			@AuthenticationPrincipal UserPrincipal principal) {
+			@ApiIgnore @AuthenticationPrincipal UserPrincipal principal) {
 		long userId = principal.getUserId();
 
 		GroupReqDto req = groupService.selectGroupReqByReqnNo(reqNo);
-		ckGroupAuth(userId, req.getGpGpNo());
+		ckGroupAuth(userId, req.getGp().getGpNo());
 		groupService.rejectJoinGroup(reqNo);
 
 		BasicResponse result = new BasicResponse();
@@ -197,8 +200,9 @@ public class GroupController {
 
 	@PostMapping("/remove")
 	@ApiOperation("스터디 퇴출")
-	public ResponseEntity removeGroupMember(@RequestParam("no") @ApiParam(value = "joinNo", required = true) long joinNo,
-			@AuthenticationPrincipal UserPrincipal principal) {
+	public ResponseEntity removeGroupMember(
+			@RequestParam("no") @ApiParam(value = "joinNo", required = true) long joinNo,
+			@ApiIgnore @AuthenticationPrincipal UserPrincipal principal) {
 		long userId = principal.getUserId();
 
 		GroupJoinDto join = groupService.selectGroupJoinByJoinNo(joinNo);
@@ -215,7 +219,7 @@ public class GroupController {
 	@PostMapping("/exit")
 	@ApiOperation("그룹 나가기")
 	public ResponseEntity exitGroup(@RequestParam("no") @ApiParam(value = "gpNo", required = true) long gpNo,
-			@AuthenticationPrincipal UserPrincipal principal) {
+			@ApiIgnore @AuthenticationPrincipal UserPrincipal principal) {
 		long userId = principal.getUserId();
 		BasicResponse result = new BasicResponse();
 
@@ -234,6 +238,33 @@ public class GroupController {
 		}
 
 		groupService.exitGroup(gpNo, userId);
+		result.msg = "success";
+		result.status = true;
+
+		return new ResponseEntity<>(result, HttpStatus.OK);
+	}
+
+	@GetMapping("/reqlist")
+	@ApiOperation("회원이 그룹장인 그룹의 모든 가입 요청 보기")
+	public ResponseEntity groupReqList(@ApiIgnore @AuthenticationPrincipal UserPrincipal principal) {
+		BasicResponse result = new BasicResponse();
+		long userId = principal.getUserId();
+
+		result.object = groupService.selectGroupReq(userId);
+		result.msg = "success";
+		result.status = true;
+
+		return new ResponseEntity<>(result, HttpStatus.OK);
+	}
+
+	@GetMapping("/reqlist/{gpNo}")
+	@ApiOperation("해당 그룹의 가입 요청 보기")
+	public ResponseEntity groupReqList(@PathVariable long gpNo,
+			@ApiIgnore @AuthenticationPrincipal UserPrincipal principal) {
+		BasicResponse result = new BasicResponse();
+		long userId = principal.getUserId();
+
+		result.object = groupService.selectGroupReqByGpNo(gpNo);
 		result.msg = "success";
 		result.status = true;
 

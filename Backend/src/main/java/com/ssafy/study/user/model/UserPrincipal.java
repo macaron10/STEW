@@ -9,7 +9,12 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import io.swagger.annotations.ApiModelProperty;
+
+
 public class UserPrincipal implements UserDetails{
+	
+	@ApiModelProperty(hidden = true)
 	private User user;
 	
 	public UserPrincipal(User user) {

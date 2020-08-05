@@ -92,7 +92,7 @@
           </v-col>
           <v-col cols="12">
             <v-combobox
-              v-model="model"
+              v-model="tags"
               :items="tagItems"
               :search-input.sync="search"
               hide-selected
@@ -151,6 +151,7 @@ export default {
     })
     const formData = new FormData()
     return {
+      tags: [],
       form: Object.assign({}, groupData),
       rules: {
         time: [
@@ -220,6 +221,7 @@ export default {
       }
     },
     submit () {
+      console.log(this.tags)
       this.snackbar = true
       this.makeFormData()
       this.createGroup()

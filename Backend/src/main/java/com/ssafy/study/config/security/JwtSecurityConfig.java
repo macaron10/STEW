@@ -135,9 +135,6 @@ public class JwtSecurityConfig extends WebSecurityConfigurerAdapter{
 				"/study/cate/*",
 				"/user/signin",
 				"/user/signup",
-				"/study/*",
-				"/study/thumb/**",
-				"/study/cate/*",
 				"/user/check",
 //				리프레쉬토큰만 멀쩡하면 허용.. 하는게 맞나?
 				"/user/refresh"

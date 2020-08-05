@@ -6,35 +6,36 @@
            <!-- sm="10" md="8" lg="6" -->
           <v-col cols="6">
             <v-form ref="form" id="form">
-              <v-cols cols="1">
-                <v-text-field
-                    v-model="user.email"
-                    :rules="[
-                      () => !!user.email || '이메일을 입력해주세요.',
-                      () => /.+@.+\..+/.test(user.email) || '이메일 형식이 올바르지 않습니다.',
-                    ]"
-                    label="이메일 *"
-                    :readonly="idCheck"
-                    :clearable=false
-                    required
-                />
-              </v-cols>
-              <v-row rows="2">
-                  <!-- :disabled="!disableCheck" -->
-                <v-btn 
-                  @click="idCheckHandler" 
-                >
-                  이메일 확인
-                </v-btn>
-              </v-row>
-
-
+                <v-row>
+                  <v-col cols=11>
+                    <v-text-field
+                        v-model="user.email"
+                        :rules="[
+                          () => !!user.email || '이메일을 입력해주세요.',
+                          () => /.+@.+\..+/.test(user.email) || '이메일 형식이 올바르지 않습니다.', 
+                        ]"
+                        label="이메일 *"
+                        :readonly="idCheck"
+                        :clearable=false
+                        required
+                    />
+                  </v-col>
+                  <v-col cols=1>
+                    <v-btn 
+                      @click="idCheckHandler" 
+                    >
+                      이메일 확인
+                    </v-btn>
+                  </v-col>
+                  <!-- <v-row rows="2">
+                      :disabled="!disableCheck"
+                  </v-row> -->
+                </v-row>
                 <v-text-field
                     v-model="user.pwd"
                     :rules="[
                       () => !!user.pwd || '비밀번호를 입력해주세요.',
                       () => user.pwd.length >= 6 || '6자 이상 입력해주세요.',
-                      addressCheck
                     ]"
                     label="비밀번호 *"
                     type="password"
@@ -130,6 +131,7 @@
           console.log(data);
           if (data.msg === "success" && data.object) {
             this.idCheck = true;
+            alert("아이디 체크 완료");
           }
         })
       },
@@ -140,6 +142,8 @@
 
         if (this.$refs.form.validate()) {
           if (this.idCheck) {
+            this.makeFormData();
+            console.log("아이디를 확인했군여 사인업핸들러로 넘어갑니다");
             this.signupHandler();
           } else {
             alert("이메일 확인을 눌러주세요!!")
@@ -150,6 +154,8 @@
       },
 
       makeFormData() {
+        console.log("폼데이터로 바꿈");
+        console.log(this.user);
         this.formData.append('userEmail', this.user.email);
         this.formData.append('userPw', this.user.pwd);
         this.formData.append('userNm', this.user.name);
@@ -169,7 +175,7 @@
         axios.post('user/signup', this.formData, config)
         .then(({ data }) => {
           let msg = '다시 시도해주세요';
-          console.log("로그인결과임다");
+          console.log("회원가입 결과임다");
           console.log(data);
 
           if (data.msg === 'success') {

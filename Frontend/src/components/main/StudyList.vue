@@ -49,6 +49,16 @@
         </v-card-text>
 
         <v-divider></v-divider>
+        <v-textarea
+          v-model="message"
+          color="teal"
+        >
+          <template v-slot:label>
+            <div>
+              보낼 메세지 <small>(optional)</small>
+            </div>
+          </template>
+        </v-textarea>
 
         <v-card-actions>
           <v-spacer></v-spacer>
@@ -75,6 +85,7 @@
 <script>
 import axios from 'axios'
 import { mapState, mapActions } from 'vuex'
+import querystring from 'querystring'
 
 export default {
   name: 'StudyList',
@@ -84,6 +95,7 @@ export default {
       dialog: false,
       selectedGroup: {},
       snackbar: false,
+      message: ""
     }
   },
   methods: {
@@ -137,9 +149,14 @@ export default {
     //     })
     // },
     async signUpGroup(gpNo) {
-      const apiUrl = '/study/user/req?no='+gpNo
+
+      const apiUrl = '/study/user/req?gpNo='+gpNo
+      const msg = {
+        "reqMsg": this.message
+      }
       try {
-        const res = await axios.post(apiUrl)
+        const res = await axios.post(apiUrl, querystring.stringify({ reqMsg: this.message }))
+        console.log(msg)
         console.log(res)
         this.dialog = false
         this.snackbar = true

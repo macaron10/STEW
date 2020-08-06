@@ -106,7 +106,7 @@
 
     <!-- 알림 메뉴 -->
 <!-- 임시 -->
-    <v-btn @click="getReqs()">알림불러오기</v-btn>
+    <v-btn v-if="isLogin" @click="getReqs()" color="blue lighten-2">알림불러오기</v-btn>
 <!-- 임시 -->
     <v-menu
       transition="slide-y-transition"
@@ -150,6 +150,10 @@
             <v-list-item-content>
               '{{ groupsReq.user.userNm }}' 님이 '{{ groupsReq.gp.gpNm }}'에 가입을 신청했습니다.
               <!-- <v-list-item-tistle v-text="groupsReqs.gp.gpNm"></v-list-item-title> -->
+            <br>
+            <div v-if="groupsReq.gpReqMsg">
+            "{{ groupsReq.gpReqMsg }}"
+            </div>
             </v-list-item-content>
             <v-btn class="mx-2" color="green lighten-2" @click="reqOk(groupsReq.gpReqNo)">수락</v-btn>
             <v-btn color="red lighten-2" @click="reqReject(groupsReq.gpReqNo)">거절</v-btn>

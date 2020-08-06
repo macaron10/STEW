@@ -14,6 +14,7 @@ import Guide from '../views/Guide.vue';
 // User 관련
 import UserDetail from '../views/user/UserDetail.vue';
 import Signup from "../views/user/Signup.vue";
+import userPage from "../views/user/userPage.vue";
 // MeetingRoom
 import MeetingRoom from "../views/MeetingRoom.vue";
 
@@ -89,6 +90,11 @@ const routes: Array<RouteConfig> = [
     name: "MeetingRoom",
     component: MeetingRoom
   },
+  {
+    path: "/user",
+    name: "userPage",
+    component: userPage
+  }
 ];
 
 const router = new VueRouter({

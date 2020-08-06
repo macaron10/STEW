@@ -4,6 +4,7 @@
     app
     color="#FFFFFF"
     dark
+    fixed
   >
     <v-app-bar-nav-icon @click.stop="$store.commit('drawerOnOff')" color="blue lighten-2"></v-app-bar-nav-icon>
     <v-toolbar-title

@@ -4,7 +4,13 @@
       <v-row>
         <v-col class="mb-6 ">
           <div class="d-flex justify-center">
-            <img @click="enterMeetingRoom(group.gpNo)" :src="$store.state.baseUrl + '/study/thumb' + group.gpImg" alt="그룹 이미지">
+            <img
+            @click="enterMeetingRoom(group.gpNo)"
+            :src="$store.state.baseUrl + '/study/thumb' + group.gpImg"
+            alt="그룹 이미지"
+            height=400px
+            >
+            <!-- :src="$store.state.baseUrl + group.gpImg" 배포용 -->
           </div>
           <div class="text-center">
             <h1 class="my-3">{{ group.gpNm }}</h1>

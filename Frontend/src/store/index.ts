@@ -90,7 +90,8 @@ const notifications = {
 
 export default new Vuex.Store({
   state: {
-    baseUrl: "http://localhost:8399/api",
+    baseUrl: "http://localhost:8399/api",//개발용
+    // https://i3b103.p.ssafy.io/image/group 배포용
     drawer: false,
     isLogin: false,
     userInfo: {

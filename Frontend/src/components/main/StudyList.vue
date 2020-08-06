@@ -40,11 +40,11 @@
       width="500"
     >
       <v-card>
-        <v-card-title class="headline grey lighten-2">
+        <v-card-title class="headline indigo darken-1 white--text">
           {{ selectedGroup.gpNm }} 에 가입하시겠습니까?
         </v-card-title>
 
-        <v-card-text>
+        <v-card-text class="py-1">
          {{selectedGroup.gpIntro}}
         </v-card-text>
 
@@ -52,9 +52,10 @@
         <v-textarea
           v-model="message"
           color="teal"
+          class="mx-5"
         >
           <template v-slot:label>
-            <div>
+            <div class="px-5">
               보낼 메세지 <small>(optional)</small>
             </div>
           </template>

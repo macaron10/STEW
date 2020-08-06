@@ -7,8 +7,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Transient;
 
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.ssafy.study.common.model.TimeEntity;
 
 import lombok.Builder;

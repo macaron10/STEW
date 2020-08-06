@@ -17,7 +17,7 @@ public class KakaoOAuth2AuthenticationSuccessHandler implements AuthenticationSu
 		
 		String id = authentication.getName();
 		
-		
+		System.out.println(request.getQueryString());
 		
 		System.out.println("카카오 ID : " + id);
 		

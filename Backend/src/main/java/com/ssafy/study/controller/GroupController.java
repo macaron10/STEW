@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.ssafy.study.common.exception.FileUploadException;
 import com.ssafy.study.common.model.BasicResponse;
@@ -105,7 +106,7 @@ public class GroupController {
 		GroupDto group = groupService.selectGroup(no);
 		List<GroupJoinDto> joinList = groupService.selectGroupMemberList(no);
 		JSONObject obj = new JSONObject();
-		obj.append("group", group);
+		obj.append("group", new Gson().toJson(group));
 		obj.append("joinList", joinList);
 
 		result.object = obj.toString();

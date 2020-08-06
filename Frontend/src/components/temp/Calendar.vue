@@ -294,7 +294,7 @@ export default {
       axios
         .get(`/cal/group/${start.year}/${start.month}`)
         .then(res => {
-          if (!(res.data.object === undefined)) {
+          if (!(res.data.object===[])) {
             for (const schedule of res.data.object) {
               const s = schedule.cstTm;
               const e = schedule.cendTm;
@@ -325,7 +325,7 @@ export default {
             }
           }
         })
-        .catch(err => console.log(err));
+        .catch(err => console.log(err,'hihi'));
       this.events = event;
     },
     createNewSchedule() {
@@ -359,13 +359,38 @@ export default {
       axios
         .post(apiUrl, schedule)
         .then(res => {
-          console.log(res.data.object);
+          const schedule = res.data.object;
+          const s = schedule.cstTm;
+          const e = schedule.cendTm;
+          const addedSchdule = {
+            pk: schedule.cno,
+            name: schedule.cevtNm,
+            details: schedule.cevtDsc,
+            start: new Date(
+              s.slice(0, 4),
+              s.slice(5, 7) - 1,
+              s.slice(8, 10),
+              s.slice(11, 13),
+              s.slice(14, 16)
+            ),
+            end: new Date(
+              e.slice(0, 4),
+              e.slice(5, 7) - 1,
+              e.slice(8, 10),
+              e.slice(11, 13),
+              e.slice(14, 16)
+            ),
+            timed: schedule.useTime,
+            color: schedule.ctype==='U' ? "green" : "blue",
+            type: schedule.ctype,
+            cown: schedule.cown
+          };
+          this.events.push(addedSchdule)
         })
         .catch(err => console.log(err));
-      //데이터 넣자마자 나타나게하는법찾기
-      // 1. 새로고침
+
       this.dialog = false;
-      this.reset;
+      this.reset();
     },
     sortDate() {
       this.newSchedule.dates.sort();

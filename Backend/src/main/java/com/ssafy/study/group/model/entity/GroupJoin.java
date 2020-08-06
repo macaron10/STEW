@@ -10,6 +10,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
+import com.ssafy.study.common.model.TimeEntity;
 import com.ssafy.study.user.model.User;
 
 import lombok.Data;
@@ -19,7 +20,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @NoArgsConstructor
 @Table(name = "gp_join", uniqueConstraints = { @UniqueConstraint(columnNames = { "gp_no", "user_id" }) })
-public class GroupJoin {
+public class GroupJoin extends TimeEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long gpJoinNo;// 소속 아이디

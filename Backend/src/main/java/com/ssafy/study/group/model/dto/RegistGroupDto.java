@@ -36,6 +36,7 @@ public class RegistGroupDto {
 
 	public Group toEntity() {
 		return Group.builder().gpCat(new GroupCategory(gpCatNo)).gpNm(gpNm).gpIntro(gpIntro).gpStTm(gpStTm)
-				.gpEndTm(gpEndTm).gpCurNum(0).gpMaxNum(5).gpPublic(gpPublic).gpTag(String.join(",", gpTag)).build();
+				.gpEndTm(gpEndTm).gpCurNum(0).gpMaxNum(5).gpPublic(gpPublic)
+				.gpTag(gpTag != null ? String.join(",", gpTag) : null).build();
 	}
 }

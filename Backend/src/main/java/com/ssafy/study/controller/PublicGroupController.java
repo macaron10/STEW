@@ -124,7 +124,7 @@ public class PublicGroupController {
 	}
 
 	@GetMapping("/test")
-	public void test() {
-		System.out.println(groupService.selectGroupJoinByJoinNo(1));
+	public Object test() {
+		return groupService.selectGroupMemberList(1);
 	}
 }

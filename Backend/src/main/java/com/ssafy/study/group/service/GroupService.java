@@ -8,6 +8,7 @@ import com.ssafy.study.group.model.dto.GroupJoinDto;
 import com.ssafy.study.group.model.dto.GroupReqDto;
 import com.ssafy.study.group.model.dto.GroupSearchDto;
 import com.ssafy.study.group.model.dto.ModifyGroupDto;
+import com.ssafy.study.group.model.dto.RequestGroupJoinDto;
 import com.ssafy.study.group.model.entity.Group;
 
 public interface GroupService {
@@ -32,7 +33,7 @@ public interface GroupService {
 
 	List<GroupCategoryDto> selecBoxAllGroupCategory();
 
-	void requestJoinGroup(long userId, long gpNo);
+	void requestJoinGroup(long userId, RequestGroupJoinDto reqJoin);
 
 	void acceptJoinGroup(long reqNo);
 
@@ -60,4 +61,5 @@ public interface GroupService {
 
 	List<GroupReqDto> selectGroupReqByGpNo(long gpNo);
 
+	List<GroupJoinDto> selectGroupMemberList(long gpNo);
 }

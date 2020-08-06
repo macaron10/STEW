@@ -1,11 +1,9 @@
 package com.ssafy.study.common.notification;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -13,8 +11,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 import com.google.gson.Gson;
-import com.nimbusds.jose.Payload;
-import com.ssafy.study.common.model.Attachment;
 import com.ssafy.study.common.model.Attachments;
 
 import lombok.ToString;
@@ -27,14 +23,13 @@ public class MatterMostSender {
 	private boolean mmEnabled = true;
 	private String webhookUrl = "https://meeting.ssafy.com/hooks/ou9oee6tq3ytuyzwnid1gmzkar";
 
-	public void sendMessage(Attachment attach) {
+	public void sendMessage(Exception excpetion, String uri, String params) {
 		if (mmEnabled) {
 			try {
-				List<Attachment> list = new ArrayList<Attachment>();
-				list.add(attach);
-				Attachments attachments = new Attachments(list);
+				Attachments attachments = new Attachments(excpetion, uri, params);
 
 				String payload = new Gson().toJson(attachments);
+				System.out.println(payload);
 
 				RestTemplate restTemplate = new RestTemplate();
 				HttpHeaders headers = new HttpHeaders();

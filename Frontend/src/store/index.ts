@@ -90,7 +90,7 @@ const notifications = {
 
 export default new Vuex.Store({
   state: {
-    baseUrl: "http://localhost:8399/api",
+    baseUrl: "https://i3b103.p.ssafy.io/api",
     drawer: false,
     isLogin: false,
     userInfo: {

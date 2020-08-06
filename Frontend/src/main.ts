@@ -11,7 +11,7 @@ import jwt from "jsonwebtoken";
 Vue.config.productionTip = false;
 // Vue.prototype.$http = axios
 
-axios.defaults.baseURL = "http://localhost:8399/api"
+axios.defaults.baseURL = "https://i3b103.p.ssafy.io/api"
 
 axios.interceptors.request.use(config => {
   const token = store.state.userInfo.accessToken;

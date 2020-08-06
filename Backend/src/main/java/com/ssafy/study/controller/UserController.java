@@ -11,6 +11,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -66,9 +67,6 @@ public class UserController {
 			}
 		}
 		
-		System.out.println(signUpInfo.getUserPw());
-		System.out.println(user.getUserPw());
-		
 		userService.save(user);
 		
 		BasicResponse result = new BasicResponse();
@@ -79,7 +77,29 @@ public class UserController {
 		
 		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
-
+	
+//	비밀번호 맞는지 아닌지
+//	유저 업데이트할때 비밀번호 포함 안하고싶다
+	
+	@GetMapping("/checkPw")
+	@ApiOperation("비밀번호 확인")
+	public ResponseEntity<BasicResponse> checkPw(@AuthenticationPrincipal UserPrincipal principal, String userPw){
+		
+		BasicResponse result = new BasicResponse();
+		
+		result.status = true;
+		result.msg = "success";
+		result.object = false;
+		
+		BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+		
+		if(encoder.encode(userPw).equals(principal.getPassword())) {
+			result.object = true;
+		}
+		
+		return new ResponseEntity<>(result, HttpStatus.OK);
+	}
+	
 	
 	@GetMapping
 	@ApiOperation("회원 정보")
@@ -118,7 +138,7 @@ public class UserController {
 		
 		BasicResponse result = new BasicResponse();
 		
-		User modifiedUser = userService.save(userModify.toEntity());
+		User modifiedUser = userService.modify(userModify.toEntity());
 		
 		result.status = true;
 		result.msg = "success";

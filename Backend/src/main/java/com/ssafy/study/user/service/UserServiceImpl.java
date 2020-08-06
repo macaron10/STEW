@@ -23,6 +23,13 @@ public class UserServiceImpl implements UserService{
 	}
 
 	@Override
+	public User modify(User user) {
+		
+		return userRepository.save(user);
+		
+	}
+
+	@Override
 	public User loadUserByUserId(long userId) {
 		return userRepository.findByUserId(userId);
 	}

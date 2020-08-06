@@ -49,7 +49,7 @@ public class UserController {
 	@Autowired
 	private FileUtils fileUtil;
 	
-	private final String fileBaseUrl = "C:\\group_thumb";
+	private final String fileBaseUrl = "/home/ubuntu/app/img/user";
 	
 	@PostMapping("/signup")
 	@ApiOperation("회원가입")

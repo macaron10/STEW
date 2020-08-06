@@ -49,7 +49,7 @@ public class GroupController {
 	@Autowired
 	private FileUtils fileUtil;
 
-	private final String fileBaseUrl = "C:\\Users\\multicampus\\Desktop\\group_thumb";
+	private final String fileBaseUrl = "/home/ubuntu/app/img/group";
 
 	@GetMapping("/my")
 	@ApiOperation("로그인한 회원의 스터디 목록 조회")

@@ -52,7 +52,7 @@
           :key="item.tab"
         >
           <v-card flat>
-            <v-card-text>{{ item.content }}</v-card-text>
+            <MemberList />
           </v-card>
         </v-tab-item>
       </v-tabs-items>
@@ -63,12 +63,14 @@
 
 <script>
 import Calendar from "@/components/temp/Calendar.vue";
+import MemberList from "@/components/temp/tabs/MemberList.vue"
 import axios from "axios";
 // @ is an alias to /src
 export default {
   name: "StudyDetail",
   components: {
-    Calendar
+    Calendar,
+    MemberList
   },
   data() {
     return {

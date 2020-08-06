@@ -23,6 +23,8 @@ public interface GroupService {
 
 	List<GroupDto> findMyGroups(long userId);
 
+	GroupDto passGroupMgr(long gpNo, long uid);
+
 	List<GroupDto> searchGroups(GroupSearchDto groupSearch);
 
 //	List<GroupCategoryDto> selectBoxLgGroupCategory();
@@ -62,4 +64,5 @@ public interface GroupService {
 	List<GroupReqDto> selectGroupReqByGpNo(long gpNo);
 
 	List<GroupJoinDto> selectGroupMemberList(long gpNo);
+
 }

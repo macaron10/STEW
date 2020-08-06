@@ -150,6 +150,14 @@ public class GroupServiceImpl implements GroupService {
 	}
 
 	@Override
+	public GroupDto passGroupMgr(long gpNo, long uid) {
+		Group group = gpRepo.findByGpNo(gpNo);
+		group.setGpMgrId(uid);
+
+		return new GroupDto(gpRepo.save(group));
+	}
+
+	@Override
 	public boolean ckGroupExist(long no) {
 		return gpRepo.existsById(no);
 	}

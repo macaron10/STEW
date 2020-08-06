@@ -1,15 +1,9 @@
 <template>
   <div>
-      <div class="mx-10 my-10 videos-container"></div>
+    <div class="mx-10 my-10 videos-container" ></div>
     <!-- footer -->
-    <v-footer
-    color="#ffffff"
-    padless
-    >
-      <v-row
-        justify="center"
-        no-gutters
-      >
+    <v-footer color="#ffffff" padless>
+      <v-row justify="center" no-gutters>
         <v-btn class="mx-1" fab dark color="indigo" @click="unmute">
           <v-icon dark>mdi-volume-high</v-icon>
         </v-btn>
@@ -42,9 +36,15 @@ export default {
     };
   },
   mounted() {
+    this.check();
     this.joinRoom();
   },
   methods: {
+    check() {
+      alert(
+        "비디오와 오디오가 켜집니다. 접속 후 오디오와 비디오 기능을 비활성화 시킬 수 있습니다."
+      );
+    },
     joinRoom() {
       this.connection = new RTCMultiConnection();
       this.connection.session = {
@@ -53,10 +53,17 @@ export default {
         data: true
       };
 
-      // this.connection.socketURL = "http://i3b103.p.ssafy.io:9001/";
+      // this.connection.socketURL = "https://i3b103.p.ssafy.io/soket/"; //배포옹
       this.connection.socketURL =
-        "https://rtcmulticonnection.herokuapp.com:443/";
+        "https://rtcmulticonnection.herokuapp.com:443/"; // 개발용
 
+      this.connection.mediaConstraints = {
+        audio: true,
+        video: {
+          width: 400,
+          height: 300
+        }
+      };
       this.connection.sdpConstraints.mandatory = {
         OfferToReceiveAudio: true,
         OfferToReceiveVideo: true

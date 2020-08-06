@@ -11,7 +11,7 @@
                     <v-row>
                          <v-text-field
                             v-model="userInfo.userNm" label="이름"
-                            class=""
+                            class="br-2"
                             single-line solo
                             id="userNm"
                         ></v-text-field>
@@ -36,7 +36,44 @@
             </v-row>
 
             <v-row class="d-flex justify-center" >
-                <v-btn depressed class="mb-2 mx-5" @click="updatePwd">비밀번호 변경</v-btn>
+                <v-btn depressed class="mb-2 mx-5" @click.stop="updatePwdDialog=true">비밀번호 변경</v-btn>
+                <v-dialog v-model="updatePwdDialog" persistent max-width="300">
+                    <v-card>
+                        <v-card-title class="headline">비밀번호 변경</v-card-title>
+                        <v-card-text>
+                            <v-text-field
+                                v-model="updatePwd.origin" label="현재 비밀번호"
+                                type="password" counter="15" required
+                                :rules="[
+                                () => !!updatePwd.origin|| '비밀번호를 입력해주세요.',
+                                ]"
+                            />
+
+                            <v-text-field
+                                v-model="updatePwd.new" label="새로운 비밀번호"
+                                type="password" counter="15" required
+                                :rules="[
+                                () => !!updatePwd.new || '새로운 비밀번호를 입력해주세요.',
+                                () => updatePwd.new.length >= 6 || '6자 이상 입력해주세요.',
+                                ]"
+                            />
+
+                            <v-text-field
+                                v-model="updatePwd.newChk" label="새로운 비밀번호 확인"
+                                type="password" counter="15" required
+                                :rules="[
+                                    () => !!updatePwd.newChk || '새로운 비밀번호를 재입력해주세요.',
+                                    () => updatePwd.new === updatePwd.newChk || '새 비밀번호와 일치하지 않습니다.'
+                                ]"
+                            />
+                        </v-card-text>
+                        <v-card-actions>
+                        <v-spacer></v-spacer>
+                        <v-btn color="error" text @click="updatePwdDialog = false">취소</v-btn>
+                        <v-btn color="primary" text @click="updateUserPwd(updatePwd.origin, update)">변경</v-btn>
+                        </v-card-actions>
+                    </v-card>
+                </v-dialog>
                 <v-btn depressed color="primary" class="mb-2 mx-5" @click="updateUserInfo">프로필 설정 완료</v-btn>
                 <v-btn depressed color="error" class="mb-2 mx-5" @click="deleteUser">회원 탈퇴</v-btn>
             </v-row>
@@ -57,6 +94,21 @@ export default {
     data() {
         return {
             userInfo: {},
+            newUserInfo: {
+                userEmail: userInfo.userEmail,
+                userPw: "",
+                userNm: userInfo.userNm,
+                userImg: userInfo.userImg,
+                userIntro: userInfo.userIntro,
+                userGoalHr: userInfo.userGoalHr
+            },
+            updatePwdDialog: false,
+            updatePwd: {
+                origin: "",
+                new: "",
+                newChk: "",
+            },
+
         }
     },
     
@@ -74,13 +126,45 @@ export default {
             
         },
 
+        checkUserPwd(pwd, type) {
+            axios.get('/user/checkPw', {
+                params: {
+                    userPw: pwd
+                }
+            })
+            .then(({ data }) => {
+                console.log(data);
+                if (data.msg === "success" && data.object) {
+                    if (type === "update") {
+                        console.log("업데이트ㄱㄱ");
+                        this.updateUserPwd();
+                    } else if (type === "del") {
+                        console.log("삭제ㄱㄱ");
+                        this.deleteUser();
+                    }
+                } else if (data.msg === "success" && !data.object) {
+                    alert("비밀번호가 올바르지 않습니다.");
+                } else {
+                    alert("오류 발생");
+                }
+            })
+        },
+
         updateUserInfo() {
             axios.put('/user', {
             })
 
         },
 
-        delete() {
+        updateUserPwd() {
+            this.newUserInfo.userPw = this.updatePwd.new;
+            axios.get('/user', this.newUserInfo)
+            .then(({ data }) => {
+                console.log(data);
+            })
+        },
+
+        deleteUser() {
             axios.delete('/user/'+this.userInfo.userId)
 
         },

@@ -197,6 +197,7 @@ export default {
   mounted () {
     this.id = this.$route.params.id
     this.getDetail()
+    this.getCategories()
   },
   computed: {
     formIsValid () {
@@ -261,6 +262,18 @@ export default {
       this.updateGroup()
       this.resetForm()
     },
+    async getCategories () {
+      try {
+        const apiUrl = '/study/cate'
+        const res = await axios.get(apiUrl)
+        for (const i in res.data.object) {
+          this.categories.push(res.data.object[i].gpCatNm)
+        }
+      } catch (err) {
+        console.err(err)
+      }
+    }
   },
+  
 };
 </script>

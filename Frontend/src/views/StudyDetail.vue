@@ -145,7 +145,7 @@ export default {
         this.group = JSON.parse(this.group)
         this.membersData = JSON.parse(res.data.object).joinList
       } catch (err) {
-        // this.$router.push('/main/')
+        this.$router.push('/main/')
         console.error(err)
       }
     },

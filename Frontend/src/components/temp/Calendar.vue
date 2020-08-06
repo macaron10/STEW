@@ -13,7 +13,8 @@
           <v-toolbar-title v-if="$refs.calendar">{{ $refs.calendar.title }}</v-toolbar-title>
           <v-spacer></v-spacer>
           <v-btn outlined color="grey darken-2" @click.stop="newForm()">NEW</v-btn>
-          <v-dialog v-model="dialog" max-width="480">
+
+          <v-dialog v-model="dialog" max-width="470">
             <v-card>
               <v-card-title class="headline">New Schedule</v-card-title>
               <v-date-picker
@@ -95,7 +96,6 @@
                 @click="deleteSchedule(selectedEvent.pk, selectedEvent.type)"
                 @change="updateRange"
                 icon
-                v-if="selectedEvent.type==='U'"
               >
                 <v-icon>mdi-trash-can</v-icon>
               </v-btn>
@@ -146,29 +146,18 @@ export default {
     selectedElement: null,
     selectedOpen: false,
     events: [],
-    colors: [
-      "blue",
-      "indigo",
-      "deep-purple",
-      "cyan",
-      "green",
-      "orange",
-      "grey darken-1"
-    ],
-    names: [
-      "Meeting",
-      "Holiday",
-      "PTO",
-      "Travel",
-      "Event",
-      "Birthday",
-      "Conference",
-      "Party"
-    ]
+    checkManager: null,
+    userId: null,
+    groupId: 0,
+    managerId: -1
   }),
   mounted() {
     this.$refs.calendar.checkChange();
     this.checkPrivateSchdule();
+    this.getUserId();
+    if (!this.private) {
+      this.getGroupIdManagerId();
+    }
   },
   computed: {
     dateRangeText() {
@@ -196,11 +185,37 @@ export default {
           this.private = false;
       }
     },
+    getUserId() {
+      axios
+        .get("/user")
+        .then(res => {
+          this.userId = res.data.object.userId;
+        })
+        .catch(err => console.log(err));
+    },
+    getGroupIdManagerId() {
+      const apiUrl = `/study/user/${this.$route.params.id}`;
+      axios
+        .get(apiUrl)
+        .then(res => {
+          const obj = JSON.parse(res.data.object);
+          const data = JSON.parse(obj.group[0]);
+          this.groupId = data.gpNo;
+          this.managerId = data.gpMgrId;
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    },
     newForm() {
       if (this.private) {
         this.dialog = true;
       } else {
-        console.log("팀장인지 확인하고 아니면 보내버리기");
+        if (this.userId === this.managerId) {
+          this.dialog = true;
+        } else {
+          alert("그룹장만 그룹일정을 수정할 수 있습니다.");
+        }
       }
     },
     viewDay({ date }) {
@@ -252,6 +267,23 @@ export default {
             console.log(err);
           });
       }
+      if (type == "G") {
+        if (this.managerId === this.userId) {
+          axios
+            .delete(`/cal/${pk}`)
+            .then(res => {
+              for (const e of this.events) {
+                if (!(e.pk === pk)) {
+                  event.push(e);
+                }
+              }
+              this.events = event;
+            })
+            .catch(err => {
+              console.log(err);
+            });
+        }
+      }
       this.selectedOpen = false;
     },
     updateRange({ start, end }) {
@@ -294,7 +326,7 @@ export default {
       axios
         .get(`/cal/group/${start.year}/${start.month}`)
         .then(res => {
-          if (!(res.data.object===[])) {
+          if (!(res.data.object === [])) {
             for (const schedule of res.data.object) {
               const s = schedule.cstTm;
               const e = schedule.cendTm;
@@ -325,10 +357,11 @@ export default {
             }
           }
         })
-        .catch(err => console.log(err,'hihi'));
+        .catch(err => console.log(err, "hihi"));
       this.events = event;
     },
     createNewSchedule() {
+      console.log(this.private);
       if (this.newSchedule.dates.length !== 2) {
         alert("종료날짜를 입력해 주세요.");
         return;
@@ -346,13 +379,16 @@ export default {
         alert("스케줄 내용을 입력해 주세요.");
         return;
       }
+      console.log(this.userId);
+      console.log(this.groupId);
+
       const schedule = {
         cstTm: `${this.newSchedule.dates[0]}T${this.newSchedule.startTime}:00`,
         cendTm: `${this.newSchedule.dates[1]}T${this.newSchedule.endTime}:00`,
         useTime: this.newSchedule.useTime,
         cevtNm: this.newSchedule.name,
         cevtDsc: this.newSchedule.details,
-        cown: 1, //id number
+        cown: this.private ? this.userId : this.groupId,
         ctype: this.private ? "U" : "G"
       };
       const apiUrl = "/cal/";
@@ -381,11 +417,11 @@ export default {
               e.slice(14, 16)
             ),
             timed: schedule.useTime,
-            color: schedule.ctype==='U' ? "green" : "blue",
+            color: this.private ? "green" : "blue",
             type: schedule.ctype,
             cown: schedule.cown
           };
-          this.events.push(addedSchdule)
+          this.events.push(addedSchdule);
         })
         .catch(err => console.log(err));
 

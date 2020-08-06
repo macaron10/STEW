@@ -17,10 +17,9 @@ public class NotificationManager {
 		this.mmSender = mmSender;
 	}
 
-	public void sendNotification(Exception e, String uri,Map params) {
+	public void sendNotification(Exception e, String uri, String params) {
 		log.info("#### send Notification.");
-		Attachment attach = new Attachment(e, uri, params);
-		mmSender.sendMessage(attach);
+		mmSender.sendMessage(e, uri, params);
 	}
 
 }

@@ -1,7 +1,9 @@
 package com.ssafy.study.controller;
 
 import java.io.IOException;
+import java.util.List;
 
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +17,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.ssafy.study.common.exception.FileUploadException;
 import com.ssafy.study.common.model.BasicResponse;
 import com.ssafy.study.common.util.FileUtils;
@@ -23,6 +27,7 @@ import com.ssafy.study.group.model.dto.GroupJoinDto;
 import com.ssafy.study.group.model.dto.GroupReqDto;
 import com.ssafy.study.group.model.dto.ModifyGroupDto;
 import com.ssafy.study.group.model.dto.RegistGroupDto;
+import com.ssafy.study.group.model.dto.RequestGroupJoinDto;
 import com.ssafy.study.group.model.entity.Group;
 import com.ssafy.study.group.model.exception.GroupFullException;
 import com.ssafy.study.group.model.exception.GroupNotExistException;
@@ -44,7 +49,7 @@ public class GroupController {
 	@Autowired
 	private FileUtils fileUtil;
 
-	private final String fileBaseUrl = "C:\\Users\\multicampus\\Desktop\\group_thumb";
+	private final String fileBaseUrl = "/home/ubuntu/app/img/group";
 
 	@GetMapping("/my")
 	@ApiOperation("로그인한 회원의 스터디 목록 조회")
@@ -99,8 +104,30 @@ public class GroupController {
 			throw new GroupNotJoinedExcpetion();
 
 		GroupDto group = groupService.selectGroup(no);
+		List<GroupJoinDto> joinList = groupService.selectGroupMemberList(no);
+		JSONObject obj = new JSONObject();
+		obj.append("group", new Gson().toJson(group));
+		obj.append("joinList", joinList);
 
-		result.object = group;
+		result.object = obj.toString();
+		result.msg = "success";
+		result.status = true;
+
+		return new ResponseEntity<>(result, HttpStatus.OK);
+	}
+
+	@GetMapping("/mem/{no}")
+	@ApiOperation("스터디 가입 멤버 조회")
+	public ResponseEntity findStudyMemberList(@PathVariable long no,
+			@ApiIgnore @AuthenticationPrincipal UserPrincipal principal) {
+		BasicResponse result = new BasicResponse();
+		if (!groupService.ckGroupExist(no))
+			throw new GroupNotExistException();
+
+		if (!groupService.ckGroupJoin(no, principal.getUserId()))
+			throw new GroupNotJoinedExcpetion();
+
+		result.object = groupService.selectGroupMemberList(no);
 		result.msg = "success";
 		result.status = true;
 
@@ -136,23 +163,52 @@ public class GroupController {
 		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 
-	@PostMapping("/req")
-	@ApiOperation("스터디에 가입요청")
-	public ResponseEntity reqJoinGroup(@RequestParam("no") @ApiParam(value = "gpNo", required = true) int gpNo,
+	@PostMapping("/mgr")
+	@ApiOperation("그룹장 넘기기")
+	public ResponseEntity passGroupMgr(@RequestParam("no") @ApiParam(value = "gpNo", required = true) long gpNo,
+			@RequestParam("userId") @ApiParam(value = "userId", required = true) long uid,
 			@ApiIgnore @AuthenticationPrincipal UserPrincipal principal) {
 		long userId = principal.getUserId();
 		BasicResponse result = new BasicResponse();
 
-		if (groupService.isGroupFull(gpNo))
-			throw new GroupFullException();
+		ckGroupAuth(userId, gpNo);
+		if (groupService.ckGroupJoin(gpNo, uid)) {
+			result.msg = "Not Joined Member";
+			result.status = false;
 
-		if (groupService.ckGroupJoin(gpNo, userId)) {
+			return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
+		}
+
+		result.object = groupService.passGroupMgr(gpNo, uid);
+		result.msg = "success";
+		result.status = true;
+
+		return new ResponseEntity(result, HttpStatus.OK);
+	}
+
+	@PostMapping("/req")
+	@ApiOperation("스터디 가입 요청 (공개는 자동 가입, 비공개는 가입 요청)")
+	public ResponseEntity reqJoinGroup(RequestGroupJoinDto reqJoin,
+			@ApiIgnore @AuthenticationPrincipal UserPrincipal principal) {
+		long userId = principal.getUserId();
+		BasicResponse result = new BasicResponse();
+
+		if (groupService.ckGroupJoin(reqJoin.getGpNo(), userId)) {
 			result.msg = "duplicate";
 			result.status = false;
 
 			return new ResponseEntity<>(result, HttpStatus.CONFLICT);
 		}
-		groupService.requestJoinGroup(userId, gpNo);
+
+		if (groupService.isGroupFull(reqJoin.getGpNo()))
+			throw new GroupFullException();
+
+		GroupDto group = groupService.selectGroup(reqJoin.getGpNo());
+		if (group.isGpPublic()) {
+			groupService.joinGroup(userId, reqJoin.getGpNo());
+		} else {
+			groupService.requestJoinGroup(userId, reqJoin);
+		}
 
 		result.msg = "success";
 		result.status = true;

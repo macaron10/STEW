@@ -18,8 +18,4 @@ public abstract class TimeEntity {
 
 	@CreatedDate
 	private LocalDateTime regDate;
-
-	@LastModifiedDate
-	private LocalDateTime modifyDate;
-
 }

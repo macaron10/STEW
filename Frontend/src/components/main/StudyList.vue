@@ -10,7 +10,7 @@
           <!-- :to="'/study/' + group.gpNo" -->
         <v-card
           class="mx-auto"
-          @click="toDetail(group.gpNo)"
+          @click="toDetail(group)"
         >
           <v-img
             :src="$store.state.baseUrl + '/study/thumb' + group.gpImg"
@@ -72,22 +72,18 @@
   </v-container>
 </template>
 
-<script>[]
+<script>
 import axios from 'axios'
 import { mapState, mapActions } from 'vuex'
 
 export default {
   name: 'StudyList',
   data () {
-    const gpNoData = {
-      gpNo:0,
-    }
     return {
       myGroups: {},
       dialog: false,
       selectedGroup: {},
       snackbar: false,
-      gpNoData
     }
   },
   methods: {
@@ -114,17 +110,17 @@ export default {
         console.error(err)
       }
     },
-    toDetail(gpNo) {
-      this.selectedGroup = this.groups[gpNo-1]
+    toDetail(group) {
+      this.selectedGroup = group
       let flag = false
       for (let i=0; i<this.myGroups.length; i++){
-        if (gpNo === this.myGroups[i].gpNo) {
+        if (group.gpNo === this.myGroups[i].gpNo) {
           flag = true
           // this.$router.push('/study/' + gpNo)
         }
       }
       if (flag === true) {
-        this.$router.push('/study/' + gpNo)
+        this.$router.push('/study/' + group.gpNo)
       } else {
         this.dialog = true
       }
@@ -142,7 +138,6 @@ export default {
     // },
     async signUpGroup(gpNo) {
       const apiUrl = '/study/user/req?no='+gpNo
-      this.gpNoData.gpNo = gpNo
       try {
         const res = await axios.post(apiUrl)
         console.log(res)
@@ -159,8 +154,9 @@ export default {
   },
   mounted () {
     this.getGroups()
-    this.getMyGroups()
-    console.log(this.groups, '이거')
+    if (this.$store.state.isLogin) {
+      this.getMyGroups()
+    }
   }
 
 }

@@ -6,9 +6,9 @@ import javax.validation.constraints.NotNull;
 import org.springframework.web.multipart.MultipartFile;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
+import lombok.Data;
 
-@Getter
+@Data
 @Valid
 public class UserSignUp {
 	@ApiModelProperty(required = true)

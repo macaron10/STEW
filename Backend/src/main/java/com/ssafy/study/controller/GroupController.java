@@ -162,6 +162,29 @@ public class GroupController {
 		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 
+	@PostMapping("/mgr")
+	@ApiOperation("그룹장 넘기기")
+	public ResponseEntity passGroupMgr(@RequestParam("no") @ApiParam(value = "gpNo", required = true) long gpNo,
+			@RequestParam("userId") @ApiParam(value = "userId", required = true) long uid,
+			@ApiIgnore @AuthenticationPrincipal UserPrincipal principal) {
+		long userId = principal.getUserId();
+		BasicResponse result = new BasicResponse();
+
+		ckGroupAuth(userId, gpNo);
+		if (groupService.ckGroupJoin(gpNo, uid)) {
+			result.msg = "Not Joined Member";
+			result.status = false;
+
+			return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
+		}
+
+		result.object = groupService.passGroupMgr(gpNo, uid);
+		result.msg = "success";
+		result.status = true;
+
+		return new ResponseEntity(result, HttpStatus.OK);
+	}
+
 	@PostMapping("/req")
 	@ApiOperation("스터디 가입 요청 (공개는 자동 가입, 비공개는 가입 요청)")
 	public ResponseEntity reqJoinGroup(RequestGroupJoinDto reqJoin,
@@ -172,13 +195,12 @@ public class GroupController {
 		if (groupService.ckGroupJoin(reqJoin.getGpNo(), userId)) {
 			result.msg = "duplicate";
 			result.status = false;
-			
+
 			return new ResponseEntity<>(result, HttpStatus.CONFLICT);
 		}
-		
+
 		if (groupService.isGroupFull(reqJoin.getGpNo()))
 			throw new GroupFullException();
-
 
 		GroupDto group = groupService.selectGroup(reqJoin.getGpNo());
 		if (group.isGpPublic()) {

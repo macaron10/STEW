@@ -1,7 +1,5 @@
 package com.ssafy.study.common.notification;
 
-import java.util.Map;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpEntity;
@@ -20,7 +18,7 @@ import lombok.ToString;
 public class MatterMostSender {
 	private Logger log = LoggerFactory.getLogger(MatterMostSender.class);
 
-	private boolean mmEnabled = false;
+	private boolean mmEnabled = true;
 	private String webhookUrl = "https://meeting.ssafy.com/hooks/ou9oee6tq3ytuyzwnid1gmzkar";
 
 	public void sendMessage(Exception excpetion, String uri, String params) {

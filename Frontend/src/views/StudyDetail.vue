@@ -4,7 +4,7 @@
       <v-row>
         <v-col class="mb-6 ">
           <div class="d-flex justify-center">
-            <img @click="enterMeetingRoom(group.gpNo)" :src="$store.state.baseUrl + '/study/thumb' + group.gpImg" alt="그룹 이미지">
+            <img @click="enterMeetingRoom(id)" :src="$store.state.baseUrl + '/study/thumb' + group.gpImg" alt="그룹 이미지">
           </div>
           <div class="text-center">
             <h1 class="my-3">{{ group.gpNm }}</h1>
@@ -81,6 +81,7 @@ export default {
         { tab: '스터디 그룹 멤버', icon: 'mdi-account-group', content: '2' },
         { tab: '타이머', icon: 'mdi-timer', content: '3' },
       ],
+      id: null
     };
   },
   mounted () {
@@ -88,8 +89,8 @@ export default {
     this.getDetail()
   },
   methods: {
-    enterMeetingRoom(gpNo) {
-      this.$router.push('/meetingroom/'+gpNo)
+    enterMeetingRoom(gpNo) {      
+      this.$router.push({name:'MeetingRoom', params:{id: gpNo}})
     },
     async getDetail () {
       // const baseUrl = this.$store.state.baseUrld

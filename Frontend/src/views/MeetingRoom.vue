@@ -61,7 +61,7 @@ export default {
         OfferToReceiveAudio: true,
         OfferToReceiveVideo: true
       };
-      this.connection.openOrJoin(this.$router.id);
+      this.connection.openOrJoin(this.$route.params.id);
       this.connection.videosContainer = document.querySelector(
         ".videos-container"
       );

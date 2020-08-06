@@ -197,6 +197,7 @@ export default {
   mounted () {
     this.id = this.$route.params.id
     this.getDetail()
+    this.getCategories()
   },
   computed: {
     formIsValid () {
@@ -236,7 +237,8 @@ export default {
     this.formData.append('gpPublic', Boolean(this.form.gpPublic))
     this.formData.append('gpStTm', Number(this.form.gpStTm))
     this.formData.append('gpTag', this.form.gpTag)
-    this.formData.append('updateGpImg', this.form.updateGpimg)
+    this.formData.append('updateGpImg', this.form.updateGpImg)
+    this.formData.append('gpNo', this.id)
     },
     async updateGroup () {
       try {
@@ -260,6 +262,18 @@ export default {
       this.updateGroup()
       this.resetForm()
     },
+    async getCategories () {
+      try {
+        const apiUrl = '/study/cate'
+        const res = await axios.get(apiUrl)
+        for (const i in res.data.object) {
+          this.categories.push(res.data.object[i].gpCatNm)
+        }
+      } catch (err) {
+        console.err(err)
+      }
+    }
   },
+  
 };
 </script>

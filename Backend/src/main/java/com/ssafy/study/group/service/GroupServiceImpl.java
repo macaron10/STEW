@@ -8,8 +8,11 @@ import org.springframework.stereotype.Service;
 
 import com.ssafy.study.group.model.dto.GroupCategoryDto;
 import com.ssafy.study.group.model.dto.GroupDto;
+import com.ssafy.study.group.model.dto.GroupJoinDto;
+import com.ssafy.study.group.model.dto.GroupReqDto;
 import com.ssafy.study.group.model.dto.GroupSearchDto;
 import com.ssafy.study.group.model.dto.ModifyGroupDto;
+import com.ssafy.study.group.model.dto.RequestGroupJoinDto;
 import com.ssafy.study.group.model.entity.Group;
 import com.ssafy.study.group.model.entity.GroupJoin;
 import com.ssafy.study.group.model.entity.GroupReq;
@@ -17,6 +20,7 @@ import com.ssafy.study.group.repository.GroupCategoryRepository;
 import com.ssafy.study.group.repository.GroupJoinRepository;
 import com.ssafy.study.group.repository.GroupRepository;
 import com.ssafy.study.group.repository.GroupReqRepository;
+import com.ssafy.study.user.model.User;
 
 @Service
 public class GroupServiceImpl implements GroupService {
@@ -85,8 +89,9 @@ public class GroupServiceImpl implements GroupService {
 	}
 
 	@Override
-	public void requestJoinGroup(long userId, long gpNo) {
-		GroupReq req = new GroupReq(userId, gpNo);
+	public void requestJoinGroup(long userId, RequestGroupJoinDto joinReq) {
+		GroupReq req = joinReq.toEntity();
+		req.setUser(new User(userId));
 
 		reqRepo.save(req);
 	}
@@ -145,8 +150,41 @@ public class GroupServiceImpl implements GroupService {
 	}
 
 	@Override
+	public GroupDto passGroupMgr(long gpNo, long uid) {
+		Group group = gpRepo.findByGpNo(gpNo);
+		group.setGpMgrId(uid);
+
+		return new GroupDto(gpRepo.save(group));
+	}
+
+	@Override
 	public boolean ckGroupExist(long no) {
 		return gpRepo.existsById(no);
+	}
+
+	@Override
+	public GroupJoinDto selectGroupJoinByJoinNo(long gpJoinNo) {
+		return new GroupJoinDto(joinRepo.findByGpJoinNo(gpJoinNo));
+	}
+
+	@Override
+	public GroupReqDto selectGroupReqByReqnNo(long gpReqNo) {
+		return new GroupReqDto(reqRepo.findByGpReqNo(gpReqNo));
+	}
+
+	@Override
+	public List<GroupReqDto> selectGroupReq(long userId) {
+		return reqRepo.findAllMgrsGpReq(userId);
+	}
+
+	@Override
+	public List<GroupReqDto> selectGroupReqByGpNo(long gpNo) {
+		return reqRepo.findMgrsGpReq(gpNo);
+	}
+
+	@Override
+	public List<GroupJoinDto> selectGroupMemberList(long gpNo) {
+		return joinRepo.findGpJoinMemeber(gpNo);
 	}
 
 }

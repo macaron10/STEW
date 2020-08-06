@@ -59,7 +59,6 @@
           v-else
           :key="item.text"
           link
-          @click="clickclick"
           :to="{ name: item.page }"
         >
           <v-list-item-action
@@ -113,9 +112,6 @@ export default {
     ],
     }),
     methods: {
-      clickclick(event) {
-        console.log('클릭미')
-      }
     }
 }
 </script>

@@ -23,7 +23,7 @@ axios.interceptors.request.use(config => {
 
 axios.interceptors.response.use(
   function (res) {
-    // console.log("res 응답");
+    // console.log("res 응답");
     // console.log(res);
     return res;
   },
@@ -36,7 +36,7 @@ axios.interceptors.response.use(
     if (err.response.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
       
-      const refreshInfo: any = jwt.decode(store.state.userInfo.refreshToken.replace("Bearer ", ""));
+      const refreshInfo: any = jwt.decode(store.state.userInfo.refreshToken.replace("Bearer ", ""));
       
       if (Date.now() - refreshInfo.exp * 1000 < 0) {
         console.log("토큰 재발급 고고");

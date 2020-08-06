@@ -3,33 +3,39 @@
         <h1> 회원가입 </h1>
 
         <v-row justify="center">
-          <v-col cols="12" sm="10" md="8" lg="6">
-            <v-form ref="form">
-                <v-text-field
-                    v-model="user.email"
-                    :rules="[
-                      () => !!user.email || '이메일을 입력해주세요.',
-                      () => /.+@.+\..+/.test(user.email) || '이메일 형식이 올바르지 않습니다.',
-                    ]"
-                    label="이메일 *"
-                    :readonly="idCheck"
-                    :clearable=false
-                    required
-                />
-
-                  <!-- :disabled="!disableCheck" -->
-                <v-btn 
-                  @click="idCheckHandler" 
-                >
-                  이메일 확인
-                </v-btn>
-
+           <!-- sm="10" md="8" lg="6" -->
+          <v-col cols="6">
+            <v-form ref="form" id="form">
+                <v-row>
+                  <v-col cols=11>
+                    <v-text-field
+                        v-model="user.email"
+                        :rules="[
+                          () => !!user.email || '이메일을 입력해주세요.',
+                          () => /.+@.+\..+/.test(user.email) || '이메일 형식이 올바르지 않습니다.', 
+                        ]"
+                        label="이메일 *"
+                        :readonly="idCheck"
+                        :clearable=false
+                        required
+                    />
+                  </v-col>
+                  <v-col cols=1>
+                    <v-btn 
+                      @click="idCheckHandler" 
+                    >
+                      이메일 확인
+                    </v-btn>
+                  </v-col>
+                  <!-- <v-row rows="2">
+                      :disabled="!disableCheck"
+                  </v-row> -->
+                </v-row>
                 <v-text-field
                     v-model="user.pwd"
                     :rules="[
                       () => !!user.pwd || '비밀번호를 입력해주세요.',
                       () => user.pwd.length >= 6 || '6자 이상 입력해주세요.',
-                      addressCheck
                     ]"
                     label="비밀번호 *"
                     type="password"
@@ -62,7 +68,12 @@
                     v-model="user.img"
                     accept="image/*" 
                     label="프로필 이미지"
-                    prepend-icon="mdi-camera"
+                    prepend-icon="mdi-camera" show-size
+                    :rules="[
+                        () => user.img.size <= 10000000 || '10MB 이하의 파일만 등록 가능합니다.',
+                        () => correctExt || '지원하지 않는 확장자입니다.'
+                    ]"
+                    @change="confirmExt"
                 ></v-file-input>
 
                 <v-textarea
@@ -93,17 +104,21 @@
   export default {
     components: {},
     data() {
+      const formData = new FormData();
+
       return {
         user: {
           email: '',
           pwd: '',
           pwdCheck: '',
           name: '',
-          img: '',
+          img: [],
           intro: '',
           goalHr: ''
         },
         idCheck: false,
+        correctExt: false,
+        formData,
       }
     },
     computed: {
@@ -112,16 +127,28 @@
       }
     },
     methods: {
+      confirmExt() {
+        this.correctExt = false;
+        const ext = this.user.img.name.substring(this.user.img.name.lastIndexOf(".")+1, this.user.img.name.length).toLowerCase();
+        const imgExts = "xbm,tif,pjp,pjpeg,svgz,jpg,jpeg,ico,tiff,gif,svg,bmp,png,gfif,webp";
+        const eachExts = imgExts.split(",");
+
+        for (let i = 0; i < eachExts.length; i++) {
+          if (ext == eachExts[i]) this.correctExt = true;
+        }
+      },
+
       idCheckHandler() {
-        axios.get('http://localhost:8399/api/user/check', {
+        axios.get('/user/check', {
           params: {
-            email: this.user.email
+            userEmail: this.user.email
           }
         })
         .then(({ data }) => {
           console.log(data);
           if (data.msg === "success" && data.object) {
             this.idCheck = true;
+            alert("아이디 체크 완료");
           }
         })
       },
@@ -132,6 +159,7 @@
 
         if (this.$refs.form.validate()) {
           if (this.idCheck) {
+            this.makeFormData();
             this.signupHandler();
           } else {
             alert("이메일 확인을 눌러주세요!!")
@@ -141,24 +169,35 @@
         }
       },
 
+      makeFormData() {
+        this.formData.append('userEmail', this.user.email);
+        this.formData.append('userPw', this.user.pwd);
+        this.formData.append('userNm', this.user.name);
+        if (this.user.img instanceof File) {
+          this.formData.append('userImg', this.user.img);
+        }
+        this.formData.append('userIntro', this.user.intro);
+        this.formData.append('userGoalHr', Number(this.user.goalHr));
+      },
+
       signupHandler() {
-        // console.log(this.user);
-        axios.post('http://localhost:8399/api/user/signup', {
-          userEmail: this.user.email,
-          userPw: this.user.pwd,
-          userNm: this.user.name,
-          userImg: this.user.img,
-          userIntro: this.user.intro,
-          userGoalHr: this.user.goalHr,
-        })
+        const config = {
+          headers: {
+            'Content-Type' : 'multipart/form-data',
+          }
+        }
+
+        axios.post('/user/signup', this.formData, config)
         .then(({ data }) => {
           let msg = '다시 시도해주세요';
-          console.log("로그인결과임다");
+          console.log("회원가입 결과임다");
           console.log(data);
 
           if (data.msg === 'success') {
             msg = '회원가입 성공';
             this.moveMain();
+          } else {
+            this.formData = new FormData();
           }
           alert(msg);
         })

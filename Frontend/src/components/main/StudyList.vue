@@ -7,9 +7,10 @@
         class="d-flex child-flex"
         cols="3"
       >
+          <!-- :to="'/study/' + group.gpNo" -->
         <v-card
           class="mx-auto"
-          :to="'/study/' + group.gpNo"
+          @click="toDetail(group)"
         >
           <v-img
             :src="$store.state.baseUrl + '/study/thumb' + group.gpImg"
@@ -34,6 +35,40 @@
         </v-card>
       </v-col>
     </v-row>
+    <v-dialog
+      v-model="dialog"
+      width="500"
+    >
+      <v-card>
+        <v-card-title class="headline grey lighten-2">
+          {{ selectedGroup.gpNm }} 에 가입하시겠습니까?
+        </v-card-title>
+
+        <v-card-text>
+         {{selectedGroup.gpIntro}}
+        </v-card-text>
+
+        <v-divider></v-divider>
+
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+            color="primary"
+            text
+            @click="signUpGroup(selectedGroup.gpNo)"
+          >
+            가입신청
+          </v-btn>
+          <v-btn
+            color="primary"
+            text
+            @click="dialog = false"
+          >
+            닫기
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-container>
 </template>
 
@@ -45,10 +80,14 @@ export default {
   name: 'StudyList',
   data () {
     return {
+      myGroups: {},
+      dialog: false,
+      selectedGroup: {},
+      snackbar: false,
     }
   },
   methods: {
-    ...mapActions(['getGroups']),
+    ...mapActions('sg', ['getGroups']),
     // 솔팅 함수
     // sortBy (prop) {
     //   if (prop === 'popularity') {
@@ -61,8 +100,52 @@ export default {
     //   this.sortedBy = prop
     //   this.movies.sort((a, b) => (a[prop] > b[prop] ? -1 : 1))
     // }
-    getSearchedGroup() {
-      return {}
+    async getMyGroups () {
+      const apiUrl = '/study/user/my'
+      try {
+        const res = await axios.get(apiUrl)
+        console.log(res)
+        this.myGroups = res.data.object
+      } catch (err) {
+        console.error(err)
+      }
+    },
+    toDetail(group) {
+      this.selectedGroup = group
+      let flag = false
+      for (let i=0; i<this.myGroups.length; i++){
+        if (group.gpNo === this.myGroups[i].gpNo) {
+          flag = true
+          // this.$router.push('/study/' + gpNo)
+        }
+      }
+      if (flag === true) {
+        this.$router.push('/study/' + group.gpNo)
+      } else {
+        this.dialog = true
+      }
+    },
+    // signUpGroup(gpNo) {
+    //   const apiUrl = '/study/user/req'
+    //   this.gpNoData.gpNo = gpNo
+    //   console.log(this.gpNoData)
+    //   axios.post(apiUrl, this.gpNoData)
+    //   .then((res) => {
+    //     console.log(res)
+    //     this.dialog = false
+    //     this.snackbar = true
+    //     })
+    // },
+    async signUpGroup(gpNo) {
+      const apiUrl = '/study/user/req?no='+gpNo
+      try {
+        const res = await axios.post(apiUrl)
+        console.log(res)
+        this.dialog = false
+        this.snackbar = true
+      } catch (err) {
+        console.error(err)
+      }
     }
   },
   computed: {
@@ -71,7 +154,9 @@ export default {
   },
   mounted () {
     this.getGroups()
-    console.log(this.groups, '이거')
+    if (this.$store.state.isLogin) {
+      this.getMyGroups()
+    }
   }
 
 }

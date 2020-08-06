@@ -4,7 +4,7 @@
       <v-row>
         <v-col class="mb-6 ">
           <div class="d-flex justify-center">
-            <img @click="enterMeetingRoom(group.gpNo)" :src="$store.state.baseUrl + '/study/thumb' + group.gpImg" alt="그룹 이미지">
+            <img @click="enterMeetingRoom(id)" :src="$store.state.baseUrl + '/study/thumb' + group.gpImg" alt="그룹 이미지">
           </div>
           <div class="text-center">
             <h1 class="my-3">{{ group.gpNm }}</h1>
@@ -12,9 +12,16 @@
             <v-btn
               :to="{ name:'StudyUpdate', params: { id: id }}"
               color="blue accent-1"
-              class="white--text font-weight-bold"
+              class="white--text font-weight-bold mx-3"
             >
               수정
+            </v-btn>
+            <v-btn
+              color="red accent-1"
+              class="white--text font-weight-bold"
+              @click="quitGroup(group.gpNo)"
+            >
+              탈퇴
             </v-btn>
           </div>
         </v-col>
@@ -22,44 +29,35 @@
           <Calendar />
         </v-col>
       </v-row>
+    <v-card>
+      <v-tabs
+        v-model="tab"
+        background-color="blue lighten-1"
+        :grow="true"
+        dark
+        :icons-and-text="true"
+      >
+        <v-tab
+          v-for="item in items"
+          :key="item.tab"
+        >
+          {{ item.tab }}
+          <v-icon>{{ item.icon }}</v-icon>
+        </v-tab>
+      </v-tabs>
+
+      <v-tabs-items v-model="tab">
+        <v-tab-item
+          v-for="item in items"
+          :key="item.tab"
+        >
+          <v-card flat>
+            <v-card-text>{{ item.content }}</v-card-text>
+          </v-card>
+        </v-tab-item>
+      </v-tabs-items>
+    </v-card>
     </v-container>
-    <v-row justify="space-around">
-      <v-switch v-model="icons" class="mx-2" label="Text + icons"></v-switch>
-      <v-switch v-model="centered" class="mx-2" label="Centered" :disabled="vertical"></v-switch>
-      <v-switch v-model="grow" class="mx-2" label="Grow"></v-switch>
-      <v-switch v-model="vertical" class="mx-2" label="Vertical"></v-switch>
-      <v-switch v-model="right" class="mx-2" label="Right"></v-switch>
-      <v-col cols="12">
-        <v-slider v-model="tabs" min="0" max="10" label="Tabs number"></v-slider>
-      </v-col>
-    </v-row>
-
-    <v-tabs
-      v-model="tab"
-      background-color="deep-purple accent-4"
-      class="elevation-2"
-      dark
-      :centered="centered"
-      :grow="grow"
-      :vertical="vertical"
-      :right="right"
-      :prev-icon="prevIcon ? 'mdi-arrow-left-bold-box-outline' : undefined"
-      :next-icon="nextIcon ? 'mdi-arrow-right-bold-box-outline' : undefined"
-      :icons-and-text="icons"
-    >
-      <v-tabs-slider></v-tabs-slider>
-
-      <v-tab v-for="i in tabs" :key="i" :href="`#tab-${i}`">
-        Tab {{ i }}
-        <v-icon v-if="icons">mdi-phone</v-icon>
-      </v-tab>
-
-      <v-tab-item v-for="i in tabs" :key="i" :value="'tab-' + i">
-        <v-card flat tile>
-          <v-card-text>{{ text }}</v-card-text>
-        </v-card>
-      </v-tab-item>
-    </v-tabs>
   </div>
 </template>
 
@@ -74,18 +72,16 @@ export default {
   },
   data() {
     return {
-      group: {},
+      group: [],
+      members: [],
       // 밑에는 그룹정보(나중에 활용)
       tab: null,
-      icons: false,
-      centered: false,
-      grow: false,
-      vertical: false,
-      prevIcon: false,
-      nextIcon: false,
-      right: false,
-      tabs: 3,
-      text: "내용이 들어가야 할 곳"
+      items: [
+        { tab: '스터디 소개', icon: 'mdi-book-open-variant', content: '1' },
+        { tab: '스터디 그룹 멤버', icon: 'mdi-account-group', content: '2' },
+        { tab: '타이머', icon: 'mdi-timer', content: '3' },
+      ],
+      id: null
     };
   },
   mounted () {
@@ -93,24 +89,32 @@ export default {
     this.getDetail()
   },
   methods: {
-    enterMeetingRoom(gpNo) {
-      this.$router.push('/meetingroom/'+gpNo)
+    enterMeetingRoom(gpNo) {      
+      this.$router.push({name:'MeetingRoom', params:{id: gpNo}})
     },
     async getDetail () {
-      // const baseUrl = this.$store.state.baseUrl
+      // const baseUrl = this.$store.state.baseUrld
       const apiUrl = '/study/user/' + this.id
       try {
-        // const config = {
-        //   headers: {
-        //     Authorization: `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c2VyMSIsInJvbGUiOlsic3RyaW5nIiwiUk9MRV9VU0VSIl0sImV4cCI6MTU5NTkyNjk3MywidXNlcklkIjoxLCJpYXQiOjE1OTU5MjUxNzN9.yJA-YJ_1QDVslPVcoT6xD8cad1SxP3iWR0AxT_vxkQiEB1CN-gdimy_mU96CGegEzkTy5JR0GhYQdE0ybwqqhQ `
-        //   }
-        // }
         const res = await axios.get(apiUrl)
-        this.group = res.data.object
+        this.group = JSON.parse(res.data.object).group
+        this.group = JSON.parse(this.group)
+        this.members = JSON.parse(res.data.object)
+      } catch (err) {
+        // this.$router.push('/main/')
+        console.error(err)
+      }
+    },
+    async quitGroup(gpNo) {
+      const apiUrl = '/study/user/exit?no=' + gpNo
+      try {
+        const res = await axios.post(apiUrl)
+        this.$router.push('/main/')
       } catch (err) {
         console.error(err)
       }
     }
+
   }
 };
 </script>

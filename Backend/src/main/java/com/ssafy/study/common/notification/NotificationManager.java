@@ -1,5 +1,7 @@
 package com.ssafy.study.common.notification;
 
+import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -15,10 +17,9 @@ public class NotificationManager {
 		this.mmSender = mmSender;
 	}
 
-	public void sendNotification(Exception e, String uri) {
+	public void sendNotification(Exception e, String uri, String params) {
 		log.info("#### send Notification.");
-		Attachment attach = new Attachment(e, uri);
-		mmSender.sendMessage(attach);
+		mmSender.sendMessage(e, uri, params);
 	}
 
 }

@@ -124,6 +124,7 @@ public class PublicGroupController {
 	}
 
 	@GetMapping("/test")
-	public void test(int no) {
+	public Object test() {
+		return groupService.selectGroupMemberList(1);
 	}
 }

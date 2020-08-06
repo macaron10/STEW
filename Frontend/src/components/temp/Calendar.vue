@@ -12,11 +12,17 @@
           </v-btn>
           <v-toolbar-title v-if="$refs.calendar">{{ $refs.calendar.title }}</v-toolbar-title>
           <v-spacer></v-spacer>
-          <v-btn outlined color="grey darken-2" @click.stop="dialog = true">NEW</v-btn>
-          <v-dialog v-model="dialog" max-width="480">
+          <v-btn outlined color="grey darken-2" @click.stop="newForm()">NEW</v-btn>
+
+          <v-dialog v-model="dialog" max-width="470">
             <v-card>
               <v-card-title class="headline">New Schedule</v-card-title>
-              <v-date-picker color='blue lighten-2' v-model="newSchedule.dates" :landscape="landscape" range></v-date-picker>
+              <v-date-picker
+                color="blue lighten-2"
+                v-model="newSchedule.dates"
+                :landscape="landscape"
+                range
+              ></v-date-picker>
               <span v-if="newSchedule.dates[0]">기간 : {{dateRangeText}}</span>
               <v-switch v-model="newSchedule.useTime" class="ma-4" label="시간 사용"></v-switch>
               <v-text-field
@@ -86,16 +92,16 @@
             <v-toolbar :color="selectedEvent.color" dark>
               <v-toolbar-title v-html="selectedEvent.name"></v-toolbar-title>
               <v-spacer></v-spacer>
-              <v-btn icon>
-                <v-icon>mdi-pencil</v-icon>
-              </v-btn>
-
-              <v-btn icon>
-                <v-icon>mdi-dots-vertical</v-icon>
+              <v-btn
+                @click="deleteSchedule(selectedEvent.pk, selectedEvent.type)"
+                @change="updateRange"
+                icon
+              >
+                <v-icon>mdi-trash-can</v-icon>
               </v-btn>
             </v-toolbar>
             <v-card-text>
-              <span>{{selectedEvent.start}}부터 {{selectedEvent.end}}까지</span>
+              <span>{{selectedEvent.start}}부터 {{selectedEvent.type}}까지</span>
               <hr />
               <span v-html="selectedEvent.details"></span>
             </v-card-text>
@@ -112,6 +118,9 @@
 <script>
 import { start } from "repl";
 import { VDatePickerYears } from "vuetify/lib";
+import axios from "axios";
+import router from "../../router";
+import { truncate } from "fs";
 export default {
   data: () => ({
     newSchedule: {
@@ -123,7 +132,7 @@ export default {
       details: ""
     },
     landscape: true,
-
+    private: true,
     dialog: false,
     focus: "",
     type: "month",
@@ -136,80 +145,19 @@ export default {
     selectedEvent: {},
     selectedElement: null,
     selectedOpen: false,
-    events: [
-      {
-        name: "카카오 코딩 테스트 준비",
-        details: "안녕",
-        // start: "2020-07-23 15:00",
-        start: new Date(2020, 6, 5, 15),
-        // end: "2020-09-23 11:30",
-        end: new Date(2020, 6, 11, 19),
-        timed: false,
-        color: "yellow"
-      },
-      {
-        name: "네이버 코딩 테스트 준비",
-        details: "안녕",
-        // start: "2020-07-23 15:00",
-        start: new Date(2020, 6, 16, 15),
-        // end: "2020-09-23 11:30",
-        end: new Date(2020, 6, 21, 19),
-        timed: false,
-        color: "green"
-      },
-      {
-        name: "Toss 코딩 테스트 준비",
-        details: "안녕",
-        // start: "2020-07-23 15:00",
-        start: new Date(2020, 6, 23, 15),
-        // end: "2020-09-23 11:30",
-        end: new Date(2020, 6, 31, 19),
-        timed: false,
-        color: "blue"
-      },
-      {
-        name: "모의 코딩 테스트",
-        details: "안녕",
-        // start: "2020-07-23 15:00",
-        start: new Date(2020, 6, 25, 15),
-        // end: "2020-09-23 11:30",
-        end: new Date(2020, 6, 25, 19),
-        timed: false,
-        color: "orange"
-      },
-      {
-        name: "모의 코테 분석",
-        details: "안녕",
-        // start: "2020-07-23 15:00",
-        start: new Date(2020, 6, 26, 15),
-        // end: "2020-09-23 11:30",
-        end: new Date(2020, 6, 26, 19),
-        timed: false,
-        color: "indigo"
-      },
-    ],
-    colors: [
-      "blue",
-      "indigo",
-      "deep-purple",
-      "cyan",
-      "green",
-      "orange",
-      "grey darken-1"
-    ],
-    names: [
-      "Meeting",
-      "Holiday",
-      "PTO",
-      "Travel",
-      "Event",
-      "Birthday",
-      "Conference",
-      "Party"
-    ]
+    events: [],
+    checkManager: null,
+    userId: null,
+    groupId: 0,
+    managerId: -1
   }),
   mounted() {
     this.$refs.calendar.checkChange();
+    this.checkPrivateSchdule();
+    this.getUserId();
+    if (!this.private) {
+      this.getGroupIdManagerId();
+    }
   },
   computed: {
     dateRangeText() {
@@ -227,6 +175,48 @@ export default {
         name: "",
         details: ""
       };
+    },
+    checkPrivateSchdule() {
+      switch (this.$router.history.current.path) {
+        case "/user/MySchedule":
+          this.private = true;
+          break;
+        default:
+          this.private = false;
+      }
+    },
+    getUserId() {
+      axios
+        .get("/user")
+        .then(res => {
+          this.userId = res.data.object.userId;
+        })
+        .catch(err => console.log(err));
+    },
+    getGroupIdManagerId() {
+      const apiUrl = `/study/user/${this.$route.params.id}`;
+      axios
+        .get(apiUrl)
+        .then(res => {
+          const obj = JSON.parse(res.data.object);
+          const data = JSON.parse(obj.group[0]);
+          this.groupId = data.gpNo;
+          this.managerId = data.gpMgrId;
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    },
+    newForm() {
+      if (this.private) {
+        this.dialog = true;
+      } else {
+        if (this.userId === this.managerId) {
+          this.dialog = true;
+        } else {
+          alert("그룹장만 그룹일정을 수정할 수 있습니다.");
+        }
+      }
     },
     viewDay({ date }) {
       this.focus = date;
@@ -260,11 +250,118 @@ export default {
 
       nativeEvent.stopPropagation();
     },
+    deleteSchedule(pk, type) {
+      const event = [];
+      if (type == "U") {
+        axios
+          .delete(`/cal/${pk}`)
+          .then(res => {
+            for (const e of this.events) {
+              if (!(e.pk === pk)) {
+                event.push(e);
+              }
+            }
+            this.events = event;
+          })
+          .catch(err => {
+            console.log(err);
+          });
+      }
+      if (type == "G") {
+        if (this.managerId === this.userId) {
+          axios
+            .delete(`/cal/${pk}`)
+            .then(res => {
+              for (const e of this.events) {
+                if (!(e.pk === pk)) {
+                  event.push(e);
+                }
+              }
+              this.events = event;
+            })
+            .catch(err => {
+              console.log(err);
+            });
+        }
+      }
+      this.selectedOpen = false;
+    },
     updateRange({ start, end }) {
-      console.log();
-      // 일정 가져오는 axios보내야 하는 함수
+      const event = [];
+      axios
+        .get(`/cal/personal/${start.year}/${start.month}`)
+        .then(res => {
+          if (!(res.data.object === undefined)) {
+            for (const schedule of res.data.object) {
+              const s = schedule.cstTm;
+              const e = schedule.cendTm;
+              const addedSchdule = {
+                pk: schedule.cno,
+                name: schedule.cevtNm,
+                details: schedule.cevtDsc,
+                start: new Date(
+                  s.slice(0, 4),
+                  s.slice(5, 7) - 1,
+                  s.slice(8, 10),
+                  s.slice(11, 13),
+                  s.slice(14, 16)
+                ),
+                end: new Date(
+                  e.slice(0, 4),
+                  e.slice(5, 7) - 1,
+                  e.slice(8, 10),
+                  e.slice(11, 13),
+                  e.slice(14, 16)
+                ),
+                timed: schedule.useTime,
+                color: "green",
+                type: schedule.ctype,
+                cown: schedule.cown
+              };
+              event.push(addedSchdule);
+            }
+          }
+        })
+        .catch(err => console.log(err));
+      axios
+        .get(`/cal/group/${start.year}/${start.month}`)
+        .then(res => {
+          if (!(res.data.object === [])) {
+            for (const schedule of res.data.object) {
+              const s = schedule.cstTm;
+              const e = schedule.cendTm;
+              const addedSchdule = {
+                pk: schedule.cno,
+                name: schedule.cevtNm,
+                details: schedule.cevtDsc,
+                start: new Date(
+                  s.slice(0, 4),
+                  s.slice(5, 7) - 1,
+                  s.slice(8, 10),
+                  s.slice(11, 13),
+                  s.slice(14, 16)
+                ),
+                end: new Date(
+                  e.slice(0, 4),
+                  e.slice(5, 7) - 1,
+                  e.slice(8, 10),
+                  e.slice(11, 13),
+                  e.slice(14, 16)
+                ),
+                timed: schedule.useTime,
+                color: "blue",
+                type: schedule.ctype,
+                cown: schedule.cown
+              };
+              event.push(addedSchdule);
+            }
+          }
+        })
+        .catch(err => console.log(err, "hihi"));
+      this.events = event;
     },
     createNewSchedule() {
+      console.log(this.private);
       if (this.newSchedule.dates.length !== 2) {
         alert("종료날짜를 입력해 주세요.");
         return;
@@ -278,24 +375,58 @@ export default {
           }
         }
       }
-      if (this.newSchedule.name===""){
-        alert("스케줄 내용을 입력해 주세요.")
-        return
+      if (this.newSchedule.name === "") {
+        alert("스케줄 내용을 입력해 주세요.");
+        return;
       }
+      console.log(this.userId);
+      console.log(this.groupId);
+
       const schedule = {
         cstTm: `${this.newSchedule.dates[0]}T${this.newSchedule.startTime}:00`,
         cendTm: `${this.newSchedule.dates[1]}T${this.newSchedule.endTime}:00`,
         useTime: this.newSchedule.useTime,
         cevtNm: this.newSchedule.name,
         cevtDsc: this.newSchedule.details,
-        cown: 1, //id number
-        ctype: 'G'  //or 'U' 
+        cown: this.private ? this.userId : this.groupId,
+        ctype: this.private ? "U" : "G"
       };
+      const apiUrl = "/cal/";
+      axios
+        .post(apiUrl, schedule)
+        .then(res => {
+          const schedule = res.data.object;
+          const s = schedule.cstTm;
+          const e = schedule.cendTm;
+          const addedSchdule = {
+            pk: schedule.cno,
+            name: schedule.cevtNm,
+            details: schedule.cevtDsc,
+            start: new Date(
+              s.slice(0, 4),
+              s.slice(5, 7) - 1,
+              s.slice(8, 10),
+              s.slice(11, 13),
+              s.slice(14, 16)
+            ),
+            end: new Date(
+              e.slice(0, 4),
+              e.slice(5, 7) - 1,
+              e.slice(8, 10),
+              e.slice(11, 13),
+              e.slice(14, 16)
+            ),
+            timed: schedule.useTime,
+            color: this.private ? "green" : "blue",
+            type: schedule.ctype,
+            cown: schedule.cown
+          };
+          this.events.push(addedSchdule);
+        })
+        .catch(err => console.log(err));
 
-      // 등록 axios
-      this.dialog = false
-      this.updateRange()
-      this.reset()
+      this.dialog = false;
+      this.reset();
     },
     sortDate() {
       this.newSchedule.dates.sort();

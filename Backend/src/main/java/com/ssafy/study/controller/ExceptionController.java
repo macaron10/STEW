@@ -7,6 +7,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import com.google.gson.JsonObject;
 import com.ssafy.study.common.exception.FileUploadException;
 import com.ssafy.study.common.model.ErrorResponse;
 import com.ssafy.study.common.notification.NotificationManager;
@@ -77,15 +79,16 @@ public class ExceptionController {
 
 	@ExceptionHandler(Exception.class)
 	public ResponseEntity exceptionTest(Exception e, HttpServletRequest req) {
-		Map<String, Object> params = new HashMap<>();
+		StringBuilder params = new StringBuilder();
 		Enumeration<String> keys = req.getParameterNames();
 		while (keys.hasMoreElements()) {
 			String key = keys.nextElement();
-			params.put(key, req.getParameter(key));
+			params.append("- ").append(key).append(" : ").append(req.getParameter(key)).append('\n');
 		}
+
 		ErrorResponse result = new ErrorResponse();
 		e.printStackTrace();
-		notificationManager.sendNotification(e, req.getRequestURI(), params);
+		notificationManager.sendNotification(e, req.getRequestURI(), params.toString());
 
 		result.status = false;
 		result.msg = "잘못된 요청입니다!";

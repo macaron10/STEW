@@ -50,52 +50,24 @@ public class Attachment {
 		this.footer = format.format(System.currentTimeMillis());
 	}
 
-	public Attachment(Exception e, String uri) {
+	public Attachment(Exception e, String uri, String params) {
 		this();
 
-		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 		this.title = e.getClass().getSimpleName();
 
-		StringBuilder text = new StringBuilder();
-		text.append("**Error Message**").append('\n');
-		text.append(e.getMessage()).append('\n').append('\n');
+		StringBuilder sb = new StringBuilder();
+		sb.append("**Error Message**").append('\n').append('\n').append("```");
+		sb.append(e.getMessage()).append("```").append('\n').append('\n');
 
-		text.append("**Reqeust URL**").append('\n');
-		text.append(uri).append('\n').append('\n');
+		sb.append("**Reqeust URL**").append('\n').append('\n');
+		sb.append(uri).append('\n').append('\n');
 
-		StringWriter sw = new StringWriter();
-		e.printStackTrace(new PrintWriter(sw));
-		text.append("**Stack Trace**").append("\n");
-		text.append(sw.toString());
+		sb.append("**Parameters**").append('\n').append('\n');
+		sb.append(params.toString()).append('\n').append('\n');
 
-		this.text = text.toString();
-
-		this.footer = format.format(System.currentTimeMillis());
-	}
-
-	public Attachment(Exception e, String uri, Map params) {
-		this();
+		this.text = sb.toString();
 
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-		this.title = e.getClass().getSimpleName();
-
-		StringBuilder text = new StringBuilder();
-		text.append("**Error Message**").append('\n');
-		text.append(e.getMessage()).append('\n').append('\n');
-
-		text.append("**Parameters**").append('\n');
-		text.append(params.toString()).append('\n').append('\n');
-
-		text.append("**Reqeust URL**").append('\n');
-		text.append(uri).append('\n').append('\n');
-
-		StringWriter sw = new StringWriter();
-		e.printStackTrace(new PrintWriter(sw));
-		text.append("**Stack Trace**").append("\n");
-		text.append(sw.toString());
-
-		this.text = text.toString();
-
 		this.footer = format.format(System.currentTimeMillis());
 	}
 

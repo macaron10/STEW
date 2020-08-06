@@ -67,6 +67,9 @@ public class User extends TimeEntity {
 	private int userGoalHr;
 
 	@Setter
+	private String type = "stew";
+	
+	@Setter
 	@Transient
 	private boolean isEnable = true;
 

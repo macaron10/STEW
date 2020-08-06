@@ -26,14 +26,10 @@ public class KakaoOAuth2AuthorizedClientService implements OAuth2AuthorizedClien
 		OAuth2AccessToken accessToken = authorizedClient.getAccessToken();
 		
 		System.out.println("인증 액세스 토큰 : " + accessToken.getTokenValue());
-		
 		OAuth2User oauth2User = (OAuth2User) principal.getPrincipal();
 		
 		System.out.println("인증 정보");
 		System.out.println(oauth2User.getAttributes());
-		
-		
-		
 		
 	}
 

@@ -161,6 +161,7 @@ export default {
         groupName: [val => (val || '').length > 0 || 'This field is required'],
       },
       categories: [],
+      categoryObj: {},
       conditions: false,
       content: `로렌입섬`,
       snackbar: false,
@@ -194,6 +195,9 @@ export default {
       this.form = Object.assign({}, this.form)
       this.$refs.form.reset()
     },
+    inputGpCatNo() {
+      this.form.gpCatNo = this.categoryObj[this.form.gpCatNo]
+    },
     makeFormData () {
       this.formData.append('gpNm', this.form.gpNm) // 순서는 상관 없음
       this.formData.append('gpCatNo', Number(this.form.gpCatNo))
@@ -222,6 +226,7 @@ export default {
     submit () {
       console.log(this.tags)
       this.snackbar = true
+      this.inputGpCatNo()
       this.makeFormData()
       this.createGroup()
       this.resetForm()
@@ -232,6 +237,7 @@ export default {
         const res = await axios.get(apiUrl)
         for (const i in res.data.object) {
           this.categories.push(res.data.object[i].gpCatNm)
+          this.categoryObj[res.data.object[i].gpCatNm] = res.data.object[i].gpCatNo
         }
       } catch (err) {
         console.err(err)

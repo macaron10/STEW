@@ -53,8 +53,8 @@ export default {
         data: true
       };
 
-      // this.connection.socketURL = "http://i3b103.p.ssafy.io:9001/";
-      this.connection.socketURL =
+         this.connection.socketURL = "http://i3b103.p.ssafy.io:9001/";
+    //  this.connection.socketURL =
         "https://rtcmulticonnection.herokuapp.com:443/";
 
       this.connection.sdpConstraints.mandatory = {

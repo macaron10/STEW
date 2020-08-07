@@ -6,7 +6,7 @@
           <div class="d-flex justify-center">
             <img
             @click="enterMeetingRoom(group.gpNo)"
-            :src="$store.state.baseUrl + '/study/thumb' + group.gpImg"
+            :src="$store.state.baseUrl + '/group' + group.gpImg"
             alt="그룹 이미지"
             height=400px
             >

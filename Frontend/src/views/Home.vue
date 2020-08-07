@@ -13,7 +13,7 @@
 
   <v-img
     dark
-    :src= "$store.state.baseUrl + '/study/thumb/2020/00/00/home2.jpg'"
+    :src= "$store.state.baseUrl + '/main/home2.jpg'"
   >
     <v-row class="my-10"></v-row>
     <v-row class="my-10"></v-row>
@@ -29,7 +29,7 @@
       </v-col>
     </v-row>
   </v-img>
-  <v-img  :src= "$store.state.baseUrl + '/study/thumb/2020/00/00/home3.jpg'"></v-img>
+  <v-img  :src= "$store.state.baseUrl + '/main/home3.jpg'"></v-img>
 </div>
 </template>
 
@@ -44,7 +44,7 @@ export default {
     return {
       items: [
         {
-          src: this.$store.state.baseUrl + '/study/thumb/2020/00/00/studyeverywhere.jpg',
+          src: this.$store.state.baseUrl + '/main/studyeverywhere.jpg',
         },
         {
           src: 'https://cdn.vuetifyjs.com/images/carousel/sky.jpg',

@@ -13,7 +13,7 @@
           @click="toDetail(group)"
         >
           <v-img
-            :src="$store.state.baseUrl + '/study/thumb' + group.gpImg"
+            :src="$store.state.baseUrl + '/group' + group.gpImg"
             height="150"
           >
             <v-row align="end" class="my-3 lightbox white--text pa-2 fill-height">

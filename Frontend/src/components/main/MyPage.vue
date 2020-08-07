@@ -17,7 +17,7 @@ export default {
     return {
       items: [
         {
-          src: this.$store.state.baseUrl + '/study/thumb/2020/00/00/studyeverywhere.jpg',
+          src: this.$store.state.baseUrl + '/main/studyeverywhere.jpg',
         },
         {
           src: 'https://cdn.vuetifyjs.com/images/carousel/sky.jpg',

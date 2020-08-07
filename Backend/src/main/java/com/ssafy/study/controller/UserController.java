@@ -81,7 +81,7 @@ public class UserController {
 //	비밀번호 맞는지 아닌지
 //	유저 업데이트할때 비밀번호 포함 안하고싶다
 	
-	@GetMapping("/checkPw")
+	@PostMapping("/checkPw")
 	@ApiOperation("비밀번호 확인")
 	public ResponseEntity<BasicResponse> checkPw(@AuthenticationPrincipal UserPrincipal principal, String userPw){
 		
@@ -93,7 +93,7 @@ public class UserController {
 		
 		BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 		
-		if(encoder.encode(userPw).equals(principal.getPassword())) {
+		if(encoder.matches(userPw, principal.getPassword())) {
 			result.object = true;
 		}
 		

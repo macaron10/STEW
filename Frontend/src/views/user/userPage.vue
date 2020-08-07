@@ -103,6 +103,7 @@
 
 <script>
 import axios from 'axios';
+import querystring from 'querystring';
 
 export default {
     name: "userPage",
@@ -152,15 +153,11 @@ export default {
         },
 
         checkUserPwd(pwd, type) {
-            console.log(pwd); 
-            axios.post('/user/checkPw', {
-                    userPw: pwd
-            })
+            axios.post('/user/checkPw', querystring.stringify({userPw : pwd}))
             .then(({ data }) => {
                 console.log(data);
                 if (data.msg === "success" && data.object) {
                     if (type === "update") {
-                        console.log("업데이트ㄱㄱ");
                         this.updateUserPwd();
                     } else if (type === "del") {
                         console.log("삭제ㄱㄱ");
@@ -181,10 +178,13 @@ export default {
         },
 
         updateUserPwd() {
-            this.newUserInfo.userPw = this.updatePwd.new;
-            axios.get('/user', this.newUserInfo)
+            axios.put('/user', querystring.stringify({userNewPw : this.updatePwd.new}))
             .then(({ data }) => {
                 console.log(data);
+                if (data.msg === "success") {
+                    alert("비밀번호 변경 성공");
+                    this.updatePwdDialog=false;
+                }
             })
         },
 

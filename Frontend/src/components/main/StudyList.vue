@@ -157,7 +157,6 @@ export default {
       }
       try {
         const res = await axios.post(apiUrl, querystring.stringify({ reqMsg: this.message }))
-        console.log(msg)
         console.log(res)
         this.dialog = false
         this.snackbar = true

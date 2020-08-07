@@ -36,7 +36,7 @@
       label="Search"
       class="hidden-sm-and-down"
       v-model="wordForSearching"
-      @keypress.enter="searchingWord(wordForSearching)"
+      @keypress.enter="fetchGroups"
     ></v-text-field>
     <v-spacer></v-spacer>
     <v-btn 
@@ -224,6 +224,7 @@ export default {
         "logout"
         ]),
       ...mapActions('notice', ['getReqs']),
+      ...mapActions('sg', ['fetchGroups']),
       async reqOk (gpReqNo) {
         const apiUrl = '/study/user/accept?no=' + gpReqNo
         try {

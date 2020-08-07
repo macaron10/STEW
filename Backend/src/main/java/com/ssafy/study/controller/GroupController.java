@@ -7,18 +7,17 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import com.ssafy.study.common.exception.FileUploadException;
 import com.ssafy.study.common.model.BasicResponse;
 import com.ssafy.study.common.util.FileUtils;
@@ -48,6 +47,8 @@ public class GroupController {
 	private GroupService groupService;
 	@Autowired
 	private FileUtils fileUtil;
+
+	private SimpMessagingTemplate template;
 
 	private final String fileBaseUrl = "C:\\Users\\multicampus\\Desktop\\group_thumb";
 

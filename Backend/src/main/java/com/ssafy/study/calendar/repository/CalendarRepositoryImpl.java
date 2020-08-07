@@ -9,6 +9,7 @@ import javax.persistence.TypedQuery;
 import org.springframework.stereotype.Repository;
 
 import com.ssafy.study.calendar.model.CalEvent;
+import com.ssafy.study.calendar.model.ResCalEvt;
 
 @Repository
 public class CalendarRepositoryImpl implements CalendarRepositoryCustom {
@@ -56,6 +57,19 @@ public class CalendarRepositoryImpl implements CalendarRepositoryCustom {
 
 		TypedQuery<CalEvent> query = em.createQuery(jpql, CalEvent.class);
 		query.setParameter("userId", userId);
+		query.setParameter("date", dateForm);
+
+		return query.getResultList();
+	}
+
+	@Override
+	public List<ResCalEvt> findGroupCalEvtByGpNo(long gpNo, int year, int month) {
+		String dateForm = String.format("%d-%d-01", year, month);
+		String jpql = "select new com.ssafy.study.calendar.model.ResCalEvt(cal) from CalEvent cal where cal.cType = 'G' and cal.cOwn = :gpNo"
+				+ " and (DATE_FORMAT(cal.cStTm,'%Y-%m') <= DATE_FORMAT(:date, '%Y-%m') and DATE_FORMAT(cal.cEndTm,'%Y-%m') >= DATE_FORMAT(:date, '%Y-%m'))";
+
+		TypedQuery<ResCalEvt> query = em.createQuery(jpql, ResCalEvt.class);
+		query.setParameter("gpNo", gpNo);
 		query.setParameter("date", dateForm);
 
 		return query.getResultList();

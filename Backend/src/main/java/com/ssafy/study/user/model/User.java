@@ -10,6 +10,8 @@ import javax.persistence.Transient;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import com.ssafy.study.common.model.TimeEntity;
+import com.ssafy.study.group.model.dto.ModifyGroupDto;
+import com.ssafy.study.group.model.entity.GroupCategory;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -68,5 +70,37 @@ public class User extends TimeEntity {
 	@Setter
 	@Transient
 	private boolean isEnable = true;
+	
+	public void update(UserModify modifyInfo) {
+		
+		if(modifyInfo.getUserNewPw() != null) {
+			this.userPw = new BCryptPasswordEncoder().encode(modifyInfo.getUserNewPw());
+		}else {
+		
+			if(!isEmptyString(modifyInfo.getUserIntro())) {
+				this.userIntro = modifyInfo.getUserIntro();
+			}
+			
+			if(!isEmptyString(modifyInfo.getUserNm())) {
+				this.userNm = modifyInfo.getUserNm();
+			}
+			
+			if(!isEmptyString(modifyInfo.getUserNewPw())){
+				
+			}
+			
+			if(modifyInfo.getUserGoalHr() != 0) {
+				this.userGoalHr = modifyInfo.getUserGoalHr();
+			}
+			
+		}
+		
+	}
+	
+	public boolean isEmptyString(String str) {
+		if (str == null || str.equals(""))
+			return true;
+		return false;
+	}
 
 }

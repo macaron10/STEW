@@ -3,10 +3,12 @@ package com.ssafy.study.user.model;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
+import org.springframework.web.multipart.MultipartFile;
 
-@Getter
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+
+@Data
 @Valid
 public class UserSignUp {
 	@ApiModelProperty(required = true)
@@ -18,7 +20,7 @@ public class UserSignUp {
 	private String userPw;
 	
 	private String userIntro;
-	private String userImg;
+	private MultipartFile userImg;
 	private int userGoalHr;
 	
 	public User toEntity() {
@@ -28,7 +30,6 @@ public class UserSignUp {
 				.userNm(this.userNm)
 				.userPw(this.userPw)
 				.userGoalHr(this.userGoalHr)
-				.userImg(this.userImg)
 				.userIntro(this.userIntro)
 				.build();
 	}

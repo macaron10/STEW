@@ -32,7 +32,6 @@ public class UserModify {
 				.userNm(this.userNm)
 				.userPw(this.userNewPw == null ? this.userNewPw : this.userPw)
 				.userGoalHr(this.userGoalHr)
-				.userImg(this.userImg)
 				.userIntro(this.userIntro)
 				.build();
 	}

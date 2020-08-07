@@ -1,5 +1,7 @@
 package com.ssafy.study.controller;
 
+import java.io.IOException;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -9,6 +11,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,7 +21,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ssafy.study.common.exception.FileUploadException;
 import com.ssafy.study.common.model.BasicResponse;
+import com.ssafy.study.common.util.FileUtils;
 import com.ssafy.study.user.model.User;
 import com.ssafy.study.user.model.UserModify;
 import com.ssafy.study.user.model.UserPrincipal;
@@ -43,13 +48,25 @@ public class UserController {
 	private RedisTemplate<String, Object> redisTemplate;
 	@Autowired
 	private UserService userService;
+	@Autowired
+	private FileUtils fileUtil;
 	
-//	테스트용
+	private final String fileBaseUrl = "/home/ubuntu/app/img/user";
+	
 	@PostMapping("/signup")
-	@ApiOperation("회원가입 테스트")
-	public ResponseEntity<BasicResponse> signUp(@RequestBody UserSignUp signUpInfo){
+	@ApiOperation("회원가입")
+	public ResponseEntity<BasicResponse> signUp(UserSignUp signUpInfo){
 		
 		User user = signUpInfo.toEntity();
+		
+		if(signUpInfo.getUserImg() != null) {
+			try {
+				user.setUserImg(fileUtil.uploadFile(signUpInfo.getUserImg(), fileBaseUrl));
+			} catch (IOException e) {
+				e.printStackTrace();
+				throw new FileUploadException();
+			}
+		}
 		
 		userService.save(user);
 		
@@ -61,6 +78,29 @@ public class UserController {
 		
 		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
+	
+//	비밀번호 맞는지 아닌지
+//	유저 업데이트할때 비밀번호 포함 안하고싶다
+	
+	@PostMapping("/checkPw")
+	@ApiOperation("비밀번호 확인")
+	public ResponseEntity<BasicResponse> checkPw(@AuthenticationPrincipal UserPrincipal principal, String userPw){
+		
+		BasicResponse result = new BasicResponse();
+		
+		result.status = true;
+		result.msg = "success";
+		result.object = false;
+		
+		BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+		
+		if(encoder.matches(userPw, principal.getPassword())) {
+			result.object = true;
+		}
+		
+		return new ResponseEntity<>(result, HttpStatus.OK);
+	}
+	
 	
 	@GetMapping
 	@ApiOperation("회원 정보")
@@ -99,7 +139,7 @@ public class UserController {
 		
 		BasicResponse result = new BasicResponse();
 		
-		User modifiedUser = userService.save(userModify.toEntity());
+		User modifiedUser = userService.modify(userModify.toEntity());
 		
 		result.status = true;
 		result.msg = "success";

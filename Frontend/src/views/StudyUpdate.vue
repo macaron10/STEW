@@ -45,7 +45,7 @@
           <v-col cols="12" sm="6">
             <v-select
               v-model="form.gpCatNo"
-              :items="groupTypes"
+              :items="categories"
               :rules="rules.types"
               color="pink"
               label="스터디 타입"
@@ -84,7 +84,7 @@
               color="green"
             >
               <template v-slot:label>
-                <div @click.stop="">
+                <div @click.stop="form.gpPublic=!form.gpPublic">
                   스터디 공개, 비공개 여부
                 </div>
               </template>
@@ -96,7 +96,7 @@
               color="green"
             >
               <template v-slot:label>
-                <div @click.stop="">
+                <div @click.stop="form.updateGpIm=!form.updateGpIm">
                   사진변경 여부
                 </div>
               </template>
@@ -152,6 +152,7 @@ export default {
   },
   data () {
     const groupData = Object.freeze({
+      // gpCatNm: "", // 카테고리이름
       gpCatNo: 0, // 타입 아이디 ㅇ
       gpEndTm: 0, // 선호 종료 시간 ㅇ
       gpImg: "",  // 스터디 썸네일 ㅇ
@@ -174,7 +175,8 @@ export default {
         types: [val => (val || '').length > 0 || 'This field is required'],
         groupName: [val => (val || '').length > 0 || 'This field is required'],
       },
-      groupTypes: ['1', '2', '3', '4', '5'],
+      categories: [],
+      categoryObj: {},
       conditions: false,
       content: `로렌입섬`,
       snackbar: false,
@@ -197,6 +199,8 @@ export default {
   mounted () {
     this.id = this.$route.params.id
     this.getDetail()
+    this.getCategories()
+
   },
   computed: {
     formIsValid () {
@@ -208,17 +212,13 @@ export default {
   },
   methods: {
     async getDetail () {
-      // const baseUrl = this.$store.state.baseUrl
       const apiUrl = '/study/user/' + this.id
       try {
-        // const config = {
-        //   headers: {
-        //     Authorization: `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c2VyMSIsInJvbGUiOlsic3RyaW5nIiwiUk9MRV9VU0VSIl0sImV4cCI6MTU5NjAxNDMzNSwidXNlcklkIjoxLCJpYXQiOjE1OTYwMTI1MzV9.JkRWjfgbMLYwlE8UVpfiNRInO6lRXzTj2dliaqnDKICfVcvMbC87-fZuNRvWSIcKI4CyY3X22wSvXj8WH_fv1w `
-        //   }
-        // }
         const res = await axios.get(apiUrl)
-        this.groupData = res.data.object
+        this.groupData = JSON.parse(res.data.object).group
+        this.groupData = JSON.parse(this.groupData)
         this.form = this.groupData
+        this.form.updateGpImg = true
       } catch (err) {
         console.error(err)
       }
@@ -243,24 +243,41 @@ export default {
       try {
         const config = {
           headers: {
-            // Authorization: `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c2VyMSIsInJvbGUiOlsic3RyaW5nIiwiUk9MRV9VU0VSIl0sImV4cCI6MTU5NjAxNDMzNSwidXNlcklkIjoxLCJpYXQiOjE1OTYwMTI1MzV9.JkRWjfgbMLYwlE8UVpfiNRInO6lRXzTj2dliaqnDKICfVcvMbC87-fZuNRvWSIcKI4CyY3X22wSvXj8WH_fv1w `,
             'Content-Type': 'multipart/form-data',
           }
         }
-        // const baseUrl = this.$store.state.baseUrl
         const apiUrl = '/study/user/' + this.id
+      for(const pair of this.formData.entries()) {
+        console.log(pair[0]+ ', '+ pair[1]); 
+      }
         const res = await axios.put(apiUrl, this.formData, config)
         this.$router.push({ name: 'StudyDetail', params: { id: res.data.object.gpNo } })
       } catch (err) {
         console.error(err)
       }
     },
+    inputGpCatNo() {
+      this.form.gpCatNo = this.categoryObj[this.form.gpCatNo]
+    },
     submit () {
       this.snackbar = true
+      this.inputGpCatNo()
       this.makeFormData()
       this.updateGroup()
       this.resetForm()
     },
+    async getCategories () {
+      try {
+        const apiUrl = '/study/cate'
+        const res = await axios.get(apiUrl)
+        for (const i in res.data.object) {
+          this.categories.push(res.data.object[i].gpCatNm)
+          this.categoryObj[res.data.object[i].gpCatNm] = res.data.object[i].gpCatNo
+        }
+      } catch (err) {
+        console.err(err)
+      }
+    }
   },
 };
 </script>

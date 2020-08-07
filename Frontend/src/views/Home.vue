@@ -7,23 +7,29 @@
       :src="item.src"
       reverse-transition="fade-transition"
       transition="fade-transition"
-    ></v-carousel-item>
+    >
+    </v-carousel-item>
   </v-carousel>
-  <v-parallax
+
+  <v-img
     dark
-    src="https://cdn.vuetifyjs.com/images/backgrounds/vbanner.jpg"
+    :src= "$store.state.baseUrl + '/main/home2.jpg'"
   >
+    <v-row class="my-10"></v-row>
+    <v-row class="my-10"></v-row>
+    <v-row class="my-10"></v-row>
+    <v-row class="my-10"></v-row>
     <v-row
       align="center"
       justify="center"
     >
       <v-col class="text-center" cols="12">
-        <h1 class="display-1 font-weight-thin mb-4">Vuetify.js</h1>
-        <h4 class="subheading">Build your application today!</h4>
+        <h1 class="display-1 font-weight-thin mb-4">친구들과 함께 공부해요</h1>
+        <h2 class="subheading">STudy EveryWhere!</h2>
       </v-col>
     </v-row>
-  </v-parallax>
-  <v-parallax src="https://cdn.vuetifyjs.com/images/parallax/material.jpg"></v-parallax>
+  </v-img>
+  <v-img  :src= "$store.state.baseUrl + '/main/home3.jpg'"></v-img>
 </div>
 </template>
 
@@ -38,7 +44,7 @@ export default {
     return {
       items: [
         {
-          src: this.$store.state.baseUrl + '/study/thumb/2020/00/00/cafe.jpg',
+          src: this.$store.state.baseUrl + '/main/studyeverywhere.jpg',
         },
         {
           src: 'https://cdn.vuetifyjs.com/images/carousel/sky.jpg',

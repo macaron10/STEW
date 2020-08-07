@@ -1,8 +1,6 @@
 package com.ssafy.study.group.repository;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -10,9 +8,8 @@ import javax.persistence.TypedQuery;
 
 import org.springframework.stereotype.Repository;
 
-import com.ssafy.study.group.model.dto.GroupSearchDto;
 import com.ssafy.study.group.model.dto.GroupDto;
-import com.ssafy.study.group.model.entity.Group;
+import com.ssafy.study.group.model.dto.GroupSearchDto;
 
 @Repository
 public class GroupRepositoryImpl /* extends QuerydslRepositorySupport */ implements GroupRepositoryCustom {
@@ -22,14 +19,16 @@ public class GroupRepositoryImpl /* extends QuerydslRepositorySupport */ impleme
 
 	@Override
 	public List<GroupDto> selectAllGroups() {
-		String jpql = "SELECT new com.ssafy.study.group.model.dto.GroupDto(gp) " + "FROM Group gp ";
+		String jpql = "SELECT new com.ssafy.study.group.model.dto.GroupDto(gp, gc.gpCatNm) "
+				+ "FROM Group gp join GroupCategory gc on gp.gpCat.gpCatNo = gc.gpCatNo";
 
 		return em.createQuery(jpql, GroupDto.class).getResultList();
 	}
 
 	@Override
 	public List<GroupDto> findMyJoinGroup(long userId) {
-		String jpql = "SELECT new com.ssafy.study.group.model.dto.GroupDto(gp) " + "FROM Group gp "
+		String jpql = "SELECT new com.ssafy.study.group.model.dto.GroupDto(gp, gc.gpCatNm) "
+				+ "FROM Group gp join GroupCategory gc on gp.gpCat.gpCatNo = gc.gpCatNo "
 				+ "where gp.gpNo in (select gj.gp.gpNo from GroupJoin gj where gj.user.userId = :userId)  ";
 
 		TypedQuery<GroupDto> query = em.createQuery(jpql, GroupDto.class);
@@ -40,8 +39,8 @@ public class GroupRepositoryImpl /* extends QuerydslRepositorySupport */ impleme
 
 	@Override
 	public GroupDto selectByGpNo(long gpNo) {
-		String jpql = "SELECT new com.ssafy.study.group.model.dto.GroupDto(gp) " + "FROM Group gp "
-				+ "WHERE gp.gpNo = :gpNo ";
+		String jpql = "SELECT new com.ssafy.study.group.model.dto.GroupDto(gp, gc.gpCatNm) "
+				+ "FROM Group gp join GroupCategory gc on gp.gpCat.gpCatNo = gc.gpCatNo " + "WHERE gp.gpNo = :gpNo ";
 
 		TypedQuery<GroupDto> query = em.createQuery(jpql, GroupDto.class);
 		query.setParameter("gpNo", gpNo);
@@ -52,9 +51,8 @@ public class GroupRepositoryImpl /* extends QuerydslRepositorySupport */ impleme
 	@Override
 	public List<GroupDto> searchGroup(GroupSearchDto search) {
 		StringBuilder jpql = new StringBuilder();
-		jpql.append("SELECT new com.ssafy.study.group.model.dto.GroupDto(gp) ");
-		jpql.append("FROM Group gp ");
-
+		jpql.append("SELECT new com.ssafy.study.group.model.dto.GroupDto(gp, gc.gpCatNm) ");
+		jpql.append("FROM Group gp join GroupCategory gc on gp.gpCat.gpCatNo = gc.gpCatNo ");
 		jpql.append(" where 1 = 1 ");
 
 		if (!isEmpty(search.getGpNm()))
@@ -71,8 +69,8 @@ public class GroupRepositoryImpl /* extends QuerydslRepositorySupport */ impleme
 //				}
 //			}
 //		}
-		if (search.getGpTagArr() != null) {
-			Arrays.stream(search.getGpTagArr()).forEach(t -> {
+		if (search.getGpTag() != null && search.getGpTag().size() != 0) {
+			search.getGpTag().stream().forEach(t -> {
 				jpql.append(" and gp.gpTag like concat('%', '").append(t).append("', '%') ");
 			});
 		}

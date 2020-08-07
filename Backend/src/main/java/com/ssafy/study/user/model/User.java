@@ -22,12 +22,11 @@ public class User extends TimeEntity {
 
 	@Builder
 	public User(String userNm, String userEmail, String userPw,
-			String userIntro, String userImg, int userGoalHr) {
+			String userIntro, int userGoalHr) {
 		this.userNm = userNm;
 		this.userEmail = userEmail;
 		this.userPw = userPw;
 		this.userIntro = userIntro;
-		this.userImg = userImg;
 		this.userGoalHr = userGoalHr;
 	}
 

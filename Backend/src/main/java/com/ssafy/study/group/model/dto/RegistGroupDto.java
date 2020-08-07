@@ -1,5 +1,7 @@
 package com.ssafy.study.group.model.dto;
 
+import java.util.List;
+
 import javax.validation.constraints.NotNull;
 
 import org.springframework.web.multipart.MultipartFile;
@@ -29,11 +31,12 @@ public class RegistGroupDto {
 	private boolean gpPublic;// 공개여부
 
 	private MultipartFile gpImg;
-	
-	private String gpTag;// 태그
+
+	private List<String> gpTag;
 
 	public Group toEntity() {
 		return Group.builder().gpCat(new GroupCategory(gpCatNo)).gpNm(gpNm).gpIntro(gpIntro).gpStTm(gpStTm)
-				.gpEndTm(gpEndTm).gpCurNum(0).gpMaxNum(5).gpPublic(gpPublic).build();
+				.gpEndTm(gpEndTm).gpCurNum(0).gpMaxNum(5).gpPublic(gpPublic)
+				.gpTag(gpTag != null ? String.join(",", gpTag) : null).build();
 	}
 }

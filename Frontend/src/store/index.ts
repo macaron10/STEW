@@ -64,9 +64,34 @@ const studyGroups = {
   },
 }
 
+const notifications = {
+  namespaced: true,
+  state: {
+    groupsReqs: []
+  },
+  mutations: {
+    setReqs(state: any, groupsReqs: any) {
+      state.groupsReqs = groupsReqs
+    }
+  },
+  actions: {
+    async getReqs({ state }: any, event: any) {
+      const apiUrl = '/study/user/reqlist'
+      try {
+        const res = await axios.get(apiUrl)
+        state.groupsReqs = res.data.object
+        console.log(res)
+      } catch (err) {
+        console.error(err)
+      }
+    },
+  },
+}
+
 export default new Vuex.Store({
   state: {
-    baseUrl: "http://localhost:8399/api",
+    // baseUrl: "http://localhost:8399/api",//개발용
+    baseUrl: "https://i3b103.p.ssafy.io/image", //배포용
     drawer: false,
     isLogin: false,
     userInfo: {
@@ -164,7 +189,8 @@ export default new Vuex.Store({
 
 
   modules: {
-    sg: studyGroups
+    sg: studyGroups,
+    notice: notifications
   },
 
   plugins: [

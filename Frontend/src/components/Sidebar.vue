@@ -2,7 +2,12 @@
   <v-navigation-drawer
     v-model="$store.state.drawer"
     :clipped="$vuetify.breakpoint.lgAndUp"
+    :mini-variant="true"
+    :expandOnHover="true"
     app
+    color="blue"
+    class="theme-dark"
+    style="background-image: linear-gradient(180deg, rgba(0, 0, 0, 0), rgba(0, 0, 255, 0.5))"
   >
     <v-list dense>
       <template v-for="item in items">
@@ -59,7 +64,6 @@
           v-else
           :key="item.text"
           link
-          @click="clickclick"
           :to="{ name: item.page }"
         >
           <v-list-item-action
@@ -82,12 +86,12 @@ export default {
     name: 'Sidebar',
     data: () => ({
       items: [
-        { icon: 'mdi-home', text: 'HOME', page: 'Home' },
+      { icon: 'mdi-home', text: 'HOME', page: 'Home' },
       { icon: 'mdi-contacts', text: 'My STudy', page: 'StudyDetail' },
       { icon: 'mdi-plus', text: 'Study 만들기', page: 'StudyCreate' },
       { icon: 'mdi-message', text: 'Contact Us', page: 'Contact' },
       { icon: 'mdi-help-circle', text: '가이드', page: 'Guide' },
-      { icon: 'mdi-keyboard', text: '사이드바 닫기(미구현)', page: 'Main' },
+      { icon: 'mdi-keyboard', text: '사이드바 닫기', page:'Guide'},
       {
         icon: 'mdi-chevron-up',
         'icon-alt': 'mdi-chevron-down',
@@ -113,9 +117,6 @@ export default {
     ],
     }),
     methods: {
-      clickclick(event) {
-        console.log('클릭미')
-      }
     }
 }
 </script>

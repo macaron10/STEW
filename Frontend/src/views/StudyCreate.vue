@@ -45,7 +45,7 @@
           <v-col cols="12" sm="6">
             <v-select
               v-model="form.gpCatNo"
-              :items="groupTypes"
+              :items="categories"
               :rules="rules.types"
               color="pink"
               label="스터디 타입"
@@ -143,7 +143,7 @@ export default {
       gpNm: "",     //스터디 이름ㅇ
       gpCatNo: 0, // 타입 아이디 ㅇ
       gpEndTm: 0, // 선호 종료 시간 ㅇ
-      gpImg: this.$store.state.baseUrl + '/study/thumb/base.png',
+      gpImg: [],
       gpIntro: "",  //스터디 소개ㅇ
       gpPublic: true, //스터디 공개 ㅇ
       gpStTm: 0,    // 선호 시작 시간 ㅇ
@@ -160,7 +160,8 @@ export default {
         types: [val => (val || '').length > 0 || 'This field is required'],
         groupName: [val => (val || '').length > 0 || 'This field is required'],
       },
-      groupTypes: ['1', '2', '3', '4', '5'],
+      categories: [],
+      categoryObj: {},
       conditions: false,
       content: `로렌입섬`,
       snackbar: false,
@@ -194,6 +195,9 @@ export default {
       this.form = Object.assign({}, this.form)
       this.$refs.form.reset()
     },
+    inputGpCatNo() {
+      this.form.gpCatNo = this.categoryObj[this.form.gpCatNo]
+    },
     makeFormData () {
       this.formData.append('gpNm', this.form.gpNm) // 순서는 상관 없음
       this.formData.append('gpCatNo', Number(this.form.gpCatNo))
@@ -208,11 +212,9 @@ export default {
       try {
         const config = {
           headers: {
-            // Authorization: `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c2VyMSIsInJvbGUiOlsic3RyaW5nIiwiUk9MRV9VU0VSIl0sImV4cCI6MTU5NjEwMTQ5MywidXNlcklkIjoxLCJpYXQiOjE1OTYwOTk2OTN9.KB03CsT5oQuX0yuXUeX5anuglURQd7y291DZ-mwr3NX8x6KRaAgWjbdB1eAMKd53XB4TkqcXZDa38eIWgTDHzQ `,
             'Content-Type': 'multipart/form-data',
           }
         }
-        // const baseUrl = this.$store.state.baseUrl
         const apiUrl = '/study/user/'
         const res = await axios.post(apiUrl, this.formData, config)
         this.$router.push({ name: 'StudyDetail', params: { id: res.data.object.gpNo } })
@@ -223,26 +225,26 @@ export default {
     submit () {
       console.log(this.tags)
       this.snackbar = true
+      this.inputGpCatNo()
       this.makeFormData()
       this.createGroup()
       this.resetForm()
     },
-    // createGroup2() {
-    //   const config = {
-    //     headers: {
-    //       Authorization: `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c2VyMSIsInJvbGUiOlsic3RyaW5nIiwiUk9MRV9VU0VSIl0sImV4cCI6MTU5NTkxMTY2NSwidXNlcklkIjoxLCJpYXQiOjE1OTU5MDk4NjV9.PuVmFIk-PRCb0DhxcaiL4UMoMT1X4Vuw-mOMmv1INkC3eW6natkq2JG_peh8HxGVzH06JHHftxjb7LMqy1sgAA `
-    //     }
-    //   }
-    //   const baseUrl = this.$store.state.baseUrl
-    //   const apiUrl = baseUrl + '/study/'
-    //   axios.post(apiUrl, this.groupData, config)
-    //     .then((res) => {
-    //       console.log(res)
-    //       console.log(this)
-    //       this.$router.push({ name: 'StudyDetail', params: { id: res.data.id } })
-    //     })
-    //     .catch(err => console.log(err))
-    // }
+    async getCategories () {
+      try {
+        const apiUrl = '/study/cate'
+        const res = await axios.get(apiUrl)
+        for (const i in res.data.object) {
+          this.categories.push(res.data.object[i].gpCatNm)
+          this.categoryObj[res.data.object[i].gpCatNm] = res.data.object[i].gpCatNo
+        }
+      } catch (err) {
+        console.err(err)
+      }
+    }
   },
+  mounted () {
+    this.getCategories()
+  }
 };
 </script>

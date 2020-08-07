@@ -40,17 +40,6 @@ public class JwtAuthenticationSuccessHandler extends SavedRequestAwareAuthentica
 		String refreshToken = JwtUtil.generateRefreshToken();
 		String accessToken = JwtUtil.generateAccessToken(userPrincipal);
 		
-//		Cookie token = new Cookie("accessToken", accessToken);
-		
-//		https가 아니면 전송하지 않는 옵션
-//		token.setSecure(true);
-		
-//		브라우저가 쿠키에 접근 못하게
-//		token.setHttpOnly(true);
-//		token.setPath("/api");
-		
-//		response.addCookie(token);
-		
 		redisTemplate.opsForValue().set(userPrincipal.getUsername(), refreshToken);
 		redisTemplate.expire(userPrincipal.getUsername(), JwtProperties.EXPIRATION_TIME_REFRESH, TimeUnit.MILLISECONDS);
 		

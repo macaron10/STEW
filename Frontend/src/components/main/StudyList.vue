@@ -10,10 +10,10 @@
           <!-- :to="'/study/' + group.gpNo" -->
         <v-card
           class="mx-auto"
-          @click="toDetail(group.gpNo)"
+          @click="toDetail(group)"
         >
           <v-img
-            :src="$store.state.baseUrl + '/study/thumb' + group.gpImg"
+            :src="$store.state.baseUrl + '/group' + group.gpImg"
             height="150"
           >
             <v-row align="end" class="my-3 lightbox white--text pa-2 fill-height">
@@ -40,15 +40,26 @@
       width="500"
     >
       <v-card>
-        <v-card-title class="headline grey lighten-2">
+        <v-card-title class="headline indigo darken-1 white--text">
           {{ selectedGroup.gpNm }} 에 가입하시겠습니까?
         </v-card-title>
 
-        <v-card-text>
+        <v-card-text class="py-1">
          {{selectedGroup.gpIntro}}
         </v-card-text>
 
         <v-divider></v-divider>
+        <v-textarea
+          v-model="message"
+          color="teal"
+          class="mx-5"
+        >
+          <template v-slot:label>
+            <div class="px-5">
+              보낼 메세지 <small>(optional)</small>
+            </div>
+          </template>
+        </v-textarea>
 
         <v-card-actions>
           <v-spacer></v-spacer>
@@ -72,22 +83,20 @@
   </v-container>
 </template>
 
-<script>[]
+<script>
 import axios from 'axios'
 import { mapState, mapActions } from 'vuex'
+import querystring from 'querystring'
 
 export default {
   name: 'StudyList',
   data () {
-    const gpNoData = {
-      gpNo:0,
-    }
     return {
       myGroups: {},
       dialog: false,
       selectedGroup: {},
       snackbar: false,
-      gpNoData
+      message: ""
     }
   },
   methods: {
@@ -114,17 +123,17 @@ export default {
         console.error(err)
       }
     },
-    toDetail(gpNo) {
-      this.selectedGroup = this.groups[gpNo-1]
+    toDetail(group) {
+      this.selectedGroup = group
       let flag = false
       for (let i=0; i<this.myGroups.length; i++){
-        if (gpNo === this.myGroups[i].gpNo) {
+        if (group.gpNo === this.myGroups[i].gpNo) {
           flag = true
           // this.$router.push('/study/' + gpNo)
         }
       }
       if (flag === true) {
-        this.$router.push('/study/' + gpNo)
+        this.$router.push('/study/' + group.gpNo)
       } else {
         this.dialog = true
       }
@@ -141,10 +150,14 @@ export default {
     //     })
     // },
     async signUpGroup(gpNo) {
-      const apiUrl = '/study/user/req?no='+gpNo
-      this.gpNoData.gpNo = gpNo
+
+      const apiUrl = '/study/user/req?gpNo='+gpNo
+      const msg = {
+        "reqMsg": this.message
+      }
       try {
-        const res = await axios.post(apiUrl)
+        const res = await axios.post(apiUrl, querystring.stringify({ reqMsg: this.message }))
+        console.log(msg)
         console.log(res)
         this.dialog = false
         this.snackbar = true
@@ -159,8 +172,9 @@ export default {
   },
   mounted () {
     this.getGroups()
-    this.getMyGroups()
-    console.log(this.groups, '이거')
+    if (this.$store.state.isLogin) {
+      this.getMyGroups()
+    }
   }
 
 }

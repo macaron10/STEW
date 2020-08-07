@@ -20,15 +20,32 @@ public class CommonController {
 
 	private final String fileBaseUrl = "C:\\Users\\multicampus\\Desktop\\img";
 
-	@GetMapping(value = "/image/{path}", produces = MediaType.IMAGE_JPEG_VALUE)
-	@ApiOperation("이미지 출력 <img src='http://localhost:8399/api/image/(type)/{Img경로}'>")
-	public byte[] showThumbnailSinglePath(@PathVariable String path) {
+	@GetMapping(value = "/image/{type}/{path}", produces = MediaType.IMAGE_JPEG_VALUE)
+	@ApiOperation("이미지 출력 <img src='https://localhost:8399/api/image/(type)/{Img경로}'>")
+	public byte[] showThumbnailSinglePath(@PathVariable String type, @PathVariable String path) {
+		String filePath = File.separator + type + File.separator + path;
 		byte[] img = {};
 		try {
-			img = fileUtil.downloadFile(fileBaseUrl, File.separator + path);
+			img = fileUtil.downloadFile(fileBaseUrl, filePath);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		return img;
 	}
+
+	@GetMapping(value = "/image/{type}/{year}/{mon}/{day}/{path}", produces = MediaType.IMAGE_JPEG_VALUE)
+	@ApiOperation("이미지 출력 <img src='https://localhost:8399/api/image/(type)/{Img경로}'>")
+	public byte[] showThumbnail(@PathVariable String type, @PathVariable String year, @PathVariable String month,
+			@PathVariable String date, @PathVariable String path) {
+		String filePath = File.separator + type + File.separator + year + File.separator + month + File.separator + date
+				+ File.separator + path;
+		byte[] img = {};
+		try {
+			img = fileUtil.downloadFile(fileBaseUrl, filePath);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return img;
+	}
+
 }

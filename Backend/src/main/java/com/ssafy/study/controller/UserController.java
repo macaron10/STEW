@@ -58,6 +58,8 @@ public class UserController {
 		
 		User user = signUpInfo.toEntity();
 		
+		user.setUserPw(new BCryptPasswordEncoder().encode(user.getUserPw()));
+		
 		if(signUpInfo.getUserImg() != null) {
 			try {
 				user.setUserImg(fileUtil.uploadFile(signUpInfo.getUserImg(), fileBaseUrl));
@@ -134,11 +136,24 @@ public class UserController {
 	
 	@PutMapping
 	@ApiOperation("회원 수정")
-	public ResponseEntity<BasicResponse> modify(@RequestBody UserModify userModify){
-		
+	public ResponseEntity<BasicResponse> modify(UserModify userModify, @AuthenticationPrincipal UserPrincipal principal){
+		System.out.println(userModify);
 		BasicResponse result = new BasicResponse();
 		
-		User modifiedUser = userService.modify(userModify.toEntity());
+		User origin = userService.loadUserByUserId(principal.getUserId());
+		
+		origin.update(userModify);
+		
+		if(userModify.getUserImg() != null) {
+			try {
+				origin.setUserImg(fileUtil.uploadFile(userModify.getUserImg(), fileBaseUrl));
+			} catch (IOException e) {
+				e.printStackTrace();
+				throw new FileUploadException();
+			}
+		}
+		
+		User modifiedUser = userService.save(origin);
 		
 		result.status = true;
 		result.msg = "success";
@@ -171,17 +186,10 @@ public class UserController {
 		
 		String refreshToken = request.getHeader("refreshToken").replace(JwtProperties.TOKEN_PREFIX, "");
 		
-//		리프레쉬 토큰 문제가 이씀
 		if(refreshToken == null || !JwtUtil.verify(refreshToken))
 			result.msg = "fail";
 
 		String accessToken = request.getHeader(JwtProperties.HEADER_STRING).replace(JwtProperties.TOKEN_PREFIX, "");
-//		String accessToken = null;
-//		if(request.getCookies() != null) {
-//			for(Cookie c : request.getCookies()) {
-//				if(c.getName().equals("accessToken")) accessToken = c.getValue();
-//			}
-//		}
 		
 		if(accessToken == null) {
 			result.msg = "accessToken not found";
@@ -193,11 +201,6 @@ public class UserController {
 			UserPrincipal userPrincipal = new UserPrincipal(userService.findByUserEmail(userEmail));
 			
 			accessToken = JwtProperties.TOKEN_PREFIX + JwtUtil.generateAccessToken(userPrincipal);
-//			Cookie c = new Cookie("accessToken", JwtUtil.generateAccessToken(userPrincipal));
-//			c.setHttpOnly(true);
-//			c.setPath("/api");
-//			
-//			response.addCookie(c);
 			
 			response.addHeader("accessToken", accessToken);
 			

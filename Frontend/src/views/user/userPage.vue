@@ -3,7 +3,7 @@
       <v-row justify="center" id="userpage" class="mx-10 my-10">
           <v-col cols="7" class="flex-column">
             <v-row class="d-flex align-center mr-2">
-                <img src="../user/default_user_image.png" id="userImg" class="mr-10 ml-5 my-5" />
+                <img :src="$store.state.baseUrl+`/image/user`+userInfo.userImg" id="userImg" class="mr-10 ml-5 my-5" />
                 <v-col class="d-flex flex-column justify-center">
                     <v-row class="mb-5">
                         <h1 style="color:black">{{userInfo.userEmail}}</h1>
@@ -98,8 +98,6 @@
             </v-row>
           </v-col>
       </v-row>
-
-      {{userInfo}}
   </div>
 </template>
 
@@ -124,6 +122,7 @@ export default {
                 userGoalHr: ""
             },
             updatePwdDialog: false,
+            deleteUserDialog: false,
             updatePwd: {
                 origin: "",
                 new: "",

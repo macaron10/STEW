@@ -79,7 +79,7 @@ const routes: Array<RouteConfig> = [
   {
     path: '/user/detail',
     name: 'UserDetail',
-    component: UserDetail
+    component: userPage
   },
   {
     path: "/user/signup",

@@ -207,7 +207,7 @@ public class JwtSecurityConfig extends WebSecurityConfigurerAdapter{
 		return new String[] {
 				"/",
 				"/study/*",
-				"/study/thumb/**",
+				"/image/**",
 				"/study/cate/*",
 				"/user/signin",
 				"/user/signup",

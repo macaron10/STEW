@@ -21,6 +21,10 @@
 
 	<dependencies>
 		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-websocket</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>com.github.maricn</groupId>
 			<artifactId>logback-slack-appender</artifactId>
 			<version>1.4.0</version>
@@ -79,7 +83,7 @@
 			<artifactId>jjwt</artifactId>
 			<version>0.9.1</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.json</groupId>
 			<artifactId>json</artifactId>
@@ -192,7 +196,7 @@
 	</dependencies>
 
 	<build>
-		<defaultGoal>install</defaultGoal> 
+		<defaultGoal>install</defaultGoal>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>

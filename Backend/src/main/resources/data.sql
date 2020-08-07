@@ -1,5 +1,4 @@
-﻿insert into gp_cat (gp_cat_nm) values (null);
-insert into gp_cat (gp_cat_nm) values ("영어");
+﻿insert into gp_cat (gp_cat_nm) values ("영어");
 insert into gp_cat (gp_cat_nm) values ("중국어");
 insert into gp_cat (gp_cat_nm) values ("일본어");
 insert into gp_cat (gp_cat_nm) values ("외국어");

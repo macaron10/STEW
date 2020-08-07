@@ -50,7 +50,8 @@ public class UserController {
 	@Autowired
 	private FileUtils fileUtil;
 	
-	private final String fileBaseUrl = "/home/ubuntu/app/img/user";
+	// private final String fileBaseUrl = "/home/ubuntu/app/img/user";
+	private final String fileBaseUrl = "C:\Users\multicampus\Desktop\img\user";
 	
 	@PostMapping("/signup")
 	@ApiOperation("회원가입")

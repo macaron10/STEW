@@ -70,15 +70,36 @@
                         <v-card-actions>
                         <v-spacer></v-spacer>
                         <v-btn color="error" text @click="updatePwdDialog = false">취소</v-btn>
-                        <v-btn color="primary" text @click="updateUserPwd(updatePwd.origin, update)">변경</v-btn>
+                        <v-btn color="primary" text @click="checkUserPwd(updatePwd.origin, 'update')">변경</v-btn>
                         </v-card-actions>
                     </v-card>
                 </v-dialog>
                 <v-btn depressed color="primary" class="mb-2 mx-5" @click="updateUserInfo">프로필 설정 완료</v-btn>
-                <v-btn depressed color="error" class="mb-2 mx-5" @click="deleteUser">회원 탈퇴</v-btn>
+                <v-btn depressed color="error" class="mb-2 mx-5" @click="deleteUserDialog=true">회원 탈퇴</v-btn>
+                <v-dialog v-model="deleteUserDialog" persistent max-width="300">
+                    <v-card>
+                        <v-card-title class="headline">회원 탈퇴</v-card-title>
+                        <v-card-text>
+                            <v-text-field
+                                v-model="updatePwd.origin" label="비밀번호"
+                                type="password" counter="15" required
+                                :rules="[
+                                () => !!updatePwd.origin|| '비밀번호를 입력해주세요.',
+                                ]"
+                            />
+                        </v-card-text>
+                        <v-card-actions>
+                        <v-spacer></v-spacer>
+                        <v-btn color="error" text @click="deleteUserDialog = false">취소</v-btn>
+                        <v-btn color="primary" text @click="checkUserPwd(updatePwd.origin, 'del')">탈퇴</v-btn>
+                        </v-card-actions>
+                    </v-card>
+                </v-dialog>
             </v-row>
           </v-col>
       </v-row>
+
+      {{userInfo}}
   </div>
 </template>
 
@@ -95,12 +116,12 @@ export default {
         return {
             userInfo: {},
             newUserInfo: {
-                userEmail: userInfo.userEmail,
+                userEmail: "",
                 userPw: "",
-                userNm: userInfo.userNm,
-                userImg: userInfo.userImg,
-                userIntro: userInfo.userIntro,
-                userGoalHr: userInfo.userGoalHr
+                userNm: "",
+                userImg: "",
+                userIntro: "",
+                userGoalHr: ""
             },
             updatePwdDialog: false,
             updatePwd: {
@@ -122,11 +143,17 @@ export default {
             .then(({ data }) => {
                 console.log(data);
                 this.userInfo = data.object;
+                this.newUserInfo.userPw = "";
+                this.newUserInfo.userNm = this.userInfo.userNm;
+                this.newUserInfo.userImg = this.userInfo.userImg;
+                this.newUserInfo.userIntro = this.userInfo.userIntro;
+                this.newUserInfo.userGoalHr = this.userInfo.userGoalHr;
             })
             
         },
 
         checkUserPwd(pwd, type) {
+            console.log(pwd); 
             axios.get('/user/checkPw', {
                 params: {
                     userPw: pwd

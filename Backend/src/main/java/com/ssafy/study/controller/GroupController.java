@@ -50,7 +50,7 @@ public class GroupController {
 
 	// private final String fileBaseUrl = "/home/ubuntu/app/img/group";
 	private final String fileBaseUrl = "C:\\Users\\multicampus\\Desktop\\img\\group_thumb";
-	
+
 	private SimpMessagingTemplate template;
 
 	@GetMapping("/my")
@@ -323,6 +323,20 @@ public class GroupController {
 		long userId = principal.getUserId();
 
 		result.object = groupService.selectGroupReqByGpNo(gpNo);
+		result.msg = "success";
+		result.status = true;
+
+		return new ResponseEntity<>(result, HttpStatus.OK);
+	}
+
+	@GetMapping("/joinck/{gpNo}")
+	@ApiOperation("회원이 해당 그룹에 가입했는지 체크 (true:가입, false:미가입)")
+	public ResponseEntity ckJoinGroup(@PathVariable long gpNo,
+			@ApiIgnore @AuthenticationPrincipal UserPrincipal principal) {
+		BasicResponse result = new BasicResponse();
+		long userId = principal.getUserId();
+
+		result.object = groupService.ckGroupJoin(gpNo, userId);
 		result.msg = "success";
 		result.status = true;
 

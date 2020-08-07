@@ -16,7 +16,7 @@
             :src="$store.state.baseUrl + '/group' + group.gpImg"
             height="150"
           >
-            <v-row align="end" class="my-3 lightbox white--text pa-2 fill-height">
+            <v-row align="end" class="my-3 lightbox black--text pa-2 fill-height">
               <v-col>
                 <div class="body-1">인원수 {{ group.gpCurNum }}/{{ group.gpMaxNum }}</div>
               </v-col>

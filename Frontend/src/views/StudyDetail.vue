@@ -59,7 +59,12 @@
           :key="item.tab"
         >
           <v-card flat>
-            <MemberList v-if="item.no==='2'" :members="membersData" :gpMgrId="group.gpMgrId" />
+            <MemberList
+              v-if="item.no==='2'"
+              :members="membersData"
+              :gpMgrId="group.gpMgrId"
+              :gpNo="group.gpNo"
+            />
     <!-- 임시페이지 -->
 <div v-else>
     <v-progress-linear
@@ -134,7 +139,7 @@ export default {
         { tab: '기록', icon: 'mdi-timer', no: '3' },
       ],
       id: null,
-      userId: 3
+      userId: 1
     };
   },
   mounted () {

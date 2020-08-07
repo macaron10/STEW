@@ -153,7 +153,7 @@ export default {
         },
 
         checkUserPwd(pwd, type) {
-            axios.post('/user/checkPw', querystring.stringify({userPw : pwd}))
+            axios.post('/user/checkpw', querystring.stringify({userPw : pwd}))
             .then(({ data }) => {
                 console.log(data);
                 if (data.msg === "success" && data.object) {

@@ -4,7 +4,13 @@
       <v-row>
         <v-col class="mb-6 ">
           <div class="d-flex justify-center">
-            <img @click="enterMeetingRoom(id)" :src="$store.state.baseUrl + '/study/thumb' + group.gpImg" alt="그룹 이미지">
+            <img
+            @click="enterMeetingRoom(group.gpNo)"
+            :src="$store.state.baseUrl + '/group' + group.gpImg"
+            alt="그룹 이미지"
+            height=400px
+            >
+            <!-- :src="$store.state.baseUrl + group.gpImg" 배포용 -->
           </div>
           <div class="text-center">
             <h1 class="my-3">{{ group.gpNm }}</h1>
@@ -52,7 +58,50 @@
           :key="item.tab"
         >
           <v-card flat>
-            <MemberList />
+            <MemberList v-if="item.no==='2'" :members="membersData" />
+    <!-- 임시페이지 -->
+<div v-else>
+    <v-progress-linear
+      indeterminate
+      color="yellow darken-2"
+    ></v-progress-linear>
+    <br>
+    <v-progress-linear
+      indeterminate
+      color="green"
+    ></v-progress-linear>
+    <br>
+    <v-progress-linear
+      indeterminate
+      color="teal"
+    ></v-progress-linear>
+    <br>
+    <v-progress-linear
+      indeterminate
+      color="blue"
+    ></v-progress-linear>
+    <br>
+      <v-progress-linear
+      indeterminate
+      color="red lighten-3"
+    ></v-progress-linear>
+    <br>
+    <v-progress-linear
+      indeterminate
+      color="cyan lighten-3"
+    ></v-progress-linear>
+    <br>
+    <v-progress-linear
+      indeterminate
+      color="teal lighten-3"
+    ></v-progress-linear>
+    <br>
+    <v-progress-linear
+      indeterminate
+      color="cyan"
+    ></v-progress-linear>
+  </div>
+  <!-- 여기까지 임시페이지 -->
           </v-card>
         </v-tab-item>
       </v-tabs-items>
@@ -75,13 +124,13 @@ export default {
   data() {
     return {
       group: [],
-      members: [],
+      membersData: [],
       // 밑에는 그룹정보(나중에 활용)
       tab: null,
       items: [
-        { tab: '스터디 소개', icon: 'mdi-book-open-variant', content: '1' },
-        { tab: '스터디 그룹 멤버', icon: 'mdi-account-group', content: '2' },
-        { tab: '타이머', icon: 'mdi-timer', content: '3' },
+        { tab: '스터디 소개', icon: 'mdi-book-open-variant', no: '1' },
+        { tab: '스터디 그룹 멤버', icon: 'mdi-account-group', no: '2' },
+        { tab: '기록', icon: 'mdi-timer', no: '3' },
       ],
       id: null
     };
@@ -101,9 +150,9 @@ export default {
         const res = await axios.get(apiUrl)
         this.group = JSON.parse(res.data.object).group
         this.group = JSON.parse(this.group)
-        this.members = JSON.parse(res.data.object)
+        this.membersData = JSON.parse(res.data.object).joinList
       } catch (err) {
-        // this.$router.push('/main/')
+        this.$router.push('/main/')
         console.error(err)
       }
     },

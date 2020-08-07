@@ -215,7 +215,6 @@ export default {
             'Content-Type': 'multipart/form-data',
           }
         }
-        // const baseUrl = this.$store.state.baseUrl
         const apiUrl = '/study/user/'
         const res = await axios.post(apiUrl, this.formData, config)
         this.$router.push({ name: 'StudyDetail', params: { id: res.data.object.gpNo } })

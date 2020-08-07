@@ -160,7 +160,6 @@ export default {
                     if (type === "update") {
                         this.updateUserPwd();
                     } else if (type === "del") {
-                        console.log("삭제ㄱㄱ");
                         this.deleteUser();
                     }
                 } else if (data.msg === "success" && !data.object) {
@@ -190,10 +189,16 @@ export default {
 
         deleteUser() {
             axios.delete('/user/'+this.userInfo.userId)
-
+            .then(({ data }) => {
+                console.log(data);
+                if (data.msg === "success") {
+                    alert("탈퇴가 완료되었습니다.")
+                    this.$store.commit("logoutSuccess");
+                    this.$router.push({ name: "Home" });
+                }
+            })
         },
     }
-
 }
 </script>
 

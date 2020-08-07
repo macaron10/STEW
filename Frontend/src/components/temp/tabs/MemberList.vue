@@ -32,9 +32,17 @@
                     >mdi-account-circle</v-icon>
                   </v-avatar>
                 </v-col>
-                <v-col>
+                <v-col cols="7">
                   <v-list-item-title class="headline">{{ member.user.userNm }}</v-list-item-title>
                   <v-list-item-subtitle>{{ member.user.userEmail }}</v-list-item-subtitle>
+                </v-col>
+                <v-col cols="2">
+                  <v-btn
+                    v-if="gpMgrId===userId&&member.user.userId!==userId"
+                    color="red lighten-2 white--text"
+                    @click="kick(member.gpJoinNo)"
+                  >퇴출
+                  </v-btn>
                 </v-col>
               </v-row>
               <v-card-text class="py-0">
@@ -52,15 +60,31 @@
 </template>
 
 <script>
+import axios from "axios";
+
   export default {
     name: 'MemberList',
     props: {
       members: Array,
+      gpMgrId: Number,
     },
-    data: () => ({
-    }),
+    data () {
+      return {
+        userId:3
+      }
+    },
+    methods : {
+      async kick(gpJoinNo) {
+        const apiUrl = '/study/user/remove?no='+gpJoinNo
+        try {
+          const res = axios.post(apiUrl)
+        } catch (err) {
+          console.error(err)
+        }
+    },
     mounted () {
       console.log(this.members[0])
+    }
     }
   }
 </script>

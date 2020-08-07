@@ -19,6 +19,7 @@
               :to="{ name:'StudyUpdate', params: { id: id }}"
               color="blue accent-1"
               class="white--text font-weight-bold mx-3"
+              v-if="group.gpMgrId===userId"
             >
               수정
             </v-btn>
@@ -45,7 +46,7 @@
       >
         <v-tab
           v-for="item in items"
-          :key="item.tab"
+          :key="item.no"
         >
           {{ item.tab }}
           <v-icon>{{ item.icon }}</v-icon>
@@ -58,7 +59,7 @@
           :key="item.tab"
         >
           <v-card flat>
-            <MemberList v-if="item.no==='2'" :members="membersData" />
+            <MemberList v-if="item.no==='2'" :members="membersData" :gpMgrId="group.gpMgrId" />
     <!-- 임시페이지 -->
 <div v-else>
     <v-progress-linear
@@ -132,7 +133,8 @@ export default {
         { tab: '스터디 그룹 멤버', icon: 'mdi-account-group', no: '2' },
         { tab: '기록', icon: 'mdi-timer', no: '3' },
       ],
-      id: null
+      id: null,
+      userId: 3
     };
   },
   mounted () {
@@ -151,6 +153,7 @@ export default {
         this.group = JSON.parse(res.data.object).group
         this.group = JSON.parse(this.group)
         this.membersData = JSON.parse(res.data.object).joinList
+        console.log(this.group)
       } catch (err) {
         this.$router.push('/main/')
         console.error(err)

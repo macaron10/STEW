@@ -2,7 +2,9 @@ package com.ssafy.study.group.model.dto;
 
 import java.time.LocalDateTime;
 
+import com.ssafy.study.group.model.entity.Group;
 import com.ssafy.study.group.model.entity.GroupReq;
+import com.ssafy.study.user.model.User;
 import com.ssafy.study.user.model.UserDto;
 
 import lombok.AllArgsConstructor;
@@ -29,6 +31,15 @@ public class GroupReqDto {
 		this.gpReqNo = req.getGpReqNo();
 		this.gp = new GroupDto(req.getGp());
 		this.user = new UserDto(req.getUser());
+
+		this.gpReqMsg = req.getGpReqMeg();
+		this.regDate = req.getRegDate();
+	}
+
+	public GroupReqDto(GroupReq req, Group group, User u) {
+		this.gpReqNo = req.getGpReqNo();
+		this.gp = new GroupDto(group);
+		this.user = new UserDto(u);
 
 		this.gpReqMsg = req.getGpReqMeg();
 		this.regDate = req.getRegDate();

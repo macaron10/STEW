@@ -6,6 +6,10 @@ import querystring from 'querystring';
 import createPersistedState from "vuex-persistedstate";
 import jwt from "jsonwebtoken";
 
+// 소켓
+import Stomp from 'webstomp-client';
+import SockJS from 'sockjs-client';
+
 import { isNull } from 'util';
 import { userInfo } from 'os';
 import { config } from 'process';
@@ -103,13 +107,32 @@ const notifications = {
         console.error(err)
       }
     },
+    getReqsSock({ state, rootState }: any, event: any) {
+      const apiUrl = rootState.baseUrl + '/sock'
+      const socket = new SockJS(apiUrl)
+      const ws = Stomp.over(socket)
+
+      const token = rootState.userInfo.accessToken
+      ws.connect(token,
+        frame => {
+          console.log('소켓 연결 성공');
+
+          ws.subscribe("/sub/mgr-req/" + 3, msg =>{
+            console.log(JSON.parse(msg.body))
+          })
+
+          ws.subscribe("/sub/user-req/" + 3, msg =>{
+            console.log(JSON.parse(msg.body))
+          })
+        })
+    }
   },
 }
 
 export default new Vuex.Store({
   state: {
     baseUrl: "http://localhost:8399/api",//개발용
-    // baseUrl: "https://i3b103.p.ssafy.io/image", //배포용
+    // baseUrl: "https://i3b103.p.ssafy.io", //배포용
     drawer: false,
     isLogin: false,
     userInfo: {

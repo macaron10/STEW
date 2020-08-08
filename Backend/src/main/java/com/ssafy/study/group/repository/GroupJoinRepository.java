@@ -27,4 +27,5 @@ public interface GroupJoinRepository extends JpaRepository<GroupJoin, Long>, Gro
 	@Modifying
 	@Query("delete from GroupJoin gj where gj.gp.gpNo = :gpNo")
 	public void deleteByGpNo(@Param("gpNo") long gpNo);
+
 }

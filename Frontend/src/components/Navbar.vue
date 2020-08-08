@@ -106,9 +106,6 @@
 
 
     <!-- 알림 메뉴 -->
-<!-- 임시 -->
-    <v-btn v-if="isLogin" @click="getReqs()" color="blue lighten-2">알림불러오기</v-btn>
-<!-- 임시 -->
     <v-menu
       transition="slide-y-transition"
       bottom
@@ -148,7 +145,16 @@
                   >
                 </v-avatar>
             </v-list-item-icon>
-            <v-list-item-content>
+            <!-- 내의 신청 -->
+            <v-list-item-content v-if="userInfo.userId===groupsReq.user.userId" >
+              '{{ groupsReq.gp.gpNm }}'에 가입을 신청했습니다.(대기중)
+            <br>
+            <div>
+              전송 메세지 : "{{ groupsReq.gpReqMsg }}"
+            </div>
+            </v-list-item-content>
+            <!-- 다른 유저에게서 온 신청 -->
+            <v-list-item-content v-else>
               '{{ groupsReq.user.userNm }}' 님이 '{{ groupsReq.gp.gpNm }}'에 가입을 신청했습니다.
               <!-- <v-list-item-tistle v-text="groupsReqs.gp.gpNm"></v-list-item-title> -->
             <br>
@@ -223,7 +229,7 @@ export default {
         "signIn",
         "logout"
         ]),
-      ...mapActions('notice', ['getReqs']),
+      ...mapActions('notice', ['getReqsSock']),
       ...mapActions('sg', ['fetchGroups']),
       async reqOk (gpReqNo) {
         const apiUrl = '/study/user/accept?no=' + gpReqNo

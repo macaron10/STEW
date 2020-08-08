@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ssafy.study.calendar.model.CalEvent;
 import com.ssafy.study.calendar.model.CreateCalEvt;
 import com.ssafy.study.calendar.model.ModifyCalEvt;
+import com.ssafy.study.calendar.model.exception.CalNoAuthException;
 import com.ssafy.study.calendar.service.CalendarService;
 import com.ssafy.study.common.model.BasicResponse;
 import com.ssafy.study.group.model.exception.GroupNotJoinedExcpetion;
@@ -131,7 +132,7 @@ public class CalendarController {
 	}
 
 	@GetMapping("/group/{year}/{month}")
-	@ApiOperation("year + month 그룹 일정 조회")
+	@ApiOperation("year + month 사용자가 가입한 그룹들의 일정 조회")
 	public Object groupMonthCalList(@PathVariable int year, @PathVariable int month,
 			@ApiIgnore @AuthenticationPrincipal UserPrincipal principal) {
 		long userId = principal.getUserId();
@@ -145,7 +146,7 @@ public class CalendarController {
 	}
 
 	@GetMapping("/group/{gpNo}/{year}/{month}")
-	@ApiOperation("year + month 그룹 일정 조회")
+	@ApiOperation("year + month 특정 그룹의 일정 조회")
 	public Object groupGpMonthCalList(@PathVariable long gpNo, @PathVariable int year, @PathVariable int month,
 			@ApiIgnore @AuthenticationPrincipal UserPrincipal principal) {
 		long userId = principal.getUserId();
@@ -164,19 +165,21 @@ public class CalendarController {
 
 	private void ckAuth(long calNo, long userId) {
 		CalEvent cal = calService.selectCalNo(calNo);
-		if (cal.getCType() == 'U')
+		if (cal.getCType() == 'U' && cal.getCOwn() == userId)
 			return;
 
 		long gpMgrId = gpService.selectGroup(cal.getCOwn()).getGpMgrId();
-		if (gpMgrId != userId)
-			throw new GroupUnAuthException();
+		if (gpMgrId == userId)
+			return;
+
+		throw new CalNoAuthException();
 	}
 
-	@ExceptionHandler(GroupUnAuthException.class)
+	@ExceptionHandler({ CalNoAuthException.class, GroupUnAuthException.class })
 	public Object noAuthExceptionHandler() {
 		BasicResponse res = new BasicResponse();
 
-		res.msg = "no auth";
+		res.msg = "해당 일정에 대한 권한이 없습니다!";
 		res.status = false;
 
 		return new ResponseEntity<>(res, HttpStatus.UNAUTHORIZED);

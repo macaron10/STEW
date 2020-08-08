@@ -14,6 +14,7 @@ import Guide from '../views/Guide.vue';
 // User 관련
 import UserDetail from '../views/user/UserDetail.vue';
 import Signup from "../views/user/Signup.vue";
+import userPage from "../views/user/userPage.vue";
 // MeetingRoom
 import MeetingRoom from "../views/MeetingRoom.vue";
 import MySchedule from "../views/MySchedule.vue"
@@ -78,7 +79,7 @@ const routes: Array<RouteConfig> = [
   {
     path: '/user/detail',
     name: 'UserDetail',
-    component: UserDetail
+    component: userPage
   },
   {
     path: "/user/signup",
@@ -89,6 +90,11 @@ const routes: Array<RouteConfig> = [
     path: "/meetingroom/:id",
     name: "MeetingRoom",
     component: MeetingRoom
+  },
+  {
+    path: "/user",
+    name: "userPage",
+    component: userPage
   },
   {
     path: "/user/myschedule",

@@ -1,6 +1,7 @@
 package com.ssafy.study.controller;
 
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -50,13 +51,16 @@ public class UserController {
 	@Autowired
 	private FileUtils fileUtil;
 	
-	private final String fileBaseUrl = "/home/ubuntu/app/img/user";
+	// private final String fileBaseUrl = "/home/ubuntu/app/img/user";
+	private final String fileBaseUrl = "C:\\Users\\multicampus\\Desktop\\img\\user";
 	
 	@PostMapping("/signup")
 	@ApiOperation("회원가입")
 	public ResponseEntity<BasicResponse> signUp(UserSignUp signUpInfo){
 		
 		User user = signUpInfo.toEntity();
+		
+		user.setUserPw(new BCryptPasswordEncoder().encode(user.getUserPw()));
 		
 		if(signUpInfo.getUserImg() != null) {
 			try {
@@ -81,7 +85,7 @@ public class UserController {
 //	비밀번호 맞는지 아닌지
 //	유저 업데이트할때 비밀번호 포함 안하고싶다
 	
-	@GetMapping("/checkPw")
+	@PostMapping("/checkpw")
 	@ApiOperation("비밀번호 확인")
 	public ResponseEntity<BasicResponse> checkPw(@AuthenticationPrincipal UserPrincipal principal, String userPw){
 		
@@ -93,7 +97,7 @@ public class UserController {
 		
 		BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 		
-		if(encoder.encode(userPw).equals(principal.getPassword())) {
+		if(encoder.matches(userPw, principal.getPassword())) {
 			result.object = true;
 		}
 		
@@ -121,9 +125,21 @@ public class UserController {
 	@ApiOperation("회원 탈퇴")
 	public ResponseEntity<BasicResponse> signOut(@PathVariable long userId, HttpServletRequest request) throws ServletException{
 		
+		
 		userService.deleteById(userId);
 		
 		BasicResponse result = new BasicResponse();
+		
+		String accessToken = request.getHeader(JwtProperties.HEADER_STRING).replace(JwtProperties.TOKEN_PREFIX, "");
+		
+		long remains = JwtUtil.getExpiringTime(accessToken) - System.currentTimeMillis();
+		
+//		BlackListing
+		redisTemplate.opsForValue().set(accessToken, "logout");
+		redisTemplate.expire(accessToken, remains, TimeUnit.MILLISECONDS);
+		
+//		Delete RefreshToken
+		redisTemplate.delete(JwtUtil.getUsernameFromToken(accessToken));
 		
 		result.status = true;
 		result.msg = "success";
@@ -134,11 +150,24 @@ public class UserController {
 	
 	@PutMapping
 	@ApiOperation("회원 수정")
-	public ResponseEntity<BasicResponse> modify(@RequestBody UserModify userModify){
-		
+	public ResponseEntity<BasicResponse> modify(UserModify userModify, @AuthenticationPrincipal UserPrincipal principal){
+		System.out.println(userModify);
 		BasicResponse result = new BasicResponse();
 		
-		User modifiedUser = userService.modify(userModify.toEntity());
+		User origin = userService.loadUserByUserId(principal.getUserId());
+		
+		origin.update(userModify);
+		
+		if(userModify.getUserImg() != null) {
+			try {
+				origin.setUserImg(fileUtil.uploadFile(userModify.getUserImg(), fileBaseUrl));
+			} catch (IOException e) {
+				e.printStackTrace();
+				throw new FileUploadException();
+			}
+		}
+		
+		User modifiedUser = userService.save(origin);
 		
 		result.status = true;
 		result.msg = "success";
@@ -171,17 +200,10 @@ public class UserController {
 		
 		String refreshToken = request.getHeader("refreshToken").replace(JwtProperties.TOKEN_PREFIX, "");
 		
-//		리프레쉬 토큰 문제가 이씀
 		if(refreshToken == null || !JwtUtil.verify(refreshToken))
 			result.msg = "fail";
 
 		String accessToken = request.getHeader(JwtProperties.HEADER_STRING).replace(JwtProperties.TOKEN_PREFIX, "");
-//		String accessToken = null;
-//		if(request.getCookies() != null) {
-//			for(Cookie c : request.getCookies()) {
-//				if(c.getName().equals("accessToken")) accessToken = c.getValue();
-//			}
-//		}
 		
 		if(accessToken == null) {
 			result.msg = "accessToken not found";
@@ -193,11 +215,6 @@ public class UserController {
 			UserPrincipal userPrincipal = new UserPrincipal(userService.findByUserEmail(userEmail));
 			
 			accessToken = JwtProperties.TOKEN_PREFIX + JwtUtil.generateAccessToken(userPrincipal);
-//			Cookie c = new Cookie("accessToken", JwtUtil.generateAccessToken(userPrincipal));
-//			c.setHttpOnly(true);
-//			c.setPath("/api");
-//			
-//			response.addCookie(c);
 			
 			response.addHeader("accessToken", accessToken);
 			

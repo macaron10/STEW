@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.google.gson.Gson;
 import com.ssafy.study.common.model.BasicResponse;
 import com.ssafy.study.common.util.FileUtils;
 import com.ssafy.study.group.model.dto.GroupSearchDto;
@@ -39,32 +40,6 @@ public class PublicGroupController {
 		result.status = true;
 
 		return new ResponseEntity<>(result, HttpStatus.OK);
-	}
-
-	@GetMapping(value = "/thumb/{year}/{month}/{date}/{file}", produces = MediaType.IMAGE_JPEG_VALUE)
-	@ApiOperation("그룹의 썸네일 출력 <img src='http://localhost:8399/api/study/thumb/{gpImg}'>")
-	public byte[] showThumbnail(@PathVariable String year, @PathVariable String month, @PathVariable String date,
-			@PathVariable String file) {
-		String path = File.separator + year + File.separator + month + File.separator + date + File.separator + file;
-		byte[] img = {};
-		try {
-			img = fileUtil.downloadFile(fileBaseUrl, path);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return img;
-	}
-
-	@GetMapping(value = "/thumb/{path}", produces = MediaType.IMAGE_JPEG_VALUE)
-	@ApiOperation("그룹의 썸네일 출력 <img src='http://localhost:8399/api/study/thumb/{gpImg}'>")
-	public byte[] showThumbnailSinglePath(@PathVariable String path) {
-		byte[] img = {};
-		try {
-			img = fileUtil.downloadFile(fileBaseUrl, File.separator + path);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return img;
 	}
 
 	@GetMapping("/search")
@@ -124,7 +99,7 @@ public class PublicGroupController {
 	}
 
 	@GetMapping("/test")
-	public Object test() {
-		return groupService.selectGroupMemberList(1);
+	public Object test(int no) {
+		return new Gson().toJson(groupService.selectGroupReq(no));
 	}
 }

@@ -7,18 +7,17 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import com.ssafy.study.common.exception.FileUploadException;
 import com.ssafy.study.common.model.BasicResponse;
 import com.ssafy.study.common.util.FileUtils;
@@ -49,7 +48,10 @@ public class GroupController {
 	@Autowired
 	private FileUtils fileUtil;
 
-	private final String fileBaseUrl = "/home/ubuntu/app/img/group";
+	// private final String fileBaseUrl = "/home/ubuntu/app/img/group";
+	private final String fileBaseUrl = "C:\\Users\\multicampus\\Desktop\\img\\group_thumb";
+
+	private SimpMessagingTemplate template;
 
 	@GetMapping("/my")
 	@ApiOperation("로그인한 회원의 스터디 목록 조회")
@@ -321,6 +323,20 @@ public class GroupController {
 		long userId = principal.getUserId();
 
 		result.object = groupService.selectGroupReqByGpNo(gpNo);
+		result.msg = "success";
+		result.status = true;
+
+		return new ResponseEntity<>(result, HttpStatus.OK);
+	}
+
+	@GetMapping("/joinck/{gpNo}")
+	@ApiOperation("회원이 해당 그룹에 가입했는지 체크 (true:가입, false:미가입)")
+	public ResponseEntity ckJoinGroup(@PathVariable long gpNo,
+			@ApiIgnore @AuthenticationPrincipal UserPrincipal principal) {
+		BasicResponse result = new BasicResponse();
+		long userId = principal.getUserId();
+
+		result.object = groupService.ckGroupJoin(gpNo, userId);
 		result.msg = "success";
 		result.status = true;
 

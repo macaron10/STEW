@@ -1,5 +1,6 @@
 package com.ssafy.study.group.model.dto;
 
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
@@ -39,7 +40,7 @@ public class GroupDto {
 
 	public GroupDto(Group group) {
 		this.gpNo = group.getGpNo();
-		this.gpCatNo = group.getGpCat().getGpCatNo();
+		this.gpCatNo =  group.getGpCat().getGpCatNo();
 		this.gpNm = group.getGpNm();
 		this.gpMgrId = group.getGpMgrId();
 		this.gpIntro = group.getGpIntro();
@@ -68,13 +69,17 @@ public class GroupDto {
 		this.gpMaxNum = group.getGpMaxNum();
 		this.gpCurNum = group.getGpCurNum();
 		this.gpImg = group.getGpImg();
-		
+
 		this.regDate = group.getRegDate();
 
 		if (group.getGpTag() != null)
 			this.gpTag = Arrays.asList(group.getGpTag().split(","));
 
 		this.gpCatNm = gpCatNm;
+	}
+
+	public GroupDto(long gpNo) {
+		this.gpNo = gpNo;
 	}
 
 }

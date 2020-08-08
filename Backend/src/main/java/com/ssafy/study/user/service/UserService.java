@@ -11,6 +11,5 @@ public interface UserService {
 	List<User> findAll(); 
 	void deleteById(long id);
 	User findByUserEmail(String userEmail);
-	User modify(User user);
 	
 }

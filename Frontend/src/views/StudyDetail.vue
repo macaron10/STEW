@@ -6,11 +6,10 @@
           <div class="d-flex justify-center">
             <img
             @click="enterMeetingRoom(group.gpNo)"
-            :src="$store.state.baseUrl + '/group' + group.gpImg"
+            :src="$store.state.baseUrl + '/image/group' + group.gpImg"
             alt="그룹 이미지"
             height=400px
             >
-            <!-- :src="$store.state.baseUrl + group.gpImg" 배포용 -->
           </div>
           <div class="text-center">
             <h1 class="my-3">{{ group.gpNm }}</h1>
@@ -151,7 +150,6 @@ export default {
       this.$router.push({name:'MeetingRoom', params:{id: gpNo}})
     },
     async getDetail () {
-      // const baseUrl = this.$store.state.baseUrld
       const apiUrl = '/study/user/' + this.id
       try {
         const res = await axios.get(apiUrl)

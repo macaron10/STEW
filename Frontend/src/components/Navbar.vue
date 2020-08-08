@@ -18,7 +18,7 @@
       
     >
         <v-img
-          :src="$store.state.baseUrl + '/main/stew.png'"
+          :src="$store.state.baseUrl + '/image/main/stew.png'"
           alt="Vuetify"
           :aspect-ratio="200"
           :min-height="30"

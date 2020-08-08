@@ -5,7 +5,10 @@
         v-for="group in groups"
         :key="group.gpNo"
         class="d-flex child-flex"
-        cols="3"
+        cols="6"
+        xs="12"
+        sm="4"
+        md="3"
       >
           <!-- :to="'/study/' + group.gpNo" -->
         <v-card

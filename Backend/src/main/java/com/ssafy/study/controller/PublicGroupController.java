@@ -35,7 +35,7 @@ public class PublicGroupController {
 	private FileUtils fileUtil;
 
 	private final String fileBaseUrl = "C:\\Users\\multicampus\\Desktop\\group_thumb";
-	
+
 	private final SimpMessageSendingOperations template;
 	private final SimpMessagingTemplate template2;
 
@@ -104,6 +104,11 @@ public class PublicGroupController {
 		result.status = true;
 
 		return new ResponseEntity<>(result, HttpStatus.OK);
+	}
+
+	@GetMapping("/test")
+	public Object test() {
+		return groupService.selectGroupReqUser(4);
 	}
 
 }

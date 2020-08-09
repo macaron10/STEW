@@ -18,4 +18,9 @@ public interface TimeAcmlRepositoryCustom {
 	List<TimeAcmlDto> selectGroupTimerTotalDate(long gpNo, int year, int month);
 
 	List<TimeAcmlDto> selectGroupTimerTotalMonth(long gpNo, int year);
+
+	List<TimeAcmlDto> selectGroupTimerTotalDateUser(long gpNo, int year, int month);
+
+	List<TimeAcmlDto> selectGroupRankTimerTotalMonth(int year, int month);
+
 }

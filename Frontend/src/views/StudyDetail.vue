@@ -5,7 +5,7 @@
         <v-col class="mb-6 ">
           <div class="d-flex justify-center">
             <img
-            @click="enterMeetingRoom(group.gpNo)"
+            @click="readyEnterMeeting(group.gpNo)"
             :src="$store.state.baseUrl + '/image/group' + group.gpImg"
             alt="그룹 이미지"
             height=400px
@@ -146,8 +146,8 @@ export default {
     this.getDetail()
   },
   methods: {
-    enterMeetingRoom(gpNo) {      
-      this.$router.push({name:'MeetingRoom', params:{id: gpNo}})
+    readyEnterMeeting(gpNo) {      
+      this.$router.push({name:'ReadyMeeting', params:{id: gpNo}})
     },
     async getDetail () {
       const apiUrl = '/study/user/' + this.id

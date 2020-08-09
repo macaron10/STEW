@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const notifications = {
+export default {
     namespaced: true,
     state: {
       groupsReqs: []
@@ -23,5 +23,3 @@ const notifications = {
       },
     },
   }
-
-  export default notifications;

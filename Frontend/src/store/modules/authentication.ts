@@ -1,7 +1,6 @@
 import router from "@/router";
 import axios from 'axios';
 import jwt from "jsonwebtoken";
-import createPersistedState from "vuex-persistedstate";
 
 interface UserInfo {
   userId: number,
@@ -10,7 +9,7 @@ interface UserInfo {
 }
 
 // 유저 인증 정보 모듈화
-const authentication = {
+export default {
     namespaced: true,
     
     state: {
@@ -20,6 +19,11 @@ const authentication = {
         accessToken: "",
         refreshToken: ""
       },
+    },
+
+    getters: {
+      loginStatus: (state: { isLogin: any; }) => state.isLogin,
+      getUserInfo: (state: { userInfo: UserInfo; }) => state.userInfo
     },
   
     mutations: {
@@ -97,10 +101,4 @@ const authentication = {
         console.log(decode);
       },
     },
-  
-    plugins: [
-      createPersistedState(),
-    ]
   }
-
-  export default authentication;

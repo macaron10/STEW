@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const studyGroups = {
+export default {
     namespaced: true,
     state: {
       // 스터디 그룹
@@ -63,5 +63,3 @@ const studyGroups = {
     },
     }
   }
-  
-  export default studyGroups;

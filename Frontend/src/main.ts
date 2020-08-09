@@ -15,7 +15,7 @@ axios.defaults.baseURL = "http://localhost:8399/api" // 개발용
 // axios.defaults.baseURL = "https://i3b103.p.ssafy.io/api" // 배포용
 
 axios.interceptors.request.use(config => {
-  const token = store.state.auth.userInfo.accessToken;
+  const token = store.getters['auth/getUserInfo'].accessToken;
   if (token != "") {
     config.headers.Authorization = token;
   }
@@ -37,7 +37,7 @@ axios.interceptors.response.use(
     if (err.response.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
       
-      const refreshInfo: any = jwt.decode(store.state.userInfo.refreshToken.replace("Bearer ", ""));
+      const refreshInfo: any = jwt.decode(store.getters['auth/getUserInfo'].refreshToken.replace("Bearer ", ""));
       
       if (Date.now() - refreshInfo.exp * 1000 < 0) {
         console.log("토큰 재발급 고고");
@@ -45,7 +45,7 @@ axios.interceptors.response.use(
         store.dispatch('tokenRefresh').then(() => {
           console.log("토큰 재발급 완료");
           
-          originalRequest.headers.Authorization = store.state.userInfo.accessToken;
+          originalRequest.headers.Authorization = store.getters['auth/getUserInfo'].accessToken;
           return axios(originalRequest);
         });
       } else {

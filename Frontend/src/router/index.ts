@@ -22,7 +22,7 @@ import MySchedule from "../views/MySchedule.vue"
 Vue.use(VueRouter);
 
 const rejectAuthUser = (to: any, from: any, next: (arg0: string) => void) => {
-  if (store.state.auth.isLogin === true) {
+  if (store.getters['auth/loginStatus'] === true) {
     alert("로그인됨");
     next("/");
   } else {
@@ -32,7 +32,7 @@ const rejectAuthUser = (to: any, from: any, next: (arg0: string) => void) => {
 // beforeEnter: rejectAuthUser, 해당 라우터에 이부분 써주기
 
 const onlyAuthUser = (to: any, from: any, next: (arg0: string | undefined) => void) => {
-  if (store.state.isLogin === false) {
+  if (store.getters['auth/loginStatus'] === false) {
     alert("로그인됨") // 아직 로그인 안 된 유저여서 막아야됨
     next("/")
   } else {

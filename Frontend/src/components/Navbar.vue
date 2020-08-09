@@ -209,7 +209,7 @@ import router from '../router';
 export default {
     name: 'Navbar',
     computed: {
-      ...mapState([ 
+      ...mapState('auth', [ 
         "userInfo",
         "isLogin"
       ]),
@@ -219,7 +219,7 @@ export default {
       }
     },
     methods: {
-      ...mapActions([
+      ...mapActions('auth', [
         "signIn",
         "logout"
         ]),

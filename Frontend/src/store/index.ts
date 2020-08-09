@@ -6,6 +6,10 @@ import querystring from 'querystring';
 import createPersistedState from "vuex-persistedstate";
 import jwt from "jsonwebtoken";
 
+// 소켓
+import Stomp from 'webstomp-client';
+import SockJS from 'sockjs-client';
+
 import { isNull } from 'util';
 import { userInfo } from 'os';
 import { config } from 'process';
@@ -103,19 +107,45 @@ const notifications = {
         console.error(err)
       }
     },
+    getReqsSock({ state, rootState }: any, event: any) {
+      const apiUrl = rootState.baseUrl + '/sock'
+      const socket = new SockJS(apiUrl)
+      const ws = Stomp.over(socket)
+
+      const token = {
+        'accessToken': rootState.userInfo.accessToken
+      }
+      ws.connect(token,
+        frame => {
+          console.log('소켓 연결 성공');
+
+          ws.subscribe("/sub/mgr-req/" + rootState.userInfo.userId, msg =>{
+            state.groupsReqs.push(JSON.parse(msg.body))
+            console.log(JSON.parse(msg.body))
+          })
+
+          ws.subscribe("/sub/user-req/" + rootState.userInfo.userId, msg =>{
+            state.groupsReqs.push(JSON.parse(msg.body))
+            console.log(JSON.parse(msg.body))
+          })
+        })
+    }
   },
 }
 
 export default new Vuex.Store({
   state: {
     baseUrl: "http://localhost:8399/api",//개발용
-    // baseUrl: "https://i3b103.p.ssafy.io/image", //배포용
+    // baseUrl: "https://i3b103.p.ssafy.io", //배포용
     drawer: false,
     isLogin: false,
     userInfo: {
       accessToken: "",
-      refreshToken: ""
+      refreshToken: "",
+    //임시 (유저id 불러오기용(유저정보))
+      userId: ""
     },
+    
   },
 
   mutations: {
@@ -141,11 +171,16 @@ export default new Vuex.Store({
     refreshSuccess(state, payload) {
       state.userInfo.accessToken = payload;
     },
+
+    //임시(userId 불러오기용)
+    changeUserId(state, payload) {
+      state.userInfo.userId = payload
+    }
   },
 
   actions: {
     // 로그인
-    signIn({ commit }, userObj) {
+    signIn({ commit, dispatch }, userObj) {
       axios.post('/user/signin', userObj)
         .then(res => {
           console.log(res);
@@ -156,6 +191,11 @@ export default new Vuex.Store({
           }
           commit("loginSuccess", userInfo);
           // axios.defaults.headers.common['Authorization'] = this.state.userInfo.accessToken;
+          dispatch("notice/getReqsSock")
+          dispatch("notice/getReqs")
+          //임시(userId 불러오기용)
+          dispatch("getUserInfoImsi")
+
         })
         .catch(err => {
           alert("이메일과 비밀번호를 확인하세요");
@@ -203,6 +243,16 @@ export default new Vuex.Store({
       const decode = jwt.decode(token);
       console.log(decode);
     },
+
+    //임시(userId불러오기용)
+    getUserInfoImsi({ commit }) {
+      axios.get('/user/')
+      .then(({ data }) => {
+          commit('changeUserId', data.object.userId)
+          console.log(data.object.userId)
+      })
+      
+  },
   },
 
 

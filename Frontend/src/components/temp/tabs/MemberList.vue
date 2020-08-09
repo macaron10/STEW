@@ -22,7 +22,7 @@
                     <img
                       v-if="member.user.userImg"
                       alt="Avatar"
-                      :src="$store.state.baseUrl + '/user' + member.user.userImg"
+                      :src="$store.state.baseUrl + '/image/user' + member.user.userImg"
                     >
                     <!-- @click="toDetail(member.userId)" 유저디테일 이동기능-->   <!-- :to="'/user/' + user넘버" -->
                     <v-icon
@@ -38,13 +38,13 @@
                 </v-col>
                  <v-col cols="2">
                   <v-btn
-                    v-if="gpMgrId===userId&&member.user.userId!==userId"
+                    v-if="gpMgrId===userInfo.userId&&member.user.userId!==userInfo.userId"
                     color="purple lighten-2 white--text"
                     @click="mand(gpNo, member.user.userId)"
                   >그룹장 위임
                   </v-btn>
                   <v-btn
-                    v-if="gpMgrId===userId&&member.user.userId!==userId"
+                    v-if="gpMgrId===userInfo.userId&&member.user.userId!==userInfo.userId"
                     color="red lighten-2 white--text"
                     @click="kick(member.gpJoinNo)"
                     class="my-2 mx-5 px-5"
@@ -68,6 +68,7 @@
 
 <script>
 import axios from "axios";
+import { mapState } from 'vuex';
 
   export default {
     name: 'MemberList',
@@ -78,8 +79,12 @@ import axios from "axios";
     },
     data () {
       return {
-        userId:1
       }
+    },
+    computed: {
+      ...mapState([ 
+        "userInfo"
+      ]),
     },
     methods : {
       async kick(gpJoinNo) {
@@ -101,6 +106,7 @@ import axios from "axios";
     },
     mounted () {
       console.log(this.members[0])
+
     }
     }
   }

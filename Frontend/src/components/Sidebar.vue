@@ -5,10 +5,10 @@
     :mini-variant="true"
     :expandOnHover="true"
     app
-    color="blue"
+    color="white"
     class="theme-dark"
-    style="background-image: linear-gradient(180deg, rgba(0, 0, 0, 0), rgba(0, 0, 255, 0.5))"
   >
+    <!-- style="background-image: linear-gradient(180deg, rgba(255, 255, 255, 1), rgba(0, 0, 0, 0.1))" -->
     <v-list dense>
       <template v-for="item in items">
         <v-row

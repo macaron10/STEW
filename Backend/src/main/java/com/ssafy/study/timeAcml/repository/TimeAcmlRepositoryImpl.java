@@ -48,7 +48,7 @@ public class TimeAcmlRepositoryImpl implements TimeAcmlRepositoryCustom {
 
 	@Override
 	public List<TimeAcmlDto> selectUserTimerTotalMonth(long userId, int year) {
-		String jpql = "select new com.ssafy.study.timeAcml.model.dto.TimeAcmlDto(sum(t.tmAcmlTime) as total, substring(t.tmAcmlDate, 1, 4)) "
+		String jpql = "select new com.ssafy.study.timeAcml.model.dto.TimeAcmlDto(sum(t.tmAcmlTime) as total, substring(t.tmAcmlDate, 1, 7)) "
 				+ "from TimeAcml t " + "where t.user.userId = :userId and year(t.tmAcmlDate) = :year group by 2";
 
 		TypedQuery<TimeAcmlDto> query = em.createQuery(jpql, TimeAcmlDto.class);
@@ -60,7 +60,7 @@ public class TimeAcmlRepositoryImpl implements TimeAcmlRepositoryCustom {
 
 	@Override
 	public List<TimeAcmlDto> selectGroupTimerTotalDate(long gpNo, int year, int month) {
-		String jpql = "select new com.ssafy.study.timeAcml.model.dto.TimeAcmlDto(sum(t.tmAcmlTime) as total, substring(t.tmAcmlDate, 1, 7)) "
+		String jpql = "select new com.ssafy.study.timeAcml.model.dto.TimeAcmlDto(sum(t.tmAcmlTime) as total, t.tmAcmlDate) "
 				+ "from TimeAcml t " + "where t.gp.gpNo = :gpNo and year(t.tmAcmlDate) = :year "
 				+ "and month(t.tmAcmlDate) = :month group by 2";
 
@@ -74,7 +74,7 @@ public class TimeAcmlRepositoryImpl implements TimeAcmlRepositoryCustom {
 
 	@Override
 	public List<TimeAcmlDto> selectGroupTimerTotalDateUser(long gpNo, int year, int month) {
-		String jpql = "select new com.ssafy.study.timeAcml.model.dto.TimeAcmlDto(sum(t.tmAcmlTime) as total, substring(t.tmAcmlDate, 1, 7), u) "
+		String jpql = "select new com.ssafy.study.timeAcml.model.dto.TimeAcmlDto(sum(t.tmAcmlTime) as total, t.tmAcmlDate, u) "
 				+ "from TimeAcml t join User u on t.user.userId = u.userId "
 				+ "where t.gp.gpNo = :gpNo and year(t.tmAcmlDate) = :year "
 				+ "and month(t.tmAcmlDate) = :month group by 2, 3 order by 1 desc";
@@ -89,7 +89,7 @@ public class TimeAcmlRepositoryImpl implements TimeAcmlRepositoryCustom {
 
 	@Override
 	public List<TimeAcmlDto> selectGroupTimerTotalMonth(long gpNo, int year) {
-		String jpql = "select new com.ssafy.study.timeAcml.model.dto.TimeAcmlDto(sum(t.tmAcmlTime) as total, substring(t.tmAcmlDate, 1, 4)) "
+		String jpql = "select new com.ssafy.study.timeAcml.model.dto.TimeAcmlDto(sum(t.tmAcmlTime) as total, substring(t.tmAcmlDate, 1, 7)) "
 				+ "from TimeAcml t " + "where t.gp.gpNo = :gpNo and year(t.tmAcmlDate) = :year group by 2";
 
 		TypedQuery<TimeAcmlDto> query = em.createQuery(jpql, TimeAcmlDto.class);

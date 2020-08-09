@@ -176,7 +176,6 @@
         <template v-slot:activator="{ on, attrs }">
             <v-btn
               icon
-              :to="{ name: 'UserDetail' }"
               v-bind="attrs"
               v-on="on"
               color="blue lighten-2"
@@ -252,7 +251,10 @@ export default {
       goToPage(nextPage) {
         switch(nextPage) {
           case "My Schedule":
-            this.$router.push('MySchedule')
+            this.$router.push({name: 'MySchedule'})
+            break
+          case "Profile":
+            this.$router.push({name:'UserDetail'})
             break
         }  
         
@@ -268,20 +270,20 @@ export default {
         },
         items: [
           {
-            icon: 'mdi-inbox',
-            text: 'Inbox',
+            icon: 'mdi-account',
+            text: 'Profile',
+          },
+          {
+            icon: 'mdi-book-open-page-variant',
+            text: 'My Study',
           },
           {
             icon: 'mdi-calendar',
             text: 'My Schedule',
           },
           {
-            icon: 'mdi-send',
-            text: 'Send',
-          },
-          {
-            icon: 'mdi-email-open',
-            text: 'Drafts',
+            icon: 'mdi-logout',
+            text: 'Logout',
           },
         ],
         model: 1,

@@ -10,7 +10,7 @@
             <h1 class="my-3">{{ group.gpNm }}</h1>
             <h4 class="mb-2">{{ group.gpIntro }}</h4>
             <v-btn
-              @click="enterMeetingRoom(group.gpNo)"
+              @click="readyEnterMeeting(group.gpNo)"
               color="green accent-1"
               class="white--text font-weight-bold mx-3"
             >스터디 캠 입장</v-btn>

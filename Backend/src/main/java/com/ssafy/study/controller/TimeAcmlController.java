@@ -73,7 +73,7 @@ public class TimeAcmlController {
 		long userId = principal.getUserId();
 		BasicResponse result = new BasicResponse();
 
-		result.object = timeService.selectGroupTimerTotalDate(gpNo, year, month);
+		result.object = timeService.selectGroupTimerTotalDateUser(gpNo, year, month);
 		result.msg = "success";
 		result.status = true;
 

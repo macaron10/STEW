@@ -10,7 +10,7 @@ import basic from "@/store/modules/basic";
 Vue.use(Vuex);
 
 export default new Vuex.Store({
-
+  
   modules: {
     basic: basic,
     auth: authentication,
@@ -26,6 +26,5 @@ export default new Vuex.Store({
       ]
     }),
   ]
-
 });
 

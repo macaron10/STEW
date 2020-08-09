@@ -41,11 +41,16 @@ export default {
       refreshSuccess(state: any, payload: any) {
         state.userInfo.accessToken = payload;
       },
+
+      //임시(userId 불러오기용)
+      changeUserId(state: { userInfo: { userId: number; }; }, payload: any) {
+        state.userInfo.userId = payload
+      }
     },
   
     actions: {
       // 로그인
-      signIn({ commit }: any, userObj: any) {
+      signIn({ commit, dispatch }: any, userObj: any) {
         axios.post('/user/signin', userObj)
           .then(res => {
             // console.log(res);
@@ -54,6 +59,10 @@ export default {
               'refreshToken': res.headers.refreshtoken
             }
             commit("loginSuccess", userInfo);
+            dispatch("notice/getReqsSock");
+            dispatch("notice/getReqs");
+            //임시(userId 불러오기용)
+            dispatch("getUserInfoImsi");
           })
           .catch(err => {
             alert("이메일과 비밀번호를 확인하세요");
@@ -99,6 +108,15 @@ export default {
         const token = state.auth.userInfo.accessToken.replace("Bearer", "");
         const decode = jwt.decode(token);
         console.log(decode);
+      },
+
+      //임시(userId불러오기용)
+      getUserInfoImsi({ commit }: any) {
+        axios.get('/user/')
+        .then(({ data }) => {
+            commit('changeUserId', data.object.userId)
+            console.log(data.object.userId)
+        })
       },
     },
   }

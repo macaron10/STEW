@@ -1,5 +1,9 @@
 <template>
   <div>
+    <v-container>
+    <Timer />
+
+    </v-container>
     <div class="mx-10 my-10 videos-container" ></div>
     <!-- footer -->
     <v-footer color="#ffffff" padless>
@@ -27,23 +31,52 @@
 <script src="https://rtcmulticonnection.herokuapp.com/socket.io/socket.io.js"></script>
 <script>
 import StudyDetailVue from "./StudyDetail.vue";
+import Timer from "@/components/temp/Timer.vue"
+import { log } from "util";
 export default {
   name: "MeetingRoom",
   data() {
     return {
       roomid: "",
-      connection: null
+      connection: null,
+      options: {
+        video: false,
+        audio: false
+      },
+      localStream: {}
     };
+  },
+  components: {
+    Timer
+  }, 
+  created() {
+    this.joinRoom();
   },
   mounted() {
     this.check();
-    this.joinRoom();
+    this.initoptions();
   },
   methods: {
     check() {
       alert(
         "비디오와 오디오가 켜집니다. 접속 후 오디오와 비디오 기능을 비활성화 시킬 수 있습니다."
       );
+    },
+    initoptions() {
+      this.connection.videosContainer = document.querySelector(".videos-container");
+      this.options = this.$route.params.options;
+
+      let localStream = {};
+      localStream = this.connection;
+      localStream = localStream;
+      console.log(this.connection.attachStreams);
+      console.log(this.connection.attachStreams[0]);
+      if (this.options.audio == false) {
+        // localStream.attachStreams[0].mute("video");
+      }
+      if (this.options.video == false) {
+        // localStream.attachStreams[0].mute("audio");
+      }
     },
     joinRoom() {
       this.connection = new RTCMultiConnection();
@@ -69,9 +102,6 @@ export default {
         OfferToReceiveVideo: true
       };
       this.connection.openOrJoin(this.$route.params.id);
-      this.connection.videosContainer = document.querySelector(
-        ".videos-container"
-      );
     },
     outRoom() {
       this.connection.getAllParticipants().forEach(participantId => {
@@ -87,6 +117,7 @@ export default {
     mute() {
       let localStream = this.connection.attachStreams[0];
       localStream.mute("audio");
+      console.log("mute");
     },
     unmute() {
       let localStream = this.connection.attachStreams[0];
@@ -112,4 +143,7 @@ export default {
 </script>
 
 <style>
+video::-webkit-media-controls {
+  display: none;
+}
 </style>

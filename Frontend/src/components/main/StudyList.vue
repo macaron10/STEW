@@ -6,7 +6,7 @@
         :key="group.gpNo"
         class="d-flex child-flex"
         cols="6"
-        xs="12"
+        xs="6"
         sm="4"
         md="3"
       >
@@ -14,21 +14,24 @@
         <v-card
           class="mx-auto"
           @click="toDetail(group)"
+          height="270"
         >
           <v-img
             :src="$store.state.baseUrl + '/image/group' + group.gpImg"
-            height="150"
+            height="170"
+            color="white"
+            gradient="to bottom, rgba(255,255,255,0), rgba(0,0,0,.15)"
           >
             <v-row align="end" class="my-3 lightbox black--text pa-2 fill-height">
               <v-col>
-                <div class="body-1">인원수 {{ group.gpCurNum }}/{{ group.gpMaxNum }}</div>
+                <div class="body-1 white--text"><v-icon color="white">mdi-account</v-icon>{{ group.gpCurNum }}/{{ group.gpMaxNum }}</div>
               </v-col>
             </v-row>
           </v-img>
           <v-list-item>
             <!-- 제목, 간단한설명, 태그, 썸네일, 인원수 -->
             <v-list-item-content>
-              <v-list-item-title class="headline">{{ group.gpNm }}</v-list-item-title>
+              <v-list-item-title>{{ group.gpNm }}</v-list-item-title>
               <v-list-item-subtitle></v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>

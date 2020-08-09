@@ -1,5 +1,6 @@
 package com.ssafy.study.timeAcml.model.dto;
 
+import java.time.LocalDateTime;
 import java.util.concurrent.TimeUnit;
 
 import com.ssafy.study.group.model.dto.GroupDto;
@@ -43,6 +44,11 @@ public class TimeAcmlDto {
 		tmAcmlTime = secendToString(time);
 	}
 
+	public TimeAcmlDto(long time, LocalDateTime date) {
+		tmAcmlDate = date.toLocalDate().toString();
+		tmAcmlTime = secendToString(time);
+	}
+
 	public TimeAcmlDto(long time, String date, User user) {
 		this.user = new UserDto(user);
 		this.tmAcmlDate = date;
@@ -52,6 +58,18 @@ public class TimeAcmlDto {
 	public TimeAcmlDto(long time, String date, Group group) {
 		this.gp = new GroupDto(group);
 		this.tmAcmlDate = date;
+		this.tmAcmlTime = secendToString(time);
+	}
+
+	public TimeAcmlDto(long time, LocalDateTime date, User user) {
+		this.user = new UserDto(user);
+		this.tmAcmlDate = date.toLocalDate().toString();
+		this.tmAcmlTime = secendToString(time);
+	}
+
+	public TimeAcmlDto(long time, LocalDateTime date, Group group) {
+		this.gp = new GroupDto(group);
+		this.tmAcmlDate = date.toLocalDate().toString();
 		this.tmAcmlTime = secendToString(time);
 	}
 

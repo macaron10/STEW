@@ -96,8 +96,8 @@ export default {
     this.getDetail();
   },
   methods: {
-    enterMeetingRoom(gpNo) {
-      this.$router.push({ name: "MeetingRoom", params: { id: gpNo } });
+    readyEnterMeeting(gpNo) {      
+      this.$router.push({name:'ReadyMeeting', params:{id: gpNo}})
     },
     async getDetail() {
       const apiUrl = "/study/user/" + this.id;

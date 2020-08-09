@@ -183,6 +183,11 @@ public class GroupServiceImpl implements GroupService {
 	}
 
 	@Override
+	public List<GroupReqDto> selectGroupReqUser(long userId) {
+		return reqRepo.findUsersReq(userId);
+	}
+
+	@Override
 	public List<GroupReqDto> selectGroupReqByGpNo(long gpNo) {
 		return reqRepo.findMgrsGpReq(gpNo);
 	}

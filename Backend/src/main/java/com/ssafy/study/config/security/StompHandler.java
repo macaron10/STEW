@@ -5,6 +5,9 @@ import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptor;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import com.ssafy.study.common.exception.StompJwtExcpetion;
@@ -22,7 +25,7 @@ public class StompHandler implements ChannelInterceptor {
 				throw new StompJwtExcpetion();
 			}
 		}
-		System.out.println("핸들러 들어옴");
+		
 		return message;
 	}
 

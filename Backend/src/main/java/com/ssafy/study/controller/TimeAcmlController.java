@@ -25,6 +25,7 @@ public class TimeAcmlController {
 	private TimeAcmlService timeService;
 
 	@GetMapping("/my/{year}/{month}")
+	@ApiOperation("개인의 한달동안 일별 누적 확인")
 	public ResponseEntity getdayTotal(@PathVariable int year, @PathVariable int month,
 			@ApiIgnore @AuthenticationPrincipal UserPrincipal principal) {
 		long userId = principal.getUserId();
@@ -38,6 +39,7 @@ public class TimeAcmlController {
 	}
 
 	@GetMapping("/my/{year}")
+	@ApiOperation("개인의 일년간 월별 누적 확인")
 	public ResponseEntity getMonthTotal(@PathVariable int year,
 			@ApiIgnore @AuthenticationPrincipal UserPrincipal principal) {
 		long userId = principal.getUserId();
@@ -51,6 +53,7 @@ public class TimeAcmlController {
 	}
 
 	@GetMapping("/{gpNo}/{year}/{month}")
+	@ApiOperation("그룹의 한달간 일별누적 확인")
 	public ResponseEntity getdayTotalGp(@PathVariable long gpNo, @PathVariable int year, @PathVariable int month,
 			@ApiIgnore @AuthenticationPrincipal UserPrincipal principal) {
 		long userId = principal.getUserId();
@@ -63,13 +66,40 @@ public class TimeAcmlController {
 		return new ResponseEntity(result, HttpStatus.OK);
 	}
 
+	@GetMapping("/user/{gpNo}/{year}/{month}")
+	@ApiOperation("그룹의 유저별 한달간 일별누적 확인(내림차순)")
+	public ResponseEntity getdayTotalGpUser(@PathVariable long gpNo, @PathVariable int year, @PathVariable int month,
+			@ApiIgnore @AuthenticationPrincipal UserPrincipal principal) {
+		long userId = principal.getUserId();
+		BasicResponse result = new BasicResponse();
+
+		result.object = timeService.selectGroupTimerTotalDate(gpNo, year, month);
+		result.msg = "success";
+		result.status = true;
+
+		return new ResponseEntity(result, HttpStatus.OK);
+	}
+
 	@GetMapping("/{gpNo}/{year}")
+	@ApiOperation("그룹의 일년간 한달 누적 확인")
 	public ResponseEntity getMonthTotalGp(@PathVariable long gpNo, @PathVariable int year,
 			@ApiIgnore @AuthenticationPrincipal UserPrincipal principal) {
 		long userId = principal.getUserId();
 		BasicResponse result = new BasicResponse();
 
 		result.object = timeService.selectGroupTimerTotalMonth(gpNo, year);
+		result.msg = "success";
+		result.status = true;
+
+		return new ResponseEntity(result, HttpStatus.OK);
+	}
+
+	@GetMapping("/rank/{year}/{month}")
+	@ApiOperation("그룹의 일년간 한달 누적 확인")
+	public ResponseEntity getMonthTotalGp(@PathVariable int year, @PathVariable int month) {
+		BasicResponse result = new BasicResponse();
+
+		result.object = timeService.selectGroupRankTimerTotalMonth(year, month);
 		result.msg = "success";
 		result.status = true;
 

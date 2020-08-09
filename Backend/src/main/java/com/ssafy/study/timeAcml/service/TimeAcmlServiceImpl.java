@@ -37,6 +37,11 @@ public class TimeAcmlServiceImpl implements TimeAcmlService {
 	}
 
 	@Override
+	public List<TimeAcmlDto> selectGroupTimerTotalDateUser(long gpNo, int year, int month) {
+		return timeRepo.selectGroupTimerTotalDateUser(gpNo, year, month);
+	}
+
+	@Override
 	public List<TimeAcmlDto> selectUserTimerTotalMonth(long userId, int year) {
 		return timeRepo.selectUserTimerTotalMonth(userId, year);
 	}
@@ -49,6 +54,11 @@ public class TimeAcmlServiceImpl implements TimeAcmlService {
 	@Override
 	public List<TimeAcmlDto> selectGroupTimerTotalMonth(long gpNo, int year) {
 		return timeRepo.selectGroupTimerTotalMonth(gpNo, year);
+	}
+
+	@Override
+	public List<TimeAcmlDto> selectGroupRankTimerTotalMonth(int year, int month) {
+		return timeRepo.selectGroupRankTimerTotalMonth(year, month);
 	}
 
 }

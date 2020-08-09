@@ -223,10 +223,9 @@ public class GroupController {
 			GroupReq req = groupService.requestJoinGroup(userId, reqJoin);
 
 			GroupReqDto reqDto = groupService.selectGroupReqByReqNo(req.getGpReqNo());
+			result.object = reqDto;
 			template.convertAndSend("/sub/mgr-req/" + group.getGpMgrId(), reqDto);
-			template.convertAndSend("/sub/user-req/" + userId, reqDto);
 		}
-
 		result.msg = "success";
 		result.status = true;
 
@@ -332,6 +331,19 @@ public class GroupController {
 		long userId = principal.getUserId();
 
 		result.object = groupService.selectGroupReq(userId);
+		result.msg = "success";
+		result.status = true;
+
+		return new ResponseEntity<>(result, HttpStatus.OK);
+	}
+
+	@GetMapping("/ureqlist")
+	@ApiOperation("회원의 가입 요청 보기")
+	public ResponseEntity groupReqListUser(@ApiIgnore @AuthenticationPrincipal UserPrincipal principal) {
+		BasicResponse result = new BasicResponse();
+		long userId = principal.getUserId();
+
+		result.object = groupService.selectGroupReqUser(userId);
 		result.msg = "success";
 		result.status = true;
 

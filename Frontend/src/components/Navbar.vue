@@ -42,14 +42,14 @@
     <v-btn 
       icon
       v-if="!isLogin"
-      @click.stop= "siginInDialog = true"
+      @click.stop= "signinInDialog = true"
       color="blue lighten-2"
     >
       <v-icon>mdi-account</v-icon>
     </v-btn>
     <!-- 로그인 모달 창 -->
     <v-dialog
-      v-model="siginInDialog"
+      v-model="signinInDialog"
       max-width="350"
     >
       <v-card>
@@ -73,7 +73,7 @@
           <v-btn 
             large color="primary" 
             :block=true 
-            @click="signIn({'userEmail': user.userEmail, 'userPw':user.userPw}), siginInDialog = false"
+            @click="signIn({'userEmail': user.userEmail, 'userPw':user.userPw}), signinInDialog = false"
           >로그인</v-btn>
         </v-col>
 
@@ -83,7 +83,7 @@
           <v-btn
             color="gray"
             text small
-            @click="siginInDialog = false"
+            @click="signinInDialog = false"
           >
             아이디/비밀번호 찾기
           </v-btn>
@@ -92,7 +92,7 @@
             :to="{ name: 'Signup' }"
             color="light gray"
             text small
-            @click="siginInDialog = false"
+            @click="signinInDialog = false"
           >
             회원가입
           </v-btn>
@@ -255,7 +255,7 @@ export default {
     data () {
       return {
         wordForSearching: "",
-        siginInDialog: false,
+        signinInDialog: false,
         user: {
           userEmail: "",
           userPw: "",

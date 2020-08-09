@@ -132,6 +132,7 @@ public class JwtSecurityConfig extends WebSecurityConfigurerAdapter{
 				"/test",
 				"/study/*",
 				"/image/**",
+				"/sock/**",
 				"/study/cate/*",
 				"/user/signin",
 				"/user/signup",

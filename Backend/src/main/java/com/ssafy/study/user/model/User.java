@@ -10,8 +10,6 @@ import javax.persistence.Transient;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import com.ssafy.study.common.model.TimeEntity;
-import com.ssafy.study.group.model.dto.ModifyGroupDto;
-import com.ssafy.study.group.model.entity.GroupCategory;
 
 import lombok.Builder;
 import lombok.Getter;

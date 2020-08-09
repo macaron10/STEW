@@ -7,6 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.simp.SimpMessageSendingOperations;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,8 +22,10 @@ import com.ssafy.study.group.model.dto.GroupSearchDto;
 import com.ssafy.study.group.service.GroupService;
 
 import io.swagger.annotations.ApiOperation;
+import lombok.RequiredArgsConstructor;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/study")
 public class PublicGroupController {
 	@Autowired
@@ -30,6 +35,9 @@ public class PublicGroupController {
 	private FileUtils fileUtil;
 
 	private final String fileBaseUrl = "C:\\Users\\multicampus\\Desktop\\group_thumb";
+	
+	private final SimpMessageSendingOperations template;
+	private final SimpMessagingTemplate template2;
 
 	@GetMapping("/all")
 	@ApiOperation("전체 스터디 ")
@@ -98,8 +106,4 @@ public class PublicGroupController {
 		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 
-	@GetMapping("/test")
-	public Object test(int no) {
-		return new Gson().toJson(groupService.selectGroupReq(no));
-	}
 }

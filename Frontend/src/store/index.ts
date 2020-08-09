@@ -2,11 +2,13 @@ import Vue from "vue";
 import Vuex from "vuex";
 import router from "../router";
 import axios from "axios";
+import querystring from 'querystring';
 import createPersistedState from "vuex-persistedstate";
 import jwt from "jsonwebtoken";
 
 import { isNull } from 'util';
 import { userInfo } from 'os';
+import { config } from 'process';
 
 Vue.use(Vuex);
 
@@ -21,14 +23,16 @@ const studyGroups = {
   state: {
     // 스터디 그룹
     groups: [],
-    //미구현
     keyword: '', // 검색어
-    searchedGroup: []
+    searchedGroups: [],
   },
 
   mutations: {
     setGroups(state: any, groups: any) {
       state.groups = groups
+    },
+    setKeyWord(state: any, keyWord: any) {
+      state.keyWord = keyWord
     }
   },
 
@@ -53,7 +57,6 @@ const studyGroups = {
         // const listSize = this.pageSize
         // const page = Math.floor((listLength - 1) / listSize) + 1
         // this.movieSize = page
-        console.log(state.groups)
       } catch (err) {
         console.error(err)
         // } finally {
@@ -61,7 +64,22 @@ const studyGroups = {
         //   this.showPagination = true
       }
     },
+  fetchGroups({ commit, state }: any, event: any) {
+    commit('setKeyWord', event.target.value)
+    const apiUrl = '/study/search'
+    const config = {
+      params: {
+        "gpNm": state.keyWord,
+        // "gpCatNo": state.keyWord
+      }
+    }
+    axios.get(apiUrl, config)
+    .then(res => {
+      commit('setGroups', res.data.object)
+      })
+      .catch(err => console.error(err))
   },
+  }
 }
 
 const notifications = {
@@ -90,8 +108,8 @@ const notifications = {
 
 export default new Vuex.Store({
   state: {
-    // baseUrl: "http://localhost:8399/api",//개발용
-    baseUrl: "https://i3b103.p.ssafy.io/image", //배포용
+    baseUrl: "http://localhost:8399/api",//개발용
+    // baseUrl: "https://i3b103.p.ssafy.io/image", //배포용
     drawer: false,
     isLogin: false,
     userInfo: {

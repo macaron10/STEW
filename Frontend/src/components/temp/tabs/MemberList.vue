@@ -32,9 +32,24 @@
                     >mdi-account-circle</v-icon>
                   </v-avatar>
                 </v-col>
-                <v-col>
+                <v-col cols="6">
                   <v-list-item-title class="headline">{{ member.user.userNm }}</v-list-item-title>
                   <v-list-item-subtitle>{{ member.user.userEmail }}</v-list-item-subtitle>
+                </v-col>
+                 <v-col cols="2">
+                  <v-btn
+                    v-if="gpMgrId===userId&&member.user.userId!==userId"
+                    color="purple lighten-2 white--text"
+                    @click="mand(gpNo, member.user.userId)"
+                  >그룹장 위임
+                  </v-btn>
+                  <v-btn
+                    v-if="gpMgrId===userId&&member.user.userId!==userId"
+                    color="red lighten-2 white--text"
+                    @click="kick(member.gpJoinNo)"
+                    class="my-2 mx-5 px-5"
+                  >퇴출
+                  </v-btn>
                 </v-col>
               </v-row>
               <v-card-text class="py-0">
@@ -52,15 +67,41 @@
 </template>
 
 <script>
+import axios from "axios";
+
   export default {
     name: 'MemberList',
     props: {
       members: Array,
+      gpMgrId: Number,
+      gpNo: Number,
     },
-    data: () => ({
-    }),
+    data () {
+      return {
+        userId:1
+      }
+    },
+    methods : {
+      async kick(gpJoinNo) {
+        const apiUrl = '/study/user/remove?no='+gpJoinNo
+        try {
+          const res = axios.post(apiUrl)
+        } catch (err) {
+          console.error(err)
+        }
+      },
+      async mand(gpNo, userId) {
+        const apiUrl = '/study/user/mgr?no=' + gpNo + '&userId=' + userId
+        try {
+          const res = axios.post(apiUrl)
+          console.log('res')
+        } catch (err) {
+          console.error(err)
+        }
+    },
     mounted () {
       console.log(this.members[0])
+    }
     }
   }
 </script>

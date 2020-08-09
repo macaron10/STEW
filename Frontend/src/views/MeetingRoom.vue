@@ -1,5 +1,9 @@
 <template>
   <div>
+    <v-container>
+    <Timer />
+
+    </v-container>
     <div class="mx-10 my-10 videos-container" ></div>
     <!-- footer -->
     <v-footer color="#ffffff" padless>
@@ -27,6 +31,7 @@
 <script src="https://rtcmulticonnection.herokuapp.com/socket.io/socket.io.js"></script>
 <script>
 import StudyDetailVue from "./StudyDetail.vue";
+import Timer from "@/components/temp/Timer.vue"
 export default {
   name: "MeetingRoom",
   data() {
@@ -34,6 +39,9 @@ export default {
       roomid: "",
       connection: null
     };
+  },
+  components: {
+    Timer
   },
   mounted() {
     this.check();

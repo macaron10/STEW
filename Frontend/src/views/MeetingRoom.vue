@@ -1,6 +1,10 @@
 <template>
   <div>
-    <div class="mx-10 my-10 videos-container"></div>
+    <v-container>
+    <Timer />
+
+    </v-container>
+    <div class="mx-10 my-10 videos-container" ></div>
     <!-- footer -->
     <v-footer color="#ffffff" padless>
       <v-row justify="center" no-gutters>
@@ -27,6 +31,7 @@
 <script src="https://rtcmulticonnection.herokuapp.com/socket.io/socket.io.js"></script>
 <script>
 import StudyDetailVue from "./StudyDetail.vue";
+import Timer from "@/components/temp/Timer.vue"
 import { log } from "util";
 export default {
   name: "MeetingRoom",
@@ -41,6 +46,9 @@ export default {
       localStream: {}
     };
   },
+  components: {
+    Timer
+  }, 
   created() {
     this.joinRoom();
   },

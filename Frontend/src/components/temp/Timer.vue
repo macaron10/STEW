@@ -10,6 +10,8 @@
 </template>
 
 <script>
+import axios from 'axios';
+import { stringify } from 'querystring';
 // @ is an alias to /src
 export default {
   name: "template",
@@ -23,6 +25,19 @@ export default {
       started: null,
       running: false
     };
+  },
+  computed: {
+    secondTime() {
+      const hours = Number(this.time.slice(0, 2))
+      console.log(hours)
+      const minutes = Number(this.time.slice(3, 5))
+      console.log(minutes)
+      const seconds = Number(this.time.slice(7, 8))
+      console.log(seconds)
+      return hours*3600 + minutes*60 + seconds
+
+    }
+  
   },
   methods: {
     start() {
@@ -47,8 +62,18 @@ export default {
       clearInterval(this.started);
     },
     end() {
-      //DB에 보내는 axios
-      this.reset()
+      const answer = confirm("현재까지의 공부시간이 누적되고 초기화 됩니다. 초기화 하시겠습니까?")
+      if (answer) {
+        const config = {
+          gpNo : Number(this.$route.params.id),
+          tmAcmlTime : this.secondTime
+        }
+        axios
+          .post("/timer", stringify(config))
+          .then(res => console.log(res))
+          .catch(err => console.log(err))
+        this.reset()
+      }
     },
     clockRunning() {
       const currentTime = new Date(),

@@ -15,7 +15,7 @@ axios.defaults.baseURL = "http://localhost:8399/api" // 개발용
 // axios.defaults.baseURL = "https://i3b103.p.ssafy.io/api" // 배포용
 
 axios.interceptors.request.use(config => {
-  const token = store.state.userInfo.accessToken;
+  const token = store.state.auth.userInfo.accessToken;
   if (token != "") {
     config.headers.Authorization = token;
   }

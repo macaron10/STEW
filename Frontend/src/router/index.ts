@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import VueRouter, { RouteConfig } from 'vue-router';
-import store from "../store";
+import store from "@/store";
 
 import Home from '../views/Home.vue';
 import Main from '../views/Main.vue';
@@ -22,7 +22,7 @@ import MySchedule from "../views/MySchedule.vue"
 Vue.use(VueRouter);
 
 const rejectAuthUser = (to: any, from: any, next: (arg0: string) => void) => {
-  if (store.state.isLogin === true) {
+  if (store.state.auth.isLogin === true) {
     alert("로그인됨");
     next("/");
   } else {

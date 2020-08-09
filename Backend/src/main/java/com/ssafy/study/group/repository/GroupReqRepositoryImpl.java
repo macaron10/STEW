@@ -36,6 +36,16 @@ public class GroupReqRepositoryImpl implements GroupReqRepositoryCustom {
 	}
 
 	@Override
+	public List<GroupReqDto> findUsersReq(long userId) {
+		String jpql = "select gr from GroupReq gr where gr.gp.gpNo in (select gj.gp.gpNo from GroupJoin gj where gj.user.userId = :userId)";
+		TypedQuery<GroupReq> query = em.createQuery(jpql, GroupReq.class);
+
+		query.setParameter("userId", userId);
+
+		return query.getResultStream().map(r -> new GroupReqDto(r)).collect(Collectors.toList());
+	}
+
+	@Override
 	public GroupReqDto findGpReqByReqNo(long reqNo) {
 		String jpql = "select new com.ssafy.study.group.model.dto.GroupReqDto(gr, gp, u) from GroupReq gr join Group gp on gr.gp.gpNo = gp.gpNo join User u on gr.user.userId = u.userId where gr.gpReqNo = :reqNo";
 		TypedQuery<GroupReqDto> query = em.createQuery(jpql, GroupReqDto.class);

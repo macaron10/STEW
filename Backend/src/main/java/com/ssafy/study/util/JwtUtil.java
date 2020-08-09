@@ -6,9 +6,6 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
@@ -20,6 +17,8 @@ import com.auth0.jwt.exceptions.InvalidClaimException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.exceptions.SignatureVerificationException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
+import com.auth0.jwt.interfaces.DecodedJWT;
+import com.ssafy.study.user.model.UserDto;
 import com.ssafy.study.user.model.UserPrincipal;
 
 @Component
@@ -31,6 +30,19 @@ public class JwtUtil implements Serializable{
 	
 	public static long getUserIdFromToken(String token) {
 		return JWT.decode(token).getClaim("userId").asLong();
+	}
+
+	public static UserDto getUserFromToken(String token) {
+		
+		DecodedJWT decodedJwt = JWT.decode(token);
+		
+		return UserDto.builder()
+				.userId(decodedJwt.getClaim("userId").asLong())
+				.userNm(decodedJwt.getClaim("userNm").asString())
+				.userImg(decodedJwt.getClaim("userImg").asString())
+				.userEmail(decodedJwt.getSubject())
+				.build();
+		
 	}
 	
 	public static Collection<? extends GrantedAuthority> getAuthoritiesFromToken(String token) {
@@ -73,6 +85,8 @@ public class JwtUtil implements Serializable{
 				JWT.create()
 				.withArrayClaim("role", authorities.toArray(new String[authorities.size()]))
 				.withClaim("userId", userPrincipal.getUserId())
+				.withClaim("userNm", userPrincipal.getUserNm())
+				.withClaim("userImg", userPrincipal.getUserImg())
 				.withSubject(userPrincipal.getUsername())
 				.withIssuedAt(new Date(System.currentTimeMillis()))
 				.withExpiresAt(new Date(System.currentTimeMillis() + JwtProperties.EXPIRATION_TIME_ACCESS))

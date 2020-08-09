@@ -62,6 +62,8 @@ public interface GroupService {
 
 	List<GroupReqDto> selectGroupReq(long userId);
 
+	List<GroupReqDto> selectGroupReqUser(long userId);
+
 	List<GroupReqDto> selectGroupReqByGpNo(long gpNo);
 
 	List<GroupJoinDto> selectGroupMemberList(long gpNo);

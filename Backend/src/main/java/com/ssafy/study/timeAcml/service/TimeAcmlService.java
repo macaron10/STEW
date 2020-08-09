@@ -14,7 +14,11 @@ public interface TimeAcmlService {
 	List<TimeAcmlDto> selectUserTimerTotalMonth(long userId, int year);
 
 	List<TimeAcmlDto> selectGroupTimerTotalDate(long gpNo, int year, int month);
+	
+	List<TimeAcmlDto> selectGroupTimerTotalDateUser(long gpNo, int year, int month);
 
 	List<TimeAcmlDto> selectGroupTimerTotalMonth(long gpNo, int year);
+
+	List<TimeAcmlDto> selectGroupRankTimerTotalMonth(int year, int month);
 
 }

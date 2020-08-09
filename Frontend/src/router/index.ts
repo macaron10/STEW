@@ -17,6 +17,7 @@ import Signup from "../views/user/Signup.vue";
 import userPage from "../views/user/userPage.vue";
 // MeetingRoom
 import MeetingRoom from "../views/MeetingRoom.vue";
+import ReadyMeeting from "../views/ReadyMeeting.vue";
 import MySchedule from "../views/MySchedule.vue"
 
 Vue.use(VueRouter);
@@ -87,9 +88,16 @@ const routes: Array<RouteConfig> = [
     component: Signup
   },
   {
+    path: "/ReadyMeeting/:id",
+    name: "ReadyMeeting",
+    component: ReadyMeeting,
+    props: true
+  },
+  {
     path: "/meetingroom/:id",
     name: "MeetingRoom",
-    component: MeetingRoom
+    component: MeetingRoom,
+    props: true
   },
   {
     path: "/user",

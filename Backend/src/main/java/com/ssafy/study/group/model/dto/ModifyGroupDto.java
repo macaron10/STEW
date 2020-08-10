@@ -43,7 +43,7 @@ public class ModifyGroupDto {
 	private List<String> gpTag;
 
 	public Group toEntity() {
-		return Group.builder().gpNo(gpNo).gpNm(gpNm).gpIntro(gpIntro).gpStTm(gpStTm).gpImg(gpImgPath).gpEndTm(gpEndTm)
+		return Group.builder().gpNo(gpNo).gpNm(gpNm).gpIntro(gpIntro).gpImg(gpImgPath)
 				.gpPublic(gpPublic).gpTag(String.join(",", gpTag)).build();
 	}
 }

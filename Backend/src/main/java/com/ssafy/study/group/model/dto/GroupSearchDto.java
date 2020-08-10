@@ -1,5 +1,7 @@
 package com.ssafy.study.group.model.dto;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -15,21 +17,29 @@ import lombok.Data;
 @Valid
 public class GroupSearchDto {
 
-	private String gpNm;
-	private int gpStTm;
-	private int gpEndTm;
-	@NotNull
-	private boolean gpPrivate;
-
+	private List<String> gpNm;
 	private int gpCatNo;
-
 	private List<String> gpTag;
 
 	public GroupSearchDto() {
-		gpCatNo = 0;
-		gpStTm = -1;
-		gpEndTm = -1;
-		gpPrivate = false;
+		gpNm = new ArrayList<String>();
+		gpTag = new ArrayList<String>();
+		gpCatNo = -1;
+	}
+
+	public GroupSearchDto(String[] keyword) {
+		this();
+		Arrays.stream(keyword).forEach(e -> {
+			if (e.startsWith("#"))
+				gpTag.add(e.replace("#", ""));
+			else
+				gpNm.add(e);
+		});
+	}
+
+	public GroupSearchDto(String[] keyword, int gpCatNo) {
+		this(keyword);
+		this.gpCatNo = gpCatNo;
 
 	}
 

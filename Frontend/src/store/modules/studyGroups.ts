@@ -51,10 +51,11 @@ export default {
       const apiUrl = '/study/search'
       const config = {
         params: {
-          "gpNm": state.keyWord,
+          "keyword": state.keyWord,
           // "gpCatNo": state.keyWord
         }
       }
+      console.log(config.params.keyword);
       axios.get(apiUrl, config)
       .then(res => {
         commit('setGroups', res.data.object)

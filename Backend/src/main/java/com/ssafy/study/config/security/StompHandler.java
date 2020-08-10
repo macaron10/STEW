@@ -25,7 +25,7 @@ public class StompHandler implements ChannelInterceptor {
 				throw new StompJwtExcpetion();
 			}
 		}
-		
+
 		return message;
 	}
 

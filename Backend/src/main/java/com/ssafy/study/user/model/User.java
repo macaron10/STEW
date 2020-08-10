@@ -7,7 +7,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Transient;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
 import com.ssafy.study.common.model.TimeEntity;
 
 import lombok.Builder;
@@ -22,12 +23,13 @@ public class User extends TimeEntity {
 
 	@Builder
 	public User(String userNm, String userEmail, String userPw,
-			String userIntro, int userGoalHr) {
+			String userIntro, int userGoalHr, String type) {
 		this.userNm = userNm;
 		this.userEmail = userEmail;
 		this.userPw = userPw;
 		this.userIntro = userIntro;
 		this.userGoalHr = userGoalHr;
+		this.type = type;
 	}
 
 	public User(long userId) {
@@ -42,7 +44,7 @@ public class User extends TimeEntity {
 	@Column(nullable = false, length = 15)
 	private String userNm;
 
-	@Column(nullable = false, unique = true, length = 128)
+	@Column(nullable = false, length = 128)
 	private String userEmail;
 
 	@Setter

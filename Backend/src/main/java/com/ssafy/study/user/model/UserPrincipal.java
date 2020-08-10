@@ -76,5 +76,8 @@ public class UserPrincipal implements UserDetails{
 	public long getUserId() {
 		return user.getUserId();
 	}
-
+	
+	public String getType() {
+		return user.getType();
+	}
 }

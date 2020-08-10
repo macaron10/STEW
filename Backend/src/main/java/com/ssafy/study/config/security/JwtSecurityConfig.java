@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.security.oauth2.client.OAuth2ClientProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -21,6 +22,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.config.oauth2.client.CommonOAuth2Provider;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.client.InMemoryOAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
@@ -28,10 +30,11 @@ import org.springframework.security.oauth2.client.registration.InMemoryClientReg
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.ssafy.study.config.oauth2.CustomOAuth2Provider;
-import com.ssafy.study.config.oauth2.KakaoOAuth2AuthenticationSuccessHandler;
-import com.ssafy.study.config.oauth2.KakaoOAuth2AuthorizedClientService;
+import com.ssafy.study.config.oauth2.CustomOAuth2AuthenticationSuccessHandler;
+import com.ssafy.study.config.oauth2.CustomOAuth2AuthorizedClientService;
 import com.ssafy.study.user.service.CustomOAuth2UserService;
 import com.ssafy.study.user.service.UserPrincipalDetailsService;
+import com.ssafy.study.user.service.UserService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -48,6 +51,12 @@ public class JwtSecurityConfig extends WebSecurityConfigurerAdapter{
 	
 	@Autowired
 	private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+	
+	@Autowired
+	private RedisTemplate<String, Object> redisTemplate;
+	
+	@Autowired
+	private UserService userService;
 	
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
@@ -82,7 +91,7 @@ public class JwtSecurityConfig extends WebSecurityConfigurerAdapter{
 			
 			.and()
 				.oauth2Login()
-				.successHandler(new KakaoOAuth2AuthenticationSuccessHandler())
+				.successHandler(new CustomOAuth2AuthenticationSuccessHandler(redisTemplate, userService))
 				.userInfoEndpoint().userService(new CustomOAuth2UserService()); // for naver user info 
 	}
 
@@ -134,7 +143,7 @@ public class JwtSecurityConfig extends WebSecurityConfigurerAdapter{
 	
 	@Bean
 	public OAuth2AuthorizedClientService authorizedClientService() {
-		return new KakaoOAuth2AuthorizedClientService();
+		return new CustomOAuth2AuthorizedClientService();
 	}
 	
 	@Bean
@@ -142,8 +151,8 @@ public class JwtSecurityConfig extends WebSecurityConfigurerAdapter{
             OAuth2ClientProperties oAuth2ClientProperties,
             @Value("${custom.oauth2.kakao.client-id}") String kakaoClientId
             ,@Value("${custom.oauth2.kakao.client-secret}") String kakaoClientSecret
-//            ,@Value("${custom.oauth2.naver.client-id}") String naverClientId
-//            ,@Value("${custom.oauth2.naver.client-secret}") String naverClientSecret
+            ,@Value("${custom.oauth2.naver.client-id}") String naverClientId
+            ,@Value("${custom.oauth2.naver.client-secret}") String naverClientSecret
             ) {
 		
         List<ClientRegistration> registrations = oAuth2ClientProperties
@@ -158,11 +167,11 @@ public class JwtSecurityConfig extends WebSecurityConfigurerAdapter{
                     .jwkSetUri("temp")
                     .build());
 
-//        registrations.add(CustomOAuth2Provider.NAVER.getBuilder("naver")
-//                .clientId(naverClientId)
-//                .clientSecret(naverClientSecret)
-//                .jwkSetUri("temp")
-//                .build());
+        registrations.add(CustomOAuth2Provider.NAVER.getBuilder("naver")
+                .clientId(naverClientId)
+                .clientSecret(naverClientSecret)
+                .jwkSetUri("temp")
+                .build());
         
         return new InMemoryClientRegistrationRepository(registrations);
     }

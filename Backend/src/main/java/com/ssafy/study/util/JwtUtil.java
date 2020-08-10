@@ -33,6 +33,10 @@ public class JwtUtil implements Serializable{
 		return JWT.decode(token).getClaim("userId").asLong();
 	}
 	
+	public static String getUserTypeFromToken(String token) {
+		return JWT.decode(token).getClaim("type").asString();
+	}
+	
 	public static Collection<? extends GrantedAuthority> getAuthoritiesFromToken(String token) {
 		String[] roles = JWT.decode(token).getClaim("role").asArray(String.class);
 		
@@ -73,6 +77,7 @@ public class JwtUtil implements Serializable{
 				JWT.create()
 				.withArrayClaim("role", authorities.toArray(new String[authorities.size()]))
 				.withClaim("userId", userPrincipal.getUserId())
+				.withClaim("type", userPrincipal.getType())
 				.withSubject(userPrincipal.getUsername())
 				.withIssuedAt(new Date(System.currentTimeMillis()))
 				.withExpiresAt(new Date(System.currentTimeMillis() + JwtProperties.EXPIRATION_TIME_ACCESS))

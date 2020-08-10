@@ -10,8 +10,8 @@ spring:
       client:
         registration:
           google:
-            client-id: 958180173202-sii4epowero1eouvvjrlrnt27sikub08k.apps.googleusercontent.com
-            client-secret: k0asdfag801WdcJF8k9ST_8SG9
+            client-id: 535466550101-20c5d4vrimd27pn1o5pv8hcu2d8443kh.apps.googleusercontent.com
+            client-secret: nnX1rRmrEeDa8fTbPxIBnD_n
           facebook:
             client-id: 11612612521462
             client-secret: 6578235217c5c365a98c51b02d0308ac
@@ -21,5 +21,5 @@ custom:
       client-id: d2a6c95bf8150a6bd64d03b08ae15d3f
       client-secret: 796k9ibwcc8e0Pnhn8y5gjTBUoJb9mfh
     naver:
-      client-id: B5yvH3Zaweyawerawwe6repj4z0L
-      client-secret: sArXFasdfawef
+      client-id: 8J0OSGAECZYpDqS0CeDW
+      client-secret: ZqU17OJo7h

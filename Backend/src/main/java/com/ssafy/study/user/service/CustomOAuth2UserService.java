@@ -78,6 +78,8 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         ResponseEntity<Map<String, Object>> response;
         try {
             response = this.restOperations.exchange(request, PARAMETERIZED_RESPONSE_TYPE);
+            response.getBody().put("provider", userRequest.getClientRegistration().getRegistrationId());
+            
         } catch (OAuth2AuthorizationException ex) {
             OAuth2Error oauth2Error = ex.getError();
             StringBuilder errorDetails = new StringBuilder();

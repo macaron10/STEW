@@ -4,7 +4,7 @@
       <v-row>
         <v-col class="mb-6">
           <div class="d-flex justify-center">
-            <img :src="$store.state.comm.baseUrl + '/image/group' + group.gpImg" alt="그룹 이미지" height="400px" />
+            <img v-if="group.gpImg" :src="$store.state.comm.baseUrl + '/image/group' + group.gpImg" alt="그룹 이미지" height="400px" />
           </div>
           <div class="text-center">
             <h1 class="my-3">{{ group.gpNm }}</h1>
@@ -107,7 +107,6 @@ export default {
         this.group = JSON.parse(res.data.object).group;
         this.group = JSON.parse(this.group);
         this.membersData = JSON.parse(res.data.object).joinList;
-        console.log(this.group);
       } catch (err) {
         this.$router.push("/main/");
         console.error(err);

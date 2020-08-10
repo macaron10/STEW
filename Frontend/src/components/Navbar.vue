@@ -200,9 +200,6 @@
           </v-list>
       </v-menu>
     </div>
-    <v-btn icon v-if="isLogin" @click="logout" color="blue lighten-2" >
-      <v-icon>mdi-logout</v-icon>
-    </v-btn>
   </v-app-bar>
 </template>
 
@@ -256,8 +253,9 @@ export default {
           case "Profile":
             this.$router.push({name:'UserDetail'})
             break
-        }  
-        
+          case "Logout":
+            this.logout()
+        }          
       }
     },
     data () {
@@ -272,10 +270,6 @@ export default {
           {
             icon: 'mdi-account',
             text: 'Profile',
-          },
-          {
-            icon: 'mdi-book-open-page-variant',
-            text: 'My Study',
           },
           {
             icon: 'mdi-calendar',

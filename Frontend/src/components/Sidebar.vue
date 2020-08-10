@@ -20,7 +20,7 @@
           </v-col>
         </v-row>
         <v-list-group
-          v-else-if="item.children"
+          v-else-if="item.children&&(isLogin||item.needLogin)"
           :key="item.text"
           v-model="item.model"
           :prepend-icon="item.model ? item.icon : item['icon-alt']"
@@ -32,15 +32,21 @@
             </v-list-item-content>
           </template>
           <v-list-item v-for="(child, i) in item.children" :key="i" link>
-            <v-list-item-action v-if="child.icon">
-              <v-icon>{{ child.icon }}</v-icon>
-            </v-list-item-action>
+            <v-list-item-action v-if="child.icon"></v-list-item-action>
             <v-list-item-content @click="goToStudy(child.value)">
-              <v-list-item-title>{{ child.text }}</v-list-item-title>
+              <v-list-item-title>
+                {{ child.text }}
+                <v-icon v-if="child.groupManager" color="amber">mdi-crown</v-icon>
+              </v-list-item-title>
             </v-list-item-content>
           </v-list-item>
         </v-list-group>
-        <v-list-item v-else :key="item.text" link :to="{ name: item.page }">
+        <v-list-item
+          v-else-if="isLogin||item.needLogin"
+          :key="item.text"
+          link
+          :to="{ name: item.page }"
+        >
           <v-list-item-action>
             <v-icon>{{ item.icon }}</v-icon>
           </v-list-item-action>
@@ -59,28 +65,47 @@ export default {
   name: "Sidebar",
   data: () => ({
     items: [
-      { icon: "mdi-home", text: "HOME", page: "Home" },
-      { icon: "mdi-plus", text: "Study 만들기", page: "StudyCreate" },
-      { icon: "mdi-message", text: "Contact Us", page: "Contact" },
-      { icon: "mdi-help-circle", text: "가이드", page: "Guide" },
+      { icon: "mdi-home", text: "HOME", page: "Home", needLogin: true },
+      {
+        icon: "mdi-plus",
+        text: "Study 만들기",
+        page: "StudyCreate",
+        needLogin: false
+      },
+      { icon: "mdi-pen", text: "전체스터디", page: "Main", needLogin: true },
+      {
+        icon: "mdi-help-circle",
+        text: "가이드",
+        page: "Guide",
+        needLogin: true
+      },
       {
         icon: "mdi-chevron-up",
         "icon-alt": "mdi-chevron-down",
         text: "My Study",
         model: false,
-        children: []
+        children: [],
+        needLogin: false
       }
     ]
   }),
+  computed: {
+    isLogin() {
+      return this.$store.state.auth.isLogin;
+    }
+  },
   mounted() {
     this.getStudyList();
   },
   methods: {
-    goToStudy(no){
-      this.$router.push({ name: 'StudyDetail', params: { id: no }})
-      this.$router.go()
+    goToStudy(no) {
+      this.$router.push({ name: "StudyDetail", params: { id: no } });
+      this.$router.go();
     },
     getStudyList() {
+      if (!this.isLogin) {
+        return;
+      }
       const myStudyList = [];
       axios
         .get("/study/user/my")
@@ -88,6 +113,10 @@ export default {
           for (const myStudy of res.data.object) {
             myStudyList.push({
               text: myStudy.gpNm,
+              groupManager:
+                this.$store.state.auth.userInfo.userId === myStudy.gpMgrId
+                  ? true
+                  : false,
               value: myStudy.gpNo
             });
           }

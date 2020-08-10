@@ -151,7 +151,7 @@ public class CalendarController {
 			@ApiIgnore @AuthenticationPrincipal UserPrincipal principal) {
 		long userId = principal.getUserId();
 
-		if (gpService.ckGroupJoin(gpNo, userId))
+		if (!gpService.ckGroupJoin(gpNo, userId))
 			throw new GroupNotJoinedExcpetion();
 
 		BasicResponse response = new BasicResponse();

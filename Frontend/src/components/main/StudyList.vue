@@ -17,7 +17,7 @@
           height="270"
         >
           <v-img
-            :src="$store.state.baseUrl + '/image/group' + group.gpImg"
+            :src="$store.state.comm.baseUrl + '/image/group' + group.gpImg"
             height="170"
             color="white"
             gradient="to bottom, rgba(255,255,255,0), rgba(0,0,0,.15)"
@@ -177,7 +177,7 @@ export default {
   },
   mounted () {
     this.getGroups()
-    if (this.$store.state.isLogin) {
+    if (this.$store.state.auth.isLogin) {
       this.getMyGroups()
     }
   }

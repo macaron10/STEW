@@ -24,6 +24,13 @@
                 range
               ></v-date-picker>
               <span v-if="newSchedule.dates[0]">기간 : {{dateRangeText}}</span>
+              <v-select
+                :items="colors"
+                label="색깔"
+                v-model="newSchedule.color"
+                item-text="text"
+                item-value="value"
+              ></v-select>
               <v-switch v-model="newSchedule.useTime" class="ma-4" label="시간 사용"></v-switch>
               <v-text-field
                 v-if="newSchedule.useTime"
@@ -129,8 +136,16 @@ export default {
       dates: [],
       useTime: false,
       name: "",
-      details: ""
+      details: "",
+      color: ""
     },
+    colors: [
+      { text: "노랑", value: "amber" },
+      { text: "파랑", value: "blue" },
+      { text: "초록", value: "green" },
+      { text: "빨강", value: "red" },
+      { text: "보라", value: "purple" }
+    ],
     landscape: true,
     private: true,
     dialog: false,
@@ -178,7 +193,7 @@ export default {
     },
     checkPrivateSchdule() {
       switch (this.$router.history.current.path) {
-        case "/user/MySchedule":
+        case "/user/myschedule":
           this.private = true;
           break;
         default:
@@ -288,80 +303,119 @@ export default {
     },
     updateRange({ start, end }) {
       const event = [];
-      axios
-        .get(`/cal/personal/${start.year}/${start.month}`)
-        .then(res => {
-          if (!(res.data.object === undefined)) {
-            for (const schedule of res.data.object) {
-              const s = schedule.cstTm;
-              const e = schedule.cendTm;
-              const addedSchdule = {
-                pk: schedule.cno,
-                name: schedule.cevtNm,
-                details: schedule.cevtDsc,
-                start: new Date(
-                  s.slice(0, 4),
-                  s.slice(5, 7) - 1,
-                  s.slice(8, 10),
-                  s.slice(11, 13),
-                  s.slice(14, 16)
-                ),
-                end: new Date(
-                  e.slice(0, 4),
-                  e.slice(5, 7) - 1,
-                  e.slice(8, 10),
-                  e.slice(11, 13),
-                  e.slice(14, 16)
-                ),
-                timed: schedule.useTime,
-                color: "green",
-                type: schedule.ctype,
-                cown: schedule.cown
-              };
-              event.push(addedSchdule);
+      const gpId = this.$route.params.id;
+      if (this.$router.history.current.path === "/user/myschedule") {
+        axios
+          .get(`/cal/personal/${start.year}/${start.month}`)
+          .then(res => {
+            if (!(res.data.object === undefined)) {
+              for (const schedule of res.data.object) {
+                const s = schedule.cstTm;
+                const e = schedule.cendTm;
+                const addedSchdule = {
+                  pk: schedule.cno,
+                  name: schedule.cevtNm,
+                  details: schedule.cevtDsc,
+                  start: new Date(
+                    s.slice(0, 4),
+                    s.slice(5, 7) - 1,
+                    s.slice(8, 10),
+                    s.slice(11, 13),
+                    s.slice(14, 16)
+                  ),
+                  end: new Date(
+                    e.slice(0, 4),
+                    e.slice(5, 7) - 1,
+                    e.slice(8, 10),
+                    e.slice(11, 13),
+                    e.slice(14, 16)
+                  ),
+                  timed: schedule.useTime,
+                  color: schedule.ccolor,
+                  type: schedule.ctype,
+                  cown: schedule.cown
+                };
+                event.push(addedSchdule);
+              }
             }
-          }
-        })
-        .catch(err => console.log(err));
-      axios
-        .get(`/cal/group/${start.year}/${start.month}`)
-        .then(res => {
-          if (!(res.data.object === [])) {
-            for (const schedule of res.data.object) {
-              const s = schedule.cstTm;
-              const e = schedule.cendTm;
-              const addedSchdule = {
-                pk: schedule.cno,
-                name: schedule.cevtNm,
-                details: schedule.cevtDsc,
-                start: new Date(
-                  s.slice(0, 4),
-                  s.slice(5, 7) - 1,
-                  s.slice(8, 10),
-                  s.slice(11, 13),
-                  s.slice(14, 16)
-                ),
-                end: new Date(
-                  e.slice(0, 4),
-                  e.slice(5, 7) - 1,
-                  e.slice(8, 10),
-                  e.slice(11, 13),
-                  e.slice(14, 16)
-                ),
-                timed: schedule.useTime,
-                color: "blue",
-                type: schedule.ctype,
-                cown: schedule.cown
-              };
-              event.push(addedSchdule);
+          })
+          .catch(err => console.log(err));
+        axios
+          .get(`/cal/group/${start.year}/${start.month}`)
+          .then(res => {
+            if (!(res.data.object === [])) {
+              for (const schedule of res.data.object) {
+                const s = schedule.cstTm;
+                const e = schedule.cendTm;
+                const addedSchdule = {
+                  pk: schedule.cno,
+                  name: schedule.cevtNm,
+                  details: schedule.cevtDsc,
+                  start: new Date(
+                    s.slice(0, 4),
+                    s.slice(5, 7) - 1,
+                    s.slice(8, 10),
+                    s.slice(11, 13),
+                    s.slice(14, 16)
+                  ),
+                  end: new Date(
+                    e.slice(0, 4),
+                    e.slice(5, 7) - 1,
+                    e.slice(8, 10),
+                    e.slice(11, 13),
+                    e.slice(14, 16)
+                  ),
+                  timed: schedule.useTime,
+                  color: schedule.ccolor,
+                  type: schedule.ctype,
+                  cown: schedule.cown
+                };
+                event.push(addedSchdule);
+              }
             }
-          }
-        })
-        .catch(err => console.log(err, "hihi"));
-      this.events = event;
+          })
+          .catch(err => console.log(err));
+        this.events = event;
+      } else {
+        axios
+          .get(`/cal/group/${gpId}/${start.year}/${start.month}`)
+          .then(res => {
+            if (!(res.data.object === undefined)) {
+              for (const schedule of res.data.object) {
+                const s = schedule.cstTm;
+                const e = schedule.cendTm;
+                const addedSchdule = {
+                  pk: schedule.cno,
+                  name: schedule.cevtNm,
+                  details: schedule.cevtDsc,
+                  start: new Date(
+                    s.slice(0, 4),
+                    s.slice(5, 7) - 1,
+                    s.slice(8, 10),
+                    s.slice(11, 13),
+                    s.slice(14, 16)
+                  ),
+                  end: new Date(
+                    e.slice(0, 4),
+                    e.slice(5, 7) - 1,
+                    e.slice(8, 10),
+                    e.slice(11, 13),
+                    e.slice(14, 16)
+                  ),
+                  timed: schedule.useTime,
+                  color: schedule.ccolor,
+                  type: schedule.ctype,
+                  cown: schedule.cown
+                };
+                event.push(addedSchdule);
+              }
+            }
+          })
+          .catch(err => console.log(err));
+        this.events = event;
+      }
     },
     createNewSchedule() {
-      console.log(this.private);
       if (this.newSchedule.dates.length !== 2) {
         alert("종료날짜를 입력해 주세요.");
         return;
@@ -379,8 +433,6 @@ export default {
         alert("스케줄 내용을 입력해 주세요.");
         return;
       }
-      console.log(this.userId);
-      console.log(this.groupId);
 
       const schedule = {
         cstTm: `${this.newSchedule.dates[0]}T${this.newSchedule.startTime}:00`,
@@ -389,7 +441,8 @@ export default {
         cevtNm: this.newSchedule.name,
         cevtDsc: this.newSchedule.details,
         cown: this.private ? this.userId : this.groupId,
-        ctype: this.private ? "U" : "G"
+        ctype: this.private ? "U" : "G",
+        ccolor: this.newSchedule.color
       };
       const apiUrl = "/cal/";
       axios
@@ -417,7 +470,7 @@ export default {
               e.slice(14, 16)
             ),
             timed: schedule.useTime,
-            color: this.private ? "green" : "blue",
+            color: schedule.ccolor,
             type: schedule.ctype,
             cown: schedule.cown
           };

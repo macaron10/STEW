@@ -2,12 +2,10 @@ package com.ssafy.study.controller;
 
 import java.time.LocalDateTime;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ssafy.study.chat.model.ChatMessage;
@@ -23,7 +21,8 @@ public class ChatController {
 	private final SimpMessagingTemplate template;
 
 	@MessageMapping("/chat")
-	public void sendMessage(@Header("accessToken") String jwt, ChatMessage msg) {
+	public void sendMessage(@Header("accessToken") String jwt,@RequestBody ChatMessage msg) {
+		System.out.println(msg);
 		UserDto user = JwtUtil.getUserFromToken(jwt);
 		msg.setUserId(user.getUserId());
 		msg.setUserNm(user.getUserNm());

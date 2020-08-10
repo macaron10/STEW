@@ -31,6 +31,7 @@ public class ResCalEvt {
 	private String cEvtNm;
 	private String cEvtDsc;
 
+	private String cColor;
 	private boolean useTime;
 
 	public ResCalEvt(CalEvent c) {
@@ -43,6 +44,6 @@ public class ResCalEvt {
 		this.cEvtDsc = c.getCEvtDsc();
 
 		this.useTime = c.isUseTime();
-
+		this.cColor = c.getCColor();
 	}
 }

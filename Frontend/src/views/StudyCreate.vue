@@ -143,7 +143,7 @@ export default {
       gpNm: "",     //스터디 이름ㅇ
       gpCatNo: 0, // 타입 아이디 ㅇ
       gpEndTm: 0, // 선호 종료 시간 ㅇ
-      gpImg: [],
+      gpImg: null,
       gpIntro: "",  //스터디 소개ㅇ
       gpPublic: true, //스터디 공개 ㅇ
       gpStTm: 0,    // 선호 시작 시간 ㅇ
@@ -202,7 +202,8 @@ export default {
       this.formData.append('gpNm', this.form.gpNm) // 순서는 상관 없음
       this.formData.append('gpCatNo', Number(this.form.gpCatNo))
       this.formData.append('gpEndTm', Number(this.form.gpEndTm))
-      this.formData.append('gpImg', this.form.gpImg)
+      if (this.form.gpImg != null)
+        this.formData.append('gpImg', this.form.gpImg)
       this.formData.append('gpIntro', this.form.gpIntro)
       this.formData.append('gpPublic', Boolean(this.form.gpPublic))
       this.formData.append('gpStTm', Number(this.form.gpStTm))

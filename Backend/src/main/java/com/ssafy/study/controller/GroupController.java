@@ -74,6 +74,7 @@ public class GroupController {
 	@ApiOperation(value = "스터디 생성", produces = "multipart/form-data")
 	public ResponseEntity createStudy(RegistGroupDto group,
 			@ApiIgnore @AuthenticationPrincipal UserPrincipal principal) {
+		System.out.println(group);
 		Group saveGroup = group.toEntity();
 		saveGroup.setGpMgrId(principal.getUserId());
 
@@ -148,8 +149,6 @@ public class GroupController {
 
 		long userId = principal.getUserId();
 		ckGroupAuth(userId, no);
-
-		modifyGroup.setGpNo(no);
 
 		if (modifyGroup.isUpdateGpImg() && modifyGroup.getGpImg() != null) {
 			try {

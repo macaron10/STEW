@@ -34,6 +34,10 @@ public class CreateCalEvt {
 	@NotNull
 	private String cEvtNm;
 	private String cEvtDsc;
+	
+	@ApiModelProperty(required = true)
+	@NotNull
+	private String cColor;
 
 	@ApiModelProperty(required = true)
 	@NotNull
@@ -41,6 +45,6 @@ public class CreateCalEvt {
 
 	public CalEvent toEntity() {
 		return CalEvent.builder().cType(cType).cOwn(cOwn).cStTm(cStTm).cEndTm(cEndTm).cEvtNm(cEvtNm).cEvtDsc(cEvtDsc)
-				.useTime(useTime).build();
+				.useTime(useTime).cColor(cColor).build();
 	}
 }

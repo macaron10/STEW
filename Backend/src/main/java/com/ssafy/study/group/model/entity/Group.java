@@ -45,8 +45,6 @@ public class Group extends TimeEntity {
 	@Column(length = 500)
 	private String gpTag;// 태그
 	
-	private int gpStTm;// 선호 시작시간
-	private int gpEndTm;// 선호 종료시간
 	private boolean gpPublic;// 공개여부
 	@Column(length = 255)
 	private String gpImg;// 썸네일
@@ -66,8 +64,6 @@ public class Group extends TimeEntity {
 		if (!isEmptyString(group.getGpIntro()))
 			this.gpIntro = group.getGpIntro();
 
-		this.gpStTm = group.getGpStTm();
-		this.gpEndTm = group.getGpEndTm();
 		this.gpPublic = group.isGpPublic();
 
 		if (group.isUpdateGpImg())

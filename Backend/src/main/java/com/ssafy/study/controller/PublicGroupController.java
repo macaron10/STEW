@@ -2,6 +2,7 @@ package com.ssafy.study.controller;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDateTime;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.google.gson.Gson;
+import com.ssafy.study.chat.model.ChatMessage;
 import com.ssafy.study.common.model.BasicResponse;
 import com.ssafy.study.common.util.FileUtils;
 import com.ssafy.study.group.model.dto.GroupSearchDto;
@@ -36,7 +38,6 @@ public class PublicGroupController {
 
 	private final String fileBaseUrl = "C:\\Users\\multicampus\\Desktop\\group_thumb";
 
-	private final SimpMessageSendingOperations template;
 	private final SimpMessagingTemplate template2;
 
 	@GetMapping("/all")
@@ -52,9 +53,10 @@ public class PublicGroupController {
 
 	@GetMapping("/search")
 	@ApiOperation("스터디 검색")
-	public Object searchStudy(GroupSearchDto groupSearch) {
+	public Object searchStudy(String keyword) {
 		BasicResponse result = new BasicResponse();
 
+		GroupSearchDto groupSearch = new GroupSearchDto(keyword.split(" "));
 		result.object = groupService.searchGroups(groupSearch);
 		result.msg = "success";
 		result.status = true;
@@ -106,9 +108,11 @@ public class PublicGroupController {
 		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 
+	@SendTo("/chat")
 	@GetMapping("/test")
-	public Object test() {
-		return groupService.selectGroupReqUser(4);
+	public void test() {
+		ChatMessage msg = ChatMessage.builder().chatMsg("g").regTime(LocalDateTime.now()).gpNo(20).type(ChatMessage.MessageType.TALK).build();
+		template2.convertAndSend("/sub/chat", msg);
 	}
 
 }

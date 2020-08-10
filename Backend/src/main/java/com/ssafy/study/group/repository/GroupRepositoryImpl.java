@@ -55,8 +55,8 @@ public class GroupRepositoryImpl /* extends QuerydslRepositorySupport */ impleme
 		jpql.append("FROM Group gp join GroupCategory gc on gp.gpCat.gpCatNo = gc.gpCatNo ");
 		jpql.append(" where 1 = 1 ");
 
-		if (!isEmpty(search.getGpNm()))
-			jpql.append(" and gp.gpNm like concat('%', '" + search.getGpNm() + "', '%') ");
+		if (search.getGpNm().size() > 0)
+			search.getGpNm().stream().forEach(nm -> jpql.append(" and gp.gpNm like concat('%', '" + nm + "', '%') "));
 
 //		if (!isEmpty(search.getGpCatLg())) {
 //			jpql.append("and gp.gpCat.gpCatLg = '" + search.getGpCatLg() + "' ");
@@ -69,22 +69,14 @@ public class GroupRepositoryImpl /* extends QuerydslRepositorySupport */ impleme
 //				}
 //			}
 //		}
-		if (search.getGpTag() != null && search.getGpTag().size() != 0) {
+		if (search.getGpTag().size() > 0) {
 			search.getGpTag().stream().forEach(t -> {
 				jpql.append(" and gp.gpTag like concat('%', '").append(t).append("', '%') ");
 			});
 		}
 
-		if (search.getGpCatNo() != 0)
+		if (search.getGpCatNo() != -1)
 			jpql.append(" and gp.gpCat.gpCatNo = " + search.getGpCatNo() + " ");
-
-		if (search.getGpStTm() != -1)
-			jpql.append(" and gp.gpStTm >= ").append(search.getGpStTm()).append(" ");
-		if (search.getGpEndTm() != -1)
-			jpql.append("and gp.gpEndTm >= ").append(search.getGpEndTm()).append(" ");
-
-		if (search.isGpPrivate())
-			jpql.append(" and gp.gpPublic = ").append(false).append(" ");
 
 		TypedQuery<GroupDto> query = em.createQuery(jpql.toString(), GroupDto.class);
 

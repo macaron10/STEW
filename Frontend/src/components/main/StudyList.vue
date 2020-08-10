@@ -36,7 +36,9 @@
             </v-list-item-content>
           </v-list-item>
           <v-card-text>
-            {{ group.gpIntro }}
+            <span v-for="tag in group.gpTag" :key="tag">
+              # {{tag}}&nbsp;&nbsp;
+            </span>
           </v-card-text>
         </v-card>
       </v-col>
@@ -123,7 +125,6 @@ export default {
       const apiUrl = '/study/user/my'
       try {
         const res = await axios.get(apiUrl)
-        console.log(res)
         this.myGroups = res.data.object
       } catch (err) {
         console.error(err)

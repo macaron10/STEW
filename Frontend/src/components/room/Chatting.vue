@@ -210,7 +210,7 @@ export default {
     methods: {
       ...mapActions('chattings', ['getChattingSock']),
       initSock () {
-        const apiUrl = this.$store.state.baseUrl + '/sock'
+        const apiUrl = this.$store.state.comm.baseUrl + '/sock'
         const socket = new SockJS(apiUrl)
         const ws = Stomp.over(socket)
         this.ws = ws
@@ -218,7 +218,7 @@ export default {
       },
       getChattingSock(gpNo) {
         const token = {
-          'accessToken': this.$store.state.userInfo.accessToken
+          'accessToken': this.$store.state.auth.userInfo.accessToken
         }
         this.ws.connect(token,
           frame => {

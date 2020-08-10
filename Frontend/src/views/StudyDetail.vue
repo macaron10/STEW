@@ -88,11 +88,12 @@ export default {
         { tab: "이번달 공부 랭킹", icon: "mdi-timer", no: "3" }
       ],
       id: null,
-      userId: 1
+      userId: 0
     };
   },
   mounted() {
     this.id = this.$route.params.id;
+    this.userId = this.$store.state.auth.userInfo.userId
     this.getDetail();
   },
   methods: {

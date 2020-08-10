@@ -59,8 +59,8 @@ export default {
               'refreshToken': res.headers.refreshtoken
             }
             commit("loginSuccess", userInfo);
-            dispatch("notice/getReqsSock");
-            dispatch("notice/getReqs");
+            dispatch("notice/getReqsSock",null, { root: true });
+            dispatch("notice/getReqs",null, { root: true });
             //임시(userId 불러오기용)
             dispatch("getUserInfoImsi");
           })

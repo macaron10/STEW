@@ -224,11 +224,11 @@ export default {
       }
     },
     methods: {
+      ...mapActions('notice', ['getReqsSock', 'getReqs']),
       ...mapActions('auth', [
         "signIn",
         "logout"
         ]),
-      ...mapActions('notice', ['getReqsSock']),
       ...mapActions('sg', ['fetchGroups']),
       async reqOk (gpReqNo) {
         const apiUrl = '/study/user/accept?no=' + gpReqNo

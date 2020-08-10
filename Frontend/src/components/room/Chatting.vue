@@ -248,15 +248,20 @@ export default {
             * It's important to notice that even when your message wasn't send 
             * yet to the server you have to add the message into the array
             */
-            console.log(message)
-            const tempMsg = {
-              type: 'talk',
-              gpNo: 26,
-              chatMsg: message
+            const token = {
+                'accessToken': this.$store.state.auth.userInfo.accessToken,
+                "content-type" : "text/plain"
             }
+            // console.log(message)
+            const tempMsg = {
+              type: 'TALK',
+              gpNo: 26,
+              chatMsg: 'no Korean'
+            }
+            const stringMsg = JSON.stringify(tempMsg)
             // this.messages.push(message);
-            this.ws.send("/pub/chat", JSON.stringify(tempMsg))
-
+            this.ws.send("/pub/chat", stringMsg, token)
+            // this.ws.send("/pub/chat", token, stringMsg)
             /*
             * you can update message state after the server response
             */

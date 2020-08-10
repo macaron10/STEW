@@ -5,14 +5,14 @@ import createPersistedState from "vuex-persistedstate";
 import studyGroups from "@/store/modules/studyGroups";
 import notification from "@/store/modules/notification";
 import authentication from "@/store/modules/authentication";
-import basic from "@/store/modules/basic";
+import common from "@/store/modules/common";
 
 Vue.use(Vuex);
 
 export default new Vuex.Store({
   
   modules: {
-    basic: basic,
+    comm: common,
     auth: authentication,
     sg: studyGroups,
     notice: notification,
@@ -21,7 +21,7 @@ export default new Vuex.Store({
   plugins: [
     createPersistedState({
       paths: [
-        'basic',
+        'comm',
         'auth'
       ]
     }),

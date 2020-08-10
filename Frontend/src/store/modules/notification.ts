@@ -35,12 +35,12 @@ export default {
           (frame: any) => {
             console.log('소켓 연결 성공');
   
-            ws.subscribe("/sub/mgr-req/" + rootState.userInfo.userId, msg =>{
+            ws.subscribe("/sub/mgr-req/" + rootState.userInfo.userId, (msg: { body: string; }) =>{
               state.groupsReqs.push(JSON.parse(msg.body))
               console.log(JSON.parse(msg.body))
             })
   
-            ws.subscribe("/sub/user-req/" + rootState.userInfo.userId, msg =>{
+            ws.subscribe("/sub/user-req/" + rootState.userInfo.userId, (msg: { body: string; }) =>{
               state.groupsReqs.push(JSON.parse(msg.body))
               console.log(JSON.parse(msg.body))
             })

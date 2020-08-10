@@ -1,6 +1,6 @@
 <template>
   <v-navigation-drawer
-    v-model="$store.state.drawer"
+    v-model="$store.state.comm.drawer"
     :clipped="$vuetify.breakpoint.lgAndUp"
     :mini-variant="true"
     :expandOnHover="true"

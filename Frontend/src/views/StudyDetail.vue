@@ -4,7 +4,7 @@
       <v-row>
         <v-col class="mb-6">
           <div class="d-flex justify-center">
-            <img :src="$store.state.baseUrl + '/group' + group.gpImg" alt="그룹 이미지" height="400px" />
+            <img :src="$store.state.comm.baseUrl + '/group' + group.gpImg" alt="그룹 이미지" height="400px" />
           </div>
           <div class="text-center">
             <h1 class="my-3">{{ group.gpNm }}</h1>

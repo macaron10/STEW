@@ -37,7 +37,9 @@ public class CalEvent {
 	private String cEvtNm;
 	@Column(length = 300)
 	private String cEvtDsc;
-	
+	@Column(length = 50)
+	private String cColor;
+
 	private boolean useTime;
 
 }

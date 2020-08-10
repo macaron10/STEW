@@ -4,13 +4,13 @@
       <v-row>
         <v-col class="mb-6">
           <div class="d-flex justify-center">
-            <img :src="$store.state.baseUrl + '/group' + group.gpImg" alt="그룹 이미지" height="400px" />
+            <img :src="$store.state.baseUrl + '/image/group' + group.gpImg" alt="그룹 이미지" height="400px" />
           </div>
           <div class="text-center">
             <h1 class="my-3">{{ group.gpNm }}</h1>
             <h4 class="mb-2">{{ group.gpIntro }}</h4>
             <v-btn
-              @click="enterMeetingRoom(group.gpNo)"
+              @click="readyEnterMeeting(group.gpNo)"
               color="green accent-1"
               class="white--text font-weight-bold mx-3"
             >스터디 캠 입장</v-btn>
@@ -88,7 +88,7 @@ export default {
         { tab: "이번달 공부 랭킹", icon: "mdi-timer", no: "3" }
       ],
       id: null,
-      userId: 1
+      userId: 3
     };
   },
   mounted() {

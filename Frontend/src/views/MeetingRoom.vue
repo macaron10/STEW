@@ -1,10 +1,17 @@
 <template>
   <div>
     <v-container>
-    <Timer />
-
+      <v-row>
+        <v-col cols="8">
+          <Timer />
+          <div class="mx-10 my-10 videos-container" ></div>
+        </v-col>
+        <v-col cols="4">
+          <Chatting :roomid="roomid"/>
+        </v-col>
+            
+      </v-row>
     </v-container>
-    <div class="mx-10 my-10 videos-container" ></div>
     <!-- footer -->
     <v-footer color="#ffffff" padless>
       <v-row justify="center" no-gutters>
@@ -31,8 +38,10 @@
 <script src="https://rtcmulticonnection.herokuapp.com/socket.io/socket.io.js"></script>
 <script>
 import StudyDetailVue from "./StudyDetail.vue";
-import Timer from "@/components/temp/Timer.vue"
+import Timer from "@/components/temp/Timer.vue";
+import Chatting from "@/components/room/Chatting.vue";
 import { log } from "util";
+
 export default {
   name: "MeetingRoom",
   data() {
@@ -47,7 +56,8 @@ export default {
     };
   },
   components: {
-    Timer
+    Timer,
+    Chatting
   }, 
   created() {
     this.joinRoom();
@@ -55,6 +65,7 @@ export default {
   mounted() {
     this.check();
     this.initoptions();
+    this.getRoodId();
   },
   methods: {
     check() {
@@ -134,6 +145,10 @@ export default {
       this.connection.session.video = true;
       let localStream = this.connection.attachStreams[0];
       localStream.unmute("video");
+    },
+    getRoodId() {
+      this.roomid = this.$route.params.id
+      console.log(this.roomid, '설정!')
     }
   },
   destroyed() {

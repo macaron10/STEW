@@ -75,6 +75,12 @@
             :block=true 
             @click="signIn({'userEmail': user.userEmail, 'userPw':user.userPw}), signinInDialog = false"
           >로그인</v-btn>
+
+          <v-spacer></v-spacer>
+          <social-login-btn provider="Kakao"></social-login-btn>
+          <social-login-btn provider="Naver"></social-login-btn>
+          <social-login-btn provider="Google"></social-login-btn>
+          <social-login-btn provider="Facebook"></social-login-btn>
         </v-col>
 
         <v-card-actions>
@@ -207,9 +213,13 @@
 import axios from 'axios';
 import { mapState, mapActions, mapMutations} from 'vuex';
 import router from '../router';
+import SocialLoginBtn from '../components/auth/SocialLoginBtn'
 
 export default {
     name: 'Navbar',
+    components:{
+      SocialLoginBtn,
+    },
     computed: {
       ...mapState('auth', [ 
         "userInfo",

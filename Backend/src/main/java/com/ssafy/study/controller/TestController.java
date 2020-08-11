@@ -1,5 +1,7 @@
 package com.ssafy.study.controller;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
 import javax.servlet.http.Cookie;

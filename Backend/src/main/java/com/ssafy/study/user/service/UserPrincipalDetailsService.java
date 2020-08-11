@@ -1,15 +1,16 @@
 package com.ssafy.study.user.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import java.util.List;
+
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.ssafy.study.user.model.User;
 import com.ssafy.study.user.model.UserPrincipal;
 import com.ssafy.study.user.repository.UserRepository;
+import com.ssafy.study.util.JwtUtil;
 
 @Service
 public class UserPrincipalDetailsService implements UserDetailsService{
@@ -28,6 +29,14 @@ public class UserPrincipalDetailsService implements UserDetailsService{
 		UserPrincipal userPrincipal = new UserPrincipal(user);
 		
 		return userPrincipal;
+	}
+	
+	public UserDetails loadUserByToken(String token) throws UsernameNotFoundException{
+		User user = userRepository.findByUserEmailAndType(JwtUtil.getUsernameFromToken(token), JwtUtil.getUserTypeFromToken(token));
+		
+		if(user == null) throw new UsernameNotFoundException("Email or Type Not Found");
+		
+		return new UserPrincipal(user);
 	}
 
 }

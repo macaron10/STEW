@@ -23,12 +23,13 @@ public class User extends TimeEntity {
 
 	@Builder
 	public User(String userNm, String userEmail, String userPw,
-			String userIntro, int userGoalHr) {
+			String userIntro, int userGoalHr, String type) {
 		this.userNm = userNm;
 		this.userEmail = userEmail;
 		this.userPw = userPw;
 		this.userIntro = userIntro;
 		this.userGoalHr = userGoalHr;
+		this.type = type;
 	}
 
 	public User(long userId) {
@@ -43,7 +44,7 @@ public class User extends TimeEntity {
 	@Column(nullable = false, length = 15)
 	private String userNm;
 
-	@Column(nullable = false, unique = true, length = 128)
+	@Column(nullable = false, length = 128)
 	private String userEmail;
 
 	@Setter
@@ -65,6 +66,9 @@ public class User extends TimeEntity {
 	@Setter
 	private int userGoalHr;
 
+	@Setter
+	private String type = "stew";
+	
 	@Setter
 	@Transient
 	private boolean isEnable = true;

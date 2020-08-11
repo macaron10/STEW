@@ -72,16 +72,11 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter{
     }
 	
 	private Authentication getUsernamePasswordAuthentication(HttpServletRequest request, HttpServletResponse response, String token) {
-		String userEmail = JwtUtil.getUsernameFromToken(token);
-		if(userEmail == null) return null;
 		
-		UserPrincipal userPrincipal = getUserPrincipalByUserEmail(userEmail);
+		UserPrincipal userPrincipal = (UserPrincipal) userPrincipalDetailsService.loadUserByToken(token);
 		
 		return new UsernamePasswordAuthenticationToken(userPrincipal, null, userPrincipal.getAuthorities());
 	}
 	
-	private UserPrincipal getUserPrincipalByUserEmail(String userEmail) {
-		return (UserPrincipal) this.userPrincipalDetailsService.loadUserByUsername(userEmail);
-	}
 	
 }

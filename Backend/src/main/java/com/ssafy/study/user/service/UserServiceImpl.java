@@ -36,7 +36,15 @@ public class UserServiceImpl implements UserService{
 	
 	@Override
 	public User findByUserEmail(String userEmail) {
-		return userRepository.findByUserEmail(userEmail).orElse(null);
+//		return userRepository.findByUserEmail(userEmail).orElse(null);
+		return userRepository.findByUserEmailAndType(userEmail, "stew");
 	}
+
+	@Override
+	public User findByUserEmailAndType(String userEmail, String type) {
+		return userRepository.findByUserEmailAndType(userEmail, type);
+	}
+	
+	
 	
 }

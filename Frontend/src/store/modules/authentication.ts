@@ -76,7 +76,8 @@ export default {
           .then(res => {
             // console.log(res);
             commit("logoutSuccess");
-            router.push({ name: "Home" })
+            console.log();
+            router.push("/").catch(()=>({}));
           })
       },
   

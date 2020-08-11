@@ -21,6 +21,7 @@ public class UserDto {
 	private String userEmail;
 	private String userIntro;
 	private String userImg;
+	private String type;
 	private int userGoalHr;
 
 	public UserDto(User user) {
@@ -29,6 +30,7 @@ public class UserDto {
 		this.userEmail = user.getUserEmail();
 		this.userIntro = user.getUserIntro();
 		this.userImg = user.getUserImg();
+		this.type = user.getType();
 		this.userGoalHr = user.getUserGoalHr();
 	}
 }

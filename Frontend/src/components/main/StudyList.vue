@@ -17,7 +17,7 @@
           height="270"
         >
           <v-img
-            :src="$store.state.comm.baseUrl + '/image/group' + group.gpImg"
+            :src="group.gpImg != null?($store.state.comm.baseUrl + '/image/group' + group.gpImg):gpImgDefault"
             height="170"
             color="white"
             gradient="to bottom, rgba(255,255,255,0), rgba(0,0,0,.15)"
@@ -104,7 +104,8 @@ export default {
       dialog: false,
       selectedGroup: {},
       snackbar: false,
-      message: ""
+      message: "",
+      gpImgDefault:this.$store.state.comm.baseUrl + "/image/group/default.png"
     }
   },
   methods: {

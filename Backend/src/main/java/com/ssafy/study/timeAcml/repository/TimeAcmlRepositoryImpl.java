@@ -1,11 +1,11 @@
 package com.ssafy.study.timeAcml.repository;
 
-import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
 import org.springframework.stereotype.Service;
@@ -34,9 +34,9 @@ public class TimeAcmlRepositoryImpl implements TimeAcmlRepositoryCustom {
 
 	@Override
 	public List<TimeAcmlDto> selectUserTimerTotalDate(long userId, int year, int month) {
-		String jpql = "select new com.ssafy.study.timeAcml.model.dto.TimeAcmlDto(sum(t.tmAcmlTime) as total, substring(t.tmAcmlDate, 1, 7)) "
+		String jpql = "select new com.ssafy.study.timeAcml.model.dto.TimeAcmlDto(sum(t.tmAcmlTime) as total, t.tmAcmlDate) "
 				+ "from TimeAcml t " + "where t.user.userId = :userId and year(t.tmAcmlDate) = :year "
-				+ "and month(t.tmAcmlDate) = :month group by 2";
+				+ "and month(t.tmAcmlDate) = :month group by 2 order by 2 desc";
 
 		TypedQuery<TimeAcmlDto> query = em.createQuery(jpql, TimeAcmlDto.class);
 		query.setParameter("userId", userId);
@@ -102,8 +102,7 @@ public class TimeAcmlRepositoryImpl implements TimeAcmlRepositoryCustom {
 	@Override
 	public List<TimeAcmlDto> selectGroupRankTimerTotalMonth(int year, int month) {
 		String jpql = "select new com.ssafy.study.timeAcml.model.dto.TimeAcmlDto(sum(t.tmAcmlTime) as total, substring(t.tmAcmlDate, 1, 7), gp) "
-				+ "from TimeAcml t join Group gp on t.gp.gpNo = gp.gpNo "
-				+ "where year(t.tmAcmlDate) = :year "
+				+ "from TimeAcml t join Group gp on t.gp.gpNo = gp.gpNo " + "where year(t.tmAcmlDate) = :year "
 				+ "and month(t.tmAcmlDate) = :month group by 2, 3 order by 1 desc";
 
 		TypedQuery<TimeAcmlDto> query = em.createQuery(jpql, TimeAcmlDto.class);
@@ -111,6 +110,24 @@ public class TimeAcmlRepositoryImpl implements TimeAcmlRepositoryCustom {
 		query.setParameter("month", month);
 
 		return query.getResultList();
+	}
+
+	@Override
+	public TimeAcmlDto selectUserToadyTmAcml(long userId) {
+		String jpql = "select new com.ssafy.study.timeAcml.model.dto.TimeAcmlDto(sum(t.tmAcmlTime)) "
+				+ "from TimeAcml t where t.user.userId = :userId and t.tmAcmlDate = CURRENT_DATE "
+				+ "group by t.tmAcmlDate ";
+
+		TypedQuery<TimeAcmlDto> query = em.createQuery(jpql, TimeAcmlDto.class);
+		query.setParameter("userId", userId);
+		TimeAcmlDto result = null;
+		try {
+			result = query.getSingleResult();
+		} catch (NoResultException e) {
+			result = new TimeAcmlDto(0);
+		}
+
+		return result;
 	}
 
 }

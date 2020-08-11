@@ -23,4 +23,6 @@ public interface TimeAcmlRepositoryCustom {
 
 	List<TimeAcmlDto> selectGroupRankTimerTotalMonth(int year, int month);
 
+	TimeAcmlDto selectUserToadyTmAcml(long userId);
+
 }

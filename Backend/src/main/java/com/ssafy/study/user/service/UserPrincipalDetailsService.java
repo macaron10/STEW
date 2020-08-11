@@ -31,12 +31,14 @@ public class UserPrincipalDetailsService implements UserDetailsService{
 		return userPrincipal;
 	}
 	
-	public UserDetails loadUserByToken(String token) throws UsernameNotFoundException{
-		User user = userRepository.findByUserEmailAndType(JwtUtil.getUsernameFromToken(token), JwtUtil.getUserTypeFromToken(token));
+	public UserDetails loadUserByUserEmailAndType(String userEmail, String type) throws UsernameNotFoundException{
+		
+		User user = userRepository.findByUserEmailAndType(userEmail, type);
 		
 		if(user == null) throw new UsernameNotFoundException("Email or Type Not Found");
 		
 		return new UserPrincipal(user);
+		
 	}
-
+	
 }

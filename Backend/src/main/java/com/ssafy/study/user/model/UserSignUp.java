@@ -29,6 +29,7 @@ public class UserSignUp {
 				.userEmail(this.userEmail)
 				.userNm(this.userNm)
 				.userPw(this.userPw)
+				.type("stew")
 				.userGoalHr(this.userGoalHr)
 				.userIntro(this.userIntro)
 				.build();

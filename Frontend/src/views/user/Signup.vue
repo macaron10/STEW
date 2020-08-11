@@ -70,8 +70,8 @@
                     label="프로필 이미지"
                     prepend-icon="mdi-camera" show-size
                     :rules="[
-                        () => user.img.size <= 10000000 || '10MB 이하의 파일만 등록 가능합니다.',
-                        () => correctExt || '지원하지 않는 확장자입니다.'
+                        () => user.img.length == 0 || user.img.size <= 10000000 || '10MB 이하의 파일만 등록 가능합니다.',
+                        () => user.img.length == 0 || correctExt || '지원하지 않는 확장자입니다.'
                     ]"
                     @change="confirmExt"
                 ></v-file-input>

@@ -47,6 +47,7 @@ public class JwtAuthenticationSuccessHandler extends SavedRequestAwareAuthentica
 		
 		response.addHeader("accessToken", JwtProperties.TOKEN_PREFIX + accessToken);
 		response.addHeader("refreshToken", JwtProperties.TOKEN_PREFIX + refreshToken);
+		
 	}
 	
 }

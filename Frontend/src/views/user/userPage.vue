@@ -3,7 +3,19 @@
       <v-row justify="center" id="userpage" class="mx-10 my-10">
           <v-col cols="7" class="flex-column">
             <v-row class="d-flex align-center mr-2">
-                <img :src="$store.state.comm.baseUrl+`/image/user`+userInfo.userImg" id="userImg" class="mr-10 ml-5 my-5" />
+                <v-col class="d-flex flex-column justify-center">
+                    <img :src="imgSrc" ref="imgpreview" id="userImg" class="mr-10 ml-5 my-5" />
+                    <v-row class="d-flex flex-nowrap justify-center">
+                        <v-file-input
+                            v-model="userInfo.userImg"
+                            accept="image/*" 
+                            @change="changeImg"
+                        ></v-file-input>
+                        <v-btn depressed rounded small class="mt-5 mx-1" @click="resetImg">
+                            초기화
+                        </v-btn>
+                    </v-row>
+                </v-col>
                 <v-col class="d-flex flex-column justify-center">
                     <v-row class="mb-5">
                         <h1 style="color:black">{{userInfo.userEmail}}</h1>
@@ -112,24 +124,23 @@ export default {
     },
     
     data() {
+        const formData = new FormData();
+        
         return {
-            userInfo: {},
-            newUserInfo: {
-                userEmail: "",
-                userPw: "",
-                userNm: "",
-                userImg: "",
-                userIntro: "",
-                userGoalHr: ""
-            },
             updatePwdDialog: false,
             deleteUserDialog: false,
+            userInfo: {},
+            imgInfo: {
+                originSrc: this.$store.state.comm.baseUrl+"/image/user",
+                default: this.$store.state.comm.baseUrl+"/image/user/userDefault.png",
+                updateImg: false,
+                correctExt: true,
+            },
             updatePwd: {
                 origin: "",
                 new: "",
                 newChk: "",
             },
-
         }
     },
     
@@ -139,17 +150,48 @@ export default {
     
     methods: {
         getUserInfo() {
-            axios.get('/user/')
+            axios.get('/user')
             .then(({ data }) => {
                 console.log(data);
                 this.userInfo = data.object;
-                this.newUserInfo.userPw = "";
-                this.newUserInfo.userNm = this.userInfo.userNm;
-                this.newUserInfo.userImg = this.userInfo.userImg;
-                this.newUserInfo.userIntro = this.userInfo.userIntro;
-                this.newUserInfo.userGoalHr = this.userInfo.userGoalHr;
+                this.imgInfo.originSrc = this.imgInfo.originSrc + this.userInfo.userImg;
+                this.imgSrc =this.imgInfo.originSrc;
+                this.userInfo.userImg = "";
             })
-            
+        },
+
+        changeImg(e){
+            console.log(e);
+            // const file = e.target.files[0]; // Get first index in files
+            this.imgInfo.correctExt = false;
+            if (e) {
+                this.confirmExt();
+                if (this.imgInfo.correctExt) {
+                    this.$refs.imgpreview.src = e ? URL.createObjectURL(e) : this.imgInfo.originSrc;
+                    this.imgInfo.updateImg = true;
+                } else {
+                    alert("지원하지 않는 확장자입니다.");
+                    this.userInfo.userImg = "";
+                }
+            }
+
+        },
+
+        resetImg(){
+            this.userInfo.updateImg = true;
+            this.$refs.imgpreview.src = this.imgInfo.default;
+            this.userInfo.userImg = "";
+        },
+
+        confirmExt() {
+            this.imgInfo.correctExt = false;
+            const ext = this.userInfo.userImg.name.substring(this.userInfo.userImg.name.lastIndexOf(".")+1, this.userInfo.userImg.name.length).toLowerCase();
+            const imgExts = "xbm,tif,pjp,pjpeg,svgz,jpg,jpeg,ico,tiff,gif,svg,bmp,png,gfif,webp";
+            const eachExts = imgExts.split(",");
+
+            for (let i = 0; i < eachExts.length; i++) {
+                if (ext == eachExts[i]) this.imgInfo.correctExt = true;
+            }
         },
 
         checkUserPwd(pwd, type) {
@@ -173,9 +215,30 @@ export default {
                 console.log(err);
             })
         },
+        
+        makeFormData() {
+            this.formData.append('userNm', this.userInfo.userNm);
+            if (this.userInfo.userImg instanceof File) {
+                this.formData.append('userImg', this.userInfo.userImg);
+            }
+            this.formData.append('userIntro', this.userInfo.userIntro);
+            this.formData.append('userGoalHr', Number(this.userInfo.userGoalHr));
+            this.formData.append('updateImg', this.imgInfo.updateImg);
+        },
 
         updateUserInfo() {
-            axios.put('/user', {
+            this.makeFormData();
+
+            const config = {
+                headers: {
+                'Content-Type' : 'multipart/form-data',
+                }
+            }
+            console.log("업데이트 시도");
+
+            axios.put('/user', this.formData, config)
+            .then(({ data }) => {
+                console.log(data);
             })
 
         },
@@ -192,7 +255,7 @@ export default {
         },
 
         deleteUser() {
-            axios.delete('/user/'+this.userInfo.userId)
+            axios.delete('/user')
             .then(({ data }) => {
                 console.log(data);
                 if (data.msg === "success") {

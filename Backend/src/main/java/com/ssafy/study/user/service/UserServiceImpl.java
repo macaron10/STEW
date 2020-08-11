@@ -16,8 +16,6 @@ public class UserServiceImpl implements UserService{
 	
 	@Override
 	public User save(User user) {
-		System.out.println(user.getType());
-		System.out.println(user.getRoles());
 		return userRepository.save(user);
 	}
 

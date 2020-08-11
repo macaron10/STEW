@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -26,6 +25,7 @@ import com.ssafy.study.common.exception.FileUploadException;
 import com.ssafy.study.common.model.BasicResponse;
 import com.ssafy.study.common.util.FileUtils;
 import com.ssafy.study.user.model.User;
+import com.ssafy.study.user.model.UserDto;
 import com.ssafy.study.user.model.UserModify;
 import com.ssafy.study.user.model.UserPrincipal;
 import com.ssafy.study.user.model.UserSignUp;
@@ -36,7 +36,6 @@ import com.ssafy.study.util.JwtUtil;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-import springfox.documentation.annotations.ApiIgnore;
 
 @RestController
 @RequestMapping("/user")
@@ -125,7 +124,6 @@ public class UserController {
 	@ApiOperation("회원 탈퇴")
 	public ResponseEntity<BasicResponse> signOut(@PathVariable long userId, HttpServletRequest request) throws ServletException{
 		
-		
 		userService.deleteById(userId);
 		
 		BasicResponse result = new BasicResponse();
@@ -151,19 +149,23 @@ public class UserController {
 	@PutMapping
 	@ApiOperation("회원 수정")
 	public ResponseEntity<BasicResponse> modify(UserModify userModify, @AuthenticationPrincipal UserPrincipal principal){
-		System.out.println(userModify);
+		
 		BasicResponse result = new BasicResponse();
 		
 		User origin = userService.loadUserByUserId(principal.getUserId());
 		
 		origin.update(userModify);
 		
-		if(userModify.getUserImg() != null) {
-			try {
-				origin.setUserImg(fileUtil.uploadFile(userModify.getUserImg(), fileBaseUrl));
-			} catch (IOException e) {
-				e.printStackTrace();
-				throw new FileUploadException();
+		if(userModify.isUpdateImg()) {
+			if(userModify.getUserImg() != null) {
+				try {
+					origin.setUserImg(fileUtil.uploadFile(userModify.getUserImg(), fileBaseUrl));
+				} catch (IOException e) {
+					e.printStackTrace();
+					throw new FileUploadException();
+				}
+			}else {
+				origin.setUserImg("여기에 기본 이미지");
 			}
 		}
 		
@@ -194,7 +196,6 @@ public class UserController {
 	@GetMapping("/refresh")
 	@ApiOperation("토큰 갱신")
 	public ResponseEntity<BasicResponse> refreshToken(HttpServletRequest request, HttpServletResponse response){
-		System.out.println((String)redisTemplate.opsForValue().get("jig7357@naver.com"));
 		
 		BasicResponse result = new BasicResponse();
 		
@@ -209,10 +210,10 @@ public class UserController {
 			result.msg = "accessToken not found";
 		}
 		
-		String userEmail = JwtUtil.getUsernameFromToken(accessToken);
+		UserDto user = JwtUtil.getUserFromToken(accessToken);
 		
-		if(refreshToken.equals(redisTemplate.opsForValue().get(userEmail))){
-			UserPrincipal userPrincipal = new UserPrincipal(userService.findByUserEmail(userEmail));
+		if(refreshToken.equals(redisTemplate.opsForValue().get(user.getUserEmail() + "#" + user.getType()))){
+			UserPrincipal userPrincipal = new UserPrincipal(userService.loadUserByUserId(user.getUserId()));
 			
 			accessToken = JwtProperties.TOKEN_PREFIX + JwtUtil.generateAccessToken(userPrincipal);
 			

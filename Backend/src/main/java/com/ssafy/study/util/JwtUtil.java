@@ -40,6 +40,7 @@ public class JwtUtil implements Serializable{
 				.userId(decodedJwt.getClaim("userId").asLong())
 				.userNm(decodedJwt.getClaim("userNm").asString())
 				.userImg(decodedJwt.getClaim("userImg").asString())
+				.type(decodedJwt.getClaim("type").asString())
 				.userEmail(decodedJwt.getSubject())
 				.build();
 		

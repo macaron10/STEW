@@ -61,9 +61,11 @@ axios.interceptors.response.use(
   }
 )
 
-new Vue({
+const v = new Vue({
   router,
   store,
   vuetify,
   render: h => h(App)
 }).$mount("#app");
+
+(window as any).app = v;

@@ -73,7 +73,7 @@
           <v-btn 
             large color="primary" 
             :block=true 
-            @click="signIn({'userEmail': user.userEmail, 'userPw':user.userPw}), signinInDialog = false"
+            @click="signInHandler()"
           >로그인</v-btn>
         </v-col>
 
@@ -256,6 +256,13 @@ export default {
           case "Logout":
             this.logout()
         }          
+      },
+
+      async signInHandler() {
+        await this.signIn({'userEmail': this.user.userEmail, 'userPw':this.user.userPw});
+        this.signinInDialog = false;
+        this.user.userEmail = this.user.userPw = "";
+        this.$router.go();
       }
     },
     data () {

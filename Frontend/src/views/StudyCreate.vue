@@ -108,12 +108,12 @@
               :items="tagItems"
               :search-input.sync="search"
               hide-selected
-              hint="Maximum of 5 tags"
-              label="Add some tags"
+              hint="스터디 그룹을 잘 나타낼 수 있는 5개의 태그를 적어주세요"
+              label="태그"
               multiple
               persistent-hint
               small-chips
-              @keypress="tagKey"
+              @keyup="tagKey"
             >
               <template v-slot:no-data>
                 <v-list-item>
@@ -181,7 +181,8 @@ export default {
       terms: false,
       groupData,
       formData,
-      imgSrc : "",
+      gpImgDefault : this.$store.state.comm.baseUrl + "/image/group/default.png",
+      imgSrc : this.$store.state.comm.baseUrl + "/image/group/default.png",
     // 해쉬태그 데이터
     tagItems: [],
     model: ['Vuetify'],
@@ -207,14 +208,15 @@ export default {
   methods: {
     tagKey(e){
       if(e.key == ' ' || e.key == ','){
-        if(!this.tags.includes(this.search))
-          this.tags.push(this.search);
+        const tag = this.search.replace(',','').replace(' ','')
+        if(tag.length>0 && !this.tags.includes(tag))
+          this.tags.push(tag);
         this.search = "";
       }
     },
     changeImg(e){
       // const file = e.target.files[0]; // Get first index in files
-      this.$refs.imgpreview.src = e ? URL.createObjectURL(e) : "";
+      this.$refs.imgpreview.src = e ? URL.createObjectURL(e) : this.gpImgDefault;
     },
     resetForm () {
       this.form = Object.assign({}, this.form)

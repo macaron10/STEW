@@ -78,7 +78,7 @@
           </v-col> -->
           <v-col cols="12">
             <v-combobox
-              v-model="model"
+              v-model="tags"
               :items="tagItems"
               :search-input.sync="search"
               hide-selected
@@ -87,14 +87,13 @@
               multiple
               persistent-hint
               small-chips
+              @keyup="tagKey"
             >
-              <template v-slot:no-data>
+              <template v-slot:no-item>
                 <v-list-item>
                   <v-list-item-content>
                     <v-list-item-title>
-                      No results matching "
-                      <strong>{{ search }}</strong>". Press
-                      <kbd>enter</kbd> to create a new one
+                      태그를 추가하시려면 <kbd>ENTER</kbd>키를 눌러주세요!
                     </v-list-item-title>
                   </v-list-item-content>
                 </v-list-item>
@@ -150,6 +149,8 @@ export default {
       terms: false,
       groupData,
       formData,
+      tags:[],
+      gpImgDefault : this.$store.state.comm.baseUrl + "/image/group/default.png",
       imgSrc : "",
     // 해쉬태그 데이터
     tagItems: [],
@@ -178,10 +179,18 @@ export default {
     },
   },
   methods: {
+    tagKey(e){
+      if(e.key == ' ' || e.key == ','){
+        const tag = this.search.replace(',','').replace(' ','');
+        if(tag.length>0 && !this.tags.includes(tag))
+          this.tags.push(tag);
+        this.search = "";
+      }
+    },
     changeImg(e){
       // console.log(e);
       // const file = e.target.files[0]; // Get first index in files
-      this.$refs.imgpreview.src = e ? URL.createObjectURL(e) : "";
+      this.$refs.imgpreview.src = e ? URL.createObjectURL(e) : this.gpImgDefault;
       this.form.updateGpImg = true;
     },
     async getDetail () {
@@ -192,8 +201,10 @@ export default {
         this.groupData = JSON.parse(res.data.object).group
         this.groupData = JSON.parse(this.groupData)
         this.form = this.groupData;
-        this.imgSrc = baseUrl + '/image/group' + this.groupData.gpImg;
+        this.imgSrc = this.groupData.gpImg != null? baseUrl + '/image/group' + this.groupData.gpImg : this.gpImgDefault;
         this.form.updateGpImg = false
+        if(this.groupData.gpTag != null)
+          this.tags = this.groupData.gpTag;
       } catch (err) {
         console.error(err)
       } 
@@ -214,7 +225,8 @@ export default {
     this.formData.append('gpIntro', this.form.gpIntro)
     this.formData.append('gpPublic', Boolean(this.form.gpPublic))
     // this.formData.append('gpStTm', Number(this.form.gpStTm))
-    this.formData.append('gpTag', this.form.gpTag)
+    if(this.form.gpTag.length > 0)
+      this.formData.append('gpTag', this.form.gpTag)
     this.formData.append('gpNo', this.id)
     this.formData.append('updateGpImg',this.form.updateGpImg)
     },
@@ -239,6 +251,7 @@ export default {
       this.form.gpCatNo = this.categoryObj[this.form.gpCatNo]
     },
     submit () {
+      this.form.gpTag = this.tags;
       this.snackbar = true
       // this.inputGpCatNo()
       this.makeFormData()

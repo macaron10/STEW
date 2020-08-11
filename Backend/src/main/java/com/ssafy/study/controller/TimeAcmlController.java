@@ -119,4 +119,17 @@ public class TimeAcmlController {
 		return new ResponseEntity(result, HttpStatus.OK);
 	}
 
+	@GetMapping("/today")
+	@ApiOperation("오늘 날짜의 공부시간 가져오기")
+	public ResponseEntity getTodayStudyTime(@ApiIgnore @AuthenticationPrincipal UserPrincipal principal) {
+		BasicResponse result = new BasicResponse();
+
+		long userId = principal.getUserId();
+		result.object = timeService.selectUserTodayTmAcml(userId);
+		result.msg = "success";
+		result.status = true;
+
+		return new ResponseEntity(result, HttpStatus.OK);
+	}
+
 }

@@ -141,6 +141,7 @@ export default {
                 new: "",
                 newChk: "",
             },
+            formData
         }
     },
     
@@ -154,9 +155,10 @@ export default {
             .then(({ data }) => {
                 console.log(data);
                 this.userInfo = data.object;
-                this.imgInfo.originSrc = this.imgInfo.originSrc + this.userInfo.userImg;
+                this.imgInfo.originSrc = this.imgInfo.originSrc.concat(this.userInfo.userImg);
                 this.imgSrc =this.imgInfo.originSrc;
                 this.userInfo.userImg = "";
+                console.log(this.imgInfo.originSrc);
             })
         },
 
@@ -174,7 +176,6 @@ export default {
                     this.userInfo.userImg = "";
                 }
             }
-
         },
 
         resetImg(){
@@ -217,6 +218,8 @@ export default {
         },
         
         makeFormData() {
+            const formData = new FormData();
+
             this.formData.append('userNm', this.userInfo.userNm);
             if (this.userInfo.userImg instanceof File) {
                 this.formData.append('userImg', this.userInfo.userImg);
@@ -227,18 +230,25 @@ export default {
         },
 
         updateUserInfo() {
-            this.makeFormData();
+            // this.makeFormData();
 
             const config = {
                 headers: {
                 'Content-Type' : 'multipart/form-data',
                 }
             }
-            console.log("업데이트 시도");
+            
+            for(const pair of this.formData.entries()) {
+                console.log(pair[0]+ ', '+ pair[1]); 
+            }
 
             axios.put('/user', this.formData, config)
             .then(({ data }) => {
                 console.log(data);
+                if (data.msg === "success") {
+                    alert("회원 정보 수정 완료");
+                    this.$router.go();
+                }
             })
 
         },

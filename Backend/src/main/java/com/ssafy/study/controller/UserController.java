@@ -52,7 +52,8 @@ public class UserController {
 	private FileUtils fileUtil;
 	
 	// private final String fileBaseUrl = "/home/ubuntu/app/img/user";
-	private final String fileBaseUrl = "C:\\Users\\multicampus\\Desktop\\img\\user";
+	private final String fileBaseUrl = "C:\\Users\\1n9yun\\Desktop\\img\\user";
+	private final String DEFAULT_USER_PROFILE = "";
 	
 	@PostMapping("/signup")
 	@ApiOperation("회원가입")
@@ -69,7 +70,8 @@ public class UserController {
 				e.printStackTrace();
 				throw new FileUploadException();
 			}
-		}
+		}else user.setUserImg(DEFAULT_USER_PROFILE);
+		
 		userService.save(user);
 		
 		BasicResponse result = new BasicResponse();
@@ -80,9 +82,6 @@ public class UserController {
 		
 		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
-	
-//	비밀번호 맞는지 아닌지
-//	유저 업데이트할때 비밀번호 포함 안하고싶다
 	
 	@PostMapping("/checkpw")
 	@ApiOperation("비밀번호 확인")
@@ -120,15 +119,17 @@ public class UserController {
 		
 	}
 	
-	@DeleteMapping("/{userId}")
+	@DeleteMapping
 	@ApiOperation("회원 탈퇴")
-	public ResponseEntity<BasicResponse> signOut(@PathVariable long userId, HttpServletRequest request) throws ServletException{
-		
-		userService.deleteById(userId);
-		
-		BasicResponse result = new BasicResponse();
+	public ResponseEntity<BasicResponse> signOut(HttpServletRequest request) throws ServletException{
 		
 		String accessToken = request.getHeader(JwtProperties.HEADER_STRING).replace(JwtProperties.TOKEN_PREFIX, "");
+		
+		UserDto user = JwtUtil.getUserFromToken(accessToken);
+		
+		userService.deleteById(user.getUserId());
+		
+		BasicResponse result = new BasicResponse();
 		
 		long remains = JwtUtil.getExpiringTime(accessToken) - System.currentTimeMillis();
 		
@@ -137,7 +138,7 @@ public class UserController {
 		redisTemplate.expire(accessToken, remains, TimeUnit.MILLISECONDS);
 		
 //		Delete RefreshToken
-		redisTemplate.delete(JwtUtil.getUsernameFromToken(accessToken));
+		redisTemplate.delete(JwtUtil.getRefreshKey(accessToken));
 		
 		result.status = true;
 		result.msg = "success";
@@ -149,13 +150,13 @@ public class UserController {
 	@PutMapping
 	@ApiOperation("회원 수정")
 	public ResponseEntity<BasicResponse> modify(UserModify userModify, @AuthenticationPrincipal UserPrincipal principal){
-		
+		System.out.println(userModify.getUserGoalHr());
 		BasicResponse result = new BasicResponse();
 		
 		User origin = userService.loadUserByUserId(principal.getUserId());
-		
+		System.out.println(origin.getUserGoalHr());
 		origin.update(userModify);
-		
+		System.out.println(origin.getUserGoalHr());
 		if(userModify.isUpdateImg()) {
 			if(userModify.getUserImg() != null) {
 				try {
@@ -165,13 +166,13 @@ public class UserController {
 					throw new FileUploadException();
 				}
 			}else {
-				origin.setUserImg("여기에 기본 이미지");
+				origin.setUserImg(DEFAULT_USER_PROFILE);
 			}
 		}
 		
 		User modifiedUser = userService.save(origin);
-		
-		result.status = true;
+		System.out.println(modifiedUser.getUserGoalHr());
+		result.status = true; 
 		result.msg = "success";
 		result.object = modifiedUser;
 		
@@ -212,7 +213,7 @@ public class UserController {
 		
 		UserDto user = JwtUtil.getUserFromToken(accessToken);
 		
-		if(refreshToken.equals(redisTemplate.opsForValue().get(user.getUserEmail() + "#" + user.getType()))){
+		if(refreshToken.equals(redisTemplate.opsForValue().get(JwtUtil.getRefreshKey(accessToken)))){
 			UserPrincipal userPrincipal = new UserPrincipal(userService.loadUserByUserId(user.getUserId()));
 			
 			accessToken = JwtProperties.TOKEN_PREFIX + JwtUtil.generateAccessToken(userPrincipal);

@@ -3,6 +3,7 @@ package com.ssafy.study.config.oauth2;
 import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -16,6 +17,7 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import com.ssafy.study.user.model.User;
 import com.ssafy.study.user.model.UserPrincipal;
 import com.ssafy.study.user.service.UserService;
+import com.ssafy.study.util.JwtProperties;
 import com.ssafy.study.util.JwtUtil;
 
 import lombok.NonNull;
@@ -54,6 +56,9 @@ public class CustomOAuth2AuthenticationSuccessHandler implements AuthenticationS
 		}else if(provider.equals("google")) {
 			userEmail = (String) userAttributes.get("email");
 			userNm = (String) userAttributes.get("name");
+		}else if(provider.equals("facebook")) {
+			userEmail = (String) userAttributes.get("email");
+			userNm = (String) userAttributes.get("name");
 		}
 		
 		User user = userService.findByUserEmailAndType(userEmail, provider);
@@ -73,8 +78,10 @@ public class CustomOAuth2AuthenticationSuccessHandler implements AuthenticationS
 		
 		String accessToken = JwtUtil.generateAccessToken(principal);
 		String refreshToken = JwtUtil.generateRefreshToken();
+		String refreshKey = JwtUtil.getRefreshKey(accessToken);
 		
-		redisTemplate.opsForValue().set(userEmail, refreshToken);
+		redisTemplate.opsForValue().set(refreshKey, refreshToken);
+		redisTemplate.expire(refreshKey, JwtProperties.EXPIRATION_TIME_REFRESH, TimeUnit.MILLISECONDS);
 		
 		response.sendRedirect("http://localhost:8080/#/oauth2" + "?email=" + userEmail + "&accessToken=" + accessToken + "&refreshToken=" + refreshToken);
 		

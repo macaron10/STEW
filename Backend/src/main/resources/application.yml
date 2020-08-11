@@ -13,8 +13,8 @@ spring:
             client-id: 535466550101-20c5d4vrimd27pn1o5pv8hcu2d8443kh.apps.googleusercontent.com
             client-secret: nnX1rRmrEeDa8fTbPxIBnD_n
           facebook:
-            client-id: 11612612521462
-            client-secret: 6578235217c5c365a98c51b02d0308ac
+            client-id: 310168230078679
+            client-secret: 61bc510680c095a346ef54fce602e8ca
 custom:
   oauth2:
     kakao:

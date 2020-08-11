@@ -23,14 +23,7 @@
         <v-col cols="10" sm="5" offset="1">
           <h2 class="mb-3">
             {{ group.gpNm }}
-            <v-btn
-              icon
-              :to="{ name:'StudyUpdate', params: { id: id }}"
-              v-if="group.gpMgrId===userId"
-            >
-              <v-icon>mdi-cogs</v-icon>
-            </v-btn>
-          </h2>
+ </h2>
           <h4>
             <span v-if="group.gpPublic">
               <v-icon>mdi-lock-open-outline</v-icon>공개
@@ -41,6 +34,36 @@
             그룹 · 멤버 {{group.gpCurNum}}명
           </h4>
         </v-col>
+
+          <div class="text-center">
+            <h1 class="my-3">
+              {{ group.gpNm }}
+              <v-tooltip top>
+                <template v-slot:activator="{ on, attrs }">
+                  <v-btn
+                    icon
+                    v-bind="attrs"
+                    v-on="on"
+                    dark
+                    color="green darken-1"
+                    @click="readyEnterMeeting(group.gpNo)"
+                  >
+                    <v-icon>mdi-video</v-icon>
+                  </v-btn>
+                </template>
+                <span>캠 스터디 입장하기!</span>
+              </v-tooltip>
+            </h1>
+            <h4 class="mb-2">{{ group.gpIntro }}</h4>
+
+            <v-btn
+              icon
+              :to="{ name:'StudyUpdate', params: { id: id }}"
+              v-if="group.gpMgrId===userId"
+            >
+              <v-icon>mdi-cogs</v-icon>
+            </v-btn>
+         
         <v-col>
           <v-btn
             @click="readyEnterMeeting(group.gpNo)"

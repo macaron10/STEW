@@ -257,13 +257,16 @@ export default {
       },
       goToPage(nextPage) {
         switch(nextPage) {
-          case "My Schedule":
+          case "내 일정":
             this.$router.push({name: 'MySchedule'})
             break
-          case "Profile":
+          case "프로필 수정":
             this.$router.push({name:'UserDetail'})
             break
-          case "Logout":
+          case "공부 기록":
+            this.$router.push({name:'UserTimer'})
+            break
+          case "로그아웃":
             this.logout()
         }          
       },
@@ -286,15 +289,19 @@ export default {
         items: [
           {
             icon: 'mdi-account',
-            text: 'Profile',
+            text: '프로필 수정',
+          },
+          {
+            icon: 'mdi-timer',
+            text: '공부 기록',
           },
           {
             icon: 'mdi-calendar',
-            text: 'My Schedule',
+            text: '내 일정',
           },
           {
             icon: 'mdi-logout',
-            text: 'Logout',
+            text: '로그아웃',
           },
         ],
         model: 1,

@@ -1,17 +1,15 @@
 <template>
   <div>
-    <v-container>
-      <v-row>
-        <v-col cols="8">
-          <Timer />
-          <div class="mx-10 my-10 videos-container" ></div>
-        </v-col>
-        <v-col cols="4">
-          <Chatting :roomid="roomid"/>
-        </v-col>
-            
-      </v-row>
-    </v-container>
+    <v-row class="mx-10 my-5">
+      <v-col cols="9">
+        <Timer />
+        <div class="mx-10 my-10 videos-container" ></div>
+      </v-col>
+      <v-col cols="3">
+        <Chat :roomid="roomid"/>
+      </v-col>
+          
+    </v-row>
     <!-- footer -->
     <v-footer color="#ffffff" padless>
       <v-row justify="center" no-gutters>
@@ -39,7 +37,8 @@
 <script>
 import StudyDetailVue from "./StudyDetail.vue";
 import Timer from "@/components/temp/Timer.vue";
-import Chatting from "@/components/room/Chatting.vue";
+// import Chatting from "@/components/room/Chatting.vue";
+import Chat from "@/components/chat/Chat.vue";
 import { log } from "util";
 
 export default {
@@ -57,7 +56,7 @@ export default {
   },
   components: {
     Timer,
-    Chatting
+    Chat
   }, 
   created() {
     this.joinRoom();

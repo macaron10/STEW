@@ -71,7 +71,6 @@ public class UserController {
 				throw new FileUploadException();
 			}
 		}
-		
 		userService.save(user);
 		
 		BasicResponse result = new BasicResponse();
@@ -186,7 +185,7 @@ public class UserController {
 		
 		result.status = true;
 		result.msg = "success";
-		result.object = userService.findByUserEmail(userEmail) == null ? true : false;
+		result.object = userService.findByUserEmailAndType(userEmail, "stew") == null ? true : false;
 		
 		return new ResponseEntity<>(result, HttpStatus.OK);
 		

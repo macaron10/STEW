@@ -95,11 +95,11 @@ public class JwtSecurityConfig extends WebSecurityConfigurerAdapter{
 
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-		auth.authenticationProvider(authenticationProvider());
+		auth.authenticationProvider(customAuthenticationProvider());
 	}
 	
 	@Bean
-	CustomAuthenticationProvider authenticationProvider() {
+	CustomAuthenticationProvider customAuthenticationProvider() {
 		return new CustomAuthenticationProvider(passwordEncoder());
 	}
 	

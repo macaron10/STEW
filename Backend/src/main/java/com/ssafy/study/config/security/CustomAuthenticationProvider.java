@@ -31,6 +31,8 @@ public class CustomAuthenticationProvider implements AuthenticationProvider{
 		
 		UserPrincipal userPrincipal = (UserPrincipal) userDetailsService.loadUserByUserEmailAndType(userEmail, "stew");
 		
+		System.out.println(userPrincipal);
+		
 		if (!passwordEncoder.matches(userPw, userPrincipal.getPassword())) {
 		    throw new BadCredentialsException(userPrincipal.getUsername() + "Invalid password");
 		}

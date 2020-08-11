@@ -5,7 +5,9 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.persistence.UniqueConstraint;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
@@ -19,6 +21,8 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Entity
+//@Table(uniqueConstraints = @UniqueConstraint(columnNames = { "user_email", "type" }))
+//alter table user add unique (user_email, type);
 public class User extends TimeEntity {
 
 	@Builder
@@ -52,9 +56,13 @@ public class User extends TimeEntity {
 	private String userPw;
 
 	@Setter
-	@Column(nullable = false)
+	@Column(nullable = false, length = 128)
 	private String roles = "USER";
-
+	
+	@Setter
+	@Column(nullable = false, length = 128)
+	private String type = "stew";
+	
 	@Setter
 	@Column(length = 200)
 	private String userIntro;
@@ -66,16 +74,10 @@ public class User extends TimeEntity {
 	@Setter
 	private int userGoalHr;
 
-	@Setter
-	private String type = "stew";
-	
-	@Setter
-	@Transient
-	private boolean isEnable = true;
 	
 	public void update(UserModify modifyInfo) {
 		
-		if(modifyInfo.getUserNewPw() != null) {
+		if(!isEmptyString(modifyInfo.getUserNewPw())) {
 			this.userPw = new BCryptPasswordEncoder().encode(modifyInfo.getUserNewPw());
 		}else {
 		
@@ -85,10 +87,6 @@ public class User extends TimeEntity {
 			
 			if(!isEmptyString(modifyInfo.getUserNm())) {
 				this.userNm = modifyInfo.getUserNm();
-			}
-			
-			if(!isEmptyString(modifyInfo.getUserNewPw())){
-				
 			}
 			
 			if(modifyInfo.getUserGoalHr() != 0) {

@@ -2,31 +2,59 @@
   <div>
     <v-container>
       <v-row>
-        <v-col class="mb-6">
+        <v-col cols="10" offset="1">
           <div class="d-flex justify-center">
-            <img v-if="group.gpImg" :src="$store.state.comm.baseUrl + '/image/group' + group.gpImg" alt="그룹 이미지" height="400px" />
-          </div>
-          <div class="text-center">
-            <h1 class="my-3">{{ group.gpNm }}</h1>
-            <h4 class="mb-2">{{ group.gpIntro }}</h4>
-            <v-btn
-              @click="readyEnterMeeting(group.gpNo)"
-              color="green accent-1"
-              class="white--text font-weight-bold mx-3"
-            >스터디 캠 입장</v-btn>
-            <v-btn
-              :to="{ name:'StudyUpdate', params: { id: id }}"
-              color="blue accent-1"
-              class="white--text font-weight-bold mx-3"
-              v-if="group.gpMgrId===userId"
-            >수정</v-btn>
-            <v-btn
-              color="red accent-1"
-              class="white--text font-weight-bold"
-              @click="quitGroup(group.gpNo)"
-            >탈퇴</v-btn>
+            <img
+              v-if="group.gpImg"
+              :src="$store.state.comm.baseUrl + '/image/group' + group.gpImg"
+              alt="그룹 이미지"
+              width="100%"  
+            />
+            <img
+              v-else
+              :src="$store.state.comm.baseUrl + '/image/group/default.png'"
+              alt="그룹이미지"
+              width="100%"
+            />
           </div>
         </v-col>
+      </v-row>
+      <v-row>
+        <v-col cols="10" sm="5" offset="1">
+          <h2 class="mb-3">
+            {{ group.gpNm }}
+            <v-btn
+              icon
+              :to="{ name:'StudyUpdate', params: { id: id }}"
+              v-if="group.gpMgrId===userId"
+            >
+              <v-icon>mdi-cogs</v-icon>
+            </v-btn>
+          </h2>
+          <h4>
+            <span v-if="group.gpPublic">
+              <v-icon>mdi-lock-open-outline</v-icon>공개
+            </span>
+            <span v-else>
+              <v-icon color="blue accent-1">mdi-lock-outline</v-icon>비공개
+            </span>
+            그룹 · 멤버 {{group.gpCurNum}}명
+          </h4>
+        </v-col>
+        <v-col>
+          <v-btn
+            @click="readyEnterMeeting(group.gpNo)"
+            color="green accent-1"
+            class="white--text font-weight-bold mx-3"
+          >스터디 캠 입장</v-btn>
+          <v-btn
+            color="red accent-1"
+            class="white--text font-weight-bold"
+            @click="quitGroup(group.gpNo)"
+          >탈퇴</v-btn>
+        </v-col>
+      </v-row>
+      <v-row>
         <v-col class="mb-6">
           <v-card>
             <v-tabs
@@ -74,7 +102,7 @@ export default {
   components: {
     Calendar,
     MemberList,
-    TimeRank,
+    TimeRank
   },
   data() {
     return {
@@ -93,12 +121,12 @@ export default {
   },
   mounted() {
     this.id = this.$route.params.id;
-    this.userId = this.$store.state.auth.userInfo.userId
+    this.userId = this.$store.state.auth.userInfo.userId;
     this.getDetail();
   },
   methods: {
-    readyEnterMeeting(gpNo) {      
-      this.$router.push({name:'ReadyMeeting', params:{id: gpNo}})
+    readyEnterMeeting(gpNo) {
+      this.$router.push({ name: "ReadyMeeting", params: { id: gpNo } });
     },
     async getDetail() {
       const apiUrl = "/study/user/" + this.id;

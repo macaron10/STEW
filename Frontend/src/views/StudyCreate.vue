@@ -155,7 +155,7 @@ export default {
       terms: false,
       groupData,
       formData,
-      imgSrc: this.$store.state.comm.baseUrl + "/image/group/default.jpg",
+      imgSrc: this.$store.state.comm.baseUrl + "/image/group/default.png",
       // 해쉬태그 데이터
       tagItems: [],
       model: [],

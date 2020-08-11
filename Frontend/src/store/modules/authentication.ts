@@ -53,7 +53,7 @@ export default {
       signIn({ commit, dispatch }: any, userObj: any) {
         axios.post('/user/signin', userObj)
           .then(res => {
-            // console.log(res);
+            console.log(res);
             const userInfo = {
               'accessToken': res.headers.accesstoken,
               'refreshToken': res.headers.refreshtoken

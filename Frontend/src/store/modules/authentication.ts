@@ -85,18 +85,18 @@ export default {
         return new Promise(resolve => {
           const config = {
             headers: {
-              "refreshToken": state.auth.userInfo.refreshToken
+              "refreshToken": state.userInfo.refreshToken
             }
           }
-          const origin = state.auth.userInfo.accessToken;
+          const origin = state.userInfo.accessToken;
   
           axios.get('/user/refresh', config)
             .then(res => {
               console.log("토큰 재발급 요청 응답");
               commit("refreshSuccess", res.headers.accesstoken);
               console.log("origin : " + origin);
-              console.log("new : " + state.auth.userInfo.accessToken);
-              if (origin !== state.auth.userInfo.accessToken) {
+              console.log("new : " + state.userInfo.accessToken);
+              if (origin !== state.userInfo.accessToken) {
                 resolve();
               }
             })
@@ -105,7 +105,7 @@ export default {
   
       // accessToken 정보 확인
       tokenInformation({ state }: any) {
-        const token = state.auth.userInfo.accessToken.replace("Bearer", "");
+        const token = state.userInfo.accessToken.replace("Bearer", "");
         const decode = jwt.decode(token);
         console.log(decode);
       },

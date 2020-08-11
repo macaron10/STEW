@@ -153,9 +153,11 @@ export default {
         },
 
         checkUserPwd(pwd, type) {
+            console.log("왓니?");
             axios.post('/user/checkpw', querystring.stringify({userPw : pwd}))
             .then(({ data }) => {
                 console.log(data);
+                console.log("????");
                 if (data.msg === "success" && data.object) {
                     if (type === "update") {
                         this.updateUserPwd();
@@ -167,6 +169,8 @@ export default {
                 } else {
                     alert("오류 발생");
                 }
+            }).catch(({ err }) => {
+                console.log(err);
             })
         },
 

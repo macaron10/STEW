@@ -74,7 +74,7 @@ public class TimeAcmlRepositoryImpl implements TimeAcmlRepositoryCustom {
 
 	@Override
 	public List<TimeAcmlDto> selectGroupTimerTotalDateUser(long gpNo, int year, int month) {
-		String jpql = "select new com.ssafy.study.timeAcml.model.dto.TimeAcmlDto(sum(t.tmAcmlTime) as total, t.tmAcmlDate, u) "
+		String jpql = "select new com.ssafy.study.timeAcml.model.dto.TimeAcmlDto(sum(t.tmAcmlTime) as total, substring(t.tmAcmlDate, 1, 7), u) "
 				+ "from TimeAcml t join User u on t.user.userId = u.userId "
 				+ "where t.gp.gpNo = :gpNo and year(t.tmAcmlDate) = :year "
 				+ "and month(t.tmAcmlDate) = :month group by 2, 3 order by 1 desc";

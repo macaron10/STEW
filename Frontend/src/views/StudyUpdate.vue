@@ -58,7 +58,7 @@
             ></v-select>
           </v-col>
           <v-col cols="12" sm="6"></v-col>
-          <v-col cols="12" sm="6">
+          <!-- <v-col cols="12" sm="6">
             <v-slider
               v-model="form.gpStTm"
               :rules="rules.time"
@@ -81,7 +81,7 @@
               max="23"
               thumb-label
             ></v-slider>
-          </v-col>
+          </v-col> -->
           <v-col cols="12">
             <v-checkbox v-model="form.gpPublic" color="green">
               <template v-slot:label>
@@ -180,7 +180,7 @@ export default {
       formData,
       imgSrc : "",
     // 해쉬태그 데이터
-    tagItems: ['Gaming', 'Programming', 'Vue', 'Vuetify'],
+    tagItems: [],
     model: ['Vuetify'],
       search: null,
     watch: {
@@ -220,7 +220,7 @@ export default {
         this.groupData = JSON.parse(this.groupData)
         this.form = this.groupData;
         this.imgSrc = this.$store.state.baseUrl + '/image/group' + this.groupData.gpImg;
-        this.form.updateGpImg = true
+        this.form.updateGpImg = false;
       } catch (err) {
         console.error(err)
       } 

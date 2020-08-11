@@ -13,7 +13,7 @@
     <v-form ref="form" @submit.prevent="submit">
       <v-container fluid>
         <v-row>
-          <v-col cols="12" sm="6">
+          <v-col cols="12" sm="12">
             <v-text-field
               v-model="form.gpNm"
               :rules="rules.groupName"
@@ -22,12 +22,23 @@
               required
             ></v-text-field>
           </v-col>
-          <v-col cols="12" sm="6">
+          <v-row align="center" justify="center">
+          <div class="d-flex justify-center">
+            <img
+              ref="imgpreview"
+              :src="imgSrc"
+              alt="그룹 이미지"
+              height="200px"
+            />
+          </div>
+          </v-row>
+          <v-col cols="12" sm="12">
             <v-file-input
               label="사진 넣기"
               v-model="form.gpImg"
               filled
               prepend-icon="mdi-camera"
+              @change="changeImg"
             ></v-file-input>
           </v-col>
           <v-col cols="12">
@@ -54,7 +65,7 @@
           </v-col>
           <v-col cols="12" sm="6">
           </v-col>
-          <v-col cols="12" sm="6">
+          <!-- <v-col cols="12" sm="6">
             <v-slider
               v-model="form.gpStTm"
               :rules="rules.time"
@@ -77,15 +88,16 @@
               max="23"
               thumb-label
             ></v-slider>
-          </v-col>
+          </v-col> -->
           <v-col cols="12">
             <v-checkbox
               v-model="form.gpPublic"
               color="green"
             >
               <template v-slot:label>
-                <div @click.stop="">
-                  스터디 공개, 비공개 여부
+                <div @click.stop="form.gpPublic=!form.gpPublic">
+                  <span v-if="form.gpPublic">공개 스터디</span>
+                  <span v-else>비공개 스터디(요청 수락시만 입장가능)</span>
                 </div>
               </template>
             </v-checkbox>
@@ -101,12 +113,13 @@
               multiple
               persistent-hint
               small-chips
+              @keypress="tagKey"
             >
               <template v-slot:no-data>
                 <v-list-item>
                   <v-list-item-content>
                     <v-list-item-title>
-                      No results matching "<strong>{{ search }}</strong>". Press <kbd>enter</kbd> to create a new one
+                      태그를 추가하시려면 <kbd>ENTER</kbd>키를 눌러주세요!
                     </v-list-item-title>
                   </v-list-item-content>
                 </v-list-item>
@@ -168,10 +181,11 @@ export default {
       terms: false,
       groupData,
       formData,
+      imgSrc : "",
     // 해쉬태그 데이터
-    tagItems: ['Gaming', 'Programming', 'Vue', 'Vuetify'],
+    tagItems: [],
     model: ['Vuetify'],
-      search: null,
+    search: null,
     watch: {
       model (val) {
         if (val.length > 5) {
@@ -191,6 +205,17 @@ export default {
   },
 
   methods: {
+    tagKey(e){
+      if(e.key == ' ' || e.key == ','){
+        if(!this.tags.includes(this.search))
+          this.tags.push(this.search);
+        this.search = "";
+      }
+    },
+    changeImg(e){
+      // const file = e.target.files[0]; // Get first index in files
+      this.$refs.imgpreview.src = e ? URL.createObjectURL(e) : "";
+    },
     resetForm () {
       this.form = Object.assign({}, this.form)
       this.$refs.form.reset()
@@ -207,7 +232,8 @@ export default {
       this.formData.append('gpIntro', this.form.gpIntro)
       this.formData.append('gpPublic', Boolean(this.form.gpPublic))
       this.formData.append('gpStTm', Number(this.form.gpStTm))
-      this.formData.append('gpTag', this.form.gpTag)
+      if(this.form.gpTag.length > 0)
+        this.formData.append('gpTag', this.form.gpTag)
     },
     async createGroup () {
       try {
@@ -224,7 +250,7 @@ export default {
       }
     },
     submit () {
-      console.log(this.tags)
+      this.form.gpTag = this.tags;
       this.snackbar = true
       this.inputGpCatNo()
       this.makeFormData()

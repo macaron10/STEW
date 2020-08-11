@@ -8,7 +8,7 @@
               v-if="group.gpImg"
               :src="$store.state.comm.baseUrl + '/image/group' + group.gpImg"
               alt="그룹 이미지"
-              width="100%"  
+              width="100%"
             />
             <img
               v-else
@@ -20,76 +20,62 @@
         </v-col>
       </v-row>
       <v-row>
-        <v-col cols="10" sm="5" offset="1">
-          <h2 class="mb-3">
+        <v-col cols="9" offset="1">
+          <h2 class="mb-3 d-inline">
             {{ group.gpNm }}
- </h2>
-          <h4>
-            <span v-if="group.gpPublic">
-              <v-icon>mdi-lock-open-outline</v-icon>공개
-            </span>
-            <span v-else>
-              <v-icon color="blue accent-1">mdi-lock-outline</v-icon>비공개
-            </span>
-            그룹 · 멤버 {{group.gpCurNum}}명
-          </h4>
-        </v-col>
-
-          <div class="text-center">
-            <h1 class="my-3">
-              {{ group.gpNm }}
-              <v-tooltip top>
-                <template v-slot:activator="{ on, attrs }">
-                  <v-btn
-                    icon
-                    v-bind="attrs"
-                    v-on="on"
-                    dark
-                    color="green darken-1"
-                    @click="readyEnterMeeting(group.gpNo)"
-                  >
-                    <v-icon>mdi-video</v-icon>
-                  </v-btn>
-                </template>
-                <span>캠 스터디 입장하기!</span>
-              </v-tooltip>
-            </h1>
-            <h4 class="mb-2">{{ group.gpIntro }}</h4>
-
             <v-btn
               icon
+              color="green darken-1"
               :to="{ name:'StudyUpdate', params: { id: id }}"
               v-if="group.gpMgrId===userId"
             >
               <v-icon>mdi-cogs</v-icon>
             </v-btn>
-         
-        <v-col>
-          <v-btn
-            @click="readyEnterMeeting(group.gpNo)"
-            color="green accent-1"
-            class="white--text font-weight-bold mx-3"
-          >스터디 캠 입장</v-btn>
-          <v-btn
-            color="red accent-1"
-            class="white--text font-weight-bold"
-            @click="quitGroup(group.gpNo)"
-          >탈퇴</v-btn>
+          </h2>
+        </v-col>
+        <v-col cols="1">
+          <v-tooltip top>
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn
+                icon
+                v-bind="attrs"
+                v-on="on"
+                dark
+                color="green darken-1"
+                @click="readyEnterMeeting(group.gpNo)"
+              >
+                <v-icon>mdi-video</v-icon>
+              </v-btn>
+            </template>
+            <span>캠 스터디 입장하기!</span>
+          </v-tooltip>
+        </v-col>
+        <v-col cols="10" offset="1" class="pt-0">
+        <h4>
+          <span v-if="group.gpPublic">
+            <v-icon>mdi-lock-open-outline</v-icon>공개
+          </span>
+          <span v-else>
+            <v-icon>mdi-lock-outline</v-icon>비공개
+          </span>
+          그룹 · 멤버 {{group.gpCurNum}}명
+        </h4>
         </v-col>
       </v-row>
+
       <v-row>
-        <v-col class="mb-6">
+        <v-col cols="10" offset="1" >
           <v-card>
             <v-tabs
-              v-model="tab"
-              background-color="blue lighten-1"
+              v-model="tab"              
               :grow="true"
-              dark
-              :icons-and-text="true"
+              :height=55
+              color="green"
+              :slider-size="3"
+              :elevation="0"
             >
               <v-tab v-for="item in items" :key="item.no">
-                {{ item.tab }}
-                <v-icon>{{ item.icon }}</v-icon>
+              <v-icon>{{ item.icon }}</v-icon><pre> </pre><span>{{ item.tab }}</span>
               </v-tab>
             </v-tabs>
 
@@ -108,6 +94,15 @@
               </v-tab-item>
             </v-tabs-items>
           </v-card>
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col>
+          <v-btn
+            color="red accent-1"
+            class="white--text font-weight-bold"
+            @click="quitGroup(group.gpNo)"
+          >탈퇴</v-btn>
         </v-col>
       </v-row>
     </v-container>
@@ -135,8 +130,8 @@ export default {
       tab: null,
       items: [
         { tab: "스터디 일정", icon: "mdi-calendar", no: "1" },
-        { tab: "스터디 그룹 멤버", icon: "mdi-account-group", no: "2" },
-        { tab: "이번달 공부 랭킹", icon: "mdi-timer", no: "3" }
+        { tab: "스터디 멤버", icon: "mdi-account-group", no: "2" },
+        { tab: "이번달 랭킹", icon: "mdi-timer", no: "3" }
       ],
       id: null,
       userId: 0
@@ -177,4 +172,11 @@ export default {
 </script>
 
 <style scoped>
+.v-item-group {
+  height: 688px;
+};
+.v-slide-group__next, .v-slide-group__prev {
+    flex: 0 0 0px;
+    min-width: 0px;
+}
 </style>

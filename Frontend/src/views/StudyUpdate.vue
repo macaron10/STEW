@@ -100,7 +100,7 @@
               small-chips
               @keypress="tagKey"
             >
-              <template v-slot:no-data>
+              <template v-slot:no-item>
                 <v-list-item>
                   <v-list-item-content>
                     <v-list-item-title>
@@ -192,13 +192,15 @@ export default {
     }
   },
   methods: {
-    tagKey(e) {
-      if (e.key == " " || e.key == ",") {
-        if (!this.tags.includes(this.search)) this.tags.push(this.search);
+    tagKey(e){
+      if(e.key == ' ' || e.key == ','){
+        const tag = this.search.replace(',','').replace(' ','');
+        if(tag.length>0 && !this.tags.includes(tag))
+          this.tags.push(tag);
         this.search = "";
       }
     },
-    changeImg(e) {
+    changeImg(e){
       this.form.updateGpImg = false;
       // console.log(e);
       // const file = e.target.files[0]; // Get first index in files
@@ -216,6 +218,7 @@ export default {
         if (ext == eachExts[i]) {
           this.form.updateGpImg = true;
           this.$refs.imgpreview.src = e ? URL.createObjectURL(e) : "";
+      this.$refs.imgpreview.src = e ? URL.createObjectURL(e) : this.gpImgDefault;
         }
       }
     },
@@ -227,9 +230,10 @@ export default {
         this.groupData = JSON.parse(res.data.object).group;
         this.groupData = JSON.parse(this.groupData);
         this.form = this.groupData;
-        this.imgSrc = baseUrl + "/image/group" + this.groupData.gpImg;
-        this.form.gpImg = { size: 0, length: 1 };
-        this.tags = this.groupData.gpTag;
+        this.imgSrc = this.groupData.gpImg != null? baseUrl + '/image/group' + this.groupData.gpImg : this.gpImgDefault;
+        this.form.updateGpImg = false
+        if(this.groupData.gpTag != null)
+          this.tags = this.groupData.gpTag;
         this.form.updateGpImg = false;
       } catch (err) {
         console.error(err);
@@ -242,16 +246,17 @@ export default {
     goToBefore() {
       this.$router.go(-1);
     },
-    makeFormData() {
-      this.formData.append("gpNm", this.form.gpNm);
-      this.formData.append("gpCatNo", Number(this.form.gpCatNo));
-      if (this.form.updateGpImg) this.formData.append("gpImg", this.form.gpImg);
-      this.formData.append("gpIntro", this.form.gpIntro);
-      this.formData.append("gpPublic", Boolean(this.form.gpPublic));
-      this.formData.append("gpNo", this.id);
-      this.formData.append("updateGpImg", this.form.updateGpImg);
-      // if (this.form.gpTag.length > 0){
-      // this.formData.append("gpTag", this.form.gpTag)}
+    makeFormData () {
+    this.formData.append('gpNm', this.form.gpNm)
+    this.formData.append('gpCatNo', Number(this.form.gpCatNo))
+    if(this.form.updateGpImg)
+      this.formData.append('gpImg', this.form.gpImg)
+    this.formData.append('gpIntro', this.form.gpIntro)
+    this.formData.append('gpPublic', Boolean(this.form.gpPublic))
+    if(this.form.gpTag.length > 0)
+      this.formData.append('gpTag', this.form.gpTag)
+    this.formData.append('gpNo', this.id)
+    this.formData.append('updateGpImg',this.form.updateGpImg)
     },
     async updateGroup() {
       try {
@@ -273,9 +278,9 @@ export default {
     inputGpCatNo() {
       this.form.gpCatNo = this.categoryObj[this.form.gpCatNo];
     },
-    submit() {
+    submit () {
       this.form.gpTag = this.tags;
-      this.snackbar = true;
+      this.snackbar = true
       // this.inputGpCatNo()
       this.makeFormData();
       this.updateGroup();

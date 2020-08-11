@@ -90,7 +90,7 @@
               multiple
               persistent-hint
               small-chips
-              @keypress="tagKey"
+              @keyup="tagKey"
             >
               <template v-slot:no-data>
                 <v-list-item>
@@ -155,20 +155,22 @@ export default {
       terms: false,
       groupData,
       formData,
-      imgSrc: this.$store.state.comm.baseUrl + "/image/group/default.jpg",
-      // 해쉬태그 데이터
-      tagItems: [],
-      model: [],
-      search: null,
-      watch: {
-        model(val) {
-          if (val.length > 5) {
-            this.$nextTick(() => this.model.pop());
-          }
+      
+      gpImgDefault : this.$store.state.comm.baseUrl + "/image/group/default.png",
+      imgSrc : this.$store.state.comm.baseUrl + "/image/group/default.png",
+    // 해쉬태그 데이터
+    tagItems: [],
+    model: [],
+    search: null,
+    }
+  },
+    watch: {
+      model (val) {
+        if (val.length > 5) {
+          this.$nextTick(() => this.model.pop())
         }
       }
-    };
-  },
+    },
   computed: {
     formIsValid() {
       return this.form.gpNm && this.form.gpCatNo && this.correctExt;
@@ -176,9 +178,11 @@ export default {
   },
 
   methods: {
-    tagKey(e) {
-      if (e.key == " " || e.key == ",") {
-        if (!this.tags.includes(this.search)) this.tags.push(this.search);
+    tagKey(e){
+      if(e.key == ' ' || e.key == ','){
+        const tag = this.search.replace(',','').replace(' ','')
+        if(tag.length>0 && !this.tags.includes(tag))
+          this.tags.push(tag);
         this.search = "";
       }
     },
@@ -203,6 +207,7 @@ export default {
           this.correctExt = false;
         }
       }
+      this.$refs.imgpreview.src = e ? URL.createObjectURL(e) : this.gpImgDefault;
     },
     resetForm() {
       this.form = Object.assign({}, this.form);

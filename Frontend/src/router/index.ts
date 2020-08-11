@@ -15,6 +15,7 @@ import Guide from '../views/Guide.vue';
 import UserDetail from '../views/user/UserDetail.vue';
 import Signup from "../views/user/Signup.vue";
 import userPage from "../views/user/userPage.vue";
+import UserTimer from "../views/user/UserTimer.vue";
 // MeetingRoom
 import MeetingRoom from "../views/MeetingRoom.vue";
 import ReadyMeeting from "../views/ReadyMeeting.vue";
@@ -108,6 +109,11 @@ const routes: Array<RouteConfig> = [
     path: "/user/myschedule",
     name: "MySchedule",
     component: MySchedule
+  },
+  {
+    path: "/user/UserTimer",
+    name: "UserTimer",
+    component: UserTimer
   }
 ];
 

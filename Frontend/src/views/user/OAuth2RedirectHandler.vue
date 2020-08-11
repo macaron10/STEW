@@ -7,7 +7,7 @@
 </template>
 
 <script>
-import {ACCESS_TOKEN_STRING, REFRESH_TOKEN_STRING, TOKEN_PREFIX} from '../constants/index';
+import {ACCESS_TOKEN_STRING, REFRESH_TOKEN_STRING, TOKEN_PREFIX} from '../../constants';
 
 export default {
     created(){
@@ -32,7 +32,7 @@ export default {
             return regex.exec(window.location.hash)[1];
         },
         loginSuccess(userInfo){
-            this.$store.commit('loginSuccess', userInfo)
+            this.$store.commit('auth/loginSuccess', userInfo)
         }
     },
 }

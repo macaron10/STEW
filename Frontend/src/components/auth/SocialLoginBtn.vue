@@ -23,20 +23,18 @@
 
 <script>
 import axios from "axios";
-import * as Constants from "../../constants/index";
+import * as Constants from "../../constants";
 
 export default {
   created(){
     const provider = this.$props.provider;
-    console.log(Constants.NAVER_LOGO_URL);
+
     if(provider == 'Kakao') this.logoUrl = Constants.KAKAO_LOGO_URL;
     else if(provider == 'Naver') this.logoUrl = Constants.NAVER_LOGO_URL;
     else if(provider == 'Google') this.logoUrl = Constants.GOOGLE_LOGO_URL;
     else if(provider == 'Facebook') this.logoUrl = Constants.FACEBOOK_LOGO_URL;
 
     this.btnText = 'Sign in with ' + provider;
-    console.log(this.logoUrl)
-    console.log(this.btnText)
   },
   data(){
     return {
@@ -58,7 +56,7 @@ export default {
         this.signInWindow = window.open(
           Constants.getCustomAuthUrl(this.provider.toLowerCase()),
           '_blank',
-          "width=330, height=450",
+          "width=450, height=600",
         )
         this.signInWindow.onunload = this.childWindowUnloadEventHandler;
       }

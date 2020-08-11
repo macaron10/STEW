@@ -21,8 +21,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Entity
-//@Table(uniqueConstraints = @UniqueConstraint(columnNames = { "user_email", "type" }))
-//alter table user add unique (user_email, type);
+@Table(uniqueConstraints = @UniqueConstraint(columnNames = { "userEmail", "type" }))
 public class User extends TimeEntity {
 
 	@Builder

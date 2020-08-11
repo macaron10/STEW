@@ -54,6 +54,9 @@ public class CustomOAuth2AuthenticationSuccessHandler implements AuthenticationS
 		}else if(provider.equals("google")) {
 			userEmail = (String) userAttributes.get("email");
 			userNm = (String) userAttributes.get("name");
+		}else if(provider.equals("facebook")) {
+			userEmail = (String) userAttributes.get("email");
+			userNm = (String) userAttributes.get("name");
 		}
 		
 		User user = userService.findByUserEmailAndType(userEmail, provider);

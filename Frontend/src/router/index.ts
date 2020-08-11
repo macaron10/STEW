@@ -15,10 +15,12 @@ import Guide from '../views/Guide.vue';
 import UserDetail from '../views/user/UserDetail.vue';
 import Signup from "../views/user/Signup.vue";
 import userPage from "../views/user/userPage.vue";
+import OAuth2RedirectHandler from "../views/user/OAuth2RedirectHandler.vue";
 // MeetingRoom
 import MeetingRoom from "../views/MeetingRoom.vue";
 import ReadyMeeting from "../views/ReadyMeeting.vue";
 import MySchedule from "../views/MySchedule.vue"
+
 
 Vue.use(VueRouter);
 
@@ -86,6 +88,10 @@ const routes: Array<RouteConfig> = [
     path: "/user/signup",
     name: "Signup",
     component: Signup
+  },
+  {
+    path: "/oauth2",
+    component: OAuth2RedirectHandler
   },
   {
     path: "/ReadyMeeting/:id",

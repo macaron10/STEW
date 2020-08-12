@@ -13,7 +13,6 @@
           <v-btn v-else class="mx-1" fab outlined dark color="#FB8C00" @click="unmute">
             <v-icon dark>mdi-volume-off</v-icon>
           </v-btn>
-          
           <v-btn v-if="options.video" class="mx-1" fab dark color="#7CB342" @click="offVideo">
             <v-icon dark>mdi-video</v-icon>
           </v-btn>
@@ -26,7 +25,6 @@
         </v-row>
       </v-col>
       <v-col cols="3">
-        <Timer />
         <Chat :roomid="roomid"/>
       </v-col>
     </v-row>
@@ -37,7 +35,7 @@
 <script>
 import StudyDetailVue from "./StudyDetail.vue";
 import RoomNavbar from "@/components/room/RoomNavbar.vue";
-import Timer from "@/components/temp/Timer.vue";
+
 // import Chatting from "@/components/room/Chatting.vue";
 import Chat from "@/components/chat/Chat.vue";
 import { log } from "util";
@@ -58,7 +56,6 @@ export default {
   },
   components: {
     RoomNavbar,
-    Timer,
     Chat,
   }, 
   created() {

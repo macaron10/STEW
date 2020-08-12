@@ -8,28 +8,33 @@
     fixed
   >
     <v-app-bar-nav-icon @click.stop="$store.commit('drawerOnOff')"></v-app-bar-nav-icon>
+  <v-col cols="9">
     <v-toolbar-title
       style="width: 300px"
       class=""
     >
-      <v-btn
-      icon
-      large
-      :to="{ name: 'Main' }"
-      
-    >
-      <v-icon>mdi-home</v-icon>
-    </v-btn>
+    <v-row>
+    <h3>[]{{ group.gpNm }}</h3><div class="mt-1 body-1 white--text"><v-icon class="pl-5 pr-1" color="white">mdi-account</v-icon>{{ group.gpCurNum }}</div>
+    </v-row>
     </v-toolbar-title>
+  </v-col>
+  <v-col cols="3">
+    <Timer />
+  </v-col>
   </v-app-bar>
 </template>
 
 <script>
 import axios from 'axios';
 import { mapState, mapActions, mapMutations} from 'vuex';
+import Timer from "@/components/temp/Timer.vue";
+
 
 export default {
     name: 'RoomNavbar',
+    components: {
+      Timer,
+    }, 
     computed: {
       ...mapState('auth', [ 
         "userInfo",
@@ -41,19 +46,32 @@ export default {
         "signIn",
         "logout"
         ]),
+    async getDetail() {
+      const apiUrl = "/study/user/" + this.id;
+      try {
+        const res = await axios.get(apiUrl);
+        this.group = JSON.parse(res.data.object).group;
+        this.group = JSON.parse(this.group);
+        this.membersData = JSON.parse(res.data.object).joinList;
+        console.log(this.group,'그룹데이터!')
+      } catch (err) {
+        console.error(err);
+      }
+    },
     },
     data () {
       return {
-        wordForSearching: "",
-        signinInDialog: false,
-        user: {
-          userEmail: "",
-          userPw: "",
-        },
-        model: 1,
-        show: false,
-      }
-    },
+      group: [],
+      membersData: [],
+      id: null,
+      userId: 0
+    };
+  },
+  mounted() {
+    this.id = this.$route.params.id;
+    this.userId = this.$store.state.auth.userInfo.userId;
+    this.getDetail();
+  },
   beforeDestroy() {
     this.$store.state.comm.onMeeting = true;
   }

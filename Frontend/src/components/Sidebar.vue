@@ -1,79 +1,57 @@
 <template>
   <v-navigation-drawer
-    v-model="$store.state.drawer"
+    v-model="$store.state.comm.drawer"
     :clipped="$vuetify.breakpoint.lgAndUp"
     :mini-variant="true"
     :expandOnHover="true"
     app
-    color="blue"
-    class="theme-dark"
-    style="background-image: linear-gradient(180deg, rgba(0, 0, 0, 0), rgba(0, 0, 255, 0.5))"
+    color="white"
+    dark class="blue lighten-2"
   >
-    <v-list dense>
+    <!-- style="background-image: linear-gradient(180deg, rgba(255, 255, 255, 1), rgba(0, 0, 0, 0.1))" -->
+    <v-list dense class="pt-0">
       <template v-for="item in items">
-        <v-row
-          v-if="item.heading"
-          :key="item.heading"
-          align="center"
-        >
+        <v-row v-if="item.heading" :key="item.heading" align="center">
           <v-col cols="6">
-            <v-subheader v-if="item.heading">
-              {{ item.heading }}
-            </v-subheader>
+            <v-subheader v-if="item.heading">{{ item.heading }}</v-subheader>
           </v-col>
-          <v-col
-            cols="6"
-            class="text-center"
-          >
-            <a
-              href="#!"
-              class="body-2 black--text"
-            >EDIT</a>
+          <v-col cols="6" class="text-center">
+            <a href="#!" class="body-2 black--text">EDIT</a>
           </v-col>
         </v-row>
         <v-list-group
-          v-else-if="item.children"
+          v-else-if="item.children&&(isLogin||item.needLogin)"
           :key="item.text"
           v-model="item.model"
           :prepend-icon="item.model ? item.icon : item['icon-alt']"
-          append-icon=""
+          append-icon light
         >
           <template v-slot:activator>
             <v-list-item-content>
-              <v-list-item-title>
-                {{ item.text }}
-              </v-list-item-title>
+              <v-list-item-title>{{ item.text }}</v-list-item-title>
             </v-list-item-content>
           </template>
-          <v-list-item
-            v-for="(child, i) in item.children"
-            :key="i"
-            link
-          >
-            <v-list-item-action v-if="child.icon">
-              <v-icon>{{ child.icon }}</v-icon>
-            </v-list-item-action>
-            <v-list-item-content>
+          <v-list-item v-for="(child, i) in item.children" :key="i" link>
+            <v-list-item-action v-if="child.icon" ></v-list-item-action>
+            <v-list-item-content @click="goToStudy(child.value)"  class="ml-5">
               <v-list-item-title>
                 {{ child.text }}
+                <v-icon v-if="child.groupManager" color="amber" class="ml-2">mdi-crown</v-icon>
               </v-list-item-title>
             </v-list-item-content>
           </v-list-item>
         </v-list-group>
         <v-list-item
-          v-else
+          v-else-if="isLogin||item.needLogin"
           :key="item.text"
           link
           :to="{ name: item.page }"
         >
-          <v-list-item-action
-          >
+          <v-list-item-action>
             <v-icon>{{ item.icon }}</v-icon>
           </v-list-item-action>
           <v-list-item-content>
-            <v-list-item-title>
-              {{ item.text }}
-            </v-list-item-title>
+            <v-list-item-title>{{ item.text }}</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
       </template>
@@ -82,45 +60,87 @@
 </template>
 
 <script>
+import axios from "axios";
 export default {
-    name: 'Sidebar',
-    data: () => ({
-      items: [
-      { icon: 'mdi-home', text: 'HOME', page: 'Home' },
-      { icon: 'mdi-contacts', text: 'My STudy', page: 'StudyDetail' },
-      { icon: 'mdi-plus', text: 'Study 만들기', page: 'StudyCreate' },
-      { icon: 'mdi-message', text: 'Contact Us', page: 'Contact' },
-      { icon: 'mdi-help-circle', text: '가이드', page: 'Guide' },
-      { icon: 'mdi-keyboard', text: '사이드바 닫기', page:'Guide'},
+  name: "Sidebar",
+  data: () => ({
+    items: [
+      { icon: "mdi-home", text: "HOME", page: "Home", needLogin: true },
       {
-        icon: 'mdi-chevron-up',
-        'icon-alt': 'mdi-chevron-down',
-        text: '라벨(나중에 필요하면 쓸 것)',
-        model: true,
-        children: [
-          { icon: 'mdi-plus', text: 'Create label' },
-        ],
+        icon: "mdi-plus",
+        text: "스터디 만들기",
+        page: "StudyCreate",
+        needLogin: false
+      },
+      { icon: "mdi-pen", text: "전체 스터디", page: "Main", needLogin: true },
+      {
+        icon: "mdi-help-circle",
+        text: "가이드",
+        page: "Guide",
+        needLogin: true
       },
       {
-        icon: 'mdi-chevron-up',
-        'icon-alt': 'mdi-chevron-down',
-        text: '추가(나중에 필요하면 쓸 것)',
+        icon: "mdi-chevron-up",
+        "icon-alt": "mdi-chevron-down",
+        text: "내 스터디",
         model: false,
-        children: [
-          { text: 'Import' },
-          { text: 'Export' },
-          { text: 'Print' },
-          { text: 'Undo changes' },
-          { text: 'Other contacts' },
-        ],
-      },
-    ],
-    }),
-    methods: {
+        children: [],
+        needLogin: false
+      }
+    ]
+  }),
+  computed: {
+    isLogin() {
+      return this.$store.state.auth.isLogin;
     }
-}
+  },
+  mounted() {
+    this.getStudyList();
+  },
+  methods: {
+    goToStudy(no) {
+      this.$router.push({ name: "StudyDetail", params: { id: no } });
+      this.$router.go();
+    },
+    getStudyList() {
+      if (!this.isLogin) {
+        return;
+      }
+      const myStudyList = [];
+      axios
+        .get("/study/user/my")
+        .then(res => {
+          for (const myStudy of res.data.object) {
+            myStudyList.push({
+              text: myStudy.gpNm,
+              groupManager:
+                this.$store.state.auth.userInfo.userId === myStudy.gpMgrId
+                  ? true
+                  : false,
+              value: myStudy.gpNo
+            });
+          }
+          this.items[this.items.length - 1].children = myStudyList;
+        })
+        .catch(err => console.log(err));
+    }
+  }
+};
 </script>
 
 <style>
+  
+.intro {
+  display: flex;
+  justify-content: center;
+  margin: 4rem 0;
+}
 
+a {
+  color: inherit;
+}
+
+.text-center {
+  text-align: center;
+}
 </style>

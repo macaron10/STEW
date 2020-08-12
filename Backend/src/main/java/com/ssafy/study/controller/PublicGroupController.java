@@ -2,24 +2,32 @@ package com.ssafy.study.controller;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDateTime;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.simp.SimpMessageSendingOperations;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.google.gson.Gson;
+import com.ssafy.study.chat.model.ChatMessage;
 import com.ssafy.study.common.model.BasicResponse;
 import com.ssafy.study.common.util.FileUtils;
 import com.ssafy.study.group.model.dto.GroupSearchDto;
 import com.ssafy.study.group.service.GroupService;
 
 import io.swagger.annotations.ApiOperation;
+import lombok.RequiredArgsConstructor;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/study")
 public class PublicGroupController {
 	@Autowired
@@ -29,6 +37,8 @@ public class PublicGroupController {
 	private FileUtils fileUtil;
 
 	private final String fileBaseUrl = "C:\\Users\\multicampus\\Desktop\\group_thumb";
+
+	private final SimpMessagingTemplate template2;
 
 	@GetMapping("/all")
 	@ApiOperation("전체 스터디 ")
@@ -41,37 +51,12 @@ public class PublicGroupController {
 		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 
-	@GetMapping(value = "/thumb/{year}/{month}/{date}/{file}", produces = MediaType.IMAGE_JPEG_VALUE)
-	@ApiOperation("그룹의 썸네일 출력 <img src='http://localhost:8399/api/study/thumb/{gpImg}'>")
-	public byte[] showThumbnail(@PathVariable String year, @PathVariable String month, @PathVariable String date,
-			@PathVariable String file) {
-		String path = File.separator + year + File.separator + month + File.separator + date + File.separator + file;
-		byte[] img = {};
-		try {
-			img = fileUtil.downloadFile(fileBaseUrl, path);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return img;
-	}
-
-	@GetMapping(value = "/thumb/{path}", produces = MediaType.IMAGE_JPEG_VALUE)
-	@ApiOperation("그룹의 썸네일 출력 <img src='http://localhost:8399/api/study/thumb/{gpImg}'>")
-	public byte[] showThumbnailSinglePath(@PathVariable String path) {
-		byte[] img = {};
-		try {
-			img = fileUtil.downloadFile(fileBaseUrl, File.separator + path);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return img;
-	}
-
 	@GetMapping("/search")
 	@ApiOperation("스터디 검색")
-	public Object searchStudy(GroupSearchDto groupSearch) {
+	public Object searchStudy(String keyword) {
 		BasicResponse result = new BasicResponse();
 
+		GroupSearchDto groupSearch = new GroupSearchDto(keyword.split(" "));
 		result.object = groupService.searchGroups(groupSearch);
 		result.msg = "success";
 		result.status = true;
@@ -123,8 +108,5 @@ public class PublicGroupController {
 		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 
-	@GetMapping("/test")
-	public Object test() {
-		return groupService.selectGroupMemberList(1);
-	}
+
 }

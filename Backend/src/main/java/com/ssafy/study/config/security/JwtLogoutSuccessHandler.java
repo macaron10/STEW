@@ -26,11 +26,6 @@ public class JwtLogoutSuccessHandler extends HttpStatusReturningLogoutSuccessHan
 		
 		String accessToken = request.getHeader(JwtProperties.HEADER_STRING).replace(JwtProperties.TOKEN_PREFIX, "");
 		
-//		String accessToken = null;
-		
-//		for(Cookie c : request.getCookies()) 
-//			if(c.getName().equals("accessToken")) accessToken = c.getValue();
-		
 		long remains = JwtUtil.getExpiringTime(accessToken) - System.currentTimeMillis();
 		
 //		BlackListing
@@ -38,13 +33,7 @@ public class JwtLogoutSuccessHandler extends HttpStatusReturningLogoutSuccessHan
 		redisTemplate.expire(accessToken, remains, TimeUnit.MILLISECONDS);
 		
 //		Delete RefreshToken
-		redisTemplate.delete(JwtUtil.getUsernameFromToken(accessToken));
+		redisTemplate.delete(JwtUtil.getRefreshKey(accessToken));
 		
-//		Delete Cookie
-//		Cookie c = new Cookie("accessToken", null);
-//		c.setPath("/api");
-//		c.setMaxAge(0);
-//		
-//		response.addCookie(c);
 	}
 }

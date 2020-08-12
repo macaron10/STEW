@@ -11,11 +11,14 @@ import jwt from "jsonwebtoken";
 Vue.config.productionTip = false;
 // Vue.prototype.$http = axios
 
-axios.defaults.baseURL = "https://i3b103.p.ssafy.io/api"
+axios.defaults.baseURL = "http://localhost:8399/api" // 개발용
+// axios.defaults.baseURL = "https://i3b103.p.ssafy.io/api" // 배포용
 
 axios.interceptors.request.use(config => {
-  const token = store.state.userInfo.accessToken;
+  const token = store.getters['auth/getUserInfo'].accessToken;
+  
   if (token != "") {
+    const tokenInfo: any = jwt.decode(store.getters['auth/getUserInfo'].accessToken.replace("Bearer ", ""));
     config.headers.Authorization = token;
   }
   return config;
@@ -23,8 +26,8 @@ axios.interceptors.request.use(config => {
 
 axios.interceptors.response.use(
   function (res) {
-    // console.log("res 응답");
-    // console.log(res);
+    console.log("res 응답");
+    console.log(res);
     return res;
   },
 
@@ -36,30 +39,33 @@ axios.interceptors.response.use(
     if (err.response.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
       
-      const refreshInfo: any = jwt.decode(store.state.userInfo.refreshToken.replace("Bearer ", ""));
+      const refreshInfo: any = jwt.decode(store.getters['auth/getUserInfo'].refreshToken.replace("Bearer ", ""));
       
       if (Date.now() - refreshInfo.exp * 1000 < 0) {
         console.log("토큰 재발급 고고");
         
-        store.dispatch('tokenRefresh').then(() => {
+        store.dispatch('auth/tokenRefresh').then(() => {
           console.log("토큰 재발급 완료");
           
-          originalRequest.headers.Authorization = store.state.userInfo.accessToken;
-          return axios(originalRequest);
+          originalRequest.headers.Authorization = store.getters['auth/getUserInfo'].accessToken;
+          console.log(originalRequest);
+          return Promise.resolve(originalRequest);
         });
       } else {
         console.log("로그아웃 해야됨");
         
-        store.commit("logoutSuccess");
+        store.commit("auth/logoutSuccess");
         return Promise.reject(err);
       }
     }
   }
 )
 
-new Vue({
+const v = new Vue({
   router,
   store,
   vuetify,
   render: h => h(App)
 }).$mount("#app");
+
+(window as any).app = v;

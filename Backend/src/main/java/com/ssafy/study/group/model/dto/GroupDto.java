@@ -1,5 +1,6 @@
 package com.ssafy.study.group.model.dto;
 
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
@@ -27,8 +28,6 @@ public class GroupDto {
 	private String gpNm;// 스터디 이름
 	private long gpMgrId;// 팀장아이디
 	private String gpIntro;// 소개
-	private int gpStTm;// 선호 시작시간
-	private int gpEndTm;// 선호 종료시간
 	private boolean gpPublic;// 공개여부
 	private String gpImg;
 	private int gpMaxNum;// 최대인원
@@ -39,12 +38,10 @@ public class GroupDto {
 
 	public GroupDto(Group group) {
 		this.gpNo = group.getGpNo();
-		this.gpCatNo = group.getGpCat().getGpCatNo();
+		this.gpCatNo =  group.getGpCat().getGpCatNo();
 		this.gpNm = group.getGpNm();
 		this.gpMgrId = group.getGpMgrId();
 		this.gpIntro = group.getGpIntro();
-		this.gpStTm = group.getGpStTm();
-		this.gpEndTm = group.getGpEndTm();
 		this.gpPublic = group.isGpPublic();
 		this.gpMaxNum = group.getGpMaxNum();
 		this.gpCurNum = group.getGpCurNum();
@@ -62,19 +59,21 @@ public class GroupDto {
 		this.gpNm = group.getGpNm();
 		this.gpMgrId = group.getGpMgrId();
 		this.gpIntro = group.getGpIntro();
-		this.gpStTm = group.getGpStTm();
-		this.gpEndTm = group.getGpEndTm();
 		this.gpPublic = group.isGpPublic();
 		this.gpMaxNum = group.getGpMaxNum();
 		this.gpCurNum = group.getGpCurNum();
 		this.gpImg = group.getGpImg();
-		
+
 		this.regDate = group.getRegDate();
 
 		if (group.getGpTag() != null)
 			this.gpTag = Arrays.asList(group.getGpTag().split(","));
 
 		this.gpCatNm = gpCatNm;
+	}
+
+	public GroupDto(long gpNo) {
+		this.gpNo = gpNo;
 	}
 
 }

@@ -1,15 +1,24 @@
 <template>
   <div id="clock">
-    <span class="time">{{ time }}</span>
     <div class="btn-container">
-      <v-btn v-if="!running" @click="start"><span v-if="timeBegan">재</span>시작</v-btn>
-      <v-btn v-if="running" @click="stop">일시정지</v-btn>
-      <v-btn v-if="timeBegan" @click="end">종료</v-btn>
+    <v-icon>mdi-timer</v-icon>
+    <span class="ml-3 mr-2 time">오늘 공부 시간 : {{ time }}</span>
+      <v-btn class="ml-4" text icon color="blue darken-2" v-if="!running" @click="start">
+        <v-icon>mdi-play</v-icon>
+      </v-btn>
+      <v-btn class="ml-4" text icon color="grey darken-2" v-if="running" @click="stop">
+        <v-icon>mdi-pause</v-icon>
+      </v-btn>
+      <v-btn class="" text icon color="red lighten-2" v-if="timeBegan" @click="end">
+        <v-icon>mdi-stop</v-icon>
+      </v-btn>
     </div>
   </div>
 </template>
 
 <script>
+import axios from 'axios';
+import { stringify } from 'querystring';
 // @ is an alias to /src
 export default {
   name: "template",
@@ -23,6 +32,19 @@ export default {
       started: null,
       running: false
     };
+  },
+  computed: {
+    secondTime() {
+      const hours = Number(this.time.slice(0, 2))
+      console.log(hours)
+      const minutes = Number(this.time.slice(3, 5))
+      console.log(minutes)
+      const seconds = Number(this.time.slice(7, 8))
+      console.log(seconds)
+      return hours*3600 + minutes*60 + seconds
+
+    }
+  
   },
   methods: {
     start() {
@@ -47,8 +69,18 @@ export default {
       clearInterval(this.started);
     },
     end() {
-      //DB에 보내는 axios
-      this.reset()
+      const answer = confirm("현재까지의 공부시간이 누적되고 초기화 됩니다. 초기화 하시겠습니까?")
+      if (answer) {
+        const config = {
+          gpNo : Number(this.$route.params.id),
+          tmAcmlTime : this.secondTime
+        }
+        axios
+          .post("/timer", stringify(config))
+          .then(res => console.log(res))
+          .catch(err => console.log(err))
+        this.reset()
+      }
     },
     clockRunning() {
       const currentTime = new Date(),

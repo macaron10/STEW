@@ -89,11 +89,11 @@ public class GroupServiceImpl implements GroupService {
 	}
 
 	@Override
-	public void requestJoinGroup(long userId, RequestGroupJoinDto joinReq) {
+	public GroupReq requestJoinGroup(long userId, RequestGroupJoinDto joinReq) {
 		GroupReq req = joinReq.toEntity();
 		req.setUser(new User(userId));
 
-		reqRepo.save(req);
+		return reqRepo.save(req);
 	}
 
 	@Override
@@ -128,6 +128,11 @@ public class GroupServiceImpl implements GroupService {
 	@Override
 	public boolean ckGroupJoin(long gpNo, long userId) {
 		return joinRepo.ckGroupJoin(gpNo, userId);
+	}
+
+	@Override
+	public boolean ckGroupReq(long gpNo, long userId) {
+		return reqRepo.ckGroupReq(gpNo, userId);
 	}
 
 	@Override
@@ -168,13 +173,18 @@ public class GroupServiceImpl implements GroupService {
 	}
 
 	@Override
-	public GroupReqDto selectGroupReqByReqnNo(long gpReqNo) {
-		return new GroupReqDto(reqRepo.findByGpReqNo(gpReqNo));
+	public GroupReqDto selectGroupReqByReqNo(long gpReqNo) {
+		return reqRepo.findGpReqByReqNo(gpReqNo);
 	}
 
 	@Override
 	public List<GroupReqDto> selectGroupReq(long userId) {
 		return reqRepo.findAllMgrsGpReq(userId);
+	}
+
+	@Override
+	public List<GroupReqDto> selectGroupReqUser(long userId) {
+		return reqRepo.findUsersReq(userId);
 	}
 
 	@Override

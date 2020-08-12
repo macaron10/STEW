@@ -1,0 +1,25 @@
+spring:
+  h2:
+    console:
+      enabled: true
+      path: /console
+  thymeleaf:
+    cache: false
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: 535466550101-20c5d4vrimd27pn1o5pv8hcu2d8443kh.apps.googleusercontent.com
+            client-secret: nnX1rRmrEeDa8fTbPxIBnD_n
+          facebook:
+            client-id: 310168230078679
+            client-secret: 61bc510680c095a346ef54fce602e8ca
+custom:
+  oauth2:
+    kakao:
+      client-id: d2a6c95bf8150a6bd64d03b08ae15d3f
+      client-secret: 796k9ibwcc8e0Pnhn8y5gjTBUoJb9mfh
+    naver:
+      client-id: 8J0OSGAECZYpDqS0CeDW
+      client-secret: ZqU17OJo7h

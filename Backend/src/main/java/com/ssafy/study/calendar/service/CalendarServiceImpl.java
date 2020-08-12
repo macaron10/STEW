@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.ssafy.study.calendar.model.CalEvent;
-import com.ssafy.study.calendar.model.CalEvtDto.ResCalEvt;
+import com.ssafy.study.calendar.model.ResCalEvt;
 import com.ssafy.study.calendar.repository.CalendarRepository;
 
 @Service
@@ -51,5 +51,10 @@ public class CalendarServiceImpl implements CalendarService {
 	public List<ResCalEvt> selectGroupCalEvt(long userId, int year, int month) {
 		return calRepo.findGroupCalEvt(userId, year, month).stream().map(c -> new ResCalEvt(c))
 				.collect(Collectors.toList());
+	}
+
+	@Override
+	public List<ResCalEvt> selectGroupCalEvtByGpNo(long gpNo, int year, int month) {
+		return calRepo.findGroupCalEvtByGpNo(gpNo, year, month);
 	}
 }

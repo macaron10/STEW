@@ -1,5 +1,6 @@
 <template>
   <v-app-bar
+    v-if="$store.state.sg.onMeeting"
     :clipped-left="$vuetify.breakpoint.lgAndUp"
     app
     color="#FFFFFF"
@@ -18,7 +19,7 @@
       
     >
         <v-img
-          :src="$store.state.baseUrl + '/main/stew.png'"
+          :src="$store.state.comm.baseUrl + '/image/main/stew.png'"
           alt="Vuetify"
           :aspect-ratio="200"
           :min-height="30"
@@ -36,20 +37,20 @@
       label="Search"
       class="hidden-sm-and-down"
       v-model="wordForSearching"
-      @keypress.enter="searchingWord(wordForSearching)"
+      @keypress.enter="fetchGroups"
     ></v-text-field>
     <v-spacer></v-spacer>
     <v-btn 
       icon
       v-if="!isLogin"
-      @click.stop= "siginInDialog = true"
+      @click.stop= "signinInDialog = true"
       color="blue lighten-2"
     >
       <v-icon>mdi-account</v-icon>
     </v-btn>
     <!-- 로그인 모달 창 -->
     <v-dialog
-      v-model="siginInDialog"
+      v-model="signinInDialog"
       max-width="350"
     >
       <v-card>
@@ -73,8 +74,14 @@
           <v-btn 
             large color="primary" 
             :block=true 
-            @click="signIn({'userEmail': user.userEmail, 'userPw':user.userPw}), siginInDialog = false"
+            @click="signInHandler()"
           >로그인</v-btn>
+
+          <v-spacer></v-spacer>
+          <social-login-btn provider="Kakao"></social-login-btn>
+          <social-login-btn provider="Naver"></social-login-btn>
+          <social-login-btn provider="Google"></social-login-btn>
+          <social-login-btn provider="Facebook"></social-login-btn>
         </v-col>
 
         <v-card-actions>
@@ -83,7 +90,7 @@
           <v-btn
             color="gray"
             text small
-            @click="siginInDialog = false"
+            @click="signinInDialog = false"
           >
             아이디/비밀번호 찾기
           </v-btn>
@@ -92,7 +99,7 @@
             :to="{ name: 'Signup' }"
             color="light gray"
             text small
-            @click="siginInDialog = false"
+            @click="signinInDialog = false"
           >
             회원가입
           </v-btn>
@@ -106,9 +113,6 @@
 
 
     <!-- 알림 메뉴 -->
-<!-- 임시 -->
-    <v-btn v-if="isLogin" @click="getReqs()" color="blue lighten-2">알림불러오기</v-btn>
-<!-- 임시 -->
     <v-menu
       transition="slide-y-transition"
       bottom
@@ -148,7 +152,16 @@
                   >
                 </v-avatar>
             </v-list-item-icon>
-            <v-list-item-content>
+            <!-- 내의 신청 -->
+            <v-list-item-content v-if="userInfo.userId===groupsReq.user.userId" >
+              '{{ groupsReq.gp.gpNm }}'에 가입을 신청했습니다.(대기중)
+            <br>
+            <div>
+              전송 메세지 : "{{ groupsReq.gpReqMsg }}"
+            </div>
+            </v-list-item-content>
+            <!-- 다른 유저에게서 온 신청 -->
+            <v-list-item-content v-else>
               '{{ groupsReq.user.userNm }}' 님이 '{{ groupsReq.gp.gpNm }}'에 가입을 신청했습니다.
               <!-- <v-list-item-tistle v-text="groupsReqs.gp.gpNm"></v-list-item-title> -->
             <br>
@@ -170,7 +183,6 @@
         <template v-slot:activator="{ on, attrs }">
             <v-btn
               icon
-              :to="{ name: 'UserDetail' }"
               v-bind="attrs"
               v-on="on"
               color="blue lighten-2"
@@ -195,9 +207,6 @@
           </v-list>
       </v-menu>
     </div>
-    <v-btn icon v-if="isLogin" @click="logout" color="blue lighten-2" >
-      <v-icon>mdi-logout</v-icon>
-    </v-btn>
   </v-app-bar>
 </template>
 
@@ -205,11 +214,15 @@
 import axios from 'axios';
 import { mapState, mapActions, mapMutations} from 'vuex';
 import router from '../router';
+import SocialLoginBtn from '../components/auth/SocialLoginBtn'
 
 export default {
     name: 'Navbar',
+    components:{
+      SocialLoginBtn,
+    },
     computed: {
-      ...mapState([ 
+      ...mapState('auth', [ 
         "userInfo",
         "isLogin"
       ]),
@@ -219,11 +232,12 @@ export default {
       }
     },
     methods: {
-      ...mapActions([
+      ...mapActions('notice', ['getReqsSock', 'getReqs']),
+      ...mapActions('auth', [
         "signIn",
         "logout"
         ]),
-      ...mapActions('notice', ['getReqs']),
+      ...mapActions('sg', ['fetchGroups']),
       async reqOk (gpReqNo) {
         const apiUrl = '/study/user/accept?no=' + gpReqNo
         try {
@@ -244,37 +258,51 @@ export default {
       },
       goToPage(nextPage) {
         switch(nextPage) {
-          case "My Schedule":
-            this.$router.push('MySchedule')
+          case "내 일정":
+            this.$router.push({name: 'MySchedule'})
             break
-        }  
-        
+          case "프로필 수정":
+            this.$router.push({name:'UserDetail'})
+            break
+          case "공부 기록":
+            this.$router.push({name:'UserTimer'})
+            break
+          case "로그아웃":
+            this.logout()
+        }          
+      },
+
+      async signInHandler() {
+        await this.signIn({'userEmail': this.user.userEmail, 'userPw':this.user.userPw});
+        this.signinInDialog = false;
+        this.user.userEmail = this.user.userPw = "";
+        this.$router.go();
       }
     },
     data () {
       return {
         wordForSearching: "",
-        siginInDialog: false,
+        signinInDialog: false,
         user: {
           userEmail: "",
           userPw: "",
         },
         items: [
           {
-            icon: 'mdi-inbox',
-            text: 'Inbox',
+            icon: 'mdi-account',
+            text: '프로필 수정',
+          },
+          {
+            icon: 'mdi-timer',
+            text: '공부 기록',
           },
           {
             icon: 'mdi-calendar',
-            text: 'My Schedule',
+            text: '내 일정',
           },
           {
-            icon: 'mdi-send',
-            text: 'Send',
-          },
-          {
-            icon: 'mdi-email-open',
-            text: 'Drafts',
+            icon: 'mdi-logout',
+            text: '로그아웃',
           },
         ],
         model: 1,

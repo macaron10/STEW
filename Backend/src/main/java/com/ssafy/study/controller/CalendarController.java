@@ -17,10 +17,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ssafy.study.calendar.model.CalEvent;
-import com.ssafy.study.calendar.model.CalEvtDto.CreateCalEvt;
-import com.ssafy.study.calendar.model.CalEvtDto.ModifyCalEvt;
+import com.ssafy.study.calendar.model.CreateCalEvt;
+import com.ssafy.study.calendar.model.ModifyCalEvt;
+import com.ssafy.study.calendar.model.exception.CalNoAuthException;
 import com.ssafy.study.calendar.service.CalendarService;
 import com.ssafy.study.common.model.BasicResponse;
+import com.ssafy.study.group.model.exception.GroupNotJoinedExcpetion;
 import com.ssafy.study.group.model.exception.GroupUnAuthException;
 import com.ssafy.study.group.service.GroupService;
 import com.ssafy.study.user.model.UserPrincipal;
@@ -130,7 +132,7 @@ public class CalendarController {
 	}
 
 	@GetMapping("/group/{year}/{month}")
-	@ApiOperation("year + month 그룹 일정 조회")
+	@ApiOperation("year + month 사용자가 가입한 그룹들의 일정 조회")
 	public Object groupMonthCalList(@PathVariable int year, @PathVariable int month,
 			@ApiIgnore @AuthenticationPrincipal UserPrincipal principal) {
 		long userId = principal.getUserId();
@@ -143,21 +145,41 @@ public class CalendarController {
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 
+	@GetMapping("/group/{gpNo}/{year}/{month}")
+	@ApiOperation("year + month 특정 그룹의 일정 조회")
+	public Object groupGpMonthCalList(@PathVariable long gpNo, @PathVariable int year, @PathVariable int month,
+			@ApiIgnore @AuthenticationPrincipal UserPrincipal principal) {
+		long userId = principal.getUserId();
+
+		if (!gpService.ckGroupJoin(gpNo, userId))
+			throw new GroupNotJoinedExcpetion();
+
+		BasicResponse response = new BasicResponse();
+
+		response.object = calService.selectGroupCalEvtByGpNo(gpNo, year, month);
+		response.msg = "success";
+		response.status = true;
+
+		return new ResponseEntity<>(response, HttpStatus.OK);
+	}
+
 	private void ckAuth(long calNo, long userId) {
 		CalEvent cal = calService.selectCalNo(calNo);
-		if (cal.getCType() == 'U')
+		if (cal.getCType() == 'U' && cal.getCOwn() == userId)
 			return;
 
 		long gpMgrId = gpService.selectGroup(cal.getCOwn()).getGpMgrId();
-		if (gpMgrId != userId)
-			throw new GroupUnAuthException();
+		if (gpMgrId == userId)
+			return;
+
+		throw new CalNoAuthException();
 	}
 
-	@ExceptionHandler(GroupUnAuthException.class)
+	@ExceptionHandler({ CalNoAuthException.class, GroupUnAuthException.class })
 	public Object noAuthExceptionHandler() {
 		BasicResponse res = new BasicResponse();
 
-		res.msg = "no auth";
+		res.msg = "해당 일정에 대한 권한이 없습니다!";
 		res.status = false;
 
 		return new ResponseEntity<>(res, HttpStatus.UNAUTHORIZED);

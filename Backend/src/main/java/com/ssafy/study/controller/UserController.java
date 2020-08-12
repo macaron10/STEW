@@ -1,6 +1,7 @@
 package com.ssafy.study.controller;
 
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -17,7 +18,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -25,6 +25,7 @@ import com.ssafy.study.common.exception.FileUploadException;
 import com.ssafy.study.common.model.BasicResponse;
 import com.ssafy.study.common.util.FileUtils;
 import com.ssafy.study.user.model.User;
+import com.ssafy.study.user.model.UserDto;
 import com.ssafy.study.user.model.UserModify;
 import com.ssafy.study.user.model.UserPrincipal;
 import com.ssafy.study.user.model.UserSignUp;
@@ -50,13 +51,17 @@ public class UserController {
 	@Autowired
 	private FileUtils fileUtil;
 	
-	private final String fileBaseUrl = "/home/ubuntu/app/img/user";
+	// private final String fileBaseUrl = "/home/ubuntu/app/img/user";
+	private final String fileBaseUrl = "C:\\Users\\multicampus\\Desktop\\img\\user";
+	private final String DEFAULT_USER_PROFILE = "\\userDefault.png";
 	
 	@PostMapping("/signup")
 	@ApiOperation("회원가입")
 	public ResponseEntity<BasicResponse> signUp(UserSignUp signUpInfo){
 		
 		User user = signUpInfo.toEntity();
+		
+		user.setUserPw(new BCryptPasswordEncoder().encode(user.getUserPw()));
 		
 		if(signUpInfo.getUserImg() != null) {
 			try {
@@ -65,7 +70,7 @@ public class UserController {
 				e.printStackTrace();
 				throw new FileUploadException();
 			}
-		}
+		}else user.setUserImg(DEFAULT_USER_PROFILE);
 		
 		userService.save(user);
 		
@@ -78,10 +83,7 @@ public class UserController {
 		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 	
-//	비밀번호 맞는지 아닌지
-//	유저 업데이트할때 비밀번호 포함 안하고싶다
-	
-	@PostMapping("/checkPw")
+	@PostMapping("/checkpw")
 	@ApiOperation("비밀번호 확인")
 	public ResponseEntity<BasicResponse> checkPw(@AuthenticationPrincipal UserPrincipal principal, String userPw){
 		
@@ -117,13 +119,26 @@ public class UserController {
 		
 	}
 	
-	@DeleteMapping("/{userId}")
+	@DeleteMapping
 	@ApiOperation("회원 탈퇴")
-	public ResponseEntity<BasicResponse> signOut(@PathVariable long userId, HttpServletRequest request) throws ServletException{
+	public ResponseEntity<BasicResponse> signOut(HttpServletRequest request) throws ServletException{
 		
-		userService.deleteById(userId);
+		String accessToken = request.getHeader(JwtProperties.HEADER_STRING).replace(JwtProperties.TOKEN_PREFIX, "");
+		
+		UserDto user = JwtUtil.getUserFromToken(accessToken);
+		
+		userService.deleteById(user.getUserId());
 		
 		BasicResponse result = new BasicResponse();
+		
+		long remains = JwtUtil.getExpiringTime(accessToken) - System.currentTimeMillis();
+		
+//		BlackListing
+		redisTemplate.opsForValue().set(accessToken, "logout");
+		redisTemplate.expire(accessToken, remains, TimeUnit.MILLISECONDS);
+		
+//		Delete RefreshToken
+		redisTemplate.delete(JwtUtil.getRefreshKey(accessToken));
 		
 		result.status = true;
 		result.msg = "success";
@@ -134,13 +149,28 @@ public class UserController {
 	
 	@PutMapping
 	@ApiOperation("회원 수정")
-	public ResponseEntity<BasicResponse> modify(@RequestBody UserModify userModify){
-		
+	public ResponseEntity<BasicResponse> modify(UserModify userModify, @AuthenticationPrincipal UserPrincipal principal){
+		System.out.println("여기"+userModify.getUserImg());
 		BasicResponse result = new BasicResponse();
 		
-		User modifiedUser = userService.modify(userModify.toEntity());
+		User origin = userService.loadUserByUserId(principal.getUserId());
+		origin.update(userModify);
+		if(userModify.isUpdateImg()) {
+			if(userModify.getUserImg() != null) {
+				try {
+					origin.setUserImg(fileUtil.uploadFile(userModify.getUserImg(), fileBaseUrl));
+				} catch (IOException e) {
+					e.printStackTrace();
+					throw new FileUploadException();
+				}
+			}else {
+				System.out.println("들어옴");
+				origin.setUserImg(DEFAULT_USER_PROFILE);
+			}
+		}
 		
-		result.status = true;
+		User modifiedUser = userService.save(origin);
+		result.status = true; 
 		result.msg = "success";
 		result.object = modifiedUser;
 		
@@ -156,7 +186,7 @@ public class UserController {
 		
 		result.status = true;
 		result.msg = "success";
-		result.object = userService.findByUserEmail(userEmail) == null ? true : false;
+		result.object = userService.findByUserEmailAndType(userEmail, "stew") == null ? true : false;
 		
 		return new ResponseEntity<>(result, HttpStatus.OK);
 		
@@ -165,39 +195,26 @@ public class UserController {
 	@GetMapping("/refresh")
 	@ApiOperation("토큰 갱신")
 	public ResponseEntity<BasicResponse> refreshToken(HttpServletRequest request, HttpServletResponse response){
-		System.out.println((String)redisTemplate.opsForValue().get("jig7357@naver.com"));
 		
 		BasicResponse result = new BasicResponse();
 		
 		String refreshToken = request.getHeader("refreshToken").replace(JwtProperties.TOKEN_PREFIX, "");
 		
-//		리프레쉬 토큰 문제가 이씀
 		if(refreshToken == null || !JwtUtil.verify(refreshToken))
 			result.msg = "fail";
 
 		String accessToken = request.getHeader(JwtProperties.HEADER_STRING).replace(JwtProperties.TOKEN_PREFIX, "");
-//		String accessToken = null;
-//		if(request.getCookies() != null) {
-//			for(Cookie c : request.getCookies()) {
-//				if(c.getName().equals("accessToken")) accessToken = c.getValue();
-//			}
-//		}
 		
 		if(accessToken == null) {
 			result.msg = "accessToken not found";
 		}
 		
-		String userEmail = JwtUtil.getUsernameFromToken(accessToken);
+		UserDto user = JwtUtil.getUserFromToken(accessToken);
 		
-		if(refreshToken.equals(redisTemplate.opsForValue().get(userEmail))){
-			UserPrincipal userPrincipal = new UserPrincipal(userService.findByUserEmail(userEmail));
+		if(refreshToken.equals(redisTemplate.opsForValue().get(JwtUtil.getRefreshKey(accessToken)))){
+			UserPrincipal userPrincipal = new UserPrincipal(userService.loadUserByUserId(user.getUserId()));
 			
 			accessToken = JwtProperties.TOKEN_PREFIX + JwtUtil.generateAccessToken(userPrincipal);
-//			Cookie c = new Cookie("accessToken", JwtUtil.generateAccessToken(userPrincipal));
-//			c.setHttpOnly(true);
-//			c.setPath("/api");
-//			
-//			response.addCookie(c);
 			
 			response.addHeader("accessToken", accessToken);
 			

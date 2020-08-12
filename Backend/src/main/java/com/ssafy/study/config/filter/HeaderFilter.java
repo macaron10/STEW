@@ -7,12 +7,17 @@
 //import javax.servlet.ServletException;
 //import javax.servlet.ServletRequest;
 //import javax.servlet.ServletResponse;
-//import javax.servlet.annotation.WebFilter;
 //import javax.servlet.http.HttpServletResponse;
+//
+//import org.springframework.core.Ordered;
+//import org.springframework.core.annotation.Order;
+//import org.springframework.stereotype.Component;
 //
 //import lombok.extern.log4j.Log4j2;
 //
 //@Log4j2
+//@Component
+//@Order(Ordered.HIGHEST_PRECEDENCE)
 //public class HeaderFilter implements Filter {
 //
 //    @Override
@@ -20,7 +25,7 @@
 //    	
 //        HttpServletResponse res = (HttpServletResponse) response;
 //        res.setHeader("Access-Control-Allow-Origin", "*");
-//        res.setHeader("Access-Control-Allow-Methods", "GET, POST");
+//        res.setHeader("Access-Control-Allow-Methods", "*");
 //        res.setHeader("Access-Control-Max-Age", "3600");
 //        res.setHeader(
 //                "Access-Control-Allow-Headers",

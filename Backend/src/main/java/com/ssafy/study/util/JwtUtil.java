@@ -6,9 +6,6 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
@@ -20,21 +17,41 @@ import com.auth0.jwt.exceptions.InvalidClaimException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.exceptions.SignatureVerificationException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
+import com.auth0.jwt.interfaces.DecodedJWT;
+import com.ssafy.study.user.model.UserDto;
 import com.ssafy.study.user.model.UserPrincipal;
 
 @Component
 public class JwtUtil implements Serializable{
 	
 	public static String getUsernameFromToken(String token) {
-		return JWT.decode(token).getSubject();
+		return JWT.decode(sliceBearer(token)).getSubject();
 	}
 	
 	public static long getUserIdFromToken(String token) {
-		return JWT.decode(token).getClaim("userId").asLong();
+		return JWT.decode(sliceBearer(token)).getClaim("userId").asLong();
+	}
+
+	public static UserDto getUserFromToken(String token) {
+		
+		DecodedJWT decodedJwt = JWT.decode(sliceBearer(token));
+		
+		return UserDto.builder()
+				.userId(decodedJwt.getClaim("userId").asLong())
+				.userNm(decodedJwt.getClaim("userNm").asString())
+				.userImg(decodedJwt.getClaim("userImg").asString())
+				.type(decodedJwt.getClaim("type").asString())
+				.userEmail(decodedJwt.getSubject())
+				.build();
+		
+	}
+	
+	public static String getUserTypeFromToken(String token) {
+		return JWT.decode(sliceBearer(token)).getClaim("type").asString();
 	}
 	
 	public static Collection<? extends GrantedAuthority> getAuthoritiesFromToken(String token) {
-		String[] roles = JWT.decode(token).getClaim("role").asArray(String.class);
+		String[] roles = JWT.decode(sliceBearer(token)).getClaim("role").asArray(String.class);
 		
 		List<GrantedAuthority> authorities = new ArrayList<>();
 		
@@ -49,7 +66,7 @@ public class JwtUtil implements Serializable{
 		try {
 			JWT.require(Algorithm.HMAC512(JwtProperties.SECRET.getBytes()))
 			.build()
-			.verify(token.replace(JwtProperties.TOKEN_PREFIX, ""));
+			.verify(sliceBearer(token));
 			
 			return true;
 			
@@ -73,6 +90,9 @@ public class JwtUtil implements Serializable{
 				JWT.create()
 				.withArrayClaim("role", authorities.toArray(new String[authorities.size()]))
 				.withClaim("userId", userPrincipal.getUserId())
+				.withClaim("userNm", userPrincipal.getUserNm())
+				.withClaim("userImg", userPrincipal.getUserImg())
+				.withClaim("type", userPrincipal.getType())
 				.withSubject(userPrincipal.getUsername())
 				.withIssuedAt(new Date(System.currentTimeMillis()))
 				.withExpiresAt(new Date(System.currentTimeMillis() + JwtProperties.EXPIRATION_TIME_ACCESS))
@@ -91,7 +111,21 @@ public class JwtUtil implements Serializable{
 	}
 	
 	public static Long getExpiringTime(String token) {
-		return JWT.decode(token).getExpiresAt().getTime();
+		return JWT.decode(sliceBearer(token)).getExpiresAt().getTime();
+	}
+	
+	public static String getRefreshKey(String accessToken) {
+		
+		return JwtUtil.getUsernameFromToken(accessToken) + "#" + JwtUtil.getUserTypeFromToken(accessToken);
+		
+	}
+	
+	private static String sliceBearer(String token) {
+		if(token.startsWith(JwtProperties.TOKEN_PREFIX)) {
+			token = token.replace(JwtProperties.TOKEN_PREFIX, "");
+		}
+		
+		return token;
 	}
 	
 }

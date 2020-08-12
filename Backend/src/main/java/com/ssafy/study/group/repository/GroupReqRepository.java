@@ -20,11 +20,10 @@ public interface GroupReqRepository extends JpaRepository<GroupReq, Long>, Group
 	@Transactional
 	@Modifying
 	public void deleteByGpReqNo(long reqNo);
-	
+
 	@Transactional
 	@Modifying
 	@Query("delete from GroupReq gr where gr.gp.gpNo = :gpNo")
 	public void deleteByGpNo(@Param("gpNo") long gpNo);
-
 
 }

@@ -26,31 +26,18 @@ public class JwtLogoutHandler extends SecurityContextLogoutHandler{
 	public void logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
 		String accessToken = request.getHeader(JwtProperties.HEADER_STRING);
 		
-//		if(request.getCookies() != null) {
-//			for(Cookie c : request.getCookies()) {
-//				if(c.getName().equals("accessToken")) accessToken = c.getValue();
-//			}
-//		}
-		
 		if(accessToken == null 
 				|| !accessToken.startsWith(JwtProperties.TOKEN_PREFIX)
 				) throw new JwtNotFoundException();
 //		else accessToken = accessToken.replace(JwtProperties.TOKEN_PREFIX, "");
 		
 		if(!JwtUtil.verify(accessToken))
-//			try {
-//				response.sendError(HttpStatus.UNAUTHORIZED.value(), "Invalid Token");
 				throw new TokenExpiredException("Token Expired");
-//			} catch (IOException e) {
-//				e.printStackTrace();
-//			}
 		
 		accessToken = accessToken.replace(JwtProperties.TOKEN_PREFIX, "");
 		
-		String userEmail = JwtUtil.getUsernameFromToken(accessToken);
-		
-		String userToken = (String) redisTemplate.opsForValue().get(userEmail);
-		if(userToken == null) throw new UserNotFoundException(userEmail);
+		String userToken = (String) redisTemplate.opsForValue().get(JwtUtil.getRefreshKey(accessToken));
+		if(userToken == null) throw new UserNotFoundException(JwtUtil.getUsernameFromToken(accessToken));
 		
 		super.logout(request, response, authentication);
 	}

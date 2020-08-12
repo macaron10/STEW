@@ -11,39 +11,39 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import io.swagger.annotations.ApiModelProperty;
 
-
 public class UserPrincipal implements UserDetails{
 	
 	@ApiModelProperty(hidden = true)
 	private User user;
-	
+
 	public UserPrincipal(User user) {
 		this.user = user;
 	}
-	
-	private List<String> arrToList(String input){
-		if(input == null || input.length() == 0) return new ArrayList<>();
-		
+
+	private List<String> arrToList(String input) {
+		if (input == null || input.length() == 0)
+			return new ArrayList<>();
+
 		return Arrays.asList(input.split(","));
 	}
-	
+
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		List<GrantedAuthority> authorities = new ArrayList<>();
-		
+
 //		arrToList(this.user.getPermissions()).forEach(p -> {
 //			GrantedAuthority authority = new SimpleGrantedAuthority(p);
 //			authorities.add(authority);
 //		});
-		
+
 		arrToList(this.user.getRoles()).forEach(p -> {
 			GrantedAuthority authority = new SimpleGrantedAuthority("ROLE_" + p);
 			authorities.add(authority);
 		});
-		
+
 		return authorities;
 	}
-	
+
 	@Override
 	public String getPassword() {
 		return this.user.getUserPw();
@@ -71,11 +71,23 @@ public class UserPrincipal implements UserDetails{
 
 	@Override
 	public boolean isEnabled() {
-		return this.user.isEnable();
+		return true;
 	}
-	
+
 	public long getUserId() {
 		return user.getUserId();
 	}
 
+	public String getUserNm() {
+		return user.getUserNm();
+	}
+
+	public String getUserImg() {
+		return user.getUserImg();
+	}
+
+	public String getType() {
+		return user.getType();
+	}
+	
 }

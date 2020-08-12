@@ -15,5 +15,11 @@ public interface GroupReqRepositoryCustom {
 
 	List<GroupReqDto> findAllMgrsGpReq(long userId);
 
+	List<GroupReqDto> findUsersReq(long userId);
+
 	List<GroupReqDto> findMgrsGpReq(long gpNo);
+
+	GroupReqDto findGpReqByReqNo(long reqNo);
+
+	boolean ckGroupReq(long gpNo, long userId);
 }

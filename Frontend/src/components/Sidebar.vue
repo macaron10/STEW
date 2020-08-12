@@ -6,10 +6,10 @@
     :expandOnHover="true"
     app
     color="white"
-    class="theme-dark"
+    dark class="blue lighten-2"
   >
     <!-- style="background-image: linear-gradient(180deg, rgba(255, 255, 255, 1), rgba(0, 0, 0, 0.1))" -->
-    <v-list dense>
+    <v-list dense class="pt-0">
       <template v-for="item in items">
         <v-row v-if="item.heading" :key="item.heading" align="center">
           <v-col cols="6">
@@ -24,7 +24,7 @@
           :key="item.text"
           v-model="item.model"
           :prepend-icon="item.model ? item.icon : item['icon-alt']"
-          append-icon
+          append-icon light
         >
           <template v-slot:activator>
             <v-list-item-content>
@@ -32,11 +32,11 @@
             </v-list-item-content>
           </template>
           <v-list-item v-for="(child, i) in item.children" :key="i" link>
-            <v-list-item-action v-if="child.icon"></v-list-item-action>
-            <v-list-item-content @click="goToStudy(child.value)">
+            <v-list-item-action v-if="child.icon" ></v-list-item-action>
+            <v-list-item-content @click="goToStudy(child.value)"  class="ml-5">
               <v-list-item-title>
                 {{ child.text }}
-                <v-icon v-if="child.groupManager" color="amber">mdi-crown</v-icon>
+                <v-icon v-if="child.groupManager" color="amber" class="ml-2">mdi-crown</v-icon>
               </v-list-item-title>
             </v-list-item-content>
           </v-list-item>
@@ -68,11 +68,11 @@ export default {
       { icon: "mdi-home", text: "HOME", page: "Home", needLogin: true },
       {
         icon: "mdi-plus",
-        text: "Study 만들기",
+        text: "스터디 만들기",
         page: "StudyCreate",
         needLogin: false
       },
-      { icon: "mdi-pen", text: "전체스터디", page: "Main", needLogin: true },
+      { icon: "mdi-pen", text: "전체 스터디", page: "Main", needLogin: true },
       {
         icon: "mdi-help-circle",
         text: "가이드",
@@ -82,7 +82,7 @@ export default {
       {
         icon: "mdi-chevron-up",
         "icon-alt": "mdi-chevron-down",
-        text: "My Study",
+        text: "내 스터디",
         model: false,
         children: [],
         needLogin: false
@@ -129,4 +129,18 @@ export default {
 </script>
 
 <style>
+  
+.intro {
+  display: flex;
+  justify-content: center;
+  margin: 4rem 0;
+}
+
+a {
+  color: inherit;
+}
+
+.text-center {
+  text-align: center;
+}
 </style>

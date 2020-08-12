@@ -1,6 +1,6 @@
 <template>
   <v-app-bar
-    v-if="!$store.state.comm.onMeeting"
+    v-if="!$store.state.sg.onMeeting"
     :clipped-left="$vuetify.breakpoint.lgAndUp"
     app
     color="grey"
@@ -14,7 +14,7 @@
       class=""
     >
     <v-row>
-    <h3>[]{{ group.gpNm }}</h3><div class="mt-1 body-1 white--text"><v-icon class="pl-5 pr-1" color="white">mdi-account</v-icon>{{ group.gpCurNum }}</div>
+    <h3 class="pl-5">{{ group.gpNm }}</h3><div class="mt-1 body-1 white--text"><v-icon class="pl-5 pr-1" color="white">mdi-account</v-icon>{{ group.gpCurNum }}</div>
     </v-row>
     </v-toolbar-title>
   </v-col>
@@ -73,7 +73,7 @@ export default {
     this.getDetail();
   },
   beforeDestroy() {
-    this.$store.state.comm.onMeeting = true;
+    this.$store.state.sg.onMeeting = true;
   }
 }
 </script>

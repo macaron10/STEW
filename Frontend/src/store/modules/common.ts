@@ -3,7 +3,6 @@ export default {
         baseUrl: "http://localhost:8399/api",//개발용
         // baseUrl: "https://i3b103.p.ssafy.io/image", //배포용
         drawer: false,
-        onMeeting: true,
       },
 
       getters: {

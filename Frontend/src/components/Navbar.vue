@@ -1,6 +1,6 @@
 <template>
   <v-app-bar
-    v-if="$store.state.comm.onMeeting"
+    v-if="$store.state.sg.onMeeting"
     :clipped-left="$vuetify.breakpoint.lgAndUp"
     app
     color="#FFFFFF"

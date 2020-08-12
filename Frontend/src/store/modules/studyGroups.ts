@@ -7,6 +7,8 @@ export default {
       groups: [],
       keyword: '', // 검색어
       searchedGroups: [],
+      onMeeting: true,
+
     },
   
     mutations: {

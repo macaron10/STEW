@@ -62,7 +62,7 @@ export default {
     this.joinRoom();
   },
   mounted() {
-    this.$store.state.comm.onMeeting = false;
+    this.$store.state.sg.onMeeting = false;
     this.check();
     this.initoptions();
   },
@@ -145,7 +145,7 @@ export default {
     // }
   },
   destroyed() {
-    this.$store.state.comm.onMeeting = true;
+    this.$store.state.sg.onMeeting = true;
     this.outRoom();
   }
 };

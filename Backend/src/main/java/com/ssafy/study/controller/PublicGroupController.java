@@ -108,11 +108,5 @@ public class PublicGroupController {
 		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 
-	@SendTo("/chat")
-	@GetMapping("/test")
-	public void test() {
-		ChatMessage msg = ChatMessage.builder().chatMsg("g").regTime(LocalDateTime.now()).gpNo(20).type(ChatMessage.MessageType.TALK).build();
-		template2.convertAndSend("/sub/chat", msg);
-	}
 
 }

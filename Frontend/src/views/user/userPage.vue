@@ -124,8 +124,6 @@ export default {
     },
     
     data() {
-        const formData = new FormData();
-        
         return {
             updatePwdDialog: false,
             deleteUserDialog: false,
@@ -141,7 +139,7 @@ export default {
                 new: "",
                 newChk: "",
             },
-            formData
+            formData: null
         }
     },
     
@@ -179,7 +177,7 @@ export default {
         },
 
         resetImg(){
-            this.userInfo.updateImg = true;
+            this.imgInfo.updateImg = true;
             this.$refs.imgpreview.src = this.imgInfo.default;
             this.userInfo.userImg = "";
         },
@@ -218,7 +216,7 @@ export default {
         },
         
         makeFormData() {
-            const formData = new FormData();
+            this.formData = new FormData();
 
             this.formData.append('userNm', this.userInfo.userNm);
             if (this.userInfo.userImg instanceof File) {

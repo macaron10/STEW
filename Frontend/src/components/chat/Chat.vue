@@ -1,7 +1,9 @@
 <template>
-  <div class="inner-wrap" fluid fill-height inner-wrap>
-    <MessageList :msgs="messages" />
-    <MessageForm v-on:submitMessage="sendMessage" />
+  <div height="">
+    <ChatMemberList />
+    <MessageList class="msg-list" :msgs="messages" />
+    <v-divider></v-divider>
+    <MessageForm class="msg-form" v-on:submitMessage="sendMessage" />
   </div>
 </template>
 
@@ -9,6 +11,7 @@
 import { mapMutations, mapState } from 'vuex';
 import MessageList from '@/components/chat/comp/MessageList.vue';
 import MessageForm from '@/components/chat/comp/MessageForm.vue';
+import ChatMemberList from '@/components/chat/comp/ChatMemberList.vue';
 // import Constant from '@/Constant';
 
 import Stomp from 'webstomp-client';
@@ -19,12 +22,14 @@ export default {
   data() {
     return {
       messages: [],
-      roomid: 0
+      roomid: 0,
+      members: [],
     };
   },
   components: {
     MessageList,
     MessageForm,
+    ChatMemberList,
   },
   methods: {
 
@@ -42,7 +47,7 @@ export default {
         this.ws.connect(token,
           frame => {
             console.log('소켓 연결 성공');
-
+            this.members.push(this.$store.state.auth.userInfo.userId)
             this.ws.subscribe("/sub/chat/" + gpNo, msg =>{
               // state.groupsReqs.push(JSON.parse(msg.body))
               this.messages.push(JSON.parse(msg.body))
@@ -74,18 +79,12 @@ export default {
 </script>
 
 <style>
-/* .msg-form {
-  bottom: -28px;
-  position: absolute;
-  left: 0;
-  right: 0;
-}
-.msg-list {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 60px;
-  overflow-x: scroll;
-} */
+/* .msg-form { */
+  /* position:absolute;
+  right:0;
+  bottom:0; */
+/* } */
+/* .msg-list { */
+  /* overflow-y: scroll; */
+/* } */ 
 </style>

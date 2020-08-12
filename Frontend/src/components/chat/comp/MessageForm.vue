@@ -1,11 +1,12 @@
 <template id="MsgForm">
-  <div class="inner-wrap">
+  <div>
     <v-text-field
       v-model="msg"
       label="chat"
       placeholder="보낼 메세지를 입력하세요."
       solo
       @keyup.enter="submitMessage"
+      hide-details
     ></v-text-field>
   </div>
 </template>
@@ -28,3 +29,8 @@ export default {
   },
 };
 </script>
+
+<style>
+/* #MsgForm {
+} */
+</style>

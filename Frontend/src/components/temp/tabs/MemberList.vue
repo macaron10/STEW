@@ -22,7 +22,7 @@
                     <img
                       v-if="member.user.userImg"
                       alt="Avatar"
-                      :src="$store.state.baseUrl + '/image/user' + member.user.userImg"
+                      :src="$store.state.comm.baseUrl + '/image/user' + member.user.userImg"
                     >
                     <!-- @click="toDetail(member.userId)" 유저디테일 이동기능-->   <!-- :to="'/user/' + user넘버" -->
                     <v-icon

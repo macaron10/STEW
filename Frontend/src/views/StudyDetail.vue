@@ -133,8 +133,9 @@ export default {
     async quitGroup(gpNo) {
       const apiUrl = "/study/user/exit?no=" + gpNo;
       try {
+        console.log(gpNo);
         const res = await axios.post(apiUrl);
-        this.$router.push("/main/");
+        // this.$router.push("/main/");
       } catch (err) {
         console.error(err);
       }

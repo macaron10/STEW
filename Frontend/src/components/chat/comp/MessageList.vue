@@ -3,14 +3,14 @@
   <v-list >
     <v-card
     class="mx-auto"
-    height="560"
+    height="68vh"
     >
      <v-virtual-scroll
     :items="msgs"
     :item-height="70"
-    height="560"
+    height="68vh"
   >
-    <template class="d-block" slot-scope="props">
+    <template  slot-scope="props">
       <!-- 남이보낸 메세지 -->
       <v-list-item v-if="props.item.userId!==$store.state.auth.userInfo.userId">
             <v-list-item-icon>
@@ -34,15 +34,15 @@
       <!-- 내가 보낸 메세지 -->
       <v-list-item v-if="props.item.userId===$store.state.auth.userInfo.userId">
         <v-list-item-content class="text-right">
-          <v-list-item-title>{{ props.item.userNm }}</v-list-item-title>
+          <v-list-item-title >{{ props.item.userNm }}</v-list-item-title>
             <div>{{ props.item.chatMsg }}</div>
           <v-list-item-subtitle>
             {{ props.item.regTime }}
           </v-list-item-subtitle>
         </v-list-item-content>
       </v-list-item>
-            </template>
-    </v-virtual-scroll>
+        </template>
+      </v-virtual-scroll>
     </v-card>
   </v-list>
 </template>

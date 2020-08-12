@@ -19,6 +19,7 @@ export default {
   data() {
     return {
       messages: [],
+      roomid: 0
     };
   },
   components: {
@@ -55,7 +56,7 @@ export default {
       }
       const tempMsg = {
         type: 'TALK',
-        gpNo: 26,
+        gpNo: this.roomid,
         chatMsg: msg
       }
       const stringMsg = JSON.stringify(tempMsg)
@@ -64,9 +65,10 @@ export default {
       }
     },
     mounted() {
+      this.roomid= Number(this.$route.params.id)
       this.initSock()
       console.log(this.roomid,'얘는 대체 어디감?')
-      this.getChattingSock(26)
+      this.getChattingSock(this.roomid)
     }
 };
 </script>

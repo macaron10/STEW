@@ -1,41 +1,41 @@
 <template>
   <div>
-    <v-row class="mx-10 my-5">
+    <RoomNavbar />
+    <v-row class="d-flex align-center">
       <v-col cols="9">
-        <Timer />
-        <div class="mx-10 my-10 videos-container" ></div>
+        <div class=" videos-container" ></div>
+        <h1>비디오의 상태 {{options.video}}</h1>
+        <!-- footer -->
+        <v-row class="footer" justify="center" no-gutters>
+          <v-btn class="mx-1" fab dark color="indigo" @click="unmute">
+            <v-icon dark>mdi-volume-high</v-icon>
+          </v-btn>
+          <v-btn class="mx-1" fab dark color="blue lighten-1" @click="mute">
+            <v-icon dark>mdi-volume-off</v-icon>
+          </v-btn>
+          <v-btn class="mx-1" fab dark color="teal lighten-1" @click="onVideo">
+            <v-icon dark>mdi-video</v-icon>
+          </v-btn>
+          <v-btn class="mx-1" fab dark color="teal accent-1" @click="offVideo">
+            <v-icon dark>mdi-video-off</v-icon>
+          </v-btn>
+          <v-btn class="mx-1" fab dark color="red" @click="outRoom" :to="{ name: 'StudyDetail' }">
+            <v-icon dark>mdi-account-arrow-right-outline</v-icon>
+          </v-btn>
+        </v-row>
       </v-col>
       <v-col cols="3">
+        <Timer />
         <Chat :roomid="roomid"/>
       </v-col>
-          
     </v-row>
-    <!-- footer -->
-    <v-footer color="#ffffff" padless>
-      <v-row justify="center" no-gutters>
-        <v-btn class="mx-1" fab dark color="indigo" @click="unmute">
-          <v-icon dark>mdi-volume-high</v-icon>
-        </v-btn>
-        <v-btn class="mx-1" fab dark color="blue lighten-1" @click="mute">
-          <v-icon dark>mdi-volume-off</v-icon>
-        </v-btn>
-        <v-btn class="mx-1" fab dark color="teal lighten-1" @click="onVideo">
-          <v-icon dark>mdi-video</v-icon>
-        </v-btn>
-        <v-btn class="mx-1" fab dark color="teal accent-1" @click="offVideo">
-          <v-icon dark>mdi-video-off</v-icon>
-        </v-btn>
-        <v-btn class="mx-1" fab dark color="red" @click="outRoom" :to="{ name: 'StudyDetail' }">
-          <v-icon dark>mdi-account-arrow-right-outline</v-icon>
-        </v-btn>
-      </v-row>
-    </v-footer>
   </div>
 </template>
 <script src="https://cdn.jsdelivr.net/npm/rtcmulticonnection@latest/dist/RTCMultiConnection.min.js"></script>
 <script src="https://rtcmulticonnection.herokuapp.com/socket.io/socket.io.js"></script>
 <script>
 import StudyDetailVue from "./StudyDetail.vue";
+import RoomNavbar from "@/components/room/RoomNavbar.vue";
 import Timer from "@/components/temp/Timer.vue";
 // import Chatting from "@/components/room/Chatting.vue";
 import Chat from "@/components/chat/Chat.vue";
@@ -51,20 +51,22 @@ export default {
         video: false,
         audio: false
       },
-      localStream: {}
+      localStream: {},
+      videos: {}
     };
   },
   components: {
+    RoomNavbar,
     Timer,
-    Chat
+    Chat,
   }, 
   created() {
     this.joinRoom();
   },
   mounted() {
+    this.$store.state.comm.onMeeting = false;
     this.check();
     this.initoptions();
-    this.getRoodId();
   },
   methods: {
     check() {
@@ -103,8 +105,6 @@ export default {
       this.connection.mediaConstraints = {
         audio: true,
         video: {
-          width: 400,
-          height: 300
         }
       };
       this.connection.sdpConstraints.mandatory = {
@@ -145,12 +145,12 @@ export default {
       let localStream = this.connection.attachStreams[0];
       localStream.unmute("video");
     },
-    getRoodId() {
-      this.roomid = this.$route.params.id
-      console.log(this.roomid, '설정!')
-    }
+    // getvideos() {
+    //   document.getElementsByName('video')
+    // }
   },
   destroyed() {
+    this.$store.state.comm.onMeeting = true;
     this.outRoom();
   }
 };
@@ -159,5 +159,24 @@ export default {
 <style>
 video::-webkit-media-controls {
   display: none;
+}
+.videos-container {
+  display: grid;
+  /* grid-template-rows: repeat(3, 100px); */
+  /* grid-template-columns: repeat(2, calc((100vw - 400px)/2.5) ); */
+  grid-template-columns: repeat(3, 23.5vw);
+}
+
+.videos-container video{
+  width: 23.5vw;
+
+  /* width: calc((100vw - 400px)/2.5); */
+  border: solid;
+}
+
+.footer {
+  position: fixed;
+  bottom: 10px;
+  left: 25vw;
 }
 </style>

@@ -34,6 +34,7 @@ export default {
   
       logoutSuccess(state: any) {
         state.isLogin = false;
+        state.userInfo.userId = 0;
         state.userInfo.accessToken = "";
         state.userInfo.refreshToken = "";
       },
@@ -58,11 +59,11 @@ export default {
               'accessToken': res.headers.accesstoken,
               'refreshToken': res.headers.refreshtoken
             }
-            commit("loginSuccess", userInfo);
-            dispatch("notice/getReqsSock",null, { root: true });
-            dispatch("notice/getReqs",null, { root: true });
-            //임시(userId 불러오기용)
             dispatch("getUserInfoImsi");
+            commit("loginSuccess", userInfo);
+            dispatch("notice/getReqsSock", null, { root: true });
+            dispatch("notice/getReqs", null, { root: true });
+            //임시(userId 불러오기용)
           })
           .catch(err => {
             alert("이메일과 비밀번호를 확인하세요");
@@ -112,8 +113,8 @@ export default {
       },
 
       //임시(userId불러오기용)
-      getUserInfoImsi({ commit }: any) {
-        axios.get('/user/')
+      async getUserInfoImsi({ commit }: any) {
+        await axios.get('/user')
         .then(({ data }) => {
             commit('changeUserId', data.object.userId)
             console.log(data.object.userId)

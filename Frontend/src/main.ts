@@ -54,7 +54,7 @@ axios.interceptors.response.use(
       } else {
         console.log("로그아웃 해야됨");
         
-        store.commit("logoutSuccess");
+        store.commit("auth/logoutSuccess");
         return Promise.reject(err);
       }
     }

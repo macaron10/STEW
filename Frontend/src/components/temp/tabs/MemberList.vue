@@ -7,7 +7,7 @@
             <!-- 가져올 수 있는 것  목표시간, 유저이름, 유저소개, 유저이미지, (유저 이메일,유저아이디)(필요x) -->
             <v-list-item-content>
               <v-row>
-                <v-col cols="2" class="d-flex flex-column ">
+                <v-col cols="4" offset="4" sm="2" offset-sm="0" class="d-flex flex-column pr-0 pt-0 py-sm-0" >
                   <img
                     v-if="member.user.userImg"
                     alt="Avatar"
@@ -24,28 +24,52 @@
                     alt="default image"
                   />
                 </v-col>
-                <v-col cols="5" class="d-flex flex-column pl-0 text-align">
-                  <div class="my-auto">
-                    <h2>{{ member.user.userNm }}</h2>
+                <v-col cols="12" sm="10" class="py-0 text-sm-align d-sm-flex">
+                  <div class="my-auto text-center text-sm-left">
+                    <h2 class="d-inline">{{ member.user.userNm }}  </h2>
+                    <v-icon v-if="gpMgrId===member.user.userId" color="amber">mdi-crown</v-icon>
+                    <v-tooltip top>
+                      <template v-slot:activator="{ on, attrs }">
+                        <v-btn
+                          v-bind="attrs"
+                          v-on="on"
+                          icon
+                          small
+                          v-if="gpMgrId===userInfo.userId&&member.user.userId!==userInfo.userId"
+                          color="purple lighten-2"
+                          @click="mand(gpNo, member.user.userId)"
+                        >
+                          <v-icon>mdi-account-convert</v-icon>
+                        </v-btn>
+                      </template>
+                      <span>그룹장 위임</span>
+                    </v-tooltip>
+                    <v-tooltip top>
+                      <template v-slot:activator="{ on, attrs }">
+                        <v-btn
+                          icon
+                          small
+                          v-bind="attrs"
+                          v-on="on"
+                          v-if="gpMgrId===userInfo.userId&&member.user.userId!==userInfo.userId"
+                          color="red lighten-2"
+                          @click="kick(member.gpJoinNo)"
+                          class
+                        >
+                          <v-icon>mdi-account-off-outline</v-icon>
+                        </v-btn>
+                      </template>
+                      <span>퇴장시키기</span>
+                    </v-tooltip>
                     <h4>{{ member.user.userEmail }}</h4>
+                    <h5>목표 : 하루 {{ member.user.userGoalHr }}시간</h5>
                   </div>
                 </v-col>
-                <v-col cols="8">
-                  <h4 class="py-0">일일 목표 공부 시간 : {{ member.user.userGoalHr }} 시간</h4>
+                <v-col cols="12">
                   <h4>{{ member.user.userIntro }}</h4>
+                  
                 </v-col>
               </v-row>
-              <v-btn
-                v-if="gpMgrId===userInfo.userId&&member.user.userId!==userInfo.userId"
-                color="purple lighten-2 white--text"
-                @click="mand(gpNo, member.user.userId)"
-              >그룹장 위임</v-btn>
-              <v-btn
-                v-if="gpMgrId===userInfo.userId&&member.user.userId!==userInfo.userId"
-                color="red lighten-2 white--text"
-                @click="kick(member.gpJoinNo)"
-                class="my-2 mx-5 px-5"
-              >퇴출</v-btn>
             </v-list-item-content>
           </v-list-item>
         </v-card>
@@ -96,4 +120,7 @@ export default {
 };
 </script>
 <style scoped>
+button {
+  height: 29px;
+}
 </style>

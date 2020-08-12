@@ -20,7 +20,7 @@
         </v-col>
       </v-row>
       <v-row>
-        <v-col cols="9" offset="1">
+        <v-col cols="8" sm="9" offset="1">
           <h2 class="mb-3 d-inline">
             {{ group.gpNm }}
             <v-btn
@@ -51,31 +51,33 @@
           </v-tooltip>
         </v-col>
         <v-col cols="10" offset="1" class="pt-0">
-        <h4>
-          <span v-if="group.gpPublic">
-            <v-icon>mdi-lock-open-outline</v-icon>공개
-          </span>
-          <span v-else>
-            <v-icon>mdi-lock-outline</v-icon>비공개
-          </span>
-          그룹 · 멤버 {{group.gpCurNum}}명
-        </h4>
+          <h4>
+            <span v-if="group.gpPublic">
+              <v-icon>mdi-lock-open-outline</v-icon>공개
+            </span>
+            <span v-else>
+              <v-icon>mdi-lock-outline</v-icon>비공개
+            </span>
+            그룹 · 멤버 {{group.gpCurNum}}명
+          </h4>
         </v-col>
       </v-row>
 
       <v-row>
-        <v-col cols="10" offset="1" >
+        <v-col cols="10" offset="1">
           <v-card>
             <v-tabs
-              v-model="tab"              
+              v-model="tab"
               :grow="true"
-              :height=55
+              :height="55"
               color="green"
               :slider-size="3"
               :elevation="0"
             >
               <v-tab v-for="item in items" :key="item.no">
-              <v-icon>{{ item.icon }}</v-icon><pre> </pre><span>{{ item.tab }}</span>
+                <v-icon>{{ item.icon }}</v-icon>
+                <pre></pre>
+                <span>{{ item.tab }}</span>
               </v-tab>
             </v-tabs>
 
@@ -173,10 +175,9 @@ export default {
 
 <style scoped>
 .v-item-group {
-  height: 688px;
-};
-.v-slide-group__next, .v-slide-group__prev {
-    flex: 0 0 0px;
-    min-width: 0px;
+  min-height: 688px;
+}
+.v-slide-group__prev {
+  display: none !important;
 }
 </style>

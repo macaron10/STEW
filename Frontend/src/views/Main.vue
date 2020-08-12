@@ -66,7 +66,8 @@ export default {
   },
   data: () => ({
     rankGpList: [],
-    baseUrl: "http://localhost:8399/api/"
+    // baseUrl: "http://localhost:8399/api/"
+    baseUrl: "http://i3b103.p.ssafy.io/"
     // baseUrl: this.$store.state.comm.baseUrl
   }),
   filters: {

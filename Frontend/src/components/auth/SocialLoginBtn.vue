@@ -1,24 +1,22 @@
 <template>
-  <div>
-    <v-btn 
+    <v-btn
+    fab
+    depressed
+    class="ma-4"
     @click="SocialSignIn"
-    :block="true"
     >
       <v-progress-circular
         v-show="loading"
         :indeterminate="true"
-        style="position: absolute"
+        style="position: absolute; z-index: 1000"
         color="light-blue"
       ></v-progress-circular>
       <img
-        style="position:absolute; left: 5%"
+        style="position:absolute; border-radius: 50%"
         :src="logoUrl"
-        width="20"
-        height="20"
+        width="100%"
         />
-      {{btnText}}
     </v-btn>
-  </div>
 </template>
 
 <script>
@@ -29,19 +27,16 @@ export default {
   created(){
     const provider = this.$props.provider;
 
-    if(provider == 'Kakao') this.logoUrl = Constants.KAKAO_LOGO_URL;
-    else if(provider == 'Naver') this.logoUrl = Constants.NAVER_LOGO_URL;
-    else if(provider == 'Google') this.logoUrl = Constants.GOOGLE_LOGO_URL;
-    else if(provider == 'Facebook') this.logoUrl = Constants.FACEBOOK_LOGO_URL;
-
-    this.btnText = 'Sign in with ' + provider;
+    if(provider == 'Kakao') this.logoUrl = this.$store.state.comm.baseUrl + Constants.KAKAO_LOGO_URL;
+    else if(provider == 'Naver') this.logoUrl = this.$store.state.comm.baseUrl + Constants.NAVER_LOGO_URL;
+    else if(provider == 'Google') this.logoUrl = this.$store.state.comm.baseUrl + Constants.GOOGLE_LOGO_URL;
+    else if(provider == 'Facebook') this.logoUrl = this.$store.state.comm.baseUrl + Constants.FACEBOOK_LOGO_URL;
   },
   data(){
     return {
       loading: false,
       signInWindow: null,
       logoUrl: '',
-      btnText: ''
     }
   },
   props:{

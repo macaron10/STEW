@@ -7,22 +7,28 @@
             <!-- 가져올 수 있는 것  목표시간, 유저이름, 유저소개, 유저이미지, (유저 이메일,유저아이디)(필요x) -->
             <v-list-item-content>
               <v-row>
-                <v-col cols="2" class="d-flex flex-column">
+                <v-col cols="2" class="d-flex flex-column ">
                   <img
                     v-if="member.user.userImg"
                     alt="Avatar"
                     :src="$store.state.comm.baseUrl + '/image/user' + member.user.userImg"
                     style="width: 100%"
-                    class="my-auto"
+                    class="my-auto rounded-pill"
                   />
                   <!-- @click="toDetail(member.userId)" 유저디테일 이동기능-->
                   <!-- :to="'/user/' + user넘버" -->
                   <!-- 아래 아이콘대신 기본이미지를 넣는것이 좋을듯!! -->
-                  <v-icon v-else :color="primary" size="36px">mdi-account-circle</v-icon>
+                  <img
+                    v-else
+                    :src="$store.state.comm.baseUrl + '/image/user/default.png'"
+                    alt="default image"
+                  />
                 </v-col>
-                <v-col cols="5" class="d-flex flex-column pl-0">
-                  <h1 class="headline">{{ member.user.userNm }}</h1>
-                  <h4>{{ member.user.userEmail }}</h4>
+                <v-col cols="5" class="d-flex flex-column pl-0 text-align">
+                  <div class="my-auto">
+                    <h2>{{ member.user.userNm }}</h2>
+                    <h4>{{ member.user.userEmail }}</h4>
+                  </div>
                 </v-col>
                 <v-col cols="8">
                   <h4 class="py-0">일일 목표 공부 시간 : {{ member.user.userGoalHr }} 시간</h4>

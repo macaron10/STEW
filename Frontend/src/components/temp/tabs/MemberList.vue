@@ -104,7 +104,6 @@ export default {
         console.error(err);
       }
     },
-<<<<<<< HEAD
     async mand(gpNo, userId) {
       const apiUrl = "/study/user/mgr?no=" + gpNo + "&userId=" + userId;
       try {
@@ -113,30 +112,6 @@ export default {
       } catch (err) {
         console.error(err);
       }
-=======
-    computed: {
-      ...mapState('auth', [
-        "userInfo"
-        ]),
-    },
-    methods : {
-      async kick(gpJoinNo) {
-        const apiUrl = '/study/user/remove?no='+gpJoinNo
-        try {
-          const res = axios.post(apiUrl)
-        } catch (err) {
-          console.error(err)
-        }
-      },
-      async mand(gpNo, userId) {
-        const apiUrl = '/study/user/mgr?no=' + gpNo + '&userId=' + userId
-        try {
-          const res = axios.post(apiUrl)
-          console.log('res')
-        } catch (err) {
-          console.error(err)
-        }
->>>>>>> 4e84cf70ed2abace3c5c51c0e27865ca675b0bb0
     },
     mounted() {
       console.log(this.members[0]);

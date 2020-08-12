@@ -52,8 +52,8 @@ public class UserController {
 	private FileUtils fileUtil;
 	
 	// private final String fileBaseUrl = "/home/ubuntu/app/img/user";
-	private final String fileBaseUrl = "C:\\Users\\1n9yun\\Desktop\\img\\user";
-	private final String DEFAULT_USER_PROFILE = "";
+	private final String fileBaseUrl = "C:\\Users\\multicampus\\Desktop\\img\\user";
+	private final String DEFAULT_USER_PROFILE = "C:\\Users\\multicampus\\Desktop\\img\\user\\userDefault.png";
 	
 	@PostMapping("/signup")
 	@ApiOperation("회원가입")
@@ -150,13 +150,11 @@ public class UserController {
 	@PutMapping
 	@ApiOperation("회원 수정")
 	public ResponseEntity<BasicResponse> modify(UserModify userModify, @AuthenticationPrincipal UserPrincipal principal){
-		System.out.println(userModify.getUserGoalHr());
+		System.out.println("여기"+userModify.getUserImg());
 		BasicResponse result = new BasicResponse();
 		
 		User origin = userService.loadUserByUserId(principal.getUserId());
-		System.out.println(origin.getUserGoalHr());
 		origin.update(userModify);
-		System.out.println(origin.getUserGoalHr());
 		if(userModify.isUpdateImg()) {
 			if(userModify.getUserImg() != null) {
 				try {
@@ -166,12 +164,12 @@ public class UserController {
 					throw new FileUploadException();
 				}
 			}else {
+				System.out.println("들어옴");
 				origin.setUserImg(DEFAULT_USER_PROFILE);
 			}
 		}
 		
 		User modifiedUser = userService.save(origin);
-		System.out.println(modifiedUser.getUserGoalHr());
 		result.status = true; 
 		result.msg = "success";
 		result.object = modifiedUser;

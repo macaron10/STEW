@@ -50,8 +50,8 @@ export default {
   
     actions: {
       // 로그인
-      signIn({ commit, dispatch }: any, userObj: any) {
-        axios.post('/user/signin', userObj)
+      async signIn({ commit, dispatch }: any, userObj: any) {
+        await axios.post('/user/signin', userObj)
           .then(res => {
             console.log(res);
             const userInfo = {
@@ -76,7 +76,8 @@ export default {
           .then(res => {
             // console.log(res);
             commit("logoutSuccess");
-            router.push({ name: "Home" })
+            console.log();
+            router.push("/").catch(()=>({}));
           })
       },
   

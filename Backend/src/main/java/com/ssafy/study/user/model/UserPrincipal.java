@@ -11,8 +11,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import io.swagger.annotations.ApiModelProperty;
 
-public class UserPrincipal implements UserDetails {
-
+public class UserPrincipal implements UserDetails{
+	
 	@ApiModelProperty(hidden = true)
 	private User user;
 
@@ -71,7 +71,7 @@ public class UserPrincipal implements UserDetails {
 
 	@Override
 	public boolean isEnabled() {
-		return this.user.isEnable();
+		return true;
 	}
 
 	public long getUserId() {
@@ -86,4 +86,8 @@ public class UserPrincipal implements UserDetails {
 		return user.getUserImg();
 	}
 
+	public String getType() {
+		return user.getType();
+	}
+	
 }

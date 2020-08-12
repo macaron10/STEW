@@ -2,9 +2,15 @@
   <div id="clock">
     <span class="time">{{ time }}</span>
     <div class="btn-container">
-      <v-btn v-if="!running" @click="start"><span v-if="timeBegan">재</span>시작</v-btn>
-      <v-btn v-if="running" @click="stop">일시정지</v-btn>
-      <v-btn v-if="timeBegan" @click="end">종료</v-btn>
+      <v-btn class="ma-2" text icon color="blue darken-2" v-if="!running" @click="start">
+        <v-icon>mdi-play</v-icon>
+      </v-btn>
+      <v-btn class="ma-2" text icon color="grey darken-2" v-if="running" @click="stop">
+        <v-icon>mdi-pause</v-icon>
+      </v-btn>
+      <v-btn class="ma-2" text icon color="red lighten-2" v-if="timeBegan" @click="end">
+        <v-icon>mdi-stop</v-icon>
+      </v-btn>
     </div>
   </div>
 </template>

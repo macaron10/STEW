@@ -74,8 +74,14 @@
           <v-btn 
             large color="primary" 
             :block=true 
-            @click="signIn({'userEmail': user.userEmail, 'userPw':user.userPw}), signinInDialog = false"
+            @click="signInHandler()"
           >로그인</v-btn>
+
+          <v-spacer></v-spacer>
+          <social-login-btn provider="Kakao"></social-login-btn>
+          <social-login-btn provider="Naver"></social-login-btn>
+          <social-login-btn provider="Google"></social-login-btn>
+          <social-login-btn provider="Facebook"></social-login-btn>
         </v-col>
 
         <v-card-actions>
@@ -201,9 +207,6 @@
           </v-list>
       </v-menu>
     </div>
-    <v-btn icon v-if="isLogin" @click="logout" color="blue lighten-2" >
-      <v-icon>mdi-logout</v-icon>
-    </v-btn>
   </v-app-bar>
 </template>
 
@@ -211,9 +214,13 @@
 import axios from 'axios';
 import { mapState, mapActions, mapMutations} from 'vuex';
 import router from '../router';
+import SocialLoginBtn from '../components/auth/SocialLoginBtn'
 
 export default {
     name: 'Navbar',
+    components:{
+      SocialLoginBtn,
+    },
     computed: {
       ...mapState('auth', [ 
         "userInfo",
@@ -251,14 +258,25 @@ export default {
       },
       goToPage(nextPage) {
         switch(nextPage) {
-          case "My Schedule":
+          case "내 일정":
             this.$router.push({name: 'MySchedule'})
             break
-          case "Profile":
+          case "프로필 수정":
             this.$router.push({name:'UserDetail'})
             break
-        }  
-        
+          case "공부 기록":
+            this.$router.push({name:'UserTimer'})
+            break
+          case "로그아웃":
+            this.logout()
+        }          
+      },
+
+      async signInHandler() {
+        await this.signIn({'userEmail': this.user.userEmail, 'userPw':this.user.userPw});
+        this.signinInDialog = false;
+        this.user.userEmail = this.user.userPw = "";
+        this.$router.go();
       }
     },
     data () {
@@ -272,19 +290,19 @@ export default {
         items: [
           {
             icon: 'mdi-account',
-            text: 'Profile',
+            text: '프로필 수정',
           },
           {
-            icon: 'mdi-book-open-page-variant',
-            text: 'My Study',
+            icon: 'mdi-timer',
+            text: '공부 기록',
           },
           {
             icon: 'mdi-calendar',
-            text: 'My Schedule',
+            text: '내 일정',
           },
           {
             icon: 'mdi-logout',
-            text: 'Logout',
+            text: '로그아웃',
           },
         ],
         model: 1,

@@ -84,7 +84,7 @@ import { mapState } from 'vuex';
     computed: {
       ...mapState('auth', [
         "userInfo"
-      ]),
+        ]),
     },
     methods : {
       async kick(gpJoinNo) {

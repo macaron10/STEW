@@ -21,4 +21,6 @@ public interface TimeAcmlService {
 
 	List<TimeAcmlDto> selectGroupRankTimerTotalMonth(int year, int month);
 
+	TimeAcmlDto selectUserTodayTmAcml(long userId);
+
 }

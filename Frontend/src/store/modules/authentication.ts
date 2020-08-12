@@ -34,6 +34,7 @@ export default {
   
       logoutSuccess(state: any) {
         state.isLogin = false;
+        state.userInfo.userId = 0;
         state.userInfo.accessToken = "";
         state.userInfo.refreshToken = "";
       },
@@ -50,19 +51,19 @@ export default {
   
     actions: {
       // 로그인
-      signIn({ commit, dispatch }: any, userObj: any) {
-        axios.post('/user/signin', userObj)
+      async signIn({ commit, dispatch }: any, userObj: any) {
+        await axios.post('/user/signin', userObj)
           .then(res => {
-            // console.log(res);
+            console.log(res);
             const userInfo = {
               'accessToken': res.headers.accesstoken,
               'refreshToken': res.headers.refreshtoken
             }
-            commit("loginSuccess", userInfo);
-            dispatch("notice/getReqsSock",null, { root: true });
-            dispatch("notice/getReqs",null, { root: true });
-            //임시(userId 불러오기용)
             dispatch("getUserInfoImsi");
+            commit("loginSuccess", userInfo);
+            dispatch("notice/getReqsSock", null, { root: true });
+            dispatch("notice/getReqs", null, { root: true });
+            //임시(userId 불러오기용)
           })
           .catch(err => {
             alert("이메일과 비밀번호를 확인하세요");
@@ -76,7 +77,8 @@ export default {
           .then(res => {
             // console.log(res);
             commit("logoutSuccess");
-            router.push({ name: "Home" })
+            console.log();
+            router.push("/").catch(()=>({}));
           })
       },
   
@@ -85,18 +87,18 @@ export default {
         return new Promise(resolve => {
           const config = {
             headers: {
-              "refreshToken": state.auth.userInfo.refreshToken
+              "refreshToken": state.userInfo.refreshToken
             }
           }
-          const origin = state.auth.userInfo.accessToken;
+          const origin = state.userInfo.accessToken;
   
           axios.get('/user/refresh', config)
             .then(res => {
               console.log("토큰 재발급 요청 응답");
               commit("refreshSuccess", res.headers.accesstoken);
               console.log("origin : " + origin);
-              console.log("new : " + state.auth.userInfo.accessToken);
-              if (origin !== state.auth.userInfo.accessToken) {
+              console.log("new : " + state.userInfo.accessToken);
+              if (origin !== state.userInfo.accessToken) {
                 resolve();
               }
             })
@@ -105,14 +107,14 @@ export default {
   
       // accessToken 정보 확인
       tokenInformation({ state }: any) {
-        const token = state.auth.userInfo.accessToken.replace("Bearer", "");
+        const token = state.userInfo.accessToken.replace("Bearer", "");
         const decode = jwt.decode(token);
         console.log(decode);
       },
 
       //임시(userId불러오기용)
-      getUserInfoImsi({ commit }: any) {
-        axios.get('/user/')
+      async getUserInfoImsi({ commit }: any) {
+        await axios.get('/user')
         .then(({ data }) => {
             commit('changeUserId', data.object.userId)
             console.log(data.object.userId)

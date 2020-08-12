@@ -21,6 +21,7 @@ public class UserModify {
 	private String userNewPw;
 	private String userIntro;
 	private MultipartFile userImg;
+	private boolean updateImg;
 	private int userGoalHr;
 	
 }

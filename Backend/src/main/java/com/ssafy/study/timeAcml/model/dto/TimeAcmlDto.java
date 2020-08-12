@@ -30,6 +30,8 @@ public class TimeAcmlDto {
 	private String tmAcmlDate;
 	private String tmAcmlTime;
 
+	private long tmAcmlTimeLong;
+
 	public TimeAcmlDto(TimeAcml time) {
 		this.tmAcmlId = time.getTmAcmlId();
 		this.user = new UserDto(time.getUser());
@@ -39,38 +41,41 @@ public class TimeAcmlDto {
 		this.tmAcmlTime = secendToString(time.getTmAcmlTime());
 	}
 
+	public TimeAcmlDto(long time) {
+		tmAcmlTime = secendToString(time);
+		tmAcmlTimeLong = time;
+	}
+
 	public TimeAcmlDto(long time, String date) {
 		tmAcmlDate = date;
 		tmAcmlTime = secendToString(time);
+		tmAcmlTimeLong = time;
 	}
 
 	public TimeAcmlDto(long time, LocalDateTime date) {
 		tmAcmlDate = date.toLocalDate().toString();
 		tmAcmlTime = secendToString(time);
+		tmAcmlTimeLong = time;
 	}
 
 	public TimeAcmlDto(long time, String date, User user) {
+		this(time, date);
 		this.user = new UserDto(user);
-		this.tmAcmlDate = date;
-		this.tmAcmlTime = secendToString(time);
 	}
 
 	public TimeAcmlDto(long time, String date, Group group) {
+		this(time, date);
 		this.gp = new GroupDto(group);
-		this.tmAcmlDate = date;
-		this.tmAcmlTime = secendToString(time);
 	}
 
 	public TimeAcmlDto(long time, LocalDateTime date, User user) {
+		this(time, date);
 		this.user = new UserDto(user);
-		this.tmAcmlDate = date.toLocalDate().toString();
-		this.tmAcmlTime = secendToString(time);
 	}
 
 	public TimeAcmlDto(long time, LocalDateTime date, Group group) {
+		this(time, date);
 		this.gp = new GroupDto(group);
-		this.tmAcmlDate = date.toLocalDate().toString();
-		this.tmAcmlTime = secendToString(time);
 	}
 
 	public String secendToString(long second) {

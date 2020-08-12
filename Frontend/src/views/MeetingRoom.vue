@@ -7,16 +7,17 @@
         <h1>비디오의 상태 {{options.video}}</h1>
         <!-- footer -->
         <v-row class="footer" justify="center" no-gutters>
-          <v-btn class="mx-1" fab dark color="indigo" @click="unmute">
+          <v-btn v-if="options.audio" class="mx-1"  fab dark color="#64B5F6" @click="mute">
             <v-icon dark>mdi-volume-high</v-icon>
           </v-btn>
-          <v-btn class="mx-1" fab dark color="blue lighten-1" @click="mute">
+          <v-btn v-else class="mx-1" fab outlined dark color="#FB8C00" @click="unmute">
             <v-icon dark>mdi-volume-off</v-icon>
           </v-btn>
-          <v-btn class="mx-1" fab dark color="teal lighten-1" @click="onVideo">
+          
+          <v-btn v-if="options.video" class="mx-1" fab dark color="#7CB342" @click="offVideo">
             <v-icon dark>mdi-video</v-icon>
           </v-btn>
-          <v-btn class="mx-1" fab dark color="teal accent-1" @click="offVideo">
+          <v-btn v-else class="mx-1" fab outlined dark color="#FF8A65" @click="onVideo">
             <v-icon dark>mdi-video-off</v-icon>
           </v-btn>
           <v-btn class="mx-1" fab dark color="red" @click="outRoom" :to="{ name: 'StudyDetail' }">
@@ -77,18 +78,12 @@ export default {
     initoptions() {
       this.connection.videosContainer = document.querySelector(".videos-container");
       this.options = this.$route.params.options;
-
-      let localStream = {};
-      localStream = this.connection;
-      localStream = localStream;
-      console.log(this.connection.attachStreams);
-      console.log(this.connection.attachStreams[0]);
-      if (this.options.audio == false) {
-        // localStream.attachStreams[0].mute("video");
-      }
-      if (this.options.video == false) {
-        // localStream.attachStreams[0].mute("audio");
-      }
+      // if (this.options.audio == false) {
+      //   this.mute();
+      // }
+      // if (this.options.video == false) {
+      //   this.offVideo();
+      // }
     },
     joinRoom() {
       this.connection = new RTCMultiConnection();
@@ -127,7 +122,7 @@ export default {
     mute() {
       let localStream = this.connection.attachStreams[0];
       localStream.mute("audio");
-      console.log("mute");
+      this.options.audio = false;
     },
     unmute() {
       let localStream = this.connection.attachStreams[0];
@@ -135,15 +130,18 @@ export default {
       this.connection.streamEvents.selectFirst(
         "local"
       ).mediaElement.muted = true;
+      this.options.audio = true;
     },
     offVideo() {
       let localStream = this.connection.attachStreams[0];
       localStream.mute("video");
+      this.options.video = false;
     },
     onVideo() {
       this.connection.session.video = true;
       let localStream = this.connection.attachStreams[0];
       localStream.unmute("video");
+      this.options.video = true;
     },
     // getvideos() {
     //   document.getElementsByName('video')

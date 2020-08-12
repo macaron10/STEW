@@ -4,16 +4,34 @@
       <v-row>
         <v-col class="mb-6">
           <div class="d-flex justify-center">
-            <img :src="$store.state.comm.baseUrl + '/image/group' + group.gpImg" alt="그룹 이미지" height="400px" />
+            <img
+              v-if="group.gpImg"
+              :src="$store.state.comm.baseUrl + '/image/group' + group.gpImg"
+              alt="그룹 이미지"
+              height="400px"
+            />
           </div>
           <div class="text-center">
-            <h1 class="my-3">{{ group.gpNm }}</h1>
+            <h1 class="my-3">
+              {{ group.gpNm }}
+              <v-tooltip top>
+                <template v-slot:activator="{ on, attrs }">
+                  <v-btn
+                    icon
+                    v-bind="attrs"
+                    v-on="on"
+                    dark
+                    color="green darken-1"
+                    @click="readyEnterMeeting(group.gpNo)"
+                  >
+                    <v-icon>mdi-video</v-icon>
+                  </v-btn>
+                </template>
+                <span>캠 스터디 입장하기!</span>
+              </v-tooltip>
+            </h1>
             <h4 class="mb-2">{{ group.gpIntro }}</h4>
-            <v-btn
-              @click="readyEnterMeeting(group.gpNo)"
-              color="green accent-1"
-              class="white--text font-weight-bold mx-3"
-            >스터디 캠 입장</v-btn>
+
             <v-btn
               :to="{ name:'StudyUpdate', params: { id: id }}"
               color="blue accent-1"
@@ -74,7 +92,7 @@ export default {
   components: {
     Calendar,
     MemberList,
-    TimeRank,
+    TimeRank
   },
   data() {
     return {
@@ -93,12 +111,12 @@ export default {
   },
   mounted() {
     this.id = this.$route.params.id;
-    this.userId = this.$store.state.auth.userInfo.userId
+    this.userId = this.$store.state.auth.userInfo.userId;
     this.getDetail();
   },
   methods: {
-    readyEnterMeeting(gpNo) {      
-      this.$router.push({name:'ReadyMeeting', params:{id: gpNo}})
+    readyEnterMeeting(gpNo) {
+      this.$router.push({ name: "ReadyMeeting", params: { id: gpNo } });
     },
     async getDetail() {
       const apiUrl = "/study/user/" + this.id;
@@ -107,7 +125,6 @@ export default {
         this.group = JSON.parse(res.data.object).group;
         this.group = JSON.parse(this.group);
         this.membersData = JSON.parse(res.data.object).joinList;
-        console.log(this.group);
       } catch (err) {
         this.$router.push("/main/");
         console.error(err);

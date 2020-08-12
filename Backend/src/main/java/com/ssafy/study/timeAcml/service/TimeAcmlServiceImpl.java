@@ -61,4 +61,9 @@ public class TimeAcmlServiceImpl implements TimeAcmlService {
 		return timeRepo.selectGroupRankTimerTotalMonth(year, month);
 	}
 
+	@Override
+	public TimeAcmlDto selectUserTodayTmAcml(long userId) {
+		return timeRepo.selectUserToadyTmAcml(userId);
+	}
+
 }

@@ -39,14 +39,16 @@ public class JwtAuthenticationSuccessHandler extends SavedRequestAwareAuthentica
 		
 		String refreshToken = JwtUtil.generateRefreshToken();
 		String accessToken = JwtUtil.generateAccessToken(userPrincipal);
+		String tokenKey = JwtUtil.getRefreshKey(accessToken);
 		
-		redisTemplate.opsForValue().set(userPrincipal.getUsername(), refreshToken);
-		redisTemplate.expire(userPrincipal.getUsername(), JwtProperties.EXPIRATION_TIME_REFRESH, TimeUnit.MILLISECONDS);
+		redisTemplate.opsForValue().set(tokenKey, refreshToken);
+		redisTemplate.expire(tokenKey, JwtProperties.EXPIRATION_TIME_REFRESH, TimeUnit.MILLISECONDS);
 		
 		SecurityContextHolder.getContext().setAuthentication(authResult);
 		
 		response.addHeader("accessToken", JwtProperties.TOKEN_PREFIX + accessToken);
 		response.addHeader("refreshToken", JwtProperties.TOKEN_PREFIX + refreshToken);
+		
 	}
 	
 }

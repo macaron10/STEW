@@ -9,5 +9,4 @@ import com.ssafy.study.timeAcml.model.entity.TimeAcml;
 
 public interface TimeAcmlRepository extends JpaRepository<TimeAcml, Long>, TimeAcmlRepositoryCustom {
 
-	
 }

@@ -3,55 +3,6 @@
     <v-col>
       <v-sheet height="64">
         <v-toolbar flat color="white">
-          <v-btn outlined class="mr-4" color="grey darken-2" @click="setToday">Today</v-btn>
-          <v-btn fab text small color="grey darken-2" @click="prev">
-            <v-icon small>mdi-chevron-left</v-icon>
-          </v-btn>
-          <v-btn fab text small color="grey darken-2" @click="next">
-            <v-icon small>mdi-chevron-right</v-icon>
-          </v-btn>
-          <v-toolbar-title v-if="$refs.calendar">{{ $refs.calendar.title }}</v-toolbar-title>
-          <v-spacer></v-spacer>
-          <v-btn outlined color="grey darken-2" @click.stop="newForm()">NEW</v-btn>
-
-          <v-dialog v-model="dialog" max-width="470">
-            <v-card>
-              <v-card-title class="headline">New Schedule</v-card-title>
-              <v-date-picker
-                color="blue lighten-2"
-                v-model="newSchedule.dates"
-                :landscape="landscape"
-                range
-              ></v-date-picker>
-              <span v-if="newSchedule.dates[0]">기간 : {{dateRangeText}}</span>
-              <v-select
-                :items="colors"
-                label="색깔"
-                v-model="newSchedule.color"
-                item-text="text"
-                item-value="value"
-              ></v-select>
-              <v-switch v-model="newSchedule.useTime" class="ma-4" label="시간 사용"></v-switch>
-              <v-text-field
-                v-if="newSchedule.useTime"
-                label="시작 시간"
-                v-model="newSchedule.startTime"
-                type="time"
-              ></v-text-field>
-              <v-text-field
-                v-if="newSchedule.useTime"
-                label="종료 시간"
-                v-model="newSchedule.endTime"
-                type="time"
-              ></v-text-field>
-              <v-text-field label="내용" v-model="newSchedule.name"></v-text-field>
-              <v-text-field label="상세내용" v-model="newSchedule.details"></v-text-field>
-
-              <v-btn color="primary" @click="createNewSchedule">등록</v-btn>
-              <v-btn color="primary" @click="reset">초기화</v-btn>
-            </v-card>
-          </v-dialog>
-          <v-spacer></v-spacer>
           <v-menu bottom right>
             <template v-slot:activator="{ on, attrs }">
               <v-btn outlined color="grey darken-2" v-bind="attrs" v-on="on">
@@ -69,11 +20,75 @@
               <v-list-item @click="type = 'month'">
                 <v-list-item-title>Month</v-list-item-title>
               </v-list-item>
-              <v-list-item @click="type = '4day'">
+              <!-- <v-list-item @click="type = '4day'">
                 <v-list-item-title>4 days</v-list-item-title>
-              </v-list-item>
+              </v-list-item> -->
             </v-list>
           </v-menu>
+          <!-- <v-btn outlined class="mr-4" color="grey darken-2" @click="setToday">Today</v-btn> -->
+          
+          <v-btn fab text small color="grey darken-2" @click="prev">
+            <v-icon small>mdi-chevron-left</v-icon>
+          </v-btn>
+          <v-toolbar-title  v-if="$refs.calendar" @click="setToday">
+            {{ $refs.calendar.title }}
+          </v-toolbar-title>
+           <v-btn fab text small color="grey darken-2" @click="next">
+            <v-icon small>mdi-chevron-right</v-icon>
+          </v-btn>
+          <v-spacer></v-spacer>
+          <!-- <v-btn outlined color="grey darken-2">NEW</v-btn> -->
+
+          <v-dialog v-model="dialog" max-width="470" style="padding: 10px">
+            <v-card>
+              <v-card-title class="headline">일정 추가</v-card-title>
+              <v-date-picker
+                color="blue lighten-2"
+                v-model="newSchedule.dates"
+                :landscape="landscape"
+                range
+              ></v-date-picker>
+              <span v-if="newSchedule.dates[0]">기간 : {{dateRangeText}}</span>
+              <v-radio-group v-model="newSchedule.color" row>
+                <v-radio v-for="color in colors" :value="color.value" :key="color.value">
+                    <template v-slot:label>
+                      <v-icon :color="color.value">mdi-checkbox-blank-circle</v-icon>
+                    </template>
+                </v-radio>
+              </v-radio-group>
+              <!-- <v-select
+                :items="colors"
+                label="color"
+                v-model="newSchedule.color"
+                item-text="text"
+                item-value="value"
+                required="true"
+              ></v-select> -->
+              <v-switch v-model="newSchedule.useTime" class="ma-4" label="시간"></v-switch>
+              <v-text-field
+                v-if="newSchedule.useTime"
+                label="시작 시간"
+                v-model="newSchedule.startTime"
+                type="time"
+              ></v-text-field>
+              <v-text-field
+                v-if="newSchedule.useTime"
+                label="종료 시간"
+                v-model="newSchedule.endTime"
+                type="time"
+              ></v-text-field>
+              <v-text-field label="제목" v-model="newSchedule.name"></v-text-field>
+              <v-text-field label="설명" v-model="newSchedule.details"></v-text-field>
+
+              <v-btn color="primary" @click="createNewSchedule">등록하기</v-btn>
+              <v-btn color="primary" @click="reset">초기화</v-btn>
+            </v-card>
+          </v-dialog>
+          <v-spacer></v-spacer>
+          <v-btn fab small outlined dark color="indigo" @click.stop="newForm()">
+            <v-icon dark>mdi-pencil</v-icon>
+          </v-btn>
+          
         </v-toolbar>
       </v-sheet>
       <v-sheet height="600">
@@ -108,7 +123,7 @@
               </v-btn>
             </v-toolbar>
             <v-card-text>
-              <span>{{selectedEvent.start}}부터 {{selectedEvent.type}}까지</span>
+              <span>{{ selectedEvent.start | dateToString(selectedEvent.timed) }} ~ {{selectedEvent.end | dateToString(selectedEvent.timed) }}</span>
               <hr />
               <span v-html="selectedEvent.details"></span>
             </v-card-text>
@@ -128,6 +143,7 @@ import { VDatePickerYears } from "vuetify/lib";
 import axios from "axios";
 import router from "../../router";
 import { truncate } from "fs";
+
 export default {
   data: () => ({
     newSchedule: {
@@ -178,6 +194,17 @@ export default {
     dateRangeText() {
       this.sortDate();
       return this.newSchedule.dates.join(" ~ ");
+    }
+  },
+  filters : {
+    dateToString(val, status){
+      const date = new Date(val);
+      let str = date.getUTCFullYear() + "년 "+(date.getUTCMonth() + 1)+"월 "+date.getUTCDate() + "일 ";
+
+      if(status)
+        str += " "+date.getHours() + " : " + date.getMinutes();
+
+      return str;
     }
   },
   methods: {

@@ -197,4 +197,9 @@ public class GroupServiceImpl implements GroupService {
 		return joinRepo.findGpJoinMemeber(gpNo);
 	}
 
+	@Override
+	public List<GroupDto> rankGroupStudyTime() {
+		return gpRepo.rankGroupStudyTime();
+	}
+
 }

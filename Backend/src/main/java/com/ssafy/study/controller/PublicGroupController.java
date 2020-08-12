@@ -107,6 +107,17 @@ public class PublicGroupController {
 
 		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
+	
+	@GetMapping("/rank")
+	@ApiOperation("스터디 랭크 출력")
+	public ResponseEntity rankStudyTime() {
+		BasicResponse result = new BasicResponse();
+		result.object = groupService.rankGroupStudyTime();
+		result.msg = "success";
+		result.status = true;
+
+		return new ResponseEntity<>(result, HttpStatus.OK);
+	}
 
 
 }

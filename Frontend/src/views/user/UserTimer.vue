@@ -5,11 +5,8 @@
         <v-row class="d-flex align-center mr-2">
           <v-col class="d-flex flex-column justify-center">
             <v-row class="mb-5">
-              <v-avatar class="mr-5">
-                  <v-img :src="this.$store.state.comm.baseUrl + '/image/user/' + userInfo.userImg"></v-img>
-              </v-avatar>
               <h1 style="color:black">
-                <strong>{{userInfo.userNm}}</strong> 님의 공부 기록
+                '<strong>{{userInfo.userNm}}</strong>' 님의 공부 기록
               </h1>
             </v-row>
           </v-col>

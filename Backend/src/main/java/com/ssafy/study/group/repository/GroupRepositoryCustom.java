@@ -18,4 +18,6 @@ public interface GroupRepositoryCustom {
 
 	List<GroupDto> selectAllGroups();
 
+	List<GroupDto> rankGroupStudyTime();
+
 }

@@ -36,9 +36,12 @@ public class GroupDto {
 	private List<String> gpTag;
 	private LocalDateTime regDate;
 
+	private long tmAcmlSum;
+	private long tmAcmlAvg;
+
 	public GroupDto(Group group) {
 		this.gpNo = group.getGpNo();
-		this.gpCatNo =  group.getGpCat().getGpCatNo();
+		this.gpCatNo = group.getGpCat().getGpCatNo();
 		this.gpNm = group.getGpNm();
 		this.gpMgrId = group.getGpMgrId();
 		this.gpIntro = group.getGpIntro();
@@ -51,6 +54,12 @@ public class GroupDto {
 
 		if (group.getGpTag() != null)
 			this.gpTag = Arrays.asList(group.getGpTag().split(","));
+	}
+
+	public GroupDto(Group group,long tm_acml_sum, long tm_acml_avg) {
+		this(group);
+		this.tmAcmlSum = tm_acml_sum;
+		this.tmAcmlAvg = tm_acml_avg;
 	}
 
 	public GroupDto(Group group, String gpCatNm) {

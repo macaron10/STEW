@@ -41,7 +41,7 @@ export default {
       console.log(hours)
       const minutes = Number(this.time.slice(3, 5))
       console.log(minutes)
-      const seconds = Number(this.time.slice(7, 8))
+      const seconds = Number(this.time.slice(6, 8))
       console.log(seconds)
       return hours*3600 + minutes*60 + seconds
 

@@ -230,7 +230,7 @@ export default {
         },
 
         updateUserInfo() {
-            // this.makeFormData();
+            this.makeFormData();
 
             const config = {
                 headers: {

@@ -1,14 +1,15 @@
 <template>
   <div id="clock">
-    <span class="time">{{ time }}</span>
     <div class="btn-container">
-      <v-btn class="ma-2" text icon color="blue darken-2" v-if="!running" @click="start">
+    <v-icon>mdi-timer</v-icon>
+    <span class="ml-3 mr-2 time">오늘 공부 시간 : {{ time }}</span>
+      <v-btn class="ml-4" text icon color="blue darken-2" v-if="!running" @click="start">
         <v-icon>mdi-play</v-icon>
       </v-btn>
-      <v-btn class="ma-2" text icon color="grey darken-2" v-if="running" @click="stop">
+      <v-btn class="ml-4" text icon color="grey darken-2" v-if="running" @click="stop">
         <v-icon>mdi-pause</v-icon>
       </v-btn>
-      <v-btn class="ma-2" text icon color="red lighten-2" v-if="timeBegan" @click="end">
+      <v-btn class="" text icon color="red lighten-2" v-if="timeBegan" @click="end">
         <v-icon>mdi-stop</v-icon>
       </v-btn>
     </div>

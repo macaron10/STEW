@@ -37,7 +37,7 @@ public class GroupReqRepositoryImpl implements GroupReqRepositoryCustom {
 
 	@Override
 	public List<GroupReqDto> findUsersReq(long userId) {
-		String jpql = "select gr from GroupReq gr where gr.gp.gpNo in (select gj.gp.gpNo from GroupJoin gj where gj.user.userId = :userId)";
+		String jpql = "select gr from GroupReq gr where gr.user.userId = :userId";
 		TypedQuery<GroupReq> query = em.createQuery(jpql, GroupReq.class);
 
 		query.setParameter("userId", userId);

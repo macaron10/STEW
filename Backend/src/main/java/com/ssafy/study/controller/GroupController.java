@@ -315,7 +315,6 @@ public class GroupController {
 				return new ResponseEntity<>(result, HttpStatus.OK);
 			}
 		}
-
 		groupService.exitGroup(gpNo, userId);
 		result.msg = "success";
 		result.status = true;

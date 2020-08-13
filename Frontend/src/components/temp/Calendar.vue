@@ -20,12 +20,8 @@
               <v-list-item @click="type = 'month'">
                 <v-list-item-title>Month</v-list-item-title>
               </v-list-item>
-              <!-- <v-list-item @click="type = '4day'">
-                <v-list-item-title>4 days</v-list-item-title>
-              </v-list-item> -->
             </v-list>
           </v-menu>
-          <!-- <v-btn outlined class="mr-4" color="grey darken-2" @click="setToday">Today</v-btn> -->
           
           <v-btn fab text small color="grey darken-2" @click="prev">
             <v-icon small>mdi-chevron-left</v-icon>
@@ -47,26 +43,8 @@
                 v-model="newSchedule.dates"
                 no-title full-width range
               ></v-date-picker>
-              <!-- <span v-if="newSchedule.dates[0]">기간 : {{dateRangeText}}</span> -->
-              
-              <!-- <v-radio-group v-model="newSchedule.color" row class="justify-center">
-                <v-radio v-for="color in colors" :value="color.value" :key="color.value">
-                    <template v-slot:label>
-                      <v-icon :color="color.value">mdi-checkbox-blank-circle</v-icon>
-                    </template>
-                </v-radio>
-              </v-radio-group> -->
-              <!-- <v-select
-                :items="colors"
-                label="color"
-                v-model="newSchedule.color"
-                item-text="text"
-                item-value="value"
-                required="true"
-              ></v-select> -->
-              <!-- <v-switch v-model="newSchedule.useTime" class="ma-4" label="시간"></v-switch> -->
               <v-col>
-                <v-radio-group v-model="newSchedule.color" row class="pl-7">
+                <v-radio-group v-model="newSchedule.color" row >
                   <v-radio v-for="color in colors" :value="color.value" :key="color.value">
                       <template v-slot:label>
                         <v-icon :color="color.value">mdi-checkbox-blank-circle</v-icon>
@@ -82,7 +60,7 @@
                   </v-col>
                 </v-row>
                 <v-row class="ma-0">
-                  <v-col cols=6 class="pa-0 pr-2">
+                  <v-col cols=5 class="pa-0 pr-5">
                     <v-text-field
                       v-if="newSchedule.useTime"
                       label="시작 시간"
@@ -91,7 +69,7 @@
                       type="time"
                     ></v-text-field>
                   </v-col>
-                  <v-col cols=6 class="pa-0">
+                  <v-col cols=5 class="pa-0 pr-5">
                     <v-text-field
                       v-if="newSchedule.useTime"
                       label="종료 시간"
@@ -104,8 +82,8 @@
                 <v-text-field label="제목" v-model="newSchedule.name" class="ma-0 mr-2"></v-text-field>
                 <v-text-field label="설명" v-model="newSchedule.details" class="ma-0 mr-2"></v-text-field>
                 <v-row class="d-flex justify-end">
-                  <v-btn color="primary" class="mx-3" @click="createNewSchedule">일정추가</v-btn>
-                  <v-btn color="primary" class="mx-3" @click="reset">초기화</v-btn>
+                  <v-btn depressed dark color="#2b90d9" class="mx-3" @click="createNewSchedule">일정추가</v-btn>
+                  <v-btn depressed dark color="grey lighten-1" class="mx-3" @click="reset">초기화</v-btn>
                 </v-row>
               </v-col>
               

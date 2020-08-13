@@ -139,6 +139,7 @@ export default {
                 new: "",
                 newChk: "",
             },
+            imgSrc: "",
             formData: null
         }
     },

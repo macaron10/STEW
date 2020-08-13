@@ -188,9 +188,9 @@ public class JwtSecurityConfig extends WebSecurityConfigurerAdapter{
             return CommonOAuth2Provider.FACEBOOK.getBuilder(client)
                     .clientId(registration.getClientId())
                     .clientSecret(registration.getClientSecret())
-                    .userInfoUri(BaseProperties.BASE_URL + "/api/login/oauth2/code/" + client)
+                    .userInfoUri("https://graph.facebook.com/me?fields=id,name,email,link")
                     .scope("email")
-                    .redirectUriTemplate("")
+                    .redirectUriTemplate(BaseProperties.BASE_URL + "/api/login/oauth2/code/" + client)
                     .build();
         }
 

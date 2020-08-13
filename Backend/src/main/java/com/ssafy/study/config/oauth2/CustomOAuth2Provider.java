@@ -4,6 +4,8 @@ import org.springframework.security.oauth2.client.registration.ClientRegistratio
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
 
+import com.ssafy.study.util.BaseProperties;
+
 public enum CustomOAuth2Provider {
 
 //	http://lcoalhost:8399/api/oauth2/authorization/kakao
@@ -36,8 +38,8 @@ public enum CustomOAuth2Provider {
         }
     };
 
-    private static final String DEFAULT_LOGIN_REDIRECT_URL = "{baseUrl}/login/oauth2/code/{registrationId}";
-
+    private static final String DEFAULT_LOGIN_REDIRECT_URL = BaseProperties.BASE_DEPLOY_URL + "/api/login/oauth2/code/{registrationId}";
+ 
     protected final ClientRegistration.Builder getBuilder(
             String registrationId, ClientAuthenticationMethod method, String redirectUri) {
         ClientRegistration.Builder builder = ClientRegistration.withRegistrationId(registrationId);

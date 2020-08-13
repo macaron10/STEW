@@ -33,6 +33,7 @@ import com.ssafy.study.config.oauth2.CustomOAuth2Provider;
 import com.ssafy.study.user.service.CustomOAuth2UserService;
 import com.ssafy.study.user.service.UserPrincipalDetailsService;
 import com.ssafy.study.user.service.UserService;
+import com.ssafy.study.util.BaseProperties;
 
 import lombok.RequiredArgsConstructor;
 
@@ -178,6 +179,7 @@ public class JwtSecurityConfig extends WebSecurityConfigurerAdapter{
                     .clientId(registration.getClientId())
                     .clientSecret(registration.getClientSecret())
                     .scope("email", "profile")
+                    .redirectUriTemplate(BaseProperties.BASE_URL + "/api/login/oauth2/code/" + client)
                     .build();
         }
 
@@ -186,8 +188,9 @@ public class JwtSecurityConfig extends WebSecurityConfigurerAdapter{
             return CommonOAuth2Provider.FACEBOOK.getBuilder(client)
                     .clientId(registration.getClientId())
                     .clientSecret(registration.getClientSecret())
-                    .userInfoUri("https://graph.facebook.com/me?fields=id,name,email,link")
+                    .userInfoUri(BaseProperties.BASE_URL + "/api/login/oauth2/code/" + client)
                     .scope("email")
+                    .redirectUriTemplate("")
                     .build();
         }
 

@@ -34,7 +34,7 @@ export default {
   methods: {
 
       initSock () {
-        const apiUrl = this.$store.state.comm.baseUrl + '/sock'
+        const apiUrl = this.$store.state.comm.baseUrl + '/api/sock'
         const socket = new SockJS(apiUrl)
         const ws = Stomp.over(socket)
         this.ws = ws

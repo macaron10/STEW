@@ -177,7 +177,7 @@ public class GroupController {
 		BasicResponse result = new BasicResponse();
 
 		ckGroupAuth(userId, gpNo);
-		if (groupService.ckGroupJoin(gpNo, uid)) {
+		if (!groupService.ckGroupJoin(gpNo, uid)) {
 			result.msg = "Not Joined Member";
 			result.status = false;
 

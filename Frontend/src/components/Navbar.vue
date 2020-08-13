@@ -137,6 +137,22 @@
         </v-btn>
       </template>
       <v-list>
+        <!-- 나의 신청 -->
+        <v-list-item-group v-model="model3">
+          <v-list-item
+            v-for="(myGroupsReq, k) in myGroupsReqs"
+            :key="k"
+          >
+
+            <v-list-item-content>
+              <div>
+                '{{ myGroupsReq.gp.gpNm }}'에 가입을 신청했습니다.(대기중)
+              </div>
+            </v-list-item-content>
+          </v-list-item>
+        </v-list-item-group>
+
+        <!-- 다른 유저에게서 온 신청 -->
         <v-list-item-group v-model="model2">
           <v-list-item
             v-for="(groupsReq, j) in groupsReqs"
@@ -152,18 +168,8 @@
                   >
                 </v-avatar>
             </v-list-item-icon>
-            <!-- 내의 신청 -->
-            <v-list-item-content v-if="userInfo.userId===groupsReq.user.userId" >
-              '{{ groupsReq.gp.gpNm }}'에 가입을 신청했습니다.(대기중)
-            <br>
-            <div>
-              전송 메세지 : "{{ groupsReq.gpReqMsg }}"
-            </div>
-            </v-list-item-content>
-            <!-- 다른 유저에게서 온 신청 -->
-            <v-list-item-content v-else>
+            <v-list-item-content>
               '{{ groupsReq.user.userNm }}' 님이 '{{ groupsReq.gp.gpNm }}'에 가입을 신청했습니다.
-              <!-- <v-list-item-tistle v-text="groupsReqs.gp.gpNm"></v-list-item-title> -->
             <br>
             <div v-if="groupsReq.gpReqMsg">
             "{{ groupsReq.gpReqMsg }}"
@@ -224,17 +230,17 @@ export default {
     computed: {
       ...mapState('auth', [ 
         "userInfo",
-        "isLogin"
+        "isLogin",
       ]),
-      ...mapState('notice', ['groupsReqs']),
+      ...mapState('notice', ['groupsReqs', 'myGroupsReqs']),
       messages: function() {
         return this.groupsReqs.length
       }
     },
     methods: {
-      ...mapActions('notice', ['getReqsSock', 'getReqs']),
+      ...mapActions('notice', [ 'getReqsSock', 'getReqs', 'getMyReqs']),
       ...mapActions('auth', [
-        "signIn",
+        'signIn',
         "logout"
         ]),
       ...mapActions('sg', ['fetchGroups']),
@@ -281,6 +287,7 @@ export default {
     },
     data () {
       return {
+
         wordForSearching: "",
         signinInDialog: false,
         user: {
@@ -307,27 +314,15 @@ export default {
         ],
         model: 1,
         model2: 2,
-        // noticeItems: [
-        //   {
-        //     icon: 'mdi-user',
-        //     text: 'ㅇㅇㅇ님이 ㅇㅇㅇ그룹에 가입하고 싶어합니다. ',
-        //   },
-        //   {
-        //     icon: 'mdi-star',
-        //     text: 'ㅇㅇㅇ님이 ㅇㅇㅇ그룹에 가입하고 싶어합니다.',
-        //   },
-        //   {
-        //     icon: 'mdi-send',
-        //     text: 'ㅇㅇㅇ님이 ㅇㅇㅇ그룹에 가입하고 싶어합니다.',
-        //   },
-        //   {
-        //     icon: 'mdi-email-open',
-        //     text: '기타알림',
-        //   },
-        // ],
+        model3: 3,
         show: false,
       }
     },
+    mounted () {
+      this.getReqs()
+      this.getMyReqs()
+      this.getReqsSock()
+    }
 }
 </script>
 

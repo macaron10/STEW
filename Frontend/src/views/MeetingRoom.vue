@@ -153,7 +153,7 @@ export default {
 
 <style>
 .meeting-room {
-  background-color: #474747;
+  background-color: #5f5f5f;
 }
 
 .chatroom {

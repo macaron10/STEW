@@ -42,7 +42,7 @@
             <v-row>
                 <v-textarea
                     v-model="userInfo.userIntro"
-                    label="자기소개 및 목표"
+                    label="나의 목표"
                     class="ma-3" solo counter=100 
                 ></v-textarea>
             </v-row>
@@ -242,9 +242,11 @@ export default {
             }
 
             axios.put('/user', this.formData, config)
-            .then(({ data }) => {
-                console.log(data);
-                if (data.msg === "success") {
+            .then(({ res }) => {
+                console.log(res);
+                if (res.data.msg === "success") {
+                    this.$store.commit("auth/refreshSuccess", res.headers.accesstoken);
+                    this.$store.dispatch("auth/tokenInformation");
                     alert("회원 정보 수정 완료");
                     this.$router.go();
                 }

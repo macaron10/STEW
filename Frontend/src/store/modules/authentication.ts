@@ -4,6 +4,9 @@ import jwt from "jsonwebtoken";
 
 interface UserInfo {
   userId: number,
+  userNm: string,
+  userEmail: string,
+  userImg: string,
   accessToken: string,
   refreshToken: string,
 }
@@ -16,6 +19,9 @@ export default {
       isLogin: false,
       userInfo: {
         userId: 0,
+        userNm: "",
+        userEmail: "",
+        userImg: "",
         accessToken: "",
         refreshToken: ""
       },
@@ -43,9 +49,11 @@ export default {
         state.userInfo.accessToken = payload;
       },
 
-      //임시(userId 불러오기용)
-      changeUserId(state: { userInfo: { userId: number; }; }, payload: any) {
-        state.userInfo.userId = payload
+      getUserInfoByToken(state: { userInfo: any; }, payload: any) {
+       state.userInfo.userId = payload.userId; 
+       state.userInfo.userNm = payload.userNm;
+       state.userInfo.userEmail = payload.userEmail;
+       state.userInfo.userImg = payload.userImg
       }
     },
   
@@ -59,11 +67,10 @@ export default {
               'accessToken': res.headers.accesstoken,
               'refreshToken': res.headers.refreshtoken
             }
-            dispatch("getUserInfoImsi");
             commit("loginSuccess", userInfo);
+            dispatch("tokenInformation");
             dispatch("notice/getReqsSock", null, { root: true });
             dispatch("notice/getReqs", null, { root: true });
-            //임시(userId 불러오기용)
           })
           .catch(err => {
             alert("이메일과 비밀번호를 확인하세요");
@@ -106,19 +113,19 @@ export default {
       },
   
       // accessToken 정보 확인
-      tokenInformation({ state }: any) {
-        const token = state.userInfo.accessToken.replace("Bearer", "");
-        const decode = jwt.decode(token);
+      tokenInformation({ state, commit }: any) {
+        const token = state.userInfo.accessToken.replace("Bearer ", "");
+        const decode: any = jwt.decode(token);
         console.log(decode);
-      },
-
-      //임시(userId불러오기용)
-      async getUserInfoImsi({ commit }: any) {
-        await axios.get('/user')
-        .then(({ data }) => {
-            commit('changeUserId', data.object.userId)
-            console.log(data.object.userId)
-        })
+        if (decode) {
+          const userInfo = {
+            'userId': decode.userId,
+            'userEmail': decode.sub,
+            'userNm': decode.userNm,
+            'userImg': decode.userImg
+          };
+          commit("getUserInfoByToken", userInfo);
+        }
       },
     },
   }

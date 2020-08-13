@@ -1,17 +1,19 @@
 <template>
   <div id="clock">
     <div class="btn-container">
-    <v-icon>mdi-timer</v-icon>
-    <span class="ml-3 mr-2 time">오늘 공부 시간 : {{ time }}</span>
-      <v-btn class="ml-4" text icon color="blue darken-2" v-if="!running" @click="start">
-        <v-icon>mdi-play</v-icon>
-      </v-btn>
-      <v-btn class="ml-4" text icon color="grey darken-2" v-if="running" @click="stop">
-        <v-icon>mdi-pause</v-icon>
-      </v-btn>
-      <v-btn class="" text icon color="red lighten-2" v-if="timeBegan" @click="end">
-        <v-icon>mdi-stop</v-icon>
-      </v-btn>
+      <v-row>
+        <v-icon class="ml-8">mdi-timer</v-icon>
+        <span class="pt-3 ml-5 mr-10 time">{{ time }}</span>
+        <v-btn class="ml-10" text icon color="blue lighten-2" v-if="!running" @click="start">
+          <v-icon>mdi-play</v-icon>
+        </v-btn>
+        <v-btn class="ml-10" text icon color="grey lighten-2" v-if="running" @click="stop">
+          <v-icon>mdi-pause</v-icon>
+        </v-btn>
+        <v-btn class="" text icon color="red lighten-2" v-if="timeBegan" @click="end">
+          <v-icon>mdi-stop</v-icon>
+        </v-btn>
+      </v-row>
     </div>
   </div>
 </template>
@@ -39,7 +41,7 @@ export default {
       console.log(hours)
       const minutes = Number(this.time.slice(3, 5))
       console.log(minutes)
-      const seconds = Number(this.time.slice(7, 8))
+      const seconds = Number(this.time.slice(6, 8))
       console.log(seconds)
       return hours*3600 + minutes*60 + seconds
 

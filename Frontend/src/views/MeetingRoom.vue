@@ -1,10 +1,10 @@
-<template>
-  <div>
+<template >
+  <div class="meeting-room">
     <RoomNavbar />
-    <v-row class="d-flex align-center">
-      <v-col cols="9">
+    <v-row >
+      <v-col class="py-0" cols="9">
         <div class=" videos-container" ></div>
-        <h1>비디오의 상태 {{options.video}}</h1>
+        <!-- <h1>비디오의 상태 {{options.video}}</h1> -->
         <!-- footer -->
         <v-row class="footer" justify="center" no-gutters>
           <v-btn v-if="options.audio" class="mx-1"  fab dark color="#64B5F6" @click="mute">
@@ -24,7 +24,7 @@
           </v-btn>
         </v-row>
       </v-col>
-      <v-col cols="3">
+      <v-col class="py-0 pl-0 chatroom" cols="3" height="92vh">
         <Chat :roomid="roomid"/>
       </v-col>
     </v-row>
@@ -90,8 +90,9 @@ export default {
         data: true
       };
 
-       this.connection.socketURL = "https://i3b103.p.ssafy.io/soket/"; //배포옹
-      //this.connection.socketURL = "https://rtcmulticonnection.herokuapp.com:443/"; // 개발용
+      // this.connection.socketURL = "https://i3b103.p.ssafy.io/socket/"; //배포옹
+      this.connection.socketURL =
+        "https://rtcmulticonnection.herokuapp.com:443/"; // 개발용
 
       this.connection.mediaConstraints = {
         audio: true,
@@ -151,26 +152,36 @@ export default {
 </script>
 
 <style>
+.meeting-room {
+  background-color: #474747;
+}
+
+.chatroom {
+  height: 92vh;
+  background-color: #fff;
+}
+
 video::-webkit-media-controls {
   display: none;
 }
 .videos-container {
   display: grid;
-  /* grid-template-rows: repeat(3, 100px); */
+  
+  /* grid-template-rows: ; */
   /* grid-template-columns: repeat(2, calc((100vw - 400px)/2.5) ); */
-  grid-template-columns: repeat(3, 23.5vw);
+  grid-template-columns: repeat(3, 23.7vw);
 }
 
 .videos-container video{
-  width: 23.5vw;
-
+  display: block;
+  width: 23.7vw;
   /* width: calc((100vw - 400px)/2.5); */
-  border: solid;
+  border: 1px solid;
 }
 
 .footer {
   position: fixed;
-  bottom: 10px;
-  left: 25vw;
+  bottom: 25px;
+  left: 33vw;
 }
 </style>

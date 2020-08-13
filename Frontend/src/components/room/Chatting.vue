@@ -250,13 +250,13 @@ export default {
             */
             const token = {
                 'accessToken': this.$store.state.auth.userInfo.accessToken,
-                "content-type" : "text/plain"
+                // "content-type" : "text/plain"
             }
-            // console.log(message)
+            console.log(message)
             const tempMsg = {
               type: 'TALK',
               gpNo: 26,
-              chatMsg: 'no Korean'
+              chatMsg: message.content
             }
             const stringMsg = JSON.stringify(tempMsg)
             // this.messages.push(message);
@@ -281,6 +281,7 @@ export default {
              * It's up to you implement the request and deal with the response in order to
              * update the message status and the message URL
              */
+
             setTimeout((res) => {
                 message.uploaded = true
                 message.src = res.src

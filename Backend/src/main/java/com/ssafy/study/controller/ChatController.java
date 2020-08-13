@@ -26,12 +26,10 @@ public class ChatController {
 		msg.setUserId(user.getUserId());
 		msg.setUserNm(user.getUserNm());
 		msg.setUserImg(user.getUserImg());
-
-		msg.setRegTime(LocalDateTime.now());
-
+	
 		if (ChatMessage.MessageType.ENTER.equals(msg.getType()))
 			msg.setChatMsg(msg.getUserNm() + "님이 입장하셨습니다.");
-		else if (ChatMessage.MessageType.ENTER.equals(msg.getType()))
+		else if (ChatMessage.MessageType.QUIT.equals(msg.getType()))
 			msg.setChatMsg(msg.getUserNm() + "님이 퇴장하셨습니다.");
 
 		template.convertAndSend("/sub/chat/" + msg.getGpNo(), msg);

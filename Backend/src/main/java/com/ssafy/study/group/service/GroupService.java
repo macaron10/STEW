@@ -28,6 +28,8 @@ public interface GroupService {
 
 	List<GroupDto> searchGroups(GroupSearchDto groupSearch);
 
+	List<GroupDto> rankGroupStudyTime();
+
 //	List<GroupCategoryDto> selectBoxLgGroupCategory();
 //
 //	List<GroupCategoryDto> selectBoxMdGroupCategory(String lg);

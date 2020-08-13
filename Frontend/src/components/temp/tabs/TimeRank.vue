@@ -1,25 +1,66 @@
 <template>
   <div>
-    <p>이번달 우리 스터디의 공부량은 {{studyTotal}}입니다</p>
-    <p>순위</p>
-    <ol>
-      <li v-for="data in rankData" :key="data.user.userID">
-      시간:{{data.tmAcmlTime}} {{data.user.userNm}}님({{data.user.userEmail}})
-      </li>
-    </ol>
+    <v-container>
+      <div v-if="studyTotal!=='00:00:00'">
+        <h2 class="text-center">{{nowMonth}}월 스터디 누적 공부량</h2>
+        <h2
+          class="text-center"
+        >{{studyTotal.slice(0,2)}}시간 {{studyTotal.slice(3,5)}}분 {{studyTotal.slice(6,8)}}초</h2>
+        <PieChart class="mx-auto" :pie-data="pieData" />
+
+        <v-simple-table>
+          <template v-slot:default>
+            <thead>
+              <tr>
+                <th>순위</th>
+                <th class="text-left">이름</th>
+                <th class="text-left">{{nowMonth}}월 누적 공부시간</th>
+                <th class="text-left d-sm-table-cell d-none">일평균 공부시간/목표시간</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="(item, idx) in rankData" :key="item.user.userid">
+                <td>{{idx+1}}</td>
+                <td class="d-flex">
+                  <img
+                    :src="$store.state.comm.baseUrl+'/image/user'+item.user.userImg"
+                    class="d-sm-flex rounded-circle my-auto d-none"
+                    style="width:35px; height:35px"
+                    alt="profile"
+                  />
+                  <p class="d-flex my-auto ml-2">{{ item.user.userNm }}</p>
+                </td>
+                <td>{{item.tmAcmlTime.slice(0,2)}}시간 {{item.tmAcmlTime.slice(3,5)}}분 {{item.tmAcmlTime.slice(6,8)}}초</td>
+                <td class="d-sm-table-cell d-none">
+                  {{parseInt(parseInt(item.tmAcmlTimeLong/(new Date().getDate())) / 3600)}}시간
+                  {{parseInt((parseInt(item.tmAcmlTimeLong/(new Date().getDate()))%3600)/60)}}분 / {{item.user.userGoalHr}}시간
+                </td>
+              </tr>
+            </tbody>
+          </template>
+        </v-simple-table>
+      </div>
+      <div v-else>
+        <h2 class="text-center">아직 공부기록이 없네요.</h2>
+        <h2 class="text-center">캠스터디에 입장하여 공부해 보세요!</h2>
+      </div>
+    </v-container>
   </div>
 </template>
 
 <script>
 // @ is an alias to /src
 import axios from "axios";
+import PieChart from "./pieChart";
 export default {
   name: "TimeRank",
   data() {
     return {
       gpNo: null,
       studyTotal: "00:00:00",
-      rankData: null
+      rankData: null,
+      pieData: [],
+      colors: ["#0F4C81", "#368F8B", "#25CED1", "#FFE66D", "#F79256", "#89023E"]
     };
   },
   mounted() {
@@ -27,7 +68,12 @@ export default {
     this.getStudyTotal();
     this.getStduyRank();
   },
-  components: {},
+  computed: {
+    nowMonth() {
+      return new Date().getMonth() + 1;
+    }
+  },
+  components: { PieChart },
   methods: {
     getStudyTotal() {
       axios
@@ -58,9 +104,31 @@ export default {
         )
         .then(res => {
           this.rankData = res.data.object;
+          const totalTime =
+            Number(this.studyTotal.slice(0, 2)) * 3600 +
+            Number(this.studyTotal.slice(3, 5)) * 60 +
+            Number(this.studyTotal.slice(6, 8));
+          for (const idx in this.rankData) {
+            const time = this.rankData[idx].tmAcmlTime;
+            const studyTime =
+              Number(time.slice(0, 2)) * 3600 +
+              Number(time.slice(3, 5)) * 60 +
+              Number(time.slice(6, 8));
+            this.pieData.push({
+              color: this.colors[Number(idx)],
+              value: totalTime ? (studyTime / totalTime) * 100 : 0
+            });
+            console.log(this.pieData);
+          }
         })
         .catch(err => console.log(err));
     }
   }
 };
 </script>
+<style scoped>
+.pie-chart {
+  width: 180px;
+  height: 180px;
+}
+</style>

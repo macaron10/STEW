@@ -107,12 +107,17 @@ public class PublicGroupController {
 
 		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
+	
+	@GetMapping("/rank")
+	@ApiOperation("스터디 랭크 출력")
+	public ResponseEntity rankStudyTime() {
+		BasicResponse result = new BasicResponse();
+		result.object = groupService.rankGroupStudyTime();
+		result.msg = "success";
+		result.status = true;
 
-	@SendTo("/chat")
-	@GetMapping("/test")
-	public void test() {
-		ChatMessage msg = ChatMessage.builder().chatMsg("g").regTime(LocalDateTime.now()).gpNo(20).type(ChatMessage.MessageType.TALK).build();
-		template2.convertAndSend("/sub/chat", msg);
+		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
+
 
 }

@@ -1,46 +1,43 @@
-<template>
-  <div>
-    <v-container>
-      <v-row>
-        <v-col cols="8">
-          <Timer />
-          <div class="mx-10 my-10 videos-container" ></div>
-        </v-col>
-        <v-col cols="4">
-          <Chatting :roomid="roomid"/>
-        </v-col>
-            
-      </v-row>
-    </v-container>
-    <!-- footer -->
-    <v-footer color="#ffffff" padless>
-      <v-row justify="center" no-gutters>
-        <v-btn v-if="options.audio" class="mx-1"  fab dark color="#64B5F6" @click="mute">
-          <v-icon dark>mdi-volume-high</v-icon>
-        </v-btn>
-        <v-btn v-else class="mx-1" fab outlined dark color="#FB8C00" @click="unmute">
-          <v-icon dark>mdi-volume-off</v-icon>
-        </v-btn>
-        
-        <v-btn v-if="options.video" class="mx-1" fab dark color="#7CB342" @click="offVideo">
-          <v-icon dark>mdi-video</v-icon>
-        </v-btn>
-        <v-btn v-else class="mx-1" fab outlined dark color="#FF8A65" @click="onVideo">
-          <v-icon dark>mdi-video-off</v-icon>
-        </v-btn>
-        <v-btn class="mx-1" fab dark color="red" @click="outRoom" :to="{ name: 'StudyDetail' }">
-          <v-icon dark>mdi-account-arrow-right-outline</v-icon>
-        </v-btn>
-      </v-row>
-    </v-footer>
+<template >
+  <div class="meeting-room">
+    <RoomNavbar />
+    <v-row >
+      <v-col class="py-0" cols="9">
+        <div class=" videos-container" ></div>
+        <!-- <h1>비디오의 상태 {{options.video}}</h1> -->
+        <!-- footer -->
+        <v-row class="footer" justify="center" no-gutters>
+          <v-btn v-if="options.audio" class="mx-1"  fab dark color="#64B5F6" @click="mute">
+            <v-icon dark>mdi-volume-high</v-icon>
+          </v-btn>
+          <v-btn v-else class="mx-1" fab outlined dark color="#FB8C00" @click="unmute">
+            <v-icon dark>mdi-volume-off</v-icon>
+          </v-btn>
+          <v-btn v-if="options.video" class="mx-1" fab dark color="#7CB342" @click="offVideo">
+            <v-icon dark>mdi-video</v-icon>
+          </v-btn>
+          <v-btn v-else class="mx-1" fab outlined dark color="#FF8A65" @click="onVideo">
+            <v-icon dark>mdi-video-off</v-icon>
+          </v-btn>
+          <v-btn class="mx-1" fab dark color="red" @click="outRoom" :to="{ name: 'StudyDetail' }">
+            <v-icon dark>mdi-account-arrow-right-outline</v-icon>
+          </v-btn>
+        </v-row>
+      </v-col>
+      <v-col class="py-0 pl-0 chatroom" cols="3" height="92vh">
+        <Chat :roomid="roomid"/>
+      </v-col>
+    </v-row>
   </div>
 </template>
 <script src="https://cdn.jsdelivr.net/npm/rtcmulticonnection@latest/dist/RTCMultiConnection.min.js"></script>
 <script src="https://rtcmulticonnection.herokuapp.com/socket.io/socket.io.js"></script>
 <script>
 import StudyDetailVue from "./StudyDetail.vue";
-import Timer from "@/components/temp/Timer.vue";
-import Chatting from "@/components/room/Chatting.vue";
+import RoomNavbar from "@/components/room/RoomNavbar.vue";
+
+// import Chatting from "@/components/room/Chatting.vue";
+import Chat from "@/components/chat/Chat.vue";
 import { log } from "util";
 
 export default {
@@ -53,20 +50,21 @@ export default {
         video: false,
         audio: false
       },
-      localStream: {}
+      localStream: {},
+      videos: {}
     };
   },
   components: {
-    Timer,
-    Chatting
+    RoomNavbar,
+    Chat,
   }, 
   created() {
     this.joinRoom();
   },
   mounted() {
+    this.$store.state.sg.onMeeting = false;
     this.check();
     this.initoptions();
-    this.getRoodId();
   },
   methods: {
     check() {
@@ -92,15 +90,13 @@ export default {
         data: true
       };
 
-      // this.connection.socketURL = "https://i3b103.p.ssafy.io/soket/"; //배포옹
+      // this.connection.socketURL = "https://i3b103.p.ssafy.io/socket/"; //배포옹
       this.connection.socketURL =
         "https://rtcmulticonnection.herokuapp.com:443/"; // 개발용
 
       this.connection.mediaConstraints = {
         audio: true,
         video: {
-          width: 400,
-          height: 300
         }
       };
       this.connection.sdpConstraints.mandatory = {
@@ -144,19 +140,48 @@ export default {
       localStream.unmute("video");
       this.options.video = true;
     },
-    getRoodId() {
-      this.roomid = this.$route.params.id
-      console.log(this.roomid, '설정!')
-    }
+    // getvideos() {
+    //   document.getElementsByName('video')
+    // }
   },
   destroyed() {
+    this.$store.state.sg.onMeeting = true;
     this.outRoom();
   }
 };
 </script>
 
 <style>
+.meeting-room {
+  background-color: #474747;
+}
+
+.chatroom {
+  height: 92vh;
+  background-color: #fff;
+}
+
 video::-webkit-media-controls {
   display: none;
+}
+.videos-container {
+  display: grid;
+  
+  /* grid-template-rows: ; */
+  /* grid-template-columns: repeat(2, calc((100vw - 400px)/2.5) ); */
+  grid-template-columns: repeat(3, 23.7vw);
+}
+
+.videos-container video{
+  display: block;
+  width: 23.7vw;
+  /* width: calc((100vw - 400px)/2.5); */
+  border: 1px solid;
+}
+
+.footer {
+  position: fixed;
+  bottom: 25px;
+  left: 33vw;
 }
 </style>

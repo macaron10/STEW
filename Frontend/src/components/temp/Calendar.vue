@@ -39,17 +39,17 @@
           <v-spacer></v-spacer>
           <!-- <v-btn outlined color="grey darken-2">NEW</v-btn> -->
 
-          <v-dialog v-model="dialog" max-width="470" style="padding: 10px">
-            <v-card>
+          <v-dialog v-model="dialog" max-width="500" style="padding: 10px">
+            <v-card class="pa-5">
               <v-card-title class="headline">일정 추가</v-card-title>
               <v-date-picker
                 color="blue lighten-2"
                 v-model="newSchedule.dates"
-                :landscape="landscape"
-                range
+                no-title full-width range
               ></v-date-picker>
               <span v-if="newSchedule.dates[0]">기간 : {{dateRangeText}}</span>
-              <v-radio-group v-model="newSchedule.color" row>
+              
+              <v-radio-group v-model="newSchedule.color" row class="justify-center">
                 <v-radio v-for="color in colors" :value="color.value" :key="color.value">
                     <template v-slot:label>
                       <v-icon :color="color.value">mdi-checkbox-blank-circle</v-icon>
@@ -64,19 +64,26 @@
                 item-value="value"
                 required="true"
               ></v-select> -->
+              <v-text-field label="기간" v-if="newSchedule.dates[0]" v-model="dateRangeText"></v-text-field>
               <v-switch v-model="newSchedule.useTime" class="ma-4" label="시간"></v-switch>
-              <v-text-field
-                v-if="newSchedule.useTime"
-                label="시작 시간"
-                v-model="newSchedule.startTime"
-                type="time"
-              ></v-text-field>
-              <v-text-field
-                v-if="newSchedule.useTime"
-                label="종료 시간"
-                v-model="newSchedule.endTime"
-                type="time"
-              ></v-text-field>
+              <v-col>
+                <v-text-field
+                  v-if="newSchedule.useTime"
+                  label="시작 시간"
+                  v-model="newSchedule.startTime"
+                  width="50%"
+                  type="time"
+                ></v-text-field>
+              </v-col>
+              <v-col>
+                <v-text-field
+                  v-if="newSchedule.useTime"
+                  label="종료 시간"
+                  v-model="newSchedule.endTime"
+                  width="50%"
+                  type="time"
+                ></v-text-field>
+              </v-col>
               <v-text-field label="제목" v-model="newSchedule.name"></v-text-field>
               <v-text-field label="설명" v-model="newSchedule.details"></v-text-field>
 
@@ -514,3 +521,9 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+  #radioGroup {
+    padding-bottom: 10px;
+  }
+</style>

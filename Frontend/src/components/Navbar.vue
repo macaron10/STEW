@@ -43,69 +43,11 @@
     <v-btn 
       icon
       v-if="!isLogin"
-      @click.stop= "signinInDialog = true"
+      :to="{ name: 'Login' }"
       color="blue lighten-2"
     >
       <v-icon>mdi-account</v-icon>
     </v-btn>
-    <!-- 로그인 모달 창 -->
-    <v-dialog
-      v-model="signinInDialog"
-      max-width="350"
-    >
-      <v-card>
-        <v-card-title class="headline">Login</v-card-title>
-
-        <v-col>
-          <v-text-field
-            label="userEmail"
-            placeholder="Email"
-            type="email"
-            v-model="user.userEmail"
-            solo
-          ></v-text-field>
-          <v-text-field
-            label="userPw"
-            placeholder="PASSWORD"
-            type="password"
-            v-model="user.userPw"
-            solo
-          ></v-text-field>
-          <v-btn 
-            large color="primary" 
-            :block=true 
-            @click="signInHandler()"
-          >로그인</v-btn>
-
-          <v-spacer></v-spacer>
-          <social-login-btn provider="Kakao"></social-login-btn>
-          <social-login-btn provider="Naver"></social-login-btn>
-          <social-login-btn provider="Google"></social-login-btn>
-          <social-login-btn provider="Facebook"></social-login-btn>
-        </v-col>
-
-        <v-card-actions>
-          <v-spacer></v-spacer>
-
-          <v-btn
-            color="gray"
-            text small
-            @click="signinInDialog = false"
-          >
-            아이디/비밀번호 찾기
-          </v-btn>
-
-          <v-btn
-            :to="{ name: 'Signup' }"
-            color="light gray"
-            text small
-            @click="signinInDialog = false"
-          >
-            회원가입
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
 
     <v-btn icon v-if="!isLogin" :to="{ name: 'Signup' }" color="blue lighten-2">
       <v-icon>mdi-account-plus</v-icon>
@@ -214,13 +156,9 @@
 import axios from 'axios';
 import { mapState, mapActions, mapMutations} from 'vuex';
 import router from '../router';
-import SocialLoginBtn from '../components/auth/SocialLoginBtn'
 
 export default {
     name: 'Navbar',
-    components:{
-      SocialLoginBtn,
-    },
     computed: {
       ...mapState('auth', [ 
         "userInfo",
@@ -272,21 +210,11 @@ export default {
         }          
       },
 
-      async signInHandler() {
-        await this.signIn({'userEmail': this.user.userEmail, 'userPw':this.user.userPw});
-        this.signinInDialog = false;
-        this.user.userEmail = this.user.userPw = "";
-        this.$router.go();
-      }
+      
     },
     data () {
       return {
         wordForSearching: "",
-        signinInDialog: false,
-        user: {
-          userEmail: "",
-          userPw: "",
-        },
         items: [
           {
             icon: 'mdi-account',

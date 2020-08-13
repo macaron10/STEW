@@ -17,6 +17,8 @@ import Signup from "../views/user/Signup.vue";
 import userPage from "../views/user/userPage.vue";
 import UserTimer from "../views/user/UserTimer.vue";
 import OAuth2RedirectHandler from "../views/user/OAuth2RedirectHandler.vue";
+import Login from "../views/user/Login.vue";
+
 // MeetingRoom
 import MeetingRoom from "../views/MeetingRoom.vue";
 import ReadyMeeting from "../views/ReadyMeeting.vue";
@@ -45,6 +47,11 @@ const onlyAuthUser = (to: any, from: any, next: (arg0: string | undefined) => vo
 }
 
 const routes: Array<RouteConfig> = [
+  { 
+    path: '/login',
+    name: 'Login',
+    component: Login
+  },
   {
     path: '/',
     name: 'Home',

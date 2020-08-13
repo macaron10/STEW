@@ -17,6 +17,7 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import com.ssafy.study.user.model.User;
 import com.ssafy.study.user.model.UserPrincipal;
 import com.ssafy.study.user.service.UserService;
+import com.ssafy.study.util.BaseProperties;
 import com.ssafy.study.util.JwtProperties;
 import com.ssafy.study.util.JwtUtil;
 
@@ -83,7 +84,7 @@ public class CustomOAuth2AuthenticationSuccessHandler implements AuthenticationS
 		redisTemplate.opsForValue().set(refreshKey, refreshToken);
 		redisTemplate.expire(refreshKey, JwtProperties.EXPIRATION_TIME_REFRESH, TimeUnit.MILLISECONDS);
 		
-		response.sendRedirect("http://localhost:8080/#/oauth2" + "?email=" + userEmail + "&accessToken=" + accessToken + "&refreshToken=" + refreshToken);
+		response.sendRedirect(BaseProperties.BASE_DEPLOY_URL + "/#/oauth2" + "?email=" + userEmail + "&accessToken=" + accessToken + "&refreshToken=" + refreshToken);
 		
 	}
 	

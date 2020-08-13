@@ -1,7 +1,7 @@
 <template>
     <v-layout justify-center class="py-6">
         <v-img
-        :src="$store.state.comm.baseUrl + '/image/main\\mainlogo.png'"
+        :src="$store.state.comm.baseUrl + '/image/main\\stew.png'"
         max-width="400px"
         >
         </v-img>

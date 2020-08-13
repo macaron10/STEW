@@ -1,20 +1,12 @@
 <template>
-    <v-container>
-        <v-row>
-            <v-col cols="4"></v-col>
-            <v-col cols="4">
+    <v-container fill-height>
+        <v-row align="center" justify="center">
+            <v-col cols="10">
                 <main-logo></main-logo>
-            </v-col>
-            <v-col cols="4"></v-col>
-        </v-row>
-        <v-row>
-            <v-col cols="1" md="3"></v-col>
-            <v-col cols="10" md="6">
                 <login-form></login-form>
                 <v-divider class="my-6"></v-divider>
                 <social-form></social-form>
             </v-col>
-            <v-col cols="1" md="3"></v-col>
         </v-row>
     </v-container>
 </template>
@@ -23,13 +15,22 @@
 import LoginForm from "@/components/auth/LoginForm"
 import MainLogo from "@/components/auth/MainLogo"
 import SocialForm from "@/components/auth/SocialForm"
+import { mapGetters } from "vuex"
 
 export default {
+    created(){
+        if(this.loginStatus) this.$router.back();
+    },
     components:{
         LoginForm,
         MainLogo,
         SocialForm
-    }
+    },
+    computed: {
+        ...mapGetters('auth', [
+            'loginStatus',
+        ])
+    },
 }
 </script>
 

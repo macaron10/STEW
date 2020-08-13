@@ -1,13 +1,11 @@
 <template>
-    <v-container>
-        <v-layout justify-center>
-            <v-img
-            :src="$store.state.comm.baseUrl + '/image/main\\mainlogo.png'"
-            max-width="400px"
-            >
-            </v-img>
-        </v-layout>
-    </v-container>
+    <v-layout justify-center class="py-6">
+        <v-img
+        :src="$store.state.comm.baseUrl + '/image/main\\mainlogo.png'"
+        max-width="400px"
+        >
+        </v-img>
+    </v-layout>
 </template>
 
 <script>

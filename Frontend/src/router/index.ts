@@ -48,7 +48,8 @@ const onlyAuthUser = (to: any, from: any, next: (arg0: string | undefined) => vo
 
 const routes: Array<RouteConfig> = [
   { 
-    path: '/testlogin',
+    path: '/login',
+    name: 'Login',
     component: Login
   },
   {

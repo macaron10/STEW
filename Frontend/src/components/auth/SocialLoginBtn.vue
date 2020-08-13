@@ -57,7 +57,7 @@ export default {
       }
     },
     childWindowUnloadEventHandler(){
-      this.loading = !this.loading;
+      this.loading = false;
       this.signInWindow = null;
     }
   }

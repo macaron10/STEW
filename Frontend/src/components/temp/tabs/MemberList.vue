@@ -1,7 +1,7 @@
 <template>
   <v-container fluid>
     <v-row>
-      <v-col v-for="member in members[0]" :key="member.userId" class="d-flex child-flex" cols="12">
+      <v-col v-for="member in members" :key="member.userId" class="d-flex child-flex" cols="12">
         <v-card class="mx-auto">
           <v-list-item>
             <!-- 가져올 수 있는 것  목표시간, 유저이름, 유저소개, 유저이미지, (유저 이메일,유저아이디)(필요x) -->
@@ -84,22 +84,39 @@ import { mapState } from "vuex";
 
 export default {
   name: "MemberList",
-  props: {
-    members: Array,
-    gpMgrId: Number,
-    gpNo: Number
-  },
   data() {
-    return {};
+    return {
+      members: null,
+      gpNo : 0,
+      userId: 0,
+      gpMgrId: 0
+    };
+  },
+  created() {
+    this.gpNo = this.$route.params.id;
+    this.userId = this.$store.state.auth.userInfo.userId;
+    this.getDetail()
   },
   computed: {
     ...mapState("auth", ["userInfo"])
   },
   methods: {
+    async getDetail() {
+      const apiUrl = "/study/user/" + this.gpNo;
+      try {
+        const res = await axios.get(apiUrl);
+        this.members = JSON.parse(res.data.object).joinList[0]
+        this.gpMgrId = JSON.parse(JSON.parse(res.data.object).group[0]).gpMgrId
+      } catch (err) {
+        this.$router.push("/main/");
+        console.error(err);
+      }
+    },
     async kick(gpJoinNo) {
       const apiUrl = "/study/user/remove?no=" + gpJoinNo;
       try {
-        const res = axios.post(apiUrl);
+        const res = await axios.post(apiUrl)
+        this.$emit('event')
       } catch (err) {
         console.error(err);
       }
@@ -107,15 +124,12 @@ export default {
     async mand(gpNo, userId) {
       const apiUrl = "/study/user/mgr?no=" + gpNo + "&userId=" + userId;
       try {
-        const res = axios.post(apiUrl);
-        console.log("res");
+        const res = await axios.post(apiUrl)
+        this.$emit('event')
       } catch (err) {
         console.error(err);
       }
     },
-    mounted() {
-      console.log(this.members[0]);
-    }
   }
 };
 </script>

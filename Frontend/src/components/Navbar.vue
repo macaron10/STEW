@@ -138,7 +138,7 @@
       </template>
       <v-list>
         <!-- 나의 신청 -->
-        <v-list-item-group v-model="model3">
+        <!-- <v-list-item-group v-model="model3">
           <v-list-item
             v-for="(myGroupsReq, k) in myGroupsReqs"
             :key="k"
@@ -150,7 +150,7 @@
               </div>
             </v-list-item-content>
           </v-list-item>
-        </v-list-item-group>
+        </v-list-item-group> -->
 
         <!-- 다른 유저에게서 온 신청 -->
         <v-list-item-group v-model="model2">

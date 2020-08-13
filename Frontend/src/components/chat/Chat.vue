@@ -1,6 +1,6 @@
 <template>
   <div height="">
-    <ChatMemberList />
+    <ChatMemberList :members="members" />
     <MessageList class="msg-list" :msgs="messages" />
     <v-divider></v-divider>
     <MessageForm class="msg-form" v-on:submitMessage="sendMessage" />
@@ -32,13 +32,11 @@ export default {
     ChatMemberList,
   },
   methods: {
-
       initSock () {
         const apiUrl = this.$store.state.comm.baseUrl + '/sock'
         const socket = new SockJS(apiUrl)
         const ws = Stomp.over(socket)
         this.ws = ws
-        console.log(this.ws, '이거다')
       },
       getChattingSock(gpNo) {
         const token = {
@@ -47,12 +45,22 @@ export default {
         this.ws.connect(token,
           frame => {
             console.log('소켓 연결 성공');
-            this.members.push(this.$store.state.auth.userInfo.userId)
             this.ws.subscribe("/sub/chat/" + gpNo, msg =>{
               // state.groupsReqs.push(JSON.parse(msg.body))
               this.messages.push(JSON.parse(msg.body))
+              if (JSON.parse(msg.body).type == "ENTER") {
+                const userInf={
+                  "userNm": JSON.parse(msg.body).userNm
+                }
+                this.members.push(userInf)
+              } else if (JSON.parse(msg.body).type == "QUIT") {
+                const itemToFind = this.members.find(function(item) {return item.userNm === JSON.parse(msg.body).userNm})
+                const idx = this.members.indexOf(itemToFind)
+                if (idx >-1) this.members.splice(idx, 1)
+              }
               console.log(JSON.parse(msg.body), '구독msg')
             })
+        this.sendEnterMsg()
         })
       },
     sendMessage(msg) {
@@ -67,14 +75,49 @@ export default {
       const stringMsg = JSON.stringify(tempMsg)
       // this.messages.push(message)
       this.ws.send("/pub/chat", stringMsg, token)
-      }
     },
-    mounted() {
-      this.roomid= Number(this.$route.params.id)
-      this.initSock()
-      console.log(this.roomid,'얘는 대체 어디감?')
-      this.getChattingSock(this.roomid)
-    }
+    sendEnterMsg() {
+      //멤버에 나 추가
+      // console.log("나 추가 되는 중?")
+      // const userInformation = {
+      //   "userNm": "나"
+      // }
+      // this.members.push({userInformation})
+      const token = {
+        'accessToken': this.$store.state.auth.userInfo.accessToken
+      }
+      const enterMsg = {
+        type: 'ENTER',
+        gpNo: this.roomid,
+        chatMsg: "입장했습니다."
+      }
+      const stringMsg = JSON.stringify(enterMsg)
+      // this.messages.push(message)
+      this.ws.send("/pub/chat", stringMsg, token)
+    },
+    sendQuitMsg() {
+        const token = {
+          'accessToken': this.$store.state.auth.userInfo.accessToken
+        }
+      const quitMsg = {
+        type: 'QUIT',
+        gpNo: this.roomid,
+        chatMsg: "님이 퇴장했습니다.(유저네임 들어오면 수정)"
+      }
+      const stringMsg = JSON.stringify(quitMsg)
+      // this.messages.push(message)
+      this.ws.send("/pub/chat", stringMsg, token)
+    },
+  },
+  mounted() {
+    this.roomid= Number(this.$route.params.id)
+    this.initSock()
+    this.getChattingSock(this.roomid)
+  },
+  destroyed() {
+    this.sendQuitMsg()
+  }
+  
 };
 </script>
 

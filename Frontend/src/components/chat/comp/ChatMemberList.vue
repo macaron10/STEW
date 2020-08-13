@@ -2,8 +2,10 @@
 <div>
     <v-list-item height="6.5vh" >
       <v-list-item-content class="py-0" >
-        <v-list-item-title>참여중인 멤버</v-list-item-title>
+        <v-list-item-title class="d-block" width="20px">참여중인 멤버</v-list-item-title>
+        <div class="pt-1 pr-2"><v-icon>mdi-account</v-icon>{{memsNum}}</div>
       </v-list-item-content>
+      
     </v-list-item>
 <v-divider></v-divider>
   <v-list class="py-0 chat-member-list" height="21vh" color="#f5f5f5">
@@ -39,49 +41,14 @@
 // @ is an alias to /src
 export default {
   name: "ChatMemberList",
-  data () {
-    return {
-      members: [
-        {
-          "userId": 1,
-          "userNm": "유저1",
-          "userEmail": "user1@a.a",
-          "userIntro": "",
-          "userImg": "\\2020\\08\\12\\f3df2cac3da241adb34145c5ba1314bc145301.png",
-          "type": "stew",
-          "userGoalHr": 0
-        },
-        {
-          "userId": 2,
-          "userNm": "유저2",
-          "userEmail": "user2@a.a",
-          "userIntro": "",
-          "userImg": "\\2020\\08\\12\\f3df2cac3da241adb34145c5ba1314bc145301.png",
-          "type": "stew",
-          "userGoalHr": 0
-        },
-        {
-          "userId": 1,
-          "userNm": "유저1",
-          "userEmail": "user1@a.a",
-          "userIntro": "",
-          "userImg": "\\2020\\08\\12\\f3df2cac3da241adb34145c5ba1314bc145301.png",
-          "type": "stew",
-          "userGoalHr": 0
-        },
-        {
-          "userId": 1,
-          "userNm": "유저1",
-          "userEmail": "user1@a.a",
-          "userIntro": "",
-          "userImg": "\\2020\\08\\12\\f3df2cac3da241adb34145c5ba1314bc145301.png",
-          "type": "stew",
-          "userGoalHr": 0
-        },
-      ],
+  props: {
+    members: Array
+  },
+  computed : {
+    memsNum: function() {
+      return this.members.length
     }
   }
-
 };
 </script>
 

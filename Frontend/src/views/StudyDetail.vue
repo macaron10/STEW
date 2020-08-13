@@ -70,6 +70,8 @@
                     :members="membersData"
                     :gpMgrId="group.gpMgrId"
                     :gpNo="group.gpNo"
+                    :key="componentKey"
+                    @event="forceRerender()"
                   />
                   <TimeRank v-else />
                 </v-card>
@@ -117,6 +119,7 @@ export default {
   },
   data() {
     return {
+      componentKey: 0,
       group: [],
       membersData: [],
       // 밑에는 그룹정보(나중에 활용)
@@ -136,6 +139,9 @@ export default {
     this.getDetail();
   },
   methods: {
+    forceRerender() {
+      this.componentKey += 1;
+    },
     readyEnterMeeting(gpNo) {
       this.$router.push({ name: "ReadyMeeting", params: { id: gpNo } });
     },

@@ -1,71 +1,79 @@
 <template>
   <div>
-    <v-container>
+    <v-container fill-height>
       <v-row>
-        <v-col cols="10" offset="1">
-          <div class="d-flex justify-center">
-            <img
-              v-if="group.gpImg"
-              :src="$store.state.comm.baseUrl + '/image/group' + group.gpImg"
-              alt="그룹 이미지"
-              width="100%"
-            />
-            <img
-              v-else
-              :src="$store.state.comm.baseUrl + '/image/group/default.png'"
-              alt="그룹이미지"
-              width="100%"
-            />
-          </div>
+        <v-col sm="12" md="6">
+          <v-row>
+            <r-col cols="12" class="ma-3">
+              <div class="d-flex justify-center" style="position: relative">
+                <img
+                  v-if="group.gpImg"
+                  :src="$store.state.comm.baseUrl + '/image/group' + group.gpImg"
+                  alt="그룹 이미지"
+                  style="width:100%"
+                />
+                <img
+                  v-else
+                  :src="$store.state.comm.baseUrl + '/image/group/default.png'"
+                  alt="그룹이미지"
+                  width="100%"
+                />
+                <!-- <v-btn fab dark x-large color="#FFC400" fixed right bottom class="ma-5">
+                  <v-icon dark>mdi-video</v-icon>
+                </v-btn> -->
+                <v-btn absolute dark fab bottom right color="indigo darken-4" class="mb-10"
+                 @click="readyEnterMeeting(group.gpNo)">
+                  <v-icon>mdi-video</v-icon>
+                </v-btn>
+              </div>
+            </r-col>
+          </v-row>
+          <v-row>
+            <r-col cols="12">
+              <h2 class="mb-5 d-inline">
+                {{ group.gpNm }}
+                <v-btn
+                  icon
+                  class="ml-5"
+                  color="grey darken-2"
+                  :to="{ name:'StudyUpdate', params: { id: id }}"
+                  v-if="group.gpMgrId===userId"
+                >
+                  <v-icon dark>mdi-settings</v-icon>
+                </v-btn>
+              </h2>
+              <h4>
+                <span v-if="group.gpPublic">
+                  <v-icon>mdi-lock-open-outline</v-icon>공개
+                </span>
+                <span v-else>
+                  <v-icon>mdi-lock-outline</v-icon>비공개
+                </span>
+                그룹 · 멤버 {{group.gpCurNum}}명
+              </h4>
+            </r-col>
+          </v-row>
+          <!-- <v-row>
+              <v-tooltip top>
+                <template v-slot:activator="{ on, attrs }">
+                  <v-btn
+                    icon
+                    v-bind="attrs"
+                    v-on="on"
+                    dark
+                    color="green darken-1"
+                    @click="readyEnterMeeting(group.gpNo)"
+                  >
+                    <v-icon>mdi-video</v-icon>
+                  </v-btn>
+                </template>
+                <span>캠 스터디 입장하기!</span>
+              </v-tooltip>
+          </v-row>-->
+          <!-- </div> -->
         </v-col>
-      </v-row>
-      <v-row>
-        <v-col cols="8" sm="9" offset="1">
-          <h2 class="mb-3 d-inline">
-            {{ group.gpNm }}
-            <v-btn
-              icon
-              color="green darken-1"
-              :to="{ name:'StudyUpdate', params: { id: id }}"
-              v-if="group.gpMgrId===userId"
-            >
-              <v-icon>mdi-cogs</v-icon>
-            </v-btn>
-          </h2>
-        </v-col>
-        <v-col cols="1">
-          <v-tooltip top>
-            <template v-slot:activator="{ on, attrs }">
-              <v-btn
-                icon
-                v-bind="attrs"
-                v-on="on"
-                dark
-                color="green darken-1"
-                @click="readyEnterMeeting(group.gpNo)"
-              >
-                <v-icon>mdi-video</v-icon>
-              </v-btn>
-            </template>
-            <span>캠 스터디 입장하기!</span>
-          </v-tooltip>
-        </v-col>
-        <v-col cols="10" offset="1" class="pt-0">
-          <h4>
-            <span v-if="group.gpPublic">
-              <v-icon>mdi-lock-open-outline</v-icon>공개
-            </span>
-            <span v-else>
-              <v-icon>mdi-lock-outline</v-icon>비공개
-            </span>
-            그룹 · 멤버 {{group.gpCurNum}}명
-          </h4>
-        </v-col>
-      </v-row>
-
-      <v-row>
-        <v-col cols="10" offset="1">
-          <v-card>
+        <v-col sm="12" md="6">
+          <v-card class="ma-3">
             <v-tabs
               v-model="tab"
               :grow="true"

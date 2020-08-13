@@ -2,7 +2,7 @@
   <div>
     <v-container>
       <v-row>
-        <v-col cols="10" offset="1">
+        <v-col cols="10" offset="1" sm="8" offset-sm="2" md="6" offset-md="3">
           <div class="d-flex justify-center">
             <img
               v-if="group.gpImg"
@@ -99,12 +99,22 @@
         </v-col>
       </v-row>
       <v-row>
-        <v-col>
-          <v-btn
-            color="red accent-1"
-            class="white--text font-weight-bold"
-            @click="quitGroup(group.gpNo)"
-          >탈퇴</v-btn>
+        <v-col offset="9" cols="1" offset-sm="10" sm="1">
+          <v-tooltip top>
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn
+                icon
+                v-bind="attrs"
+                v-on="on"
+                dark
+                color="red accent-1"
+                @click="quitGroup(group.gpNo)"
+              >
+                <v-icon>mdi-account-arrow-right-outline</v-icon>
+              </v-btn>
+            </template>
+            <span>그룹 탈퇴하기</span>
+          </v-tooltip>
         </v-col>
       </v-row>
     </v-container>
@@ -162,12 +172,18 @@ export default {
     },
     async quitGroup(gpNo) {
       const apiUrl = "/study/user/exit?no=" + gpNo;
-      try {
-        console.log(gpNo);
+      const answer = confirm('정말 탈퇴하시겠습니까?')
+      if (answer) {
+        try {
         const res = await axios.post(apiUrl);
-        // this.$router.push("/main/");
+        if (res.data.msg==='success') {
+          this.$router.push("/main/");
+        } else if (res.data.msg==='매니저 탈퇴 불가') {
+          alert('매니저는 탈퇴가 불가능합니다.')
+        }
       } catch (err) {
         console.error(err);
+      }
       }
     }
   }

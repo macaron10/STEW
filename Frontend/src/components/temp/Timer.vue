@@ -71,7 +71,7 @@ export default {
       clearInterval(this.started);
     },
     end() {
-      const answer = confirm("현재까지의 공부시간이 누적되고 초기화 됩니다. 초기화 하시겠습니까?")
+      const answer = confirm("현재까지의 공부시간이 누적됩니다.")
       if (answer) {
         const config = {
           gpNo : Number(this.$route.params.id),
@@ -115,6 +115,9 @@ export default {
       this.timeStopped = null;
       this.time = "00:00:00";
     }
+  },
+  destroyed() {
+    this.end()
   }
 };
 </script>

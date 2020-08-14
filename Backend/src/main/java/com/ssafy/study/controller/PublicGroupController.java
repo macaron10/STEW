@@ -56,6 +56,7 @@ public class PublicGroupController {
 	public Object searchStudy(String keyword) {
 		BasicResponse result = new BasicResponse();
 
+		System.out.println(keyword);
 		GroupSearchDto groupSearch = new GroupSearchDto(keyword.split(" "));
 		result.object = groupService.searchGroups(groupSearch);
 		result.msg = "success";

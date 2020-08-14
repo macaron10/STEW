@@ -117,6 +117,8 @@ export default {
     getUserInfo() {
       axios.get("/user/").then(({ data }) => {
         this.userIntro = data.object.userIntro;
+        if(this.userIntro ==""||this.userIntro==null)
+        this.userIntro="나의 각오를 적어보세요!";
       });
     },
     getRankGpList() {

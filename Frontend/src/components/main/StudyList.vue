@@ -5,10 +5,10 @@
         v-for="group in groups"
         :key="group.gpNo"
         class="d-flex child-flex"
-        cols="6"
-        xs="6"
-        sm="4"
-        md="3"
+        cols="12"
+        sm="6"
+        md="4"
+        lg="3"
       >
         <v-hover>
           <template v-slot:default="{ hover }">

@@ -79,7 +79,7 @@
 
                 <v-textarea
                     v-model="user.intro"
-                    label="자기소개"
+                    label="나의 목표"
                     auto-grow rows="1" row-height="15"
                     counter
                     maxlength="100"

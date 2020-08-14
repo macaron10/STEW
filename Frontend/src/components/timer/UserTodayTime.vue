@@ -1,8 +1,8 @@
 <template>
   <div>
-    <v-row class="d-flex flex-column mx-auto">
-      <v-col md="6" sm="12">
-        <v-card class="mx-auto" height="180px">
+    <v-row class="d-flex flex-row mx-1">
+      <v-col sm="6" xs="12">
+        <v-card class="mx-1" height="180px">
           <v-card-title class="font-weight-bold">오늘의 공부시간</v-card-title>
           <v-row justify="center" align="center" class="m-5">
             <v-card-text
@@ -11,8 +11,8 @@
           </v-row>
         </v-card>
       </v-col>
-      <v-col  md="6" sm="12">
-        <v-card class="mx-auto" height="180px">
+      <v-col  sm="6" xs="12">
+        <v-card class="mx-1" height="180px">
           <v-card-title class="font-weight-bold">오늘의 목표 달성률</v-card-title>
           <v-row justify="center" align="center" class="m-5">
             <v-progress-circular

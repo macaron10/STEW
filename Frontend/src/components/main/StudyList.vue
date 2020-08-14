@@ -13,7 +13,7 @@
         <v-hover>
           <template v-slot:default="{ hover }">
             <!-- :to="'/study/' + group.gpNo" -->
-            <v-card class="mx-auto" height="250" @click="toDetail(group)">
+            <v-card class="mx-1" height="250" @click="toDetail(group)">
               <v-img
                 :src="group.gpImg != null?($store.state.comm.baseUrl + '/image/group' + group.gpImg):gpImgDefault"
                 height="170"
@@ -77,8 +77,8 @@
     <v-dialog v-model="dialog" width="500">
       <v-card>
         <v-card-title
-          class="headline blue accent-2 white--text"
-        >'{{ selectedGroup.gpNm }}' 에 가입하시겠습니까?</v-card-title>
+          class="headline blue lighten-2 white--text"
+        >'{{ selectedGroup.gpNm }}'스터디에 가입하시겠습니까?</v-card-title>
 
         <v-card-text class="py-1">{{selectedGroup.gpIntro}}</v-card-text>
 
@@ -86,15 +86,15 @@
         <v-textarea v-model="message" color="teal" class="mx-5">
           <template v-slot:label>
             <div class="px-5">
-              보낼 메세지
-              <small>(optional)</small>
+              가입신청 메세지
+              <small>(공개스터디는 자동으로 가입됩니다.)</small>
             </div>
           </template>
         </v-textarea>
 
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="primary" text @click="signUpGroup(selectedGroup.gpNo)">가입신청</v-btn>
+          <v-btn color="primary" text @click="signUpGroup(selectedGroup.gpNo, selectedGroup.gpPublic)">가입신청</v-btn>
           <v-btn color="primary" text @click="dialog = false">닫기</v-btn>
         </v-card-actions>
       </v-card>
@@ -143,6 +143,11 @@ export default {
       }
     },
     toDetail(group) {
+      if (this.$store.state.auth.isLogin===false){
+        alert('로그인이 필요합니다.')
+        this.$router.push({name:'Login'}) 
+        return       
+      }
       this.selectedGroup = group;
       let flag = false;
       for (let i = 0; i < this.myGroups.length; i++) {
@@ -168,7 +173,7 @@ export default {
     //     this.snackbar = true
     //     })
     // },
-    async signUpGroup(gpNo) {
+    async signUpGroup(gpNo, isPublic) {
       const apiUrl = "/study/user/req?gpNo=" + gpNo;
       const msg = {
         reqMsg: this.message
@@ -178,9 +183,15 @@ export default {
           apiUrl,
           querystring.stringify({ reqMsg: this.message })
         );
-        console.log(res);
         this.dialog = false;
         this.snackbar = true;
+        if (isPublic) {
+          alert('공개그룹입니다. 자동가입됩니다.')
+          this.$emit('event')
+        } else {
+          alert('비공개 그룹입니다. 그룹장의 승인을 기다려 주세요')
+        }
+        // this.$router.go()
       } catch (err) {
         console.error(err);
       }
@@ -190,7 +201,7 @@ export default {
     // groups () { return this.$store.state.sg.groups }
     ...mapState("sg", ["groups"])
   },
-  mounted() {
+  created() {
     this.getGroups();
     if (this.$store.state.auth.isLogin) {
       this.getMyGroups();

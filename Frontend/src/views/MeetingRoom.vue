@@ -7,13 +7,13 @@
         <!-- <h1>비디오의 상태 {{options.video}}</h1> -->
         <!-- footer -->
         <v-row class="footer" justify="center" no-gutters>
-          <v-btn v-if="options.audio" class="mx-1" fab dark color="#64B5F6" @click="mute">
+          <v-btn v-if="options.audio" class="mx-1"  fab dark color="#FB8C00" @click="mute">
             <v-icon dark>mdi-volume-high</v-icon>
           </v-btn>
           <v-btn v-else class="mx-1" fab outlined dark color="#FB8C00" @click="unmute">
             <v-icon dark>mdi-volume-off</v-icon>
           </v-btn>
-          <v-btn v-if="options.video" class="mx-1" fab dark color="#7CB342" @click="offVideo">
+          <v-btn v-if="options.video" class="mx-1" fab dark color="#FF8A65" @click="offVideo">
             <v-icon dark>mdi-video</v-icon>
           </v-btn>
           <v-btn v-else class="mx-1" fab outlined dark color="#FF8A65" @click="onVideo">
@@ -73,7 +73,7 @@ export default {
   methods: {
     check() {
       alert(
-        "비디오와 오디오가 켜집니다. 접속 후 오디오와 비디오 기능을 비활성화 시킬 수 있습니다."
+        "현재 설정으로 미팅룸에 접속합니다. 접속 후 오디오와 비디오 기능을 재설정할 수 있습니다."
       );
     },
     initoptions() {
@@ -179,7 +179,7 @@ export default {
 
 <style>
 .meeting-room {
-  background-color: #474747;
+  background-color: #5f5f5f;
 }
 
 .chatroom {

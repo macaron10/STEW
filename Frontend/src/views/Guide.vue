@@ -28,25 +28,25 @@ export default {
       {
         color: "red lighten-2",
         icon: "mdi-star",
-        title: "hi",
-        content: "hello"
+        title: "소개",
+        content: ""
       },
       {
         color: "purple darken-1",
         icon: "mdi-book-variant",
-        title: "hi",
-        content: "hello"
+        title: "사용법",
+        content: "1. 캠 준비 2. 로그인(회원가입) 3. 그룹가입 or 그룹생성 4. 캠스터디"
       },
       {
         color: "green lighten-1",
         icon: "mdi-airballoon",
-        title: "hi",
+        title: "",
         content: "hello"
       },
       {
         color: "indigo",
         icon: "mdi-buffer",
-        title: "hi",
+        title: "문의",
         content: "hello"
       }
     ]

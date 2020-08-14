@@ -1,20 +1,19 @@
 <template>
   <div>
-    <v-row class="d-flex flex-column mx-auto">
-      <v-col md="6" sm="12">
+    <v-row class="d-flex mx-auto">
+      <v-col cols="12" sm="6">
         <v-card class="mx-auto" height="180px">
-          <v-card-title class="font-weight-bold">오늘의 공부시간</v-card-title>
-          <v-row justify="center" align="center" class="m-5">
-            <v-card-text
-              class="text--primary headline text-center"
-            >{{todayStudyTime.tmAcmlTime}} / {{userInfo.userGoalHr}}시간</v-card-text>
-          </v-row>
+          <v-card-title class="d-block font-weight-bold text-center">오늘의 공부시간</v-card-title>
+          <v-card-text
+            class="text--primary headline text-center text-subtitle-1 text-sm-h5 mt-7"
+          >{{todayStudyTime.tmAcmlTime}} / {{userInfo.userGoalHr}}시간</v-card-text>
         </v-card>
       </v-col>
-      <v-col  md="6" sm="12">
+
+      <v-col cols="12" sm="6">
         <v-card class="mx-auto" height="180px">
-          <v-card-title class="font-weight-bold">오늘의 목표 달성률</v-card-title>
-          <v-row justify="center" align="center" class="m-5">
+          <v-card-title class="d-block font-weight-bold text-center">오늘의 목표 달성률</v-card-title>
+          <div class="text-center">
             <v-progress-circular
               :indeterminate="indeterminate"
               :rotate="270"
@@ -23,7 +22,7 @@
               :width="15"
               color="light-blue"
             >{{todayStudyTime.tmAcmlTimeLong | toPercent(goalSecond)}} %</v-progress-circular>
-          </v-row>
+          </div>
         </v-card>
       </v-col>
     </v-row>
@@ -53,7 +52,7 @@ export default {
       return percent > 100 ? 100 : percent;
     }
   },
-  mounted(){
+  mounted() {
     this.getUserInfo();
   },
   methods: {

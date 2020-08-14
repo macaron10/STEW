@@ -84,7 +84,7 @@ public class CustomOAuth2AuthenticationSuccessHandler implements AuthenticationS
 		redisTemplate.opsForValue().set(refreshKey, refreshToken);
 		redisTemplate.expire(refreshKey, JwtProperties.EXPIRATION_TIME_REFRESH, TimeUnit.MILLISECONDS);
 		
-		response.sendRedirect(BaseProperties.BASE_DEPLOY_URL + "/#/oauth2" + "?email=" + userEmail + "&accessToken=" + accessToken + "&refreshToken=" + refreshToken);
+		response.sendRedirect(BaseProperties.BASE_URL_FRONT + "/#/oauth2" + "?email=" + userEmail + "&accessToken=" + accessToken + "&refreshToken=" + refreshToken);
 		
 	}
 	

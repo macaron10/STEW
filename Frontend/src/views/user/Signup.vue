@@ -1,36 +1,33 @@
 <template>
     <div id="Signup">
-        <h1> 회원가입 </h1>
-
         <v-row justify="center">
            <!-- sm="10" md="8" lg="6" -->
           <v-col cols="6">
             <v-form ref="form" id="form">
                 <v-row>
                   <v-col cols=11>
-                    <v-text-field
-                        v-model="user.email"
-                        :rules="[
-                          () => !!user.email || '이메일을 입력해주세요.',
-                          () => /.+@.+\..+/.test(user.email) || '이메일 형식이 올바르지 않습니다.', 
-                          () => /([\w-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/.test(user.email) || '이메일 형식이 올바르지 않습니다.', 
-                        ]"
-                        label="이메일 *"
-                        :readonly="idCheck"
-                        :clearable=false
-                        required
+                    <v-text-field dense outlined
+                      color="#64b4f6"
+                      prepend-inner-icon="person"
+                      v-model="user.email"
+                      :rules="[
+                        () => !!user.email || '이메일을 입력해주세요.',
+                        () => /.+@.+\..+/.test(user.email) || '이메일 형식이 올바르지 않습니다.', 
+                        () => /([\w-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/.test(user.email) || '이메일 형식이 올바르지 않습니다.', 
+                      ]"
+                      label="이메일 *"
+                      :readonly="idCheck"
+                      :clearable=false
+                      required
                     />
                   </v-col>
                   <v-col cols=1>
-                    <v-btn 
-                      @click="idCheckHandler" 
+                    <v-btn icon depressed
+                      @click="idCheckHandler"
                     >
-                      이메일 확인
+                    check
                     </v-btn>
                   </v-col>
-                  <!-- <v-row rows="2">
-                      :disabled="!disableCheck"
-                  </v-row> -->
                 </v-row>
                 <v-text-field
                     v-model="user.pwd"

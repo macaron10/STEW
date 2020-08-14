@@ -1,6 +1,5 @@
 <template>
     <v-layout justify-center>
-        <link rel='stylesheet prefetch' href='https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons'>
         <v-form>
             <v-text-field dense outlined
             color="#64b4f6"

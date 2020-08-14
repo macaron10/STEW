@@ -237,12 +237,8 @@ export default {
                 }
             }
             
-            for(const pair of this.formData.entries()) {
-                console.log(pair[0]+ ', '+ pair[1]); 
-            }
-
             axios.put('/user', this.formData, config)
-            .then(({ res }) => {
+            .then((res) => {
                 console.log(res);
                 if (res.data.msg === "success") {
                     this.$store.commit("auth/refreshSuccess", res.headers.accesstoken);

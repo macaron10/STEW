@@ -242,13 +242,13 @@ export default {
             }
 
             axios.put('/user', this.formData, config)
-            .then(({ res }) => {
+            .then((res) => {
                 console.log(res);
                 if (res.data.msg === "success") {
                     this.$store.commit("auth/refreshSuccess", res.headers.accesstoken);
                     this.$store.dispatch("auth/tokenInformation");
                     alert("회원 정보 수정 완료");
-                    this.$router.go();
+                    // this.$router.go();
                 }
             })
 

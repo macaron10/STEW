@@ -46,30 +46,28 @@
     </div>
     <div class="p-3 ma-5" v-if="$store.state.auth.isLogin">
       <v-row>
-        <v-col cols="12">
+        <v-col cols="12" lg="8" class="pb-0">
           <TodayTimer />
         </v-col>
-        <v-col>
-          <v-card class="mx-auto" height="180px" color="#42A5F5" dark>
-            <v-card-title class="font-weight-bold">나의 다짐</v-card-title>
-            <v-row justify="center" align="center" class="m-5">
-              <v-card-text class="h3 headline text-center">{{userIntro}}</v-card-text>
-            </v-row>
-          </v-card>
+        <v-col class="pt-0 pt-lg-3 pl-lg-0">
+          <v-col cols="12" sm="6" lg="12" class="pl-lg-0">
+            <v-card class="mx-auto" height="180px" color="#42A5F5" dark>
+              <v-card-title class="font-weight-bold">나의 다짐</v-card-title>
+              <v-row justify="center" align="center" class="m-5">
+                <v-card-text class="h3 headline text-center">{{userIntro}}</v-card-text>
+              </v-row>
+            </v-card>
+          </v-col>
         </v-col>
       </v-row>
     </div>
-    <br />
-
     <br />
     <div class="p-3 mx-5">
       <h2>스터디 목록</h2>
       <v-icon small color="#666666" class="ml-3">mdi-lock</v-icon>
       <span class="text-caption">비공개 스터디</span>
     </div>
-    <StudyList 
-      :key="componentKey"
-      @event="forceRerender()" />
+    <StudyList :key="componentKey" @event="forceRerender()" />
   </div>
 </template>
 
@@ -126,10 +124,10 @@ export default {
       if (this.$store.state.auth.isLogin) {
         axios.get("/user/").then(({ data }) => {
           this.userIntro = data.object.userIntro;
-           if(this.userIntro ==""||this.userIntro==null)
-        this.userIntro="나의 각오를 적어보세요!";
+          if (this.userIntro == "" || this.userIntro == null)
+            this.userIntro = "나의 각오를 적어보세요!";
         });
-
+      }
     },
     getRankGpList() {
       axios

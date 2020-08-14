@@ -72,6 +72,7 @@ public class CustomOAuth2AuthenticationSuccessHandler implements AuthenticationS
 					.type(provider)
 					.build();
 			
+			user.setUserImg(BaseProperties.DEFAULT_USER_PROFILE);
 			userService.save(user);
 		}
 		

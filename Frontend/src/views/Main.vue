@@ -59,7 +59,9 @@
       <v-icon small color="#666666" class="ml-3">mdi-lock</v-icon>
       <span class="text-caption">비공개 스터디</span>
     </div>
-    <StudyList />
+    <StudyList 
+      :key="componentKey"
+      @event="forceRerender()" />
   </div>
 </template>
 
@@ -79,6 +81,7 @@ export default {
     TodayTimer
   },
   data: () => ({
+    componentKey: 0,
     rankGpList: [],
     userIntro : "",
     // baseUrl: "http://localhost:8399/api/"
@@ -108,6 +111,9 @@ export default {
     this.getUserInfo();
   },
   methods: {
+    forceRerender() {
+      this.componentKey += 1;
+    },
     getUserInfo() {
       axios.get("/user/").then(({ data }) => {
         this.userIntro = data.object.userIntro;

@@ -25,10 +25,11 @@
           v-model="item.model"
           :prepend-icon="item.model ? item.icon : item['icon-alt']"
           append-icon light
+          @click="getStudyList()"
         >
           <template v-slot:activator>
             <v-list-item-content>
-              <v-list-item-title>{{ item.text }}</v-list-item-title>
+              <v-list-item-title >{{ item.text }}</v-list-item-title>
             </v-list-item-content>
           </template>
           <v-list-item v-for="(child, i) in item.children" :key="i" link>
@@ -98,6 +99,9 @@ export default {
     this.getStudyList();
   },
   methods: {
+    event(){
+      this.$emit('event')
+    },
     goToStudy(no) {
       this.$router.push({ name: "StudyDetail", params: { id: no } });
       this.$router.go();
@@ -121,6 +125,7 @@ export default {
             });
           }
           this.items[this.items.length - 1].children = myStudyList;
+          this.event()
         })
         .catch(err => console.log(err));
     }

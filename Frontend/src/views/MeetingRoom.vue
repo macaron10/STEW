@@ -80,19 +80,6 @@ export default {
       this.connection.videosContainer = document.querySelector(
         ".videos-container"
       );
-      this.connection.onstream = function(event) {
-        const video = event.mediaElement;
-        video.id = event.streamid;
-        // document.body.insertBefore(video, document.body.firstChild);
-
-        event.stream.mute("video");
-        if (this.$route.params.options.audio == false) {
-          this.mute();
-        }
-        if (this.$route.params.options.video == false) {
-          this.offVideo();
-        }
-      };
     },
     joinRoom() {
       this.connection = new RTCMultiConnection();
@@ -102,8 +89,8 @@ export default {
         data: true
       };
 
-      this.connection.socketURL = "https://i3b103.p.ssafy.io/socket/"; //배포옹
-      // this.connection.socketURL = "https://rtcmulticonnection.herokuapp.com:443/"; // 개발용
+      //this.connection.socketURL = "https://i3b103.p.ssafy.io/socket/"; //배포옹
+       this.connection.socketURL = "https://rtcmulticonnection.herokuapp.com:443/"; // 개발용
 
       this.connection.mediaConstraints = {
         audio: true,
@@ -113,7 +100,7 @@ export default {
         OfferToReceiveAudio: true,
         OfferToReceiveVideo: true
       };
-      this.connection.openOrJoin(this.$route.params.id);
+      this.connection.openOrJoin(`stew${this.$route.params.id}ssafy3`)
     },
     outRoom() {
       this.connection.getAllParticipants().forEach(participantId => {
@@ -131,8 +118,6 @@ export default {
       console.log(localStream);
       localStream.mute("audio");
       this.options.audio = false;
-
-      console.log("MUTE#################");
     },
     unmute() {
       let localStream = this.connection.attachStreams[0];
@@ -146,8 +131,6 @@ export default {
       let localStream = this.connection.attachStreams[0];
       localStream.mute("video");
       this.options.video = false;
-
-      console.log("OFFVIDEO#################");
     },
     onVideo() {
       this.connection.session.video = true;

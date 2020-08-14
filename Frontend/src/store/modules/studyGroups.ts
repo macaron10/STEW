@@ -12,14 +12,11 @@ export default {
     },
   
     mutations: {
-      setSearchGroups(state: any, groups: any) {
-        state.searchedGroups = groups
-      },
       setGroups(state: any, groups: any) {
         state.groups = groups
       },
       setKeyWord(state: any, keyWord: any) {
-        state.keyword = keyWord
+        state.keyWord = keyWord
       }
     },
   
@@ -51,17 +48,19 @@ export default {
           //   this.showPagination = true
         }
       },
-    fetchGroups({ commit, state }: any) {
+    fetchGroups({ commit, state }: any, event: any) {
+      commit('setKeyWord', event.target.value)
       const apiUrl = '/study/search'
       const config = {
         params: {
-          "keyword": state.keyword
+          "keyword": state.keyWord,
           // "gpCatNo": state.keyWord
         }
       }
+      console.log(config.params.keyword);
       axios.get(apiUrl, config)
       .then(res => {
-        commit('setSearchGroups', res.data.object)
+        commit('setGroups', res.data.object)
         })
         .catch(err => console.error(err))
     },

@@ -1,13 +1,13 @@
 <template>
   <div id="Mainpage">
     <MyPage />
-    <div class="p-3 ma-5" v-if="$store.state.auth.isLogin">
-      <v-row>
-        <v-col lg="6" sm="12">
+    <div class="mt-5" v-if="$store.state.auth.isLogin">
+      <v-row class="d-none d-sm-flex">
+        <v-col md="6" xs="12">
           <TodayTimer />
         </v-col>
-        <v-col lg="3" sm="6">
-          <v-card class="mx-auto" height="180px" color="#42A5F5" dark>
+        <v-col md="5" sm="10" xs="12" class="mt-3 ml-3">
+          <v-card class="mx-2" height="180px" color="#42A5F5" dark>
             <v-card-title class="font-weight-bold">나의 다짐</v-card-title>
             <v-row justify="center" align="center" class="m-5">
               <v-card-text class="h3 headline text-center ">{{userIntro}}</v-card-text>
@@ -19,7 +19,7 @@
     <br />
     <div class="p-3 ma-5">
       <h2 class="mb-3">이달의 스터디 랭킹</h2>
-      <div>
+      <div class="pl-3">
         <div v-if="rankGpList.length == 0">아직 이달의 랭킹이 존재하지 않습니다!</div>
         <v-card flat tile class="d-flex">
           <v-card flat tile v-for="(gp, index) in rankGpList" :key="index + gp" class="align-start">

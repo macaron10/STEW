@@ -13,7 +13,7 @@
         <v-hover>
           <template v-slot:default="{ hover }">
             <!-- :to="'/study/' + group.gpNo" -->
-            <v-card class="mx-auto" height="250" @click="toDetail(group)">
+            <v-card class="mx-1" height="250" @click="toDetail(group)">
               <v-img
                 :src="group.gpImg != null?($store.state.comm.baseUrl + '/image/group' + group.gpImg):gpImgDefault"
                 height="170"

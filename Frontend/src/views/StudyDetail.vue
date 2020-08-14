@@ -2,10 +2,10 @@
   <div>
     <v-container fill-height>
       <v-row>
-        <v-col sm="12" md="6">
+        <v-col sm="12" md="6" >
           <v-row>
             <r-col cols="12" class="ma-3">
-              <div class="d-flex justify-center" style="position: relative">
+              <div class=" d-flex justify-center" style="position: relative">
                 <img
                   v-if="group.gpImg"
                   :src="$store.state.comm.baseUrl + '/image/group' + group.gpImg"

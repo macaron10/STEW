@@ -8,6 +8,7 @@ import Main from '../views/Main.vue';
 import StudyCreate from '../views/StudyCreate.vue';
 import StudyDetail from '../views/StudyDetail.vue';
 import StudyUpdate from '../views/StudyUpdate.vue';
+import StudySearch from '../views/StudySearch.vue';
 // Contact & Guide
 import Contact from '../views/Contact.vue';
 import Guide from '../views/Guide.vue';
@@ -78,6 +79,12 @@ const routes: Array<RouteConfig> = [
     component: StudyUpdate
   },
   {
+    path: '/study/search',
+    name: 'StudySearch',
+    component: StudySearch,
+    props: true
+  },
+  {
     path: '/contact',
     name: 'Contact',
     component: Contact
@@ -127,7 +134,8 @@ const routes: Array<RouteConfig> = [
     path: "/user/UserTimer",
     name: "UserTimer",
     component: UserTimer
-  }
+  },
+  
 ];
 
 const router = new VueRouter({

@@ -100,6 +100,26 @@ public class JwtUtil implements Serializable{
 		
 	}
 	
+	public static String generateAccessTokenExpireIn(UserPrincipal userPrincipal, long millis) {
+		ArrayList<String> authorities = new ArrayList<>();
+		for(GrantedAuthority p : userPrincipal.getAuthorities()) {
+			authorities.add(p.getAuthority());
+		}
+		
+		return 
+				JWT.create()
+				.withArrayClaim("role", authorities.toArray(new String[authorities.size()]))
+				.withClaim("userId", userPrincipal.getUserId())
+				.withClaim("userNm", userPrincipal.getUserNm())
+				.withClaim("userImg", userPrincipal.getUserImg())
+				.withClaim("type", userPrincipal.getType())
+				.withSubject(userPrincipal.getUsername())
+				.withIssuedAt(new Date(System.currentTimeMillis()))
+				.withExpiresAt(new Date(System.currentTimeMillis() + millis))
+				.sign(Algorithm.HMAC512(JwtProperties.SECRET.getBytes()));
+		
+	}
+	
 	public static String generateRefreshToken() {
 		
 		return

@@ -1,19 +1,19 @@
-<template >
+<template>
   <div class="meeting-room">
     <RoomNavbar />
-    <v-row >
+    <v-row>
       <v-col class="py-0" cols="9">
-        <div class=" videos-container" ></div>
+        <div class="videos-container"></div>
         <!-- <h1>비디오의 상태 {{options.video}}</h1> -->
         <!-- footer -->
         <v-row class="footer" justify="center" no-gutters>
-          <v-btn v-if="options.audio" class="mx-1"  fab dark color="#64B5F6" @click="mute">
+          <v-btn v-if="options.audio" class="mx-1"  fab dark color="#FB8C00" @click="mute">
             <v-icon dark>mdi-volume-high</v-icon>
           </v-btn>
           <v-btn v-else class="mx-1" fab outlined dark color="#FB8C00" @click="unmute">
             <v-icon dark>mdi-volume-off</v-icon>
           </v-btn>
-          <v-btn v-if="options.video" class="mx-1" fab dark color="#7CB342" @click="offVideo">
+          <v-btn v-if="options.video" class="mx-1" fab dark color="#FF8A65" @click="offVideo">
             <v-icon dark>mdi-video</v-icon>
           </v-btn>
           <v-btn v-else class="mx-1" fab outlined dark color="#FF8A65" @click="onVideo">
@@ -25,7 +25,7 @@
         </v-row>
       </v-col>
       <v-col class="py-0 pl-0 chatroom" cols="3" height="92vh">
-        <Chat :roomid="roomid"/>
+        <Chat :roomid="roomid" />
       </v-col>
     </v-row>
   </div>
@@ -36,7 +36,7 @@
 import StudyDetailVue from "./StudyDetail.vue";
 import RoomNavbar from "@/components/room/RoomNavbar.vue";
 
-// import Chatting from "@/components/room/Chatting.vue";
+import Chatting from "@/components/room/Chatting.vue";
 import Chat from "@/components/chat/Chat.vue";
 import { log } from "util";
 
@@ -56,31 +56,43 @@ export default {
   },
   components: {
     RoomNavbar,
-    Chat,
-  }, 
+    Chat
+  },
   created() {
     this.joinRoom();
   },
   mounted() {
     this.$store.state.sg.onMeeting = false;
+
+    this.options = this.$route.params.options;
+    console.log(this.options);
     this.check();
+
     this.initoptions();
   },
   methods: {
     check() {
       alert(
-        "비디오와 오디오가 켜집니다. 접속 후 오디오와 비디오 기능을 비활성화 시킬 수 있습니다."
+        "현재 설정으로 미팅룸에 접속합니다. 접속 후 오디오와 비디오 기능을 재설정할 수 있습니다."
       );
     },
     initoptions() {
-      this.connection.videosContainer = document.querySelector(".videos-container");
-      this.options = this.$route.params.options;
-      // if (this.options.audio == false) {
-      //   this.mute();
-      // }
-      // if (this.options.video == false) {
-      //   this.offVideo();
-      // }
+      this.connection.videosContainer = document.querySelector(
+        ".videos-container"
+      );
+      this.connection.onstream = function(event) {
+        const video = event.mediaElement;
+        video.id = event.streamid;
+        // document.body.insertBefore(video, document.body.firstChild);
+
+        event.stream.mute("video");
+        if (this.$route.params.options.audio == false) {
+          this.mute();
+        }
+        if (this.$route.params.options.video == false) {
+          this.offVideo();
+        }
+      };
     },
     joinRoom() {
       this.connection = new RTCMultiConnection();
@@ -95,8 +107,7 @@ export default {
 
       this.connection.mediaConstraints = {
         audio: true,
-        video: {
-        }
+        video: {}
       };
       this.connection.sdpConstraints.mandatory = {
         OfferToReceiveAudio: true,
@@ -117,8 +128,11 @@ export default {
     },
     mute() {
       let localStream = this.connection.attachStreams[0];
+      console.log(localStream);
       localStream.mute("audio");
       this.options.audio = false;
+
+      console.log("MUTE#################");
     },
     unmute() {
       let localStream = this.connection.attachStreams[0];
@@ -132,6 +146,8 @@ export default {
       let localStream = this.connection.attachStreams[0];
       localStream.mute("video");
       this.options.video = false;
+
+      console.log("OFFVIDEO#################");
     },
     onVideo() {
       this.connection.session.video = true;
@@ -139,6 +155,17 @@ export default {
       localStream.unmute("video");
       this.options.video = true;
     },
+    handleOnsream(e) {
+      var video = document.createElement("video");
+      try {
+        video.setAttributeNode(document.createAttribute("autoplay"));
+        video.setAttributeNode(document.createAttribute("playsinline"));
+      } catch (e) {
+        video.setAttribute("autoplay", true);
+        video.setAttribute("playsinline", true);
+      }
+      video.srcObject = e.stream;
+    }
     // getvideos() {
     //   document.getElementsByName('video')
     // }
@@ -152,7 +179,7 @@ export default {
 
 <style>
 .meeting-room {
-  background-color: #474747;
+  background-color: #5f5f5f;
 }
 
 .chatroom {
@@ -165,13 +192,13 @@ video::-webkit-media-controls {
 }
 .videos-container {
   display: grid;
-  
+
   /* grid-template-rows: ; */
   /* grid-template-columns: repeat(2, calc((100vw - 400px)/2.5) ); */
   grid-template-columns: repeat(3, 23.7vw);
 }
 
-.videos-container video{
+.videos-container video {
   display: block;
   width: 23.7vw;
   /* width: calc((100vw - 400px)/2.5); */

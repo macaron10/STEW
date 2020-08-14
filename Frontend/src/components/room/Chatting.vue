@@ -211,6 +211,7 @@ export default {
       ...mapActions('chattings', ['getChattingSock']),
       initSock () {
         const apiUrl = this.$store.state.comm.baseUrl + '/sock'
+        console.log(apiUrl);
         const socket = new SockJS(apiUrl)
         const ws = Stomp.over(socket)
         this.ws = ws

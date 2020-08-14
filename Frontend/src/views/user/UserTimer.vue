@@ -2,7 +2,7 @@
   <div>
     <v-row justify="center" id="userpage" class="mx-10 my-10">
       <v-col cols="7" class="flex-column">
-        <v-row class="d-flex align-center mr-2">
+        <!-- <v-row class="d-flex align-center mr-2">
           <v-col class="d-flex flex-column justify-center">
             <v-row class="mb-5">
               <h1 style="color:black">
@@ -35,7 +35,8 @@
                 </v-row>
             </v-card>
           </v-col>
-        </v-row>
+        </v-row> -->
+        <TodayTimer/>
         <v-row>
           <v-col col="12">
             <template>
@@ -68,11 +69,14 @@
 
 <script>
 import axios from "axios";
+import TodayTimer from "@/components/timer/UserTodayTime.vue"
 
 export default {
   name: "UserTimer",
-
-  components: {},
+  components: 
+  {
+    TodayTimer
+  },
 
   data() {
     return {
@@ -85,11 +89,6 @@ export default {
       dateTimer: [],
       today: {},
       searchDate: {},
-      todayStudyTime: {
-        tmAcmlDate: "",
-        tmAcmlTime: "00:10:00",
-        tmAcmlTimeLong: 600
-      },
       goalSecond: 0
     };
   },
@@ -99,8 +98,6 @@ export default {
     this.searchDate = this.today;
     // this.getUserTimer(this.today.year, this.today.month);
     this.getUserTimer("2020", "8");
-    this.initTodayStudy();
-    console.log();
   },
   filters: {
     toPercent: (val, second) => {
@@ -130,12 +127,6 @@ export default {
       await axios.get("/timer/my/" + year + "/" + month).then(({ data }) => {
         this.dateTimer = data.object;
         console.log(this.dateTimer);
-      });
-    },
-    initTodayStudy() {
-      axios.get("/timer/today").then(({ data }) => {
-        this.todayStudyTime = data.object;
-        console.log(this.todayStudyTime);
       });
     }
   }

@@ -51,8 +51,8 @@ public class UserController {
 	@Autowired
 	private FileUtils fileUtil;
 	
-	private final String fileBaseUrl = "/home/ubuntu/app/img/user";
-	// private final String fileBaseUrl = "C:\\Users\\multicampus\\Desktop\\img\\user";
+//	private final String fileBaseUrl = "/home/ubuntu/app/img/user";
+	 private final String fileBaseUrl = "C:\\Users\\multicampus\\Desktop\\img\\user";
 	private final String DEFAULT_USER_PROFILE = "\\userDefault.png";
 	
 	@PostMapping("/signup")
@@ -149,8 +149,10 @@ public class UserController {
 	
 	@PutMapping
 	@ApiOperation("회원 수정")
-	public ResponseEntity<BasicResponse> modify(UserModify userModify, @AuthenticationPrincipal UserPrincipal principal){
-		System.out.println("여기"+userModify.getUserImg());
+	public ResponseEntity<BasicResponse> modify(
+			HttpServletRequest request, HttpServletResponse response,
+			UserModify userModify, @AuthenticationPrincipal UserPrincipal principal){
+		
 		BasicResponse result = new BasicResponse();
 		
 		User origin = userService.loadUserByUserId(principal.getUserId());
@@ -169,10 +171,20 @@ public class UserController {
 			}
 		}
 		
+		String accessToken = request.getHeader(JwtProperties.HEADER_STRING).replace(JwtProperties.TOKEN_PREFIX, "");
+		long remains = JwtUtil.getExpiringTime(accessToken) - System.currentTimeMillis();
+		
+//		BlackListing
+		redisTemplate.opsForValue().set(accessToken, "logout");
+		redisTemplate.expire(accessToken, remains, TimeUnit.MILLISECONDS);
+		
 		User modifiedUser = userService.save(origin);
 		result.status = true; 
 		result.msg = "success";
 		result.object = modifiedUser;
+		
+		accessToken = JwtUtil.generateAccessTokenExpireIn(new UserPrincipal(modifiedUser), remains);
+		response.addHeader("accessToken", accessToken);
 		
 		return new ResponseEntity<>(result, HttpStatus.OK);
 		

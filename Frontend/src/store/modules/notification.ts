@@ -5,20 +5,30 @@ import SockJS from 'sockjs-client';
 export default {
     namespaced: true,
     state: {
-      groupsReqs: []
+      groupsReqs: [],
+      myGroupsReqs: []
     },
     mutations: {
-      setReqs(state: any, groupsReqs: any) {
+      setReqs({state, rootState}: any, groupsReqs: any) {
         state.groupsReqs = groupsReqs
       }
     },
     actions: {
-      async getReqs({ state }: any, event: any) {
+      async getReqs({ state, rootState }: any, event: any) {
         const apiUrl = '/study/user/reqlist'
         try {
           const res = await axios.get(apiUrl)
           state.groupsReqs = res.data.object
           console.log(res)
+        } catch (err) {
+          console.error(err)
+        }
+      },
+      async getMyReqs({state}: any, event: any){
+        const apiUrl = '/study/user/ureqlist'
+        try {
+          const res = await axios.get(apiUrl)
+          state.myGroupsReqs = res.data.object
         } catch (err) {
           console.error(err)
         }
@@ -40,10 +50,10 @@ export default {
               state.groupsReqs.push(JSON.parse(msg.body))
               console.log(JSON.parse(msg.body))
             })
-  
-            ws.subscribe("/sub/user-req/" + rootState.auth.userInfo.userId, (msg: { body: string; }) =>{
-              state.groupsReqs.push(JSON.parse(msg.body))
-              console.log(JSON.parse(msg.body))
+
+            ws.subscribe("/sub/user-req/" + rootState.auth.userInfo.userId, (msg: any) =>{
+              state.groupsReqs.push(JSON.parse(JSON.parse(msg.body).req))
+              console.log(JSON.parse(JSON.parse(msg.body).req))
             })
           })
       }

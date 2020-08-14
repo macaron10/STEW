@@ -77,7 +77,7 @@ export default {
   name: "Sidebar",
   data: () => ({
     items: [
-      { icon: "mdi-home", text: "HOME", page: "Home", needLogin: true },
+      { icon: "mdi-home", text: "HOME", page: "Main", needLogin: true },
       {
         icon: "mdi-plus",
         text: "스터디 만들기",

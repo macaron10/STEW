@@ -2,7 +2,6 @@ import Vue from 'vue';
 import VueRouter, { RouteConfig } from 'vue-router';
 import store from "@/store";
 
-import Home from '../views/Home.vue';
 import Main from '../views/Main.vue';
 // Study Group 관련
 import StudyCreate from '../views/StudyCreate.vue';
@@ -54,11 +53,6 @@ const routes: Array<RouteConfig> = [
   },
   {
     path: '/',
-    name: 'Home',
-    component: Home
-  },
-  {
-    path: '/main',
     name: 'Main',
     component: Main
   },

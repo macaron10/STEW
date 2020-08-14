@@ -179,7 +179,7 @@ public class JwtSecurityConfig extends WebSecurityConfigurerAdapter{
                     .clientId(registration.getClientId())
                     .clientSecret(registration.getClientSecret())
                     .scope("email", "profile")
-                    .redirectUriTemplate(BaseProperties.BASE_URL + "/api/login/oauth2/code/" + client)
+                    .redirectUriTemplate(BaseProperties.BASE_URL_BACK + "/login/oauth2/code/" + client)
                     .build();
         }
 
@@ -190,7 +190,7 @@ public class JwtSecurityConfig extends WebSecurityConfigurerAdapter{
                     .clientSecret(registration.getClientSecret())
                     .userInfoUri("https://graph.facebook.com/me?fields=id,name,email,link")
                     .scope("email")
-                    .redirectUriTemplate(BaseProperties.BASE_URL + "/api/login/oauth2/code/" + client)
+                    .redirectUriTemplate(BaseProperties.BASE_URL_BACK + "/login/oauth2/code/" + client)
                     .build();
         }
 

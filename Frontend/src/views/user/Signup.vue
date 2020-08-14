@@ -5,7 +5,7 @@
           <v-col cols="6">
             <v-form ref="form" id="form">
                 <v-row>
-                  <v-col cols=11>
+                  <v-col cols=12>
                     <v-text-field dense outlined
                       color="#64b4f6"
                       prepend-inner-icon="person"
@@ -16,20 +16,24 @@
                         () => /([\w-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/.test(user.email) || '이메일 형식이 올바르지 않습니다.', 
                       ]"
                       label="이메일 *"
-                      :readonly="idCheck"
                       :clearable=false
+                      @change="idCheckColor = idCheck = ''"
                       required
                     />
                   </v-col>
                   <v-col cols=1>
                     <v-btn icon depressed
                       @click="idCheckHandler"
+                      :loading="idChecking"
                     >
-                    check
+                      <v-icon
+                      :color="idCheckColor"
+                      >check</v-icon>
                     </v-btn>
+                    
                   </v-col>
                 </v-row>
-                <v-text-field
+                <v-text-field dense outlined
                     v-model="user.pwd"
                     :rules="[
                       () => !!user.pwd || '비밀번호를 입력해주세요.',
@@ -41,7 +45,7 @@
                     required
                 />
 
-                <v-text-field
+                <v-text-field dense outlined
                   v-model="user.pwdCheck"
                   label="비밀번호 확인 *"
                   :rules="[
@@ -53,7 +57,7 @@
                   required
                 />
 
-                <v-text-field
+                <v-text-field dense outlined
                     v-model="user.name"
                     :rules="[() => !!user.name || '이름을 입력해주세요.']"
                     label="이름 *"
@@ -62,7 +66,7 @@
 
                 <v-subheader>선택사항</v-subheader>
 
-                <v-file-input 
+                <v-file-input dense outlined
                     v-model="user.img"
                     accept="image/*" 
                     label="프로필 이미지"
@@ -74,7 +78,7 @@
                     @change="confirmExt"
                 ></v-file-input>
 
-                <v-textarea
+                <v-textarea dense outlined
                     v-model="user.intro"
                     label="나의 목표"
                     auto-grow rows="1" row-height="15"
@@ -82,7 +86,7 @@
                     maxlength="100"
                 ></v-textarea>
 
-                <v-text-field
+                <v-text-field  dense outlined
                     v-model="user.goalHr"
                     label="하루 목표 시간"
                     type="number"
@@ -115,6 +119,8 @@
           goalHr: ''
         },
         idCheck: false,
+        idChecking: false,
+        idCheckColor: "",
         correctExt: false,
         formData,
       }
@@ -137,6 +143,7 @@
       },
 
       idCheckHandler() {
+        this.idChecking = true;
         axios.get('/user/check', {
           params: {
             userEmail: this.user.email
@@ -146,8 +153,10 @@
           console.log(data);
           if (data.msg === "success" && data.object) {
             this.idCheck = true;
+            this.idCheckColor = "#64b4f6"
             alert("아이디 체크 완료");
-          }
+          }else this.idCheckColor = "red"
+          this.idChecking = false;  
         })
       },
 

@@ -1,9 +1,9 @@
-<template >
+<template>
   <div class="meeting-room">
     <RoomNavbar />
-    <v-row >
+    <v-row>
       <v-col class="py-0" cols="9">
-        <div class=" videos-container" ></div>
+        <div class="videos-container"></div>
         <!-- <h1>비디오의 상태 {{options.video}}</h1> -->
         <!-- footer -->
         <v-row class="footer" justify="center" no-gutters>
@@ -25,7 +25,7 @@
         </v-row>
       </v-col>
       <v-col class="py-0 pl-0 chatroom" cols="3" height="92vh">
-        <Chat :roomid="roomid"/>
+        <Chat :roomid="roomid" />
       </v-col>
     </v-row>
   </div>
@@ -36,7 +36,7 @@
 import StudyDetailVue from "./StudyDetail.vue";
 import RoomNavbar from "@/components/room/RoomNavbar.vue";
 
-// import Chatting from "@/components/room/Chatting.vue";
+import Chatting from "@/components/room/Chatting.vue";
 import Chat from "@/components/chat/Chat.vue";
 import { log } from "util";
 
@@ -56,14 +56,18 @@ export default {
   },
   components: {
     RoomNavbar,
-    Chat,
-  }, 
+    Chat
+  },
   created() {
     this.joinRoom();
   },
   mounted() {
     this.$store.state.sg.onMeeting = false;
+
+    this.options = this.$route.params.options;
+    console.log(this.options);
     this.check();
+
     this.initoptions();
   },
   methods: {
@@ -73,14 +77,22 @@ export default {
       );
     },
     initoptions() {
-      this.connection.videosContainer = document.querySelector(".videos-container");
-      this.options = this.$route.params.options;
-      // if (this.options.audio == false) {
-      //   this.mute();
-      // }
-      // if (this.options.video == false) {
-      //   this.offVideo();
-      // }
+      this.connection.videosContainer = document.querySelector(
+        ".videos-container"
+      );
+      this.connection.onstream = function(event) {
+        const video = event.mediaElement;
+        video.id = event.streamid;
+        // document.body.insertBefore(video, document.body.firstChild);
+
+        event.stream.mute("video");
+        if (this.$route.params.options.audio == false) {
+          this.mute();
+        }
+        if (this.$route.params.options.video == false) {
+          this.offVideo();
+        }
+      };
     },
     joinRoom() {
       this.connection = new RTCMultiConnection();
@@ -90,14 +102,12 @@ export default {
         data: true
       };
 
-      // this.connection.socketURL = "https://i3b103.p.ssafy.io/socket/"; //배포옹
-      this.connection.socketURL =
-        "https://rtcmulticonnection.herokuapp.com:443/"; // 개발용
+      this.connection.socketURL = "https://i3b103.p.ssafy.io/socket/"; //배포옹
+      // this.connection.socketURL = "https://rtcmulticonnection.herokuapp.com:443/"; // 개발용
 
       this.connection.mediaConstraints = {
         audio: true,
-        video: {
-        }
+        video: {}
       };
       this.connection.sdpConstraints.mandatory = {
         OfferToReceiveAudio: true,
@@ -118,8 +128,11 @@ export default {
     },
     mute() {
       let localStream = this.connection.attachStreams[0];
+      console.log(localStream);
       localStream.mute("audio");
       this.options.audio = false;
+
+      console.log("MUTE#################");
     },
     unmute() {
       let localStream = this.connection.attachStreams[0];
@@ -133,6 +146,8 @@ export default {
       let localStream = this.connection.attachStreams[0];
       localStream.mute("video");
       this.options.video = false;
+
+      console.log("OFFVIDEO#################");
     },
     onVideo() {
       this.connection.session.video = true;
@@ -140,6 +155,17 @@ export default {
       localStream.unmute("video");
       this.options.video = true;
     },
+    handleOnsream(e) {
+      var video = document.createElement("video");
+      try {
+        video.setAttributeNode(document.createAttribute("autoplay"));
+        video.setAttributeNode(document.createAttribute("playsinline"));
+      } catch (e) {
+        video.setAttribute("autoplay", true);
+        video.setAttribute("playsinline", true);
+      }
+      video.srcObject = e.stream;
+    }
     // getvideos() {
     //   document.getElementsByName('video')
     // }
@@ -166,13 +192,13 @@ video::-webkit-media-controls {
 }
 .videos-container {
   display: grid;
-  
+
   /* grid-template-rows: ; */
   /* grid-template-columns: repeat(2, calc((100vw - 400px)/2.5) ); */
   grid-template-columns: repeat(3, 23.7vw);
 }
 
-.videos-container video{
+.videos-container video {
   display: block;
   width: 23.7vw;
   /* width: calc((100vw - 400px)/2.5); */

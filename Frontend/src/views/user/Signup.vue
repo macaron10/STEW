@@ -13,6 +13,7 @@
                         :rules="[
                           () => !!user.email || '이메일을 입력해주세요.',
                           () => /.+@.+\..+/.test(user.email) || '이메일 형식이 올바르지 않습니다.', 
+                          () => /([\w-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/.test(user.email) || '이메일 형식이 올바르지 않습니다.', 
                         ]"
                         label="이메일 *"
                         :readonly="idCheck"
@@ -78,7 +79,7 @@
 
                 <v-textarea
                     v-model="user.intro"
-                    label="자기소개"
+                    label="나의 목표"
                     auto-grow rows="1" row-height="15"
                     counter
                     maxlength="100"

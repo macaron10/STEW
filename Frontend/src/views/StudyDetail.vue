@@ -2,8 +2,8 @@
   <div>
     <v-container>
       <v-row>
-        <v-col cols="10" offset="1">
-          <div class="d-flex justify-center">
+        <v-col cols="10" offset="1" sm="8" offset-sm="2" md="6" offset-md="0" >
+          <div class="d-flex justify-center" style="position: relative">
             <img
               v-if="group.gpImg"
               :src="$store.state.comm.baseUrl + '/image/group' + group.gpImg"
@@ -16,41 +16,24 @@
               alt="그룹이미지"
               width="100%"
             />
+            <v-btn absolute dark fab bottom right color="indigo darken-4" class="mb-10"
+                 @click="readyEnterMeeting(group.gpNo)">
+                  <v-icon>mdi-video</v-icon>
+                </v-btn>
+
           </div>
-        </v-col>
-      </v-row>
-      <v-row>
-        <v-col cols="8" sm="9" offset="1">
           <h2 class="mb-3 d-inline">
             {{ group.gpNm }}
             <v-btn
               icon
-              color="green darken-1"
+              class="ml-5"
+              color="grey darken-2"
               :to="{ name:'StudyUpdate', params: { id: id }}"
               v-if="group.gpMgrId===userId"
             >
-              <v-icon>mdi-cogs</v-icon>
+              <v-icon>mdi-settings</v-icon>
             </v-btn>
           </h2>
-        </v-col>
-        <v-col cols="1">
-          <v-tooltip top>
-            <template v-slot:activator="{ on, attrs }">
-              <v-btn
-                icon
-                v-bind="attrs"
-                v-on="on"
-                dark
-                color="green darken-1"
-                @click="readyEnterMeeting(group.gpNo)"
-              >
-                <v-icon>mdi-video</v-icon>
-              </v-btn>
-            </template>
-            <span>캠 스터디 입장하기!</span>
-          </v-tooltip>
-        </v-col>
-        <v-col cols="10" offset="1" class="pt-0">
           <h4>
             <span v-if="group.gpPublic">
               <v-icon>mdi-lock-open-outline</v-icon>공개
@@ -61,10 +44,7 @@
             그룹 · 멤버 {{group.gpCurNum}}명
           </h4>
         </v-col>
-      </v-row>
-
-      <v-row>
-        <v-col cols="10" offset="1">
+        <v-col cols="10" offset="1" md="6" offset-md="0">
           <v-card>
             <v-tabs
               v-model="tab"
@@ -90,6 +70,8 @@
                     :members="membersData"
                     :gpMgrId="group.gpMgrId"
                     :gpNo="group.gpNo"
+                    :key="componentKey"
+                    @event="forceRerender()"
                   />
                   <TimeRank v-else />
                 </v-card>
@@ -98,13 +80,24 @@
           </v-card>
         </v-col>
       </v-row>
+     
       <v-row>
-        <v-col>
-          <v-btn
-            color="red accent-1"
-            class="white--text font-weight-bold"
-            @click="quitGroup(group.gpNo)"
-          >탈퇴</v-btn>
+        <v-col offset="9" cols="1" offset-sm="10" sm="1" md="1" offset-md="11">
+          <v-tooltip top>
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn
+                icon
+                v-bind="attrs"
+                v-on="on"
+                dark
+                color="red accent-1"
+                @click="quitGroup(group.gpNo)"
+              >
+                <v-icon>mdi-account-arrow-right-outline</v-icon>
+              </v-btn>
+            </template>
+            <span>그룹 탈퇴하기</span>
+          </v-tooltip>
         </v-col>
       </v-row>
     </v-container>
@@ -126,6 +119,7 @@ export default {
   },
   data() {
     return {
+      componentKey: 0,
       group: [],
       membersData: [],
       // 밑에는 그룹정보(나중에 활용)
@@ -145,6 +139,9 @@ export default {
     this.getDetail();
   },
   methods: {
+    forceRerender() {
+      this.componentKey += 1;
+    },
     readyEnterMeeting(gpNo) {
       this.$router.push({ name: "ReadyMeeting", params: { id: gpNo } });
     },
@@ -162,12 +159,18 @@ export default {
     },
     async quitGroup(gpNo) {
       const apiUrl = "/study/user/exit?no=" + gpNo;
-      try {
-        console.log(gpNo);
-        const res = await axios.post(apiUrl);
-        // this.$router.push("/main/");
-      } catch (err) {
-        console.error(err);
+      const answer = confirm("정말 탈퇴하시겠습니까?");
+      if (answer) {
+        try {
+          const res = await axios.post(apiUrl);
+          if (res.data.msg === "success") {
+            this.$router.push("/main/");
+          } else if (res.data.msg === "매니저 탈퇴 불가") {
+            alert("매니저는 탈퇴가 불가능합니다.");
+          }
+        } catch (err) {
+          console.error(err);
+        }
       }
     }
   }

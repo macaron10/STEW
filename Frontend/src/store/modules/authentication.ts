@@ -23,8 +23,9 @@ export default {
         userEmail: "",
         userImg: "",
         accessToken: "",
-        refreshToken: ""
+        refreshToken: "",
       },
+
     },
 
     getters: {
@@ -67,10 +68,11 @@ export default {
               'accessToken': res.headers.accesstoken,
               'refreshToken': res.headers.refreshtoken
             }
+            //임시(userId 불러오기용)
             commit("loginSuccess", userInfo);
             dispatch("tokenInformation");
-            dispatch("notice/getReqsSock", null, { root: true });
-            dispatch("notice/getReqs", null, { root: true });
+            // dispatch("notice/getReqsSock", null, { root: true });
+            // dispatch("notice/getReqs", null, { root: true });
           })
           .catch(err => {
             alert("이메일과 비밀번호를 확인하세요");

@@ -13,7 +13,7 @@
         <v-hover>
           <template v-slot:default="{ hover }">
             <!-- :to="'/study/' + group.gpNo" -->
-            <v-card class="mx-auto" height="250" @click="toDetail(group)">
+            <v-card class="mx-1" height="250" @click="toDetail(group)">
               <v-img
                 :src="group.gpImg != null?($store.state.comm.baseUrl + '/image/group' + group.gpImg):gpImgDefault"
                 height="170"
@@ -187,10 +187,11 @@ export default {
         this.snackbar = true;
         if (isPublic) {
           alert('공개그룹입니다. 자동가입됩니다.')
+          this.$emit('event')
         } else {
           alert('비공개 그룹입니다. 그룹장의 승인을 기다려 주세요')
         }
-        this.$router.go()
+        // this.$router.go()
       } catch (err) {
         console.error(err);
       }
@@ -200,7 +201,7 @@ export default {
     // groups () { return this.$store.state.sg.groups }
     ...mapState("sg", ["groups"])
   },
-  mounted() {
+  created() {
     this.getGroups();
     if (this.$store.state.auth.isLogin) {
       this.getMyGroups();

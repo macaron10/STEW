@@ -14,7 +14,8 @@
       class=""
     >
     <v-row>
-    <h3 class="pl-10">{{ group.gpNm }}</h3><div class="mt-2 body-1 white--text"><v-icon class="pl-5 pr-1" color="white">mdi-account</v-icon>{{ group.gpCurNum }}</div>
+    <h3 class="pl-10">{{ group.gpNm }}</h3>
+    <!-- <div class="mt-2 body-1 white--text"><v-icon class="pl-5 pr-1" color="white">mdi-account</v-icon>{{ group.gpCurNum }}</div> -->
     </v-row>
     </v-toolbar-title>
   </v-col>

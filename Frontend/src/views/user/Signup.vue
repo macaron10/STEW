@@ -2,10 +2,9 @@
     <div id="Signup">
         <v-row justify="center">
            <!-- sm="10" md="8" lg="6" -->
-          <v-col cols="6">
             <v-form ref="form" id="form">
                 <v-row>
-                  <v-col cols=12>
+                  <v-col cols=11>
                     <v-text-field dense outlined
                       color="#64b4f6"
                       prepend-inner-icon="person"
@@ -95,7 +94,6 @@
 
                 <v-btn class="mr-4" @click="formCheckHandler">회원가입</v-btn>
             </v-form>
-          </v-col>
         </v-row>
     </div>
 </template>

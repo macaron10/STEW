@@ -50,7 +50,8 @@ export default {
               this.messages.push(JSON.parse(msg.body))
               if (JSON.parse(msg.body).type == "ENTER") {
                 const userInf={
-                  "userNm": JSON.parse(msg.body).userNm
+                  "userNm": JSON.parse(msg.body).userNm,
+                  "userImg": JSON.parse(msg.body).userImg
                 }
                 this.members.push(userInf)
               } else if (JSON.parse(msg.body).type == "QUIT") {

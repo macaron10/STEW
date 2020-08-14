@@ -2,8 +2,7 @@
 <div>
     <v-list-item height="6.5vh" >
       <v-list-item-content class="py-0" >
-        <v-list-item-title class="d-block" width="20px">참여중인 멤버</v-list-item-title>
-        <div class="pt-1 pr-2"><v-icon>mdi-account</v-icon>{{memsNum}}</div>
+        <v-list-item-title class="d-flex justify-space-between pt-1" width="20px">참여중인 멤버<div class=" pr-2"><v-icon>mdi-account</v-icon>{{memsNum}}</div></v-list-item-title>
       </v-list-item-content>
       
     </v-list-item>
@@ -27,9 +26,6 @@
         </v-list-item-icon>
         <v-list-item-content class="py-0 pl-5 d-block">
           {{ member.userNm }}
-        <v-list-item-subtitle height="10">
-        "{{ member.userEmail }}"
-        </v-list-item-subtitle>
         </v-list-item-content>
       </v-list-item>
     </v-list-item-group>

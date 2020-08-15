@@ -20,6 +20,10 @@ import { mapGetters } from "vuex"
 export default {
     created(){
         if(this.loginStatus) this.$router.back();
+
+        this.$on('social-succeed', (payload) => {
+            console.log(payload);
+        })
     },
     components:{
         LoginForm,

@@ -19,11 +19,9 @@ export default {
         // if(!error){
 
         // }
-
         this.loginSuccess({accessToken, refreshToken})
-
-        window.close();
-        window.opener.app.$root.$router.go();
+        window.opener.app.$emit('social-succeed', 'hi')
+        // window.close();
 
     },
     methods:{

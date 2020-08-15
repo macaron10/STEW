@@ -5,31 +5,56 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.listener.ChannelTopic;
+import org.springframework.data.redis.listener.RedisMessageListenerContainer;
+import org.springframework.data.redis.listener.adapter.MessageListenerAdapter;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
-import com.ssafy.study.user.model.UserToken;
-
+import com.ssafy.study.chat.service.RedisSubscriber;
 
 @Configuration
 public class RedisConfig {
+
+	@Bean
+	public ChannelTopic channelTopic() {
+		return new ChannelTopic("chatroom");
+	}
+
 	@Bean
 	public RedisConnectionFactory redisConnectionFactory() {
 		return new LettuceConnectionFactory();
 	}
-	
+
 	@Bean
-	public RedisTemplate<String, Object> redisTemplate(){
-		
+	public RedisTemplate<String, Object> redisTemplate() {
+
 		RedisTemplate<String, Object> redisTemplate = new RedisTemplate<String, Object>();
-		
+
 		redisTemplate.setConnectionFactory(redisConnectionFactory());
 		redisTemplate.setKeySerializer(new StringRedisSerializer());
-		
+		redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<>(String.class));
+
 //		객체를 Json 형태로 깨지지 않고 받기 위한 직렬화
 //		redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<>(UserToken.class));
-		
+
 		return redisTemplate;
-		
+
 	}
+
+	@Bean
+	public RedisMessageListenerContainer redisMessageListener(RedisConnectionFactory connectionFactory,
+			MessageListenerAdapter listenerAdapter, ChannelTopic channelTopic) {
+		RedisMessageListenerContainer container = new RedisMessageListenerContainer();
+
+		container.setConnectionFactory(connectionFactory);
+		container.addMessageListener(listenerAdapter, channelTopic);
+		return container;
+	}
+
+	@Bean
+	public MessageListenerAdapter listenerAdapter(RedisSubscriber subscriber) {
+		return new MessageListenerAdapter(subscriber, "sendMessage");
+	}
+
 }

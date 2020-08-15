@@ -1,5 +1,7 @@
 package com.ssafy.study.user.model;
 
+import java.io.Serializable;
+
 import javax.persistence.Column;
 
 import lombok.AllArgsConstructor;
@@ -15,7 +17,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class UserDto {
+public class UserDto implements Serializable {
 	private long userId;
 	private String userNm;
 	private String userEmail;

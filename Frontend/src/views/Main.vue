@@ -1,6 +1,22 @@
 <template>
   <div id="Mainpage">
     <MyPage />
+    <div class="mt-5" v-if="$store.state.auth.isLogin">
+      <v-row class="d-none d-sm-flex">
+        <v-col md="6" xs="12">
+          <TodayTimer />
+        </v-col>
+        <v-col md="5" sm="10" xs="12" class="mt-3 ml-3">
+          <v-card class="mx-2" height="180px" color="blue lighten-2" dark>
+            <v-card-title class="font-weight-bold">나의 다짐</v-card-title>
+            <v-row justify="center" align="center" class="m-5">
+              <v-card-text class="h3 headline text-center ">{{userIntro}}</v-card-text>
+            </v-row>
+          </v-card>
+        </v-col>
+      </v-row>
+    </div>
+    <br />
     <div class="p-3 ma-5">
       <div>
         <h2 class="mb-3 text-center text-sm-left">{{new Date().getMonth()+1}}월의 스터디 랭킹</h2>

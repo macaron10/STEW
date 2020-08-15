@@ -99,6 +99,12 @@ export default {
   },
   methods: {
     async enterStudy(group) {
+      if (!this.$store.state.comm.isLogin) {
+        alert("로그인이 필요합니다!");
+        this.$router.push({name:'Login'}) 
+        return;
+      }
+
       try {
         const joinCkUrl = "/study/user/joinck/" + group.gpNo;
         const joinRes = await axios.get(joinCkUrl);

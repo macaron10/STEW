@@ -7,7 +7,7 @@
           <TodayTimer />
         </v-col>
         <v-col md="5" sm="10" xs="12" class="mt-3 ml-3">
-          <v-card class="mx-2" height="180px" color="#42A5F5" dark>
+          <v-card class="mx-2" height="180px" color="blue lighten-2" dark>
             <v-card-title class="font-weight-bold">나의 다짐</v-card-title>
             <v-row justify="center" align="center" class="m-5">
               <v-card-text class="h3 headline text-center ">{{userIntro}}</v-card-text>

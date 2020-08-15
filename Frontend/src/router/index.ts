@@ -13,7 +13,6 @@ import StudySearch from '../views/StudySearch.vue';
 import Contact from '../views/Contact.vue';
 import Guide from '../views/Guide.vue';
 // User 관련
-import UserDetail from '../views/user/UserDetail.vue';
 import Signup from "../views/user/Signup.vue";
 import userPage from "../views/user/userPage.vue";
 import UserTimer from "../views/user/UserTimer.vue";
@@ -119,11 +118,6 @@ const routes: Array<RouteConfig> = [
     name: "MeetingRoom",
     component: MeetingRoom,
     props: true
-  },
-  {
-    path: "/user",
-    name: "userPage",
-    component: userPage
   },
   {
     path: "/user/myschedule",

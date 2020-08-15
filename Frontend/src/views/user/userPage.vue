@@ -195,11 +195,8 @@ export default {
         },
 
         checkUserPwd(pwd, type) {
-            console.log("왓니?");
             axios.post('/user/checkpw', querystring.stringify({userPw : pwd}))
             .then(({ data }) => {
-                console.log(data);
-                console.log("????");
                 if (data.msg === "success" && data.object) {
                     if (type === "update") {
                         this.updateUserPwd();
@@ -239,7 +236,6 @@ export default {
             
             axios.put('/user', this.formData, config)
             .then((res) => {
-                console.log(res);
                 if (res.data.msg === "success") {
                     this.$store.commit("auth/refreshSuccess", res.headers.accesstoken);
                     this.$store.dispatch("auth/tokenInformation");
@@ -253,7 +249,6 @@ export default {
         updateUserPwd() {
             axios.put('/user', querystring.stringify({userNewPw : this.updatePwd.new}))
             .then(({ data }) => {
-                console.log(data);
                 if (data.msg === "success") {
                     alert("비밀번호 변경 성공");
                     this.updatePwdDialog=false;
@@ -264,7 +259,6 @@ export default {
         deleteUser() {
             axios.delete('/user')
             .then(({ data }) => {
-                console.log(data);
                 if (data.msg === "success") {
                     alert("탈퇴가 완료되었습니다.")
                     this.$store.commit("logoutSuccess");

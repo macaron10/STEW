@@ -1,10 +1,9 @@
 <template>
     <v-layout justify-center>
-        <link rel='stylesheet prefetch' href='https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons'>
         <v-form>
             <v-text-field dense outlined
             color="#64b4f6"
-            prepend-inner-icon="person"
+            prepend-inner-icon="mdi-account"
             label="이메일"
             type="text"
             v-model="userEmail"
@@ -13,7 +12,7 @@
             <v-text-field dense outlined
             color="#64b4f6"
             label="패스워드"
-            prepend-inner-icon="lock"
+            prepend-inner-icon="mdi-lock"
             :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
             @click:append="showPassword = !showPassword"
             v-bind:type="showPassword ? 'text' : 'password'"

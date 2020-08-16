@@ -10,7 +10,7 @@
     </v-list-item>
   </v-list>
 <v-divider></v-divider>
-  <v-list class='message-list py-0' height="51vh" color="#f5f5f5">
+  <v-list ref="ChatWindow" class='message-list py-0' height="51vh" color="#f5f5f5" >
     <v-list-item-group>
       <div
         v-for="(msg, j) in msgs"
@@ -68,6 +68,10 @@ export default {
   name: 'MessageList',
   props: {
     msgs: Array
+  },
+  updated(){
+    const msgList = this.$refs.ChatWindow
+    msgList.$el.scrollTop = msgList.$el.scrollHeight;
   },
 };
 </script>

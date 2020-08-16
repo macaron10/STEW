@@ -19,9 +19,8 @@ export default {
         // if(!error){
 
         // }
-        this.loginSuccess({accessToken, refreshToken})
-        window.opener.app.$emit('social-succeed', 'hi')
-        // window.close();
+        window.opener.app.$root.$store.commit('auth/loginSuccess', {accessToken, refreshToken})
+        window.close();
 
     },
     methods:{
@@ -29,9 +28,6 @@ export default {
             const regex = new RegExp('[\\?&]' + key + '=([^&#]*)');
             return regex.exec(window.location.hash)[1];
         },
-        loginSuccess(userInfo){
-            this.$store.commit('auth/loginSuccess', userInfo)
-        }
     },
 }
 </script>

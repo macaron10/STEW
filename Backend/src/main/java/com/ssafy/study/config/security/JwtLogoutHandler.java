@@ -37,7 +37,6 @@ public class JwtLogoutHandler extends SecurityContextLogoutHandler{
 		accessToken = accessToken.replace(JwtProperties.TOKEN_PREFIX, "");
 		
 		String userToken = (String) redisTemplate.opsForValue().get(JwtUtil.getRefreshKey(accessToken));
-		if(userToken == null) throw new UserNotFoundException(JwtUtil.getUsernameFromToken(accessToken));
 		
 		super.logout(request, response, authentication);
 	}

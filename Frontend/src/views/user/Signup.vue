@@ -16,6 +16,7 @@
                 () => /([\w-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/.test(user.email) || '이메일 형식이 올바르지 않습니다.', 
               ]"
               label="이메일 *"
+              hint="입력 후 체크"
               :clearable=false
               required
             />
@@ -151,7 +152,7 @@
       }
     },
     computed: {
-      disableCheck() {
+      isEnabledEmail() {
         return this.$refs.form.$children[0].validate();
       },
       emailChanged() {
@@ -164,6 +165,7 @@
     watch: {
       emailChanged: function(){
         this.idCheck = false;
+        this.idCheckColor = "";
       }
     },
     methods: {
@@ -179,6 +181,7 @@
       },
 
       idCheckHandler() {
+        if(!this.isEnabledEmail) return;
         axios.get('/user/check', {
           params: {
             userEmail: this.user.email
@@ -189,7 +192,10 @@
           if (data.msg === "success" && data.object) {
             this.idCheck = true;
             this.idCheckColor = "#64b4f6"
-          }else this.idCheckColor = "red"
+          }else {
+            this.idCheckColor = "red"
+            alert('이미 사용중인 이메일입니다')
+          }
         })
       },
 

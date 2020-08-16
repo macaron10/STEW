@@ -19,6 +19,7 @@ export default {
         // if(!error){
 
         // }
+        
         window.opener.app.$root.$store.commit('auth/loginSuccess', {accessToken, refreshToken})
         window.close();
 

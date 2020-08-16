@@ -16,13 +16,14 @@
                 () => /([\w-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/.test(user.email) || '이메일 형식이 올바르지 않습니다.', 
               ]"
               label="이메일 *"
-              hint="입력 후 체크"
               :clearable=false
               required
+              @change="idCheckHandler"
             />
           </v-col>
           <v-col cols=1>
             <v-btn icon depressed
+              tabindex="-1"
               @click="idCheckHandler"
             >
               <v-icon
@@ -102,6 +103,9 @@
           min=0
           max=24
           background-color="lightgray"
+          :rules="[
+            () => (!user.goalHr || (0 <= user.goalHr && user.goalHr <= 24)) || '0 ~ 24'
+          ]"
         ></v-text-field>
         
         <v-btn block dark 
@@ -124,8 +128,10 @@
   import { mapGetters } from 'vuex'
 
   export default {
-    created(){
-      if(this.loginStatus) this.$router.back();
+    beforeRouteEnter(to, from, next){
+      next(vm => {
+        vm.$data.prevPage = from.next;
+      })
     },
     components: {
       SocialForm
@@ -134,6 +140,7 @@
       const formData = new FormData();
 
       return {
+        prevPage: '',
         user: {
           email: '',
           pwd: '',

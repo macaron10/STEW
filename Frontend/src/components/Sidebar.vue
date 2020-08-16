@@ -1,4 +1,7 @@
 <template>
+<v-hover
+  v-slot:default="{ hover }"
+>
   <v-navigation-drawer
     v-model="$store.state.comm.drawer"
     :clipped="$vuetify.breakpoint.lgAndUp"
@@ -21,6 +24,7 @@
         </v-row>
         <v-list-group
           v-else-if="item.children&&(isLogin||item.needLogin)"
+          v-show="hover"
           :key="item.text"
           v-model="item.model"
           :prepend-icon="item.model ? item.icon : item['icon-alt']"
@@ -35,13 +39,13 @@
           <v-list-item v-for="(child, i) in item.children" :key="i" link>
             <v-list-item-action v-if="child.icon" ></v-list-item-action>
             <v-list-item-content @click="goToStudy(child.value)"  class="ml-7">
-              <v-list-item-title style="white-space: preline" v-if="!child.waiting">
+              <v-list-item-title class="d-flex justify-space-between my-auto" style="white-space: normal" v-if="!child.waiting">
                 {{ child.text }}
                 <v-icon v-if="child.groupManager" color="amber" class="ml-2">mdi-crown</v-icon>
               </v-list-item-title>
-              <v-list-item-title class="grey--text text--lighten-2 d-flex justify-space-between" style="white-space: preline" v-else>
-                <div >{{ child.text }}</div>
-                <div class="">승인 대기중
+              <v-list-item-title class="grey--text text--lighten-2 d-flex justify-space-between" v-else>
+                <div style="white-space: normal">{{ child.text }}</div>
+                <div class="my-auto">승인 대기중
                   <v-progress-circular
                     :value="50"
                     :size="19"
@@ -67,12 +71,18 @@
           </v-list-item-content>
         </v-list-item>
       </template>
+    <v-list-item>
+    <v-icon v-show="!hover&&isLogin">mdi-chevron-down</v-icon>
+    </v-list-item>
     </v-list>
   </v-navigation-drawer>
+  </v-hover>
 </template>
 
 <script>
 import axios from "axios";
+import { mapActions } from 'vuex';
+
 export default {
   name: "Sidebar",
   data: () => ({
@@ -107,9 +117,11 @@ export default {
     }
   },
   mounted() {
+    this.getMyReqs();
     this.getStudyList();
   },
   methods: {
+    ...mapActions("notice", ["getMyReqs"]),
     event(){
       this.$emit('event')
     },

@@ -95,6 +95,7 @@
 <script>
 // @ is an alias to /src
 import axios from "axios";
+import { mapActions } from "vuex";
 
 import MyPage from "@/components/main/MyPage.vue";
 import StudyList from "@/components/main/StudyList.vue";
@@ -105,15 +106,13 @@ export default {
   components: {
     MyPage,
     StudyList,
-    TodayTimer
+    TodayTimer,
   },
   data: () => ({
     componentKey: 0,
     rankGpList: [],
     userIntro : "",
-    // baseUrl: "http://localhost:8399/api",
-    baseUrl: "https://i3b103.p.ssafy.io",
-    // baseUrl: this.$store.state.comm.baseUrl,
+    pageNumber: 1,
     bottom: false,
     //상단 바로가기 버튼
     isIntersecting: false
@@ -141,6 +140,7 @@ export default {
     this.getUserInfo();
   },
   methods: {
+    ...mapActions("sg", ["getGroups", "getNextGroups"]),
     forceRerender() {
       this.componentKey += 1;
     },
@@ -166,20 +166,20 @@ export default {
       const scrollY = window.scrollY
       const visible = document.documentElement.clientHeight
       const pageHeight = document.documentElement.scrollHeight
-      const bottomOfPage = visible + scrollY >= pageHeight
-      return bottomOfPage || pageHeight < visible
+      const bottomOfPage = visible + scrollY + 64 >= pageHeight
+      return bottomOfPage || pageHeight <= visible
     },
     // 상단 바로가기 버튼
       onIntersect (entries, observer) {
         this.isIntersecting = entries[0].isIntersecting
-        console.log('인터섹트중')
       },
   },
   watch: {
     // 무한스크롤
     bottom(bottom) {
       if (bottom) {
-        console.log('그룹 불러오기!')
+        this.getNextGroups(this.pageNumber)
+        this.pageNumber++
       }
     }
   },
@@ -188,7 +188,7 @@ export default {
     window.addEventListener('scroll', () => {
       this.bottom = this.bottomVisible()
     })
-    console.log('그룹불러오기!')
+    this.getGroups();
   }
 };
 </script>

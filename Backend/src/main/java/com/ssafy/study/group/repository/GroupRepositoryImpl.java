@@ -91,16 +91,14 @@ public class GroupRepositoryImpl /* extends QuerydslRepositorySupport */ impleme
 
 		return query.getSingleResult();
 	}
-	
+
 	@Override
-	public List<GroupDto> rankGroupStudyTime(){
-		String jpql="select new com.ssafy.study.group.model.dto.GroupDto(gp, sum(tm.tmAcmlTime) as sumTime, sum(tm.tmAcmlTime) / gp.gpCurNum as avgTime) "
+	public List<GroupDto> rankGroupStudyTime() {
+		String jpql = "select new com.ssafy.study.group.model.dto.GroupDto(gp, sum(tm.tmAcmlTime) as sumTime, sum(tm.tmAcmlTime) / gp.gpCurNum as avgTime) "
 				+ "from Group gp join TimeAcml tm on gp.gpNo = tm.gp.gpNo "
-				+ "where substring(tm.tmAcmlDate, 1, 7) = substring(CURRENT_DATE, 1, 7) "
-				+ "and 2 <> 0 "
-				+ "group by gp.gpNo "
-				+ "order by avgTime desc, gp.gpCurNum desc ";
-		
+				+ "where substring(tm.tmAcmlDate, 1, 7) = substring(CURRENT_DATE, 1, 7) " + "and 2 <> 0 "
+				+ "group by gp.gpNo " + "order by avgTime desc, gp.gpCurNum desc ";
+
 		TypedQuery<GroupDto> query = em.createQuery(jpql, GroupDto.class);
 
 		query.setMaxResults(5);
@@ -112,4 +110,5 @@ public class GroupRepositoryImpl /* extends QuerydslRepositorySupport */ impleme
 			return true;
 		return false;
 	}
+
 }

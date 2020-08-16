@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.ssafy.study.group.model.dto.GroupCategoryDto;
@@ -48,6 +49,11 @@ public class GroupServiceImpl implements GroupService {
 	@Override
 	public List<GroupDto> selectAllGroups() {
 		return gpRepo.selectAllGroups();
+	}
+
+	@Override
+	public List<GroupDto> selectAllGroups(Pageable page) {
+		return gpRepo.findAll(page).getContent().stream().map(g -> new GroupDto(g)).collect(Collectors.toList());
 	}
 
 	@Override

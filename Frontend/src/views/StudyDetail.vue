@@ -26,7 +26,7 @@
               fab
               bottom
               right
-              color="blue"
+              color="amber darken-1"
               class="mb-10"
               @click="readyEnterMeeting(group.gpNo)"
             >

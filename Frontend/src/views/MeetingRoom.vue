@@ -72,48 +72,59 @@
               </v-btn>
             </template>
             <v-btn v-if="options.audio" class="mx-1" small fab dark color="#FFB300" @click="mute">
-                <v-icon dark>mdi-microphone</v-icon>
-              </v-btn>
-              <v-btn v-else class="mx-1" fab outlined small dark color="#FFB300" @click="unmute">
-                <v-icon dark>mdi-microphone-off</v-icon>
-              </v-btn>
-              <v-btn v-if="options.video" class="mx-1" small fab dark color="#43A047" @click="offVideo">
-                <v-icon dark>mdi-video</v-icon>
-              </v-btn>
-              <v-btn v-else class="mx-1" fab outlined small dark color="#43A047" @click="onVideo">
-                <v-icon dark>mdi-video-off</v-icon>
-              </v-btn>
-              <v-btn
-                v-if="showChatRoom"
-                class="mx-1"
-                fab
-                dark small
-                color="#29B6F6"
-                @click="showChatRoom = !showChatRoom"
-              >
-                <v-icon dark>mdi-message-text-outline</v-icon>
-              </v-btn>
-              <v-btn
-                v-else
-                class="mx-1"
-                fab
-                outlined
-                dark small
-                color="#29B6F6"
-                @click="showChatRoom = !showChatRoom"
-              >
-                <v-icon dark>mdi-message-text-outline</v-icon>
-              </v-btn>
-              <v-btn
-                class="mx-1"
-                fab
-                dark small
-                color="red"
-                @click="outRoom"
-                :to="{ name: 'StudyDetail' }"
-              >
-                <v-icon dark>mdi-account-arrow-right-outline</v-icon>
-              </v-btn>
+              <v-icon dark>mdi-microphone</v-icon>
+            </v-btn>
+            <v-btn v-else class="mx-1" fab outlined small dark color="#FFB300" @click="unmute">
+              <v-icon dark>mdi-microphone-off</v-icon>
+            </v-btn>
+            <v-btn
+              v-if="options.video"
+              class="mx-1"
+              small
+              fab
+              dark
+              color="#43A047"
+              @click="offVideo"
+            >
+              <v-icon dark>mdi-video</v-icon>
+            </v-btn>
+            <v-btn v-else class="mx-1" fab outlined small dark color="#43A047" @click="onVideo">
+              <v-icon dark>mdi-video-off</v-icon>
+            </v-btn>
+            <v-btn
+              v-if="showChatRoom"
+              class="mx-1"
+              fab
+              dark
+              small
+              color="#29B6F6"
+              @click="showChatRoom = !showChatRoom"
+            >
+              <v-icon dark>mdi-message-text-outline</v-icon>
+            </v-btn>
+            <v-btn
+              v-else
+              class="mx-1"
+              fab
+              outlined
+              dark
+              small
+              color="#29B6F6"
+              @click="showChatRoom = !showChatRoom"
+            >
+              <v-icon dark>mdi-message-text-outline</v-icon>
+            </v-btn>
+            <v-btn
+              class="mx-1"
+              fab
+              dark
+              small
+              color="red"
+              @click="outRoom"
+              :to="{ name: 'StudyDetail' }"
+            >
+              <v-icon dark>mdi-account-arrow-right-outline</v-icon>
+            </v-btn>
           </v-speed-dial>
         </div>
       </v-col>
@@ -183,19 +194,20 @@ export default {
       this.connection.videosContainer = document.querySelector(
         ".videos-container"
       );
-      // this.connection.onstream = function(event) {
-      //   const video = event.mediaElement;
-      //   video.id = event.streamid;
-      //   // document.body.insertBefore(video, document.body.firstChild);
 
-      //   event.stream.mute("video");
-      //   if (this.$route.params.options.audio == false) {
-      //     this.mute();
-      //   }
-      //   if (this.$route.params.options.video == false) {
-      //     this.offVideo();
-      //   }
-      // };
+      const options = this.$route.params.options;
+      const connection = this.connection;
+      connection.onstream = function(e) {
+        e.mediaElement.id = e.streamid; // ---------- set ID
+
+        document.querySelector(".videos-container").appendChild(e.mediaElement);
+
+        console.log(e.stream);
+        if (e.type == "local") {
+          if (!options.video) e.stream.mute("video");
+          if (!options.audio) e.stream.mute("audio");
+        }
+      };
     },
     joinRoom() {
       this.connection = new RTCMultiConnection();
@@ -205,9 +217,9 @@ export default {
         data: true
       };
 
-      // this.connection.socketURL = "https://i3b103.p.ssafy.io/socket/"; //배포옹
-      this.connection.socketURL =
-        "https://rtcmulticonnection.herokuapp.com:443/"; // 개발용
+      this.connection.socketURL = "https://i3b103.p.ssafy.io/socket/"; //배포옹
+      // this.connection.socketURL =
+      //   "https://rtcmulticonnection.herokuapp.com:443/"; // 개발용
 
       this.connection.mediaConstraints = {
         audio: true,
@@ -246,12 +258,18 @@ export default {
     offVideo() {
       let localStream = this.connection.attachStreams[0];
       localStream.mute("video");
+      // connection.streams[0].mute({
+      //   video: true
+      // });
       this.options.video = false;
     },
     onVideo() {
       this.connection.session.video = true;
       let localStream = this.connection.attachStreams[0];
       localStream.unmute("video");
+      // connection.streams[0].unmute({
+      //   video: true
+      // });
       this.options.video = true;
     },
     dragElement() {
@@ -319,7 +337,7 @@ video::-webkit-media-controls {
 .videos-container video {
   display: block;
   width: 23.7vw;
-  /* width: calc((100vw - 400px)/2.5); */
+  /* width: calc((100vw - 400px) / 2.5); */
   border: 1px solid;
 }
 

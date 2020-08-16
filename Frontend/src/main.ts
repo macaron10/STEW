@@ -26,34 +26,32 @@ axios.interceptors.request.use(config => {
 
 axios.interceptors.response.use(
   function (res) {
-    console.log("res 응답");
-    console.log(res);
+    // console.log(res);
     return res;
   },
 
   function (err) {
-    const originalRequest = err.config;
-    console.log("err 응답");
+    const originReq = err.config;
+    console.log("err response");
     console.log(err);
     
-    if (err.response.status === 401 && !originalRequest._retry) {
-      originalRequest._retry = true;
+    if (err.response.status === 401 && !originReq._retry) {
+      originReq._retry = true;
       
       const refreshInfo: any = jwt.decode(store.getters['auth/getUserInfo'].refreshToken.replace("Bearer ", ""));
       
       if (Date.now() - refreshInfo.exp * 1000 < 0) {
-        console.log("토큰 재발급 고고");
+        // console.log("token refresh start");
         
-        store.dispatch('auth/tokenRefresh').then(() => {
-          console.log("토큰 재발급 완료");
+        return store.dispatch('auth/tokenRefresh').then(() => {
+          // console.log("token refresh fin");
           
-          originalRequest.headers.Authorization = store.getters['auth/getUserInfo'].accessToken;
-          console.log(originalRequest);
-          return Promise.resolve(originalRequest);
+          originReq.headers.Authorization = store.getters['auth/getUserInfo'].accessToken;
+          return axios.request(originReq);
+          // return Promise.resolve(originReq);
         });
       } else {
-        console.log("로그아웃 해야됨");
-        
+        // console.log("can't refresh. have to logout")
         store.commit("auth/logoutSuccess");
         return Promise.reject(err);
       }

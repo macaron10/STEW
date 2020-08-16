@@ -1,23 +1,17 @@
 package com.ssafy.study.controller;
 
-import java.io.File;
-import java.io.IOException;
-import java.time.LocalDateTime;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.messaging.handler.annotation.SendTo;
-import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.google.gson.Gson;
-import com.ssafy.study.chat.model.ChatMessage;
 import com.ssafy.study.common.model.BasicResponse;
 import com.ssafy.study.common.util.FileUtils;
 import com.ssafy.study.group.model.dto.GroupSearchDto;
@@ -98,6 +92,21 @@ public class PublicGroupController {
 //		return new ResponseEntity<>(result, HttpStatus.OK);
 //	}
 
+	@GetMapping("/")
+	@ApiOperation("스터디 목록 페이지네이션 출력")
+	public ResponseEntity paginationStudyList(@RequestParam(required = false, defaultValue = "0") int page,
+			@RequestParam(required = false, defaultValue = "12") int size) {
+		BasicResponse result = new BasicResponse();
+
+		Pageable pageable = PageRequest.of(page, size, Sort.by("regDate").descending());
+
+		result.object = groupService.selectAllGroups(pageable);
+		result.msg = "success";
+		result.status = true;
+
+		return new ResponseEntity<>(result, HttpStatus.OK);
+	}
+
 	@GetMapping("/cate")
 	@ApiOperation("전체 카테고리 출력")
 	public ResponseEntity selectBoxGroupCategory() {
@@ -108,7 +117,7 @@ public class PublicGroupController {
 
 		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
-	
+
 	@GetMapping("/rank")
 	@ApiOperation("스터디 랭크 출력")
 	public ResponseEntity rankStudyTime() {
@@ -119,6 +128,5 @@ public class PublicGroupController {
 
 		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
-
 
 }

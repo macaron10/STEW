@@ -1,6 +1,8 @@
 <template>
   <div id="Mainpage">
-    <MyPage />
+    <MyPage 
+      v-intersect="onIntersect"
+    />
     <div class="mt-5" v-if="$store.state.auth.isLogin">
       <v-row class="d-none d-sm-flex">
         <v-col md="6" xs="12">
@@ -27,7 +29,7 @@
               <v-row justify="space-between">
                 <v-col cols="auto" v-if="index < 3">
                   <v-img
-                    :src="baseUrl + `image/main/${index+1}-medal.png`"
+                    :src="$store.state.comm.baseUrl + `/image/main/${index+1}-medal.png`"
                     height="40px"
                     width="40px"
                   ></v-img>
@@ -62,6 +64,23 @@
     <StudyList 
       :key="componentKey"
       @event="forceRerender()" />
+    <!-- 상단으로 버튼 -->
+      <v-btn
+      color="red lighten-1"
+      v-if="!isIntersecting"
+      dark
+      bottom
+      right
+      fixed
+      fab
+      class="btTop my-5 mx-5"
+      @click="$vuetify.goTo(0, {
+        duration: 100,
+        offset: 0
+      })"
+    >
+      <v-icon>mdi-chevron-up</v-icon>
+    </v-btn>
   </div>
 </template>
 
@@ -84,9 +103,12 @@ export default {
     componentKey: 0,
     rankGpList: [],
     userIntro : "",
-    // baseUrl: "http://localhost:8399/api/"
-    baseUrl: "https://i3b103.p.ssafy.io/"
-    // baseUrl: this.$store.state.comm.baseUrl
+    // baseUrl: "http://localhost:8399/api",
+    baseUrl: "https://i3b103.p.ssafy.io",
+    // baseUrl: this.$store.state.comm.baseUrl,
+    bottom: false,
+    //상단 바로가기 버튼
+    isIntersecting: false
   }),
   filters: {
     toTimeFormat: sec => {
@@ -128,7 +150,35 @@ export default {
           this.rankGpList = res.data.object;
         })
         .catch(err => console.log(err));
+    },
+    // 무한스크롤
+    bottomVisible() {
+      const scrollY = window.scrollY
+      const visible = document.documentElement.clientHeight
+      const pageHeight = document.documentElement.scrollHeight
+      const bottomOfPage = visible + scrollY >= pageHeight
+      return bottomOfPage || pageHeight < visible
+    },
+    // 상단 바로가기 버튼
+      onIntersect (entries, observer) {
+        this.isIntersecting = entries[0].isIntersecting
+        console.log('인터섹트중')
+      },
+  },
+  watch: {
+    // 무한스크롤
+    bottom(bottom) {
+      if (bottom) {
+        console.log('그룹 불러오기!')
+      }
     }
+  },
+  created() {
+    //무한스크롤
+    window.addEventListener('scroll', () => {
+      this.bottom = this.bottomVisible()
+    })
+    console.log('그룹불러오기!')
   }
 };
 </script>

@@ -195,12 +195,13 @@ export default {
       } catch (err) {
         console.error(err);
       }
-    }
+    },
   },
   computed: {
     // groups () { return this.$store.state.sg.groups }
     ...mapState("sg", ["groups"])
   },
+
   created() {
     this.getGroups();
     if (this.$store.state.auth.isLogin) {

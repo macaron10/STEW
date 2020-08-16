@@ -224,6 +224,11 @@ export default {
       // ],
       show: false
     };
+  },
+  mounted () {
+    this.getReqs()
+    this.getReqsSock()
   }
+
 };
 </script>

@@ -117,7 +117,7 @@ export default {
     }
   },
   mounted() {
-    this.getMyReqs();
+    this.getMyReqs()
     this.getStudyList();
   },
   methods: {

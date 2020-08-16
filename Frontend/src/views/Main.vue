@@ -75,7 +75,7 @@
     <!-- 상단으로 버튼 -->
       <v-btn
       color="red lighten-1"
-      v-if="!isIntersecting"
+      v-show="!isIntersecting"
       dark
       bottom
       right
@@ -86,6 +86,7 @@
         duration: 100,
         offset: 0
       })"
+      transition="scale-transition"
     >
       <v-icon>mdi-chevron-up</v-icon>
     </v-btn>
@@ -114,7 +115,7 @@ export default {
     userIntro : "",
     pageNumber: 1,
     bottom: false,
-    //상단 바로가기 버튼
+    //상단 바로가기 버튼 -> 메인화면에 배너가 보일때 사라짐
     isIntersecting: false
   }),
   filters: {
@@ -178,8 +179,9 @@ export default {
     // 무한스크롤
     bottom(bottom) {
       if (bottom) {
-        this.getNextGroups(this.pageNumber)
-        this.pageNumber++
+        setTimeout(
+          function () {this.getNextGroups(this.pageNumber), this.pageNumber++}.bind(this), 400
+          )
       }
     }
   },
@@ -192,3 +194,6 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+</style>

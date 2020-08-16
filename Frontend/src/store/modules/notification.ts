@@ -34,7 +34,7 @@ export default {
         }
       },
       getReqsSock({ state, rootState }: any, event: any) {
-        const apiUrl = rootState.comm.baseUrl + '/sock'
+        const apiUrl = rootState.comm.baseSocketUrl + '/sock'
         const socket = new SockJS(apiUrl)
         const ws = Stomp.over(socket)
   

@@ -29,8 +29,13 @@ export default {
     computed: {
         ...mapGetters('auth', [
             'loginStatus',
-        ])
+        ]),
     },
+    watch:{
+        loginStatus: function(){
+            this.$router.back()
+        }
+    }
 }
 </script>
 

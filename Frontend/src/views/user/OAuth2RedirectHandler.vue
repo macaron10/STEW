@@ -19,11 +19,8 @@ export default {
         // if(!error){
 
         // }
-
-        this.loginSuccess({accessToken, refreshToken})
-
+        window.opener.app.$root.$store.commit('auth/loginSuccess', {accessToken, refreshToken})
         window.close();
-        window.opener.app.$root.$router.go();
 
     },
     methods:{
@@ -31,9 +28,6 @@ export default {
             const regex = new RegExp('[\\?&]' + key + '=([^&#]*)');
             return regex.exec(window.location.hash)[1];
         },
-        loginSuccess(userInfo){
-            this.$store.commit('auth/loginSuccess', userInfo)
-        }
     },
 }
 </script>

@@ -61,7 +61,6 @@ export default {
         async signInHandler() {
             await this.signIn({'userEmail': this.userEmail, 'userPw':this.userPw});
             this.userEmail = this.userPw = "";
-            this.$router.go();
         }
     }
 }

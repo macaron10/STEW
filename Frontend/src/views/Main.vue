@@ -95,6 +95,7 @@
     >
       <v-icon>mdi-chevron-up</v-icon>
     </v-btn>
+    </v-container>
   </div>
 </template>
 

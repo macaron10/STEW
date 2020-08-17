@@ -238,9 +238,8 @@ export default {
         data: true
       };
 
-      // this.connection.socketURL = "https://i3b103.p.ssafy.io/socket/"; //배포옹
-      this.connection.socketURL =
-        "https://rtcmulticonnection.herokuapp.com:443/"; // 개발용
+      //this.connection.socketURL = "https://i3b103.p.ssafy.io/socket/"; //배포옹
+       this.connection.socketURL = "https://rtcmulticonnection.herokuapp.com:443/"; // 개발용
 
       this.connection.mediaConstraints = {
         audio: true,
@@ -250,7 +249,7 @@ export default {
         OfferToReceiveAudio: true,
         OfferToReceiveVideo: true
       };
-      this.connection.openOrJoin(this.$route.params.id);
+      this.connection.openOrJoin(`stew${this.$route.params.id}ssafy3`)
     },
     outRoom() {
       this.connection.getAllParticipants().forEach(participantId => {

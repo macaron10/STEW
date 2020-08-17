@@ -1,7 +1,9 @@
+import { getBaseUrl } from '@/constants'
+
 export default {
     state: {
-        baseUrl: "http://localhost:8399/api",//개발용
-        // baseUrl: "https://i3b103.p.ssafy.io", //배포용
+        baseUrl: getBaseUrl('img'),
+        baseSocketUrl: getBaseUrl('api'),
         drawer: false,
       },
 

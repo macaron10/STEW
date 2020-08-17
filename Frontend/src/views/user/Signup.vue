@@ -125,7 +125,7 @@
 <script>
   import axios from 'axios';
   import SocialForm from '@/components/auth/SocialForm'
-  import { mapGetters } from 'vuex'
+  import { mapGetters, mapActions } from 'vuex'
 
   export default {
     beforeRouteEnter(to, from, next){
@@ -229,7 +229,12 @@
         this.formData.append('userIntro', this.user.intro);
         this.formData.append('userGoalHr', Number(this.user.goalHr));
       },
-
+      ...mapActions('auth', [
+          "signIn"
+          ]),
+      async signInHandler() {
+          await this.signIn({'userEmail': this.user.email, 'userPw':this.user.pwd});
+      },
       signupHandler() {
         const config = {
           headers: {
@@ -245,6 +250,7 @@
 
           if (data.msg === 'success') {
             msg = '회원가입 성공';
+            this.signInHandler();
             this.moveMain();
           } else {
             this.formData = new FormData();

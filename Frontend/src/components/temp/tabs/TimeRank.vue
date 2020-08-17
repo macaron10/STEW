@@ -60,7 +60,7 @@ export default {
       studyTotal: "00:00:00",
       rankData: null,
       pieData: [],
-      colors: ["#0F4C81", "#368F8B", "#25CED1", "#FFE66D", "#F79256", "#89023E"]
+      colors: ["#0277BD", "#00BFA5", "#B2EBF2", "#FFE082", "#FB8C00", "#E53935"]
     };
   },
   mounted() {

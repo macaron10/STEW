@@ -20,7 +20,7 @@
                 contain
               />
             </div>
-            <div align="left" class="text-left align-center ml-3">
+            <div align="left" class="text-truncate align-center ml-3">
               <v-card-title v-text="group.gpNm"></v-card-title>
               <v-card-subtitle class="text-truncate py-1" v-text="group.gpIntro"></v-card-subtitle>
               <v-card-text class="my-0 py-1">
@@ -99,7 +99,7 @@ export default {
   },
   methods: {
     async enterStudy(group) {
-      if (!this.$store.state.comm.isLogin) {
+      if (!this.$store.state.auth.isLogin) {
         alert("로그인이 필요합니다!");
         this.$router.push({name:'Login'}) 
         return;

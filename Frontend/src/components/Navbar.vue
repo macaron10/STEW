@@ -64,7 +64,7 @@
           <v-list-item v-for="(groupsReq, j) in groupsReqs" :key="j">
             <v-list-item-icon>
               <v-avatar size="36px">
-                <img alt="Avatar" src="https://avatars0.githubusercontent.com/u/9064066?v=4&s=460" />
+                <img alt="Avatar" :src='$store.state.comm.baseUrl + "/image/user" + groupsReq.user.userImg' />
               </v-avatar>
             </v-list-item-icon>
             <!-- 내의 신청 -->
@@ -126,12 +126,6 @@ export default {
       return this.groupsReqs.length;
     }
   },
-  // watch: {
-  //   '$route' (to, from) {
-  //     if(to.fullPah == from.fullPah){
-
-  //     }
-  //   },
   methods: {
     ...mapActions("notice", ["getReqsSock", "getReqs"]),
     ...mapActions("auth", ["signIn", "logout"]),

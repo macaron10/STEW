@@ -25,7 +25,7 @@ public class ChatRoom implements Serializable {
 	public ChatRoom(String gpNo) {
 		this.gpNo = gpNo;
 		this.userCount = 0;
-		this.userList = new HashMap<String, UserDto>();
+		this.userList = new HashMap<>();
 	}
 
 	public void minusCount() {

@@ -46,7 +46,7 @@
       <v-icon>mdi-account</v-icon>
     </v-btn>
 
-    <v-btn icon v-if="!isLogin" :to="{ name: 'Signup' }" color="blue lighten-2">
+    <v-btn icon v-if="!isLogin" :to="{ name: 'SignUp' }" color="blue lighten-2">
       <v-icon>mdi-account-plus</v-icon>
     </v-btn>
 

@@ -80,8 +80,8 @@
               <br />
               <div v-if="groupsReq.gpReqMsg">"{{ groupsReq.gpReqMsg }}"</div>
             </v-list-item-content>
-            <v-btn class="mx-2" color="green lighten-2" @click="reqOk(groupsReq.gpReqNo)">수락</v-btn>
-            <v-btn color="red lighten-2" @click="reqReject(groupsReq.gpReqNo)">거절</v-btn>
+            <v-btn class="mx-2" dark color="green lighten-2" @click="reqOk(groupsReq.gpReqNo)">수락</v-btn>
+            <v-btn color="red lighten-2" dark  @click="reqReject(groupsReq.gpReqNo)">거절</v-btn>
           </v-list-item>
         </v-list-item-group>
       </v-list>

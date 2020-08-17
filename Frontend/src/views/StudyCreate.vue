@@ -11,7 +11,7 @@
             <v-text-field
               v-model="form.gpNm"
               :rules="rules.groupName"
-              color="blue darken-2"
+              color="blue"
               label="그룹 이름"
               required
             ></v-text-field>
@@ -42,7 +42,7 @@
         </v-row>
         <v-row>
           <v-col cols="10" offset="1">
-            <v-textarea v-model="form.gpIntro" rows="2" color="primary">
+            <v-textarea v-model="form.gpIntro" rows="2" color="blue">
               <template v-slot:label>
                 <div>
                   스터디 소개
@@ -59,15 +59,15 @@
               v-model="form.gpCatNo"
               :items="categories"
               :rules="rules.types"
-              color="pink"
+              color="blue"
               label="스터디 타입"
               required
             ></v-select>
           </v-col>
           <v-col offset="1" sm="5">
-            <v-checkbox v-model="form.gpPublic" color="green">
-              <template v-slot:label>
-                <div @click.stop="form.gpPublic=!form.gpPublic">
+            <v-checkbox v-model="form.gpPublic" color="blue">
+              <template @click.stop="form.gpPublic=!form.gpPublic" v-slot:label>
+                <div >
                   <span v-if="form.gpPublic">공개 스터디</span>
                   <span v-else>비공개 스터디</span>
                 </div>
@@ -108,8 +108,8 @@
         <v-row>
           <v-col cols="4" offset="4" class="d-flex justify-center">
             <v-card-actions>
-              <v-btn width="80px" :disabled="!formIsValid" color="primary" type="submit">생성</v-btn>
-              <v-btn width="80px" color="amber" @click="resetForm">초기화</v-btn>
+              <v-btn width="80px" :disabled="!formIsValid" color="blue" type="submit">생성</v-btn>
+              <v-btn width="80px" color="amber lighten-1" @click="resetForm">초기화</v-btn>
               <!-- 생성버튼!! -->
             </v-card-actions>
           </v-col>

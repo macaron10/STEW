@@ -14,16 +14,8 @@
     <!-- style="background-image: linear-gradient(180deg, rgba(255, 255, 255, 1), rgba(0, 0, 0, 0.1))" -->
     <v-list dense class="pt-0">
       <template v-for="item in items">
-        <v-row v-if="item.heading" :key="item.heading" align="center">
-          <v-col cols="6">
-            <v-subheader v-if="item.heading">{{ item.heading }}</v-subheader>
-          </v-col>
-          <v-col cols="6" class="text-center">
-            <a href="#!" class="body-2 black--text">EDIT</a>
-          </v-col>
-        </v-row>
         <v-list-group
-          v-else-if="item.children&&(isLogin||item.needLogin)"
+          v-if="item.children&&(isLogin||item.needLogin)"
           v-show="hover"
           :key="item.text"
           v-model="item.model"
@@ -62,6 +54,7 @@
           :key="item.text"
           link
           :to="{ name: item.page }"
+          :exact="true"
         >
           <v-list-item-action>
             <v-icon>{{ item.icon }}</v-icon>

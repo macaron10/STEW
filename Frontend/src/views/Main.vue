@@ -16,7 +16,8 @@
             >
               <v-container v-bind:class="{ 'd-none d-sm-flex' : index > 2}">
                 <v-row>
-                  <v-col class="pa-0">
+                  <v-row>
+                  <v-col cols="12" class="pa-0">
                   <v-img
                     v-if="index < 3"
                     :src="$store.state.comm.baseUrl + `/image/main/${index+1}-medal.png`"
@@ -25,11 +26,12 @@
                     class="mx-auto"
                   ></v-img>
                   </v-col>
+                  </v-row>
                   <v-col cols="12" class="text-center">
-                    <v-row class="flex-column ma-0 pa-0" justify="center">
-                      <v-col class="pa-0 ma-0">
+                    <v-row class="flex-column ma-0 pa-0" justify="center" >
+                      <v-col class="pa-0 ma-0" >
                         <span class="blue--text">{{index+1}}등</span>&nbsp;
-                        <a color="black">{{gp.gpNm}}</a>
+                        <div class="blue--text text--darken-2" style="display: block; max-width: 240px; max-height:24px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">{{gp.gpNm}}</div>
                       </v-col>
                       <v-col class="pa-0 ma-0">
                         <span class="subtitle-2">

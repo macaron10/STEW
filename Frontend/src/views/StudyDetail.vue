@@ -54,6 +54,8 @@
             </span>
             그룹 · 멤버 {{group.gpCurNum}}명
           </h4>
+          <hr class="my-3">
+          <h4>{{ group.gpIntro }}</h4>
         </v-col>
         <v-col cols="10" offset="1" md="6" offset-md="0">
           <v-card>

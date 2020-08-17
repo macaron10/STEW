@@ -13,7 +13,7 @@
         <v-hover>
           <template v-slot:default="{ hover }">
             <!-- :to="'/study/' + group.gpNo" -->
-            <v-card class="mx-1" height="250" @click="toDetail(group)">
+            <v-card class="mx-1" height="250" @click="toDetail(group)" :elevation="1">
               <v-img
                 :src="group.gpImg != null?($store.state.comm.baseUrl + '/image/group' + group.gpImg):gpImgDefault"
                 height="170"
@@ -58,7 +58,7 @@
               <v-fade-transition>
                 <v-overlay v-if="hover" absolute color="#424242">
                   <div>
-                    <p class="multiwrap mx-auto">{{group.gpIntro}}</p>
+                    <p style="min-width: 200px;" class="multiwrap mx-auto">{{group.gpIntro}}</p>
                     <div class="text-justify p-10 text-center mx-auto" style="width:80%">
                       <span v-for="tag in group.gpTag" samll :key="tag">#{{tag}}&nbsp;&nbsp;</span>
                     </div>

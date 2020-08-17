@@ -1,20 +1,21 @@
 <template>
-  <div id="Mainpage" >
+  <div id="Mainpage">
     <MyPage v-intersect="onIntersect" ref="MyPage"/>
     <v-container >
       <div class="p-3 ma-5">
         <div>
           <h2 class="mb-3 text-center text-sm-left">{{new Date().getMonth()+1}}월의 스터디 랭킹</h2>
           <div v-if="rankGpList.length == 0">아직 이달의 랭킹이 존재하지 않습니다!</div>
-          <v-card flat tile class="d-flex justify-center justify-sm-start">
+          <v-card flat tile color="#fcfcfc" class="d-flex justify-center justify-sm-start">
             <v-card
               flat
               tile
               v-for="(gp, index) in rankGpList"
               :key="index + gp"
               class="align-start"
+              color="#fcfcfc"
             >
-              <v-container v-bind:class="{ 'd-none d-sm-flex' : index > 2}">
+              <v-container  v-bind:class="{ 'd-none d-sm-flex' : index > 2}">
                 <v-row>
                   <v-row>
                   <v-col cols="12" class="pa-0">
@@ -118,7 +119,7 @@ export default {
     pageNumber: 1,
     bottom: false,
     //상단 바로가기 버튼 -> 메인화면에 배너가 보일때 사라짐
-    isIntersecting: false
+    isIntersecting: false,
   }),
   filters: {
     toTimeFormat: sec => {
@@ -197,5 +198,8 @@ export default {
 };
 </script>
 
-<style scoped>
+<style>
+#Mainpage {
+  background-color: #fcfcfc;
+}
 </style>

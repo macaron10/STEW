@@ -33,7 +33,9 @@ public class JwtLogoutSuccessHandler extends HttpStatusReturningLogoutSuccessHan
 		redisTemplate.expire(accessToken, remains, TimeUnit.MILLISECONDS);
 		
 //		Delete RefreshToken
-		redisTemplate.delete(JwtUtil.getRefreshKey(accessToken));
+		
+		if(redisTemplate.opsForValue().get(JwtUtil.getRefreshKey(accessToken)) != null)
+			redisTemplate.delete(JwtUtil.getRefreshKey(accessToken));
 		
 	}
 }

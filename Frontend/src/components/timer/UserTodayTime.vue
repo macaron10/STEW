@@ -15,7 +15,7 @@
           <v-card-title class="d-block font-weight-bold text-center">오늘의 목표 달성률</v-card-title>
           <div class="text-center">
             <v-progress-circular
-              :indeterminate="indeterminate"
+              :indeterminate="false"
               :rotate="270"
               :size="100"
               :value="todayStudyTime.tmAcmlTimeLong | toPercent(goalSecond)"
@@ -54,6 +54,7 @@ export default {
   },
   mounted() {
     this.getUserInfo();
+    this.initTodayStudy()
   },
   methods: {
     getUserInfo() {

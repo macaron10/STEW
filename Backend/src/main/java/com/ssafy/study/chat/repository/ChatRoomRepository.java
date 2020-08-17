@@ -99,7 +99,10 @@ public class ChatRoomRepository {
 		UserDto user = chatRoom.getUserList().remove(sessionId);
 		chatRoom.minusCount();
 
-		hashOpsChatRoom.put(CHAT_ROOMS, chatRoom.getGpNo(), chatRoom);
+		if (chatRoom.getUserCount() == 0)
+			hashOpsChatRoom.delete(CHAT_ROOMS, chatRoom.getGpNo());
+		else
+			hashOpsChatRoom.put(CHAT_ROOMS, chatRoom.getGpNo(), chatRoom);
 
 		return user;
 	}

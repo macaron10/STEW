@@ -25,15 +25,15 @@
             >
             로그인
             </v-btn>
-            <v-btn
+            <!-- <v-btn
             color="gray"
             text small
             >
                 아이디/비밀번호 찾기
-            </v-btn>
+            </v-btn> -->
 
             <v-btn
-            :to="{ name: 'Signup' }"
+            :to="{ name: 'SignUp' }"
             color="light gray"
             text small
             >
@@ -61,7 +61,6 @@ export default {
         async signInHandler() {
             await this.signIn({'userEmail': this.userEmail, 'userPw':this.userPw});
             this.userEmail = this.userPw = "";
-            this.$router.go();
         }
     }
 }

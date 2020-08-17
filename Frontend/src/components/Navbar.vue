@@ -46,7 +46,7 @@
       <v-icon>mdi-account</v-icon>
     </v-btn>
 
-    <v-btn icon v-if="!isLogin" :to="{ name: 'Signup' }" color="blue lighten-2">
+    <v-btn icon v-if="!isLogin" :to="{ name: 'SignUp' }" color="blue lighten-2">
       <v-icon>mdi-account-plus</v-icon>
     </v-btn>
 
@@ -64,7 +64,7 @@
           <v-list-item v-for="(groupsReq, j) in groupsReqs" :key="j">
             <v-list-item-icon>
               <v-avatar size="36px">
-                <img alt="Avatar" src="https://avatars0.githubusercontent.com/u/9064066?v=4&s=460" />
+                <img alt="Avatar" :src='$store.state.comm.baseUrl + "/image/user" + groupsReq.user.userImg' />
               </v-avatar>
             </v-list-item-icon>
             <!-- 내의 신청 -->
@@ -80,8 +80,8 @@
               <br />
               <div v-if="groupsReq.gpReqMsg">"{{ groupsReq.gpReqMsg }}"</div>
             </v-list-item-content>
-            <v-btn class="mx-2" color="green lighten-2" @click="reqOk(groupsReq.gpReqNo)">수락</v-btn>
-            <v-btn color="red lighten-2" @click="reqReject(groupsReq.gpReqNo)">거절</v-btn>
+            <v-btn class="mx-2" dark color="green lighten-2" @click="reqOk(groupsReq.gpReqNo)">수락</v-btn>
+            <v-btn color="red lighten-2" dark  @click="reqReject(groupsReq.gpReqNo)">거절</v-btn>
           </v-list-item>
         </v-list-item-group>
       </v-list>
@@ -126,12 +126,6 @@ export default {
       return this.groupsReqs.length;
     }
   },
-  // watch: {
-  //   '$route' (to, from) {
-  //     if(to.fullPah == from.fullPah){
-
-  //     }
-  //   },
   methods: {
     ...mapActions("notice", ["getReqsSock", "getReqs"]),
     ...mapActions("auth", ["signIn", "logout"]),

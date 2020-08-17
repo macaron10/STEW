@@ -44,7 +44,6 @@ export default {
   },
   methods:{
     SocialSignIn(){
-      
       this.loading = !this.loading;
 
       if(this.signInWindow == null){

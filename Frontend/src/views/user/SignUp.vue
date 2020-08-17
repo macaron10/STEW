@@ -18,10 +18,12 @@
               label="이메일 *"
               :clearable=false
               required
+              @change="idCheckHandler"
             />
           </v-col>
           <v-col cols=1>
             <v-btn icon depressed
+              tabindex="-1"
               @click="idCheckHandler"
             >
               <v-icon
@@ -101,6 +103,9 @@
           min=0
           max=24
           background-color="lightgray"
+          :rules="[
+            () => (!user.goalHr || (0 <= user.goalHr && user.goalHr <= 24)) || '0 ~ 24'
+          ]"
         ></v-text-field>
         
         <v-btn block dark 
@@ -123,8 +128,10 @@
   import { mapGetters } from 'vuex'
 
   export default {
-    created(){
-      if(this.loginStatus) this.$router.back();
+    beforeRouteEnter(to, from, next){
+      next(vm => {
+        vm.$data.prevPage = from.next;
+      })
     },
     components: {
       SocialForm
@@ -133,6 +140,7 @@
       const formData = new FormData();
 
       return {
+        prevPage: '',
         user: {
           email: '',
           pwd: '',
@@ -151,7 +159,7 @@
       }
     },
     computed: {
-      disableCheck() {
+      isEnabledEmail() {
         return this.$refs.form.$children[0].validate();
       },
       emailChanged() {
@@ -164,6 +172,7 @@
     watch: {
       emailChanged: function(){
         this.idCheck = false;
+        this.idCheckColor = "";
       }
     },
     methods: {
@@ -179,6 +188,7 @@
       },
 
       idCheckHandler() {
+        if(!this.isEnabledEmail) return;
         axios.get('/user/check', {
           params: {
             userEmail: this.user.email
@@ -189,7 +199,10 @@
           if (data.msg === "success" && data.object) {
             this.idCheck = true;
             this.idCheckColor = "#64b4f6"
-          }else this.idCheckColor = "red"
+          }else {
+            this.idCheckColor = "red"
+            alert('이미 사용중인 이메일입니다')
+          }
         })
       },
 

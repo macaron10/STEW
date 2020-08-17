@@ -66,7 +66,7 @@
                   <!-- <v-btn
                     align="end"
                     color="#039BE5"
-                  >입장하기</v-btn> -->
+                  >입장하기</v-btn>-->
                 </v-overlay>
               </v-fade-transition>
             </v-card>
@@ -94,7 +94,11 @@
 
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="primary" text @click="signUpGroup(selectedGroup.gpNo, selectedGroup.gpPublic)">가입신청</v-btn>
+          <v-btn
+            color="primary"
+            text
+            @click="signUpGroup(selectedGroup.gpNo, selectedGroup.gpPublic, selectedGroup.gpCurNum)"
+          >가입신청</v-btn>
           <v-btn color="primary" text @click="dialog = false">닫기</v-btn>
         </v-card-actions>
       </v-card>
@@ -130,10 +134,10 @@ export default {
       }
     },
     toDetail(group) {
-      if (this.$store.state.auth.isLogin===false){
-        alert('로그인이 필요합니다.')
-        this.$router.push({name:'Login'}) 
-        return       
+      if (this.$store.state.auth.isLogin === false) {
+        alert("로그인이 필요합니다.");
+        this.$router.push({ name: "Login" });
+        return;
       }
       this.selectedGroup = group;
       let flag = false;
@@ -149,7 +153,22 @@ export default {
         this.dialog = true;
       }
     },
-    async signUpGroup(gpNo, isPublic) {
+    // signUpGroup(gpNo) {
+    //   const apiUrl = '/study/user/req'
+    //   this.gpNoData.gpNo = gpNo
+    //   console.log(this.gpNoData)
+    //   axios.post(apiUrl, this.gpNoData)
+    //   .then((res) => {
+    //     console.log(res)
+    //     this.dialog = false
+    //     this.snackbar = true
+    //     })
+    // },
+    async signUpGroup(gpNo, isPublic, gpCurNum) {
+      if (gpCurNum === 6) {
+        alert("정원이 가득 찼습니다.");
+        return;
+      }
       const apiUrl = "/study/user/req?gpNo=" + gpNo;
       const msg = {
         reqMsg: this.message
@@ -162,10 +181,10 @@ export default {
         this.dialog = false;
         this.snackbar = true;
         if (isPublic) {
-          alert('공개그룹입니다. 자동가입됩니다.')
-          this.$emit('event')
+          alert("공개그룹입니다. 자동가입됩니다.");
+          this.$emit("event");
         } else {
-          alert('비공개 그룹입니다. 그룹장의 승인을 기다려 주세요')
+          alert("비공개 그룹입니다. 그룹장의 승인을 기다려 주세요");
         }
         // this.$router.go()
       } catch (err) {

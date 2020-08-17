@@ -149,6 +149,10 @@ export default {
     this.id = this.$route.params.id;
     this.userId = this.$store.state.auth.userInfo.userId;
     this.getDetail();
+    this.$vuetify.goTo(0, {
+        duration: 100,
+        offset: 0
+      })
   },
   methods: {
     forceRerender() {

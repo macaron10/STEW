@@ -1,7 +1,7 @@
 <template>
-  <div id="Mainpage">
-    <MyPage v-intersect="onIntersect"/>
-    <v-container>
+  <div id="Mainpage" >
+    <MyPage v-intersect="onIntersect" ref="MyPage"/>
+    <v-container >
       <div class="p-3 ma-5">
         <div>
           <h2 class="mb-3 text-center text-sm-left">{{new Date().getMonth()+1}}월의 스터디 랭킹</h2>
@@ -25,7 +25,7 @@
                     v-if="index < 3"
                   >
                     <v-img
-                      :src="baseUrl + `image/main/${index+1}-medal.png`"
+                      :src="$store.state.comm.baseUrl + `/image/main/${index+1}-medal.png`"
                       height="40px"
                       width="40px"
                     ></v-img>
@@ -95,6 +95,7 @@
     >
       <v-icon>mdi-chevron-up</v-icon>
     </v-btn>
+    </v-container>
   </div>
 </template>
 

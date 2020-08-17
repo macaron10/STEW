@@ -124,19 +124,6 @@ export default {
     };
   },
   methods: {
-    ...mapActions("sg", ["getGroups"]),
-    // 솔팅 함수
-    // sortBy (prop) {
-    //   if (prop === 'popularity') {
-    //     this.sortCriteria = 'Most Popular'
-    //   } else if (prop === 'vote_average') {
-    //     this.sortCriteria = 'Highest Rated'
-    //   } else if (prop === 'release_date') {
-    //     this.sortCriteria = 'Release Date'
-    //   }
-    //   this.sortedBy = prop
-    //   this.movies.sort((a, b) => (a[prop] > b[prop] ? -1 : 1))
-    // }
     async getMyGroups() {
       const apiUrl = "/study/user/my";
       try {
@@ -203,14 +190,14 @@ export default {
       } catch (err) {
         console.error(err);
       }
-    }
+    },
   },
   computed: {
     // groups () { return this.$store.state.sg.groups }
     ...mapState("sg", ["groups"])
   },
+
   created() {
-    this.getGroups();
     if (this.$store.state.auth.isLogin) {
       this.getMyGroups();
     }

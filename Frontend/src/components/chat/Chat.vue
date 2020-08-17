@@ -35,7 +35,7 @@ export default {
   },
   methods: {
     initSock() {
-      const apiUrl = this.$store.state.comm.baseUrl + "/sock";
+      const apiUrl = this.$store.state.comm.baseSocketUrl + "/sock";
       const socket = new SockJS(apiUrl);
       const ws = Stomp.over(socket);
       this.ws = ws;
@@ -121,7 +121,6 @@ export default {
         Object.values(userList).forEach(e => {
           this.members.push(e);
         });
-        console.log("##################################################33");
         console.log(this.members);
       } catch (err) {
         console.error(err);

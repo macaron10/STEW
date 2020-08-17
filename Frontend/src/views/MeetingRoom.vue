@@ -139,7 +139,6 @@
 import StudyDetailVue from "./StudyDetail.vue";
 import RoomNavbar from "@/components/room/RoomNavbar.vue";
 
-import Chatting from "@/components/room/Chatting.vue";
 import Chat from "@/components/chat/Chat.vue";
 import { log } from "util";
 

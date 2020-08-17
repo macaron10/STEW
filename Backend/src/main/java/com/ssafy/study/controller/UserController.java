@@ -166,7 +166,6 @@ public class UserController {
 					throw new FileUploadException();
 				}
 			}else {
-				System.out.println("들어옴");
 				origin.setUserImg(DEFAULT_USER_PROFILE);
 			}
 		}
@@ -183,7 +182,7 @@ public class UserController {
 		result.msg = "success";
 		result.object = modifiedUser;
 		
-		accessToken = JwtUtil.generateAccessTokenExpireIn(new UserPrincipal(modifiedUser), remains);
+		accessToken = JwtProperties.TOKEN_PREFIX + JwtUtil.generateAccessTokenExpireIn(new UserPrincipal(modifiedUser), remains);
 		response.addHeader("accessToken", accessToken);
 		
 		return new ResponseEntity<>(result, HttpStatus.OK);

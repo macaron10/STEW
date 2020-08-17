@@ -18,8 +18,15 @@ import SocialForm from "@/components/auth/SocialForm"
 import { mapGetters } from "vuex"
 
 export default {
-    created(){
-        if(this.loginStatus) this.$router.back();
+    beforeRouteEnter(to, from, next){   
+        next(vm => {
+            vm.$data.prevPage = from.name == 'SignUp' ? 'Main' : from.name;
+        })
+    },
+    data(){
+        return{
+            prevPage: '',
+        }
     },
     components:{
         LoginForm,
@@ -29,8 +36,13 @@ export default {
     computed: {
         ...mapGetters('auth', [
             'loginStatus',
-        ])
+        ]),
     },
+    watch:{
+        loginStatus: function(){
+            this.$router.push({ name: this.prevPage });
+        }
+    }
 }
 </script>
 

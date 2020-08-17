@@ -1,7 +1,5 @@
 package com.ssafy.study.group.repository;
 
-import java.util.List;
-
 import javax.transaction.Transactional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -28,4 +26,5 @@ public interface GroupRepository extends JpaRepository<Group, Long>, GroupReposi
 	void decreaseMemberCnt(@Param("gpNo") long gpNo);
 
 	Group findByGpNo(long gpNo);
+
 }

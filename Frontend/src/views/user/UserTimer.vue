@@ -1,7 +1,8 @@
 <template>
-  <div>
-    <v-row justify="center" id="userpage" class="mx-10 my-10">
-      <v-col cols="7" class="flex-column">
+  <v-container>
+    <h2 class="text-center">{{userInfo.userNm}}님의 {{searchDate.month}}월 공부기록</h2>
+    <v-row justify="center" id="userpage" class="mx-5 my-5">
+      <v-col cols="12" class="flex-column">
         <!-- <v-row class="d-flex align-center mr-2">
           <v-col class="d-flex flex-column justify-center">
             <v-row class="mb-5">
@@ -35,17 +36,21 @@
                 </v-row>
             </v-card>
           </v-col>
-        </v-row> -->
-        <TodayTimer/>
+        </v-row>-->
+        <TodayTimer />
+        <v-col></v-col>
         <v-row>
           <v-col col="12">
+            <h3
+              class="text-center text-sm-left"
+            >{{searchDate.year}}년 {{searchDate.month}}월의 공부시간 달성률</h3>
+            <br />
             <template>
-              <h3>{{searchDate.year}}년 {{searchDate.month}}월의 공부기록</h3>
-              <br />
               <v-data-table
                 :headers="headers"
                 :items="dateTimer"
                 hide-default-footer
+                fixed-header
                 class="elevation-1"
               >
                 <template v-slot:item="dt">
@@ -64,17 +69,16 @@
         </v-row>
       </v-col>
     </v-row>
-  </div>
+  </v-container>
 </template>
 
 <script>
 import axios from "axios";
-import TodayTimer from "@/components/timer/UserTodayTime.vue"
+import TodayTimer from "@/components/timer/UserTodayTime.vue";
 
 export default {
   name: "UserTimer",
-  components: 
-  {
+  components: {
     TodayTimer
   },
 

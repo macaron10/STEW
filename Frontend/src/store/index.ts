@@ -22,7 +22,7 @@ export default new Vuex.Store({
     createPersistedState({
       paths: [
         'comm',
-        'auth'
+        'auth',
       ]
     }),
   ]

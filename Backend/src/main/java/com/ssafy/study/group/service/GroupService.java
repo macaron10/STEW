@@ -2,6 +2,9 @@ package com.ssafy.study.group.service;
 
 import java.util.List;
 
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+
 import com.ssafy.study.group.model.dto.GroupCategoryDto;
 import com.ssafy.study.group.model.dto.GroupDto;
 import com.ssafy.study.group.model.dto.GroupJoinDto;
@@ -21,6 +24,8 @@ public interface GroupService {
 	GroupDto selectGroup(long gpNo);
 
 	List<GroupDto> selectAllGroups();
+
+	List<GroupDto> selectAllGroups(Pageable page);
 
 	List<GroupDto> findMyGroups(long userId);
 

@@ -8,12 +8,12 @@ import Main from '../views/Main.vue';
 import StudyCreate from '../views/StudyCreate.vue';
 import StudyDetail from '../views/StudyDetail.vue';
 import StudyUpdate from '../views/StudyUpdate.vue';
+import StudySearch from '../views/StudySearch.vue';
 // Contact & Guide
 import Contact from '../views/Contact.vue';
 import Guide from '../views/Guide.vue';
 // User 관련
-import UserDetail from '../views/user/UserDetail.vue';
-import Signup from "../views/user/Signup.vue";
+import SignUp from "../views/user/SignUp.vue";
 import userPage from "../views/user/userPage.vue";
 import UserTimer from "../views/user/UserTimer.vue";
 import OAuth2RedirectHandler from "../views/user/OAuth2RedirectHandler.vue";
@@ -27,12 +27,11 @@ import MySchedule from "../views/MySchedule.vue"
 
 Vue.use(VueRouter);
 
-const rejectAuthUser = (to: any, from: any, next: (arg0: string) => void) => {
+const rejectAuthUser = (to: any, from: any, next: any) => {
   if (store.getters['auth/loginStatus'] === true) {
-    alert("로그인됨");
-    next("/");
+    alert('이미 로그인 하셨어요!')
   } else {
-    next("");
+    next()
   }
 }
 // beforeEnter: rejectAuthUser, 해당 라우터에 이부분 써주기
@@ -50,7 +49,14 @@ const routes: Array<RouteConfig> = [
   { 
     path: '/login',
     name: 'Login',
-    component: Login
+    component: Login,
+    beforeEnter: rejectAuthUser,
+  },
+  {
+    path: "/user/signup",
+    name: "SignUp",
+    component: SignUp,
+    beforeEnter: rejectAuthUser,
   },
   {
     path: '/',
@@ -78,6 +84,12 @@ const routes: Array<RouteConfig> = [
     component: StudyUpdate
   },
   {
+    path: '/study/search',
+    name: 'StudySearch',
+    component: StudySearch,
+    props: true
+  },
+  {
     path: '/contact',
     name: 'Contact',
     component: Contact
@@ -91,11 +103,6 @@ const routes: Array<RouteConfig> = [
     path: '/user/detail',
     name: 'UserDetail',
     component: userPage
-  },
-  {
-    path: "/user/signup",
-    name: "Signup",
-    component: Signup
   },
   {
     path: "/oauth2",
@@ -112,11 +119,6 @@ const routes: Array<RouteConfig> = [
     name: "MeetingRoom",
     component: MeetingRoom,
     props: true
-  },
-  {
-    path: "/user",
-    name: "userPage",
-    component: userPage
   },
   {
     path: "/user/myschedule",

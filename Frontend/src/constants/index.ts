@@ -1,5 +1,5 @@
-// export const API_BASE_URL = 'http://localhost:8399/api';
-export const API_BASE_URL = 'https://i3b103.p.ssafy.io/api'
+export const API_BASE_URL = 'http://localhost:8399/api';
+// export const API_BASE_URL = 'https://i3b103.p.ssafy.io/api'
 export const ACCESS_TOKEN_STRING = 'accessToken';
 export const REFRESH_TOKEN_STRING = 'refreshToken';
 export const TOKEN_PREFIX = 'Bearer ';

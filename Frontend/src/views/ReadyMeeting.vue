@@ -3,7 +3,7 @@
     <h1 class="mt-5 text-center">화면과 마이크를 테스트해주세요</h1>
     <v-container>
       <v-layout text-center wrap>
-        <div style="background:black; width: 60%; height:25em;" class="mt-5 mx-auto">
+        <div style="background:black; width: 80%; height:25em;" class="mt-5 mx-auto">
           <div></div><video
             autoplay
             playsinline

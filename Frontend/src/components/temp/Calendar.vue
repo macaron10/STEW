@@ -124,12 +124,15 @@
                 @click="deleteSchedule(selectedEvent.pk, selectedEvent.type)"
                 @change="updateRange"
                 icon
+                v-if="(selectedEvent.type==='U' && this.private) || (selectedEvent.type==='G' && !this.private)"
               >
                 <v-icon>mdi-trash-can</v-icon>
               </v-btn>
             </v-toolbar>
             <v-card-text>
-              <span>{{ selectedEvent.start | dateToString(selectedEvent.timed) }} ~ {{selectedEvent.end | dateToString(selectedEvent.timed) }}</span>
+              <p>{{scheduleTypeResult}}</p>
+
+              <span>{{ selectedEvent.start | dateToString(selectedEvent.timed, true) }} ~ {{selectedEvent.end | dateToString(selectedEvent.timed, false) }}</span>
               <hr />
               <span v-html="selectedEvent.details"></span>
             </v-card-text>
@@ -149,6 +152,8 @@ import { VDatePickerYears } from "vuetify/lib";
 import axios from "axios";
 import router from "../../router";
 import { truncate } from "fs";
+import { strict } from 'assert';
+import { stringify } from 'querystring';
 
 export default {
   data: () => ({
@@ -168,6 +173,7 @@ export default {
       { text: "빨강", value: "red" },
       { text: "보라", value: "purple" }
     ],
+    scheduleType: "",
     landscape: true,
     private: true,
     dialog: false,
@@ -200,20 +206,56 @@ export default {
     dateRangeText() {
       this.sortDate();
       return this.newSchedule.dates.join(" ~ ");
+    }, 
+    scheduleTypeResult() {
+      this.checkScheduleType()
+      return this.scheduleType
     }
   },
   filters : {
-    dateToString(val, status){
+    dateToString(val, status, isStart){
       const date = new Date(val);
-      let str = date.getUTCFullYear() + "년 "+(date.getUTCMonth() + 1)+"월 "+date.getUTCDate() + "일 ";
+      let str = ""
+      if ((isStart && !status) || (status && date.getHours() < 9)){
+        date.setDate(date.getDate() + 1)
+        str = date.getUTCFullYear() + "년 "+(date.getUTCMonth() + 1)+"월 "+ date.getUTCDate() + "일 ";
+      } else {
+        str = date.getUTCFullYear() + "년 "+(date.getUTCMonth() + 1)+"월 "+ date.getUTCDate() + "일 ";
+      }
+      if(status){
+        if (date.getHours() < 10) {
+          str += " 0" + date.getHours()
+        } else {
+          str += " "+date.getHours()
+        }
+        if (date.getMinutes() < 10) {
+          str += " : 0" + date.getMinutes()
+        } else {
 
-      if(status)
-        str += " "+date.getHours() + " : " + date.getMinutes();
+          str += " : " + date.getMinutes();
+        }
+      }
+      
 
       return str;
     }
   },
   methods: {
+     checkScheduleType() {
+      if (this.selectedEvent.type==="U") {
+        this.scheduleType = "개인일정"
+      } else if (this.selectedEvent.cown===undefined){
+        return
+      } else {
+        axios.get(`/study/user/${this.selectedEvent.cown}`)
+          .then(res => {
+            this.scheduleType = `${JSON.parse(JSON.parse(res.data.object).group[0]).gpNm} 스터디의 일정`
+          })
+          .catch(err => console.log(err))
+
+      }
+      
+    },
     reset() {
       this.newSchedule = {
         startTime: "00:00",
@@ -330,6 +372,8 @@ export default {
             .catch(err => {
               console.log(err);
             });
+        } else {
+          alert("스터디일정은 스터디페이지에서 그룹장만 삭제 가능합니다.")
         }
       }
       this.selectedOpen = false;
@@ -462,11 +506,14 @@ export default {
           }
         }
       }
+      if (this.newSchedule.color === ""){
+        alert("색깔을 선택해 주세요")
+        return
+      }
       if (this.newSchedule.name === "") {
         alert("스케줄 내용을 입력해 주세요.");
         return;
       }
-
       const schedule = {
         cstTm: `${this.newSchedule.dates[0]}T${this.newSchedule.startTime}:00`,
         cendTm: `${this.newSchedule.dates[1]}T${this.newSchedule.endTime}:00`,

@@ -7,12 +7,12 @@ import "roboto-fontface/css/roboto/roboto-fontface.css";
 import "@mdi/font/css/materialdesignicons.css";
 import axios from "axios";
 import jwt from "jsonwebtoken";
+import { getBaseUrl } from '@/constants'
 
 Vue.config.productionTip = false;
 // Vue.prototype.$http = axios
 
-axios.defaults.baseURL = "http://localhost:8399/api" // 개발용
-// axios.defaults.baseURL = "https://i3b103.p.ssafy.io/api" // 배포용
+axios.defaults.baseURL = getBaseUrl('api')
 
 axios.interceptors.request.use(config => {
   const token = store.getters['auth/getUserInfo'].accessToken;

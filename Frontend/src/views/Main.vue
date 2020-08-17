@@ -15,23 +15,17 @@
               class="align-start"
             >
               <v-container v-bind:class="{ 'd-none d-sm-flex' : index > 2}">
-                <v-row justify="space-between">
-                  <v-col
-                    cols="4"
-                    offset="4"
-                    sm="4"
-                    offset-sm="0"
-                    class="pa-0 pa-sm-3"
+                <v-row>
+                  <v-col class="pa-0">
+                  <v-img
                     v-if="index < 3"
-                  >
-                    <v-img
-                      :src="$store.state.comm.baseUrl + `/image/main/${index+1}-medal.png`"
-                      height="40px"
-                      width="40px"
-                    ></v-img>
+                    :src="$store.state.comm.baseUrl + `/image/main/${index+1}-medal.png`"
+                    height="40px"
+                    width="40px"
+                    class="mx-auto"
+                  ></v-img>
                   </v-col>
-                  <v-col cols="auto" class="pa-auto" v-else></v-col>
-                  <v-col cols="12" sm="auto" class="text-center pl-0">
+                  <v-col cols="12" class="text-center">
                     <v-row class="flex-column ma-0 pa-0" justify="center">
                       <v-col class="pa-0 ma-0">
                         <span class="blue--text">{{index+1}}등</span>&nbsp;
@@ -66,17 +60,17 @@
               </v-card>
             </v-col>
           </v-col>
-      </v-row>
-    </div>
-    <br />
-    <div class="p-3 mx-5">
-      <h2>스터디 목록</h2>
-      <v-icon small color="#666666" class="ml-3">mdi-lock</v-icon>
-      <span class="text-caption">비공개 스터디</span>
-    </div>
-    <StudyList 
-      :key="componentKey"
-      @event="forceRerender()" />
+        </v-row>
+      </div>
+      <br />
+      <div class="p-3 mx-5">
+        <h2>스터디 목록</h2>
+        <v-icon small color="#666666" class="ml-3">mdi-lock</v-icon>
+        <span class="text-caption">비공개 스터디</span>
+      </div>
+    </v-container>
+    <v-container>
+      <StudyList :key="componentKey" @event="forceRerender()" />
     <!-- 상단으로 버튼 -->
       <v-btn
       color="red lighten-1"

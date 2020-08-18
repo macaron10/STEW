@@ -2,7 +2,7 @@
   <div class="meeting-room">
     <RoomNavbar />
     <v-row>
-      <v-col class="py-0" sm="7" md="9" xs="12">
+      <v-col class="py-0">
         <div class="videos-container">
           <!-- <h1>비디오의 상태 {{options.video}}</h1> -->
           <!-- footer -->
@@ -23,7 +23,7 @@
               </v-btn>
               <v-btn
                 v-if="showChatRoom"
-                class="mx-1"
+                class="mx-1 chatRoomBtn"
                 fab
                 dark
                 color="#29B6F6"
@@ -33,7 +33,7 @@
               </v-btn>
               <v-btn
                 v-else
-                class="mx-1"
+                class="mx-1 chatRoomBtn"
                 fab
                 outlined
                 dark
@@ -42,14 +42,7 @@
               >
                 <v-icon dark>mdi-message-text-outline</v-icon>
               </v-btn>
-              <v-btn
-                class="mx-1"
-                fab
-                dark
-                color="red"
-                @click="outRoom"
-                :to="{ name: 'StudyDetail' }"
-              >
+              <v-btn class="mx-1" fab dark color="red" @click="checkout">
                 <v-icon dark>mdi-account-arrow-right-outline</v-icon>
               </v-btn>
             </div>
@@ -72,52 +65,54 @@
               </v-btn>
             </template>
             <v-btn v-if="options.audio" class="mx-1" small fab dark color="#FFB300" @click="mute">
-                <v-icon dark>mdi-microphone</v-icon>
-              </v-btn>
-              <v-btn v-else class="mx-1" fab outlined small dark color="#FFB300" @click="unmute">
-                <v-icon dark>mdi-microphone-off</v-icon>
-              </v-btn>
-              <v-btn v-if="options.video" class="mx-1" small fab dark color="#43A047" @click="offVideo">
-                <v-icon dark>mdi-video</v-icon>
-              </v-btn>
-              <v-btn v-else class="mx-1" fab outlined small dark color="#43A047" @click="onVideo">
-                <v-icon dark>mdi-video-off</v-icon>
-              </v-btn>
-              <v-btn
-                v-if="showChatRoom"
-                class="mx-1"
-                fab
-                dark small
-                color="#29B6F6"
-                @click="showChatRoom = !showChatRoom"
-              >
-                <v-icon dark>mdi-message-text-outline</v-icon>
-              </v-btn>
-              <v-btn
-                v-else
-                class="mx-1"
-                fab
-                outlined
-                dark small
-                color="#29B6F6"
-                @click="showChatRoom = !showChatRoom"
-              >
-                <v-icon dark>mdi-message-text-outline</v-icon>
-              </v-btn>
-              <v-btn
-                class="mx-1"
-                fab
-                dark small
-                color="red"
-                @click="outRoom"
-                :to="{ name: 'StudyDetail' }"
-              >
-                <v-icon dark>mdi-account-arrow-right-outline</v-icon>
-              </v-btn>
+              <v-icon dark>mdi-microphone</v-icon>
+            </v-btn>
+            <v-btn v-else class="mx-1" fab outlined small dark color="#FFB300" @click="unmute">
+              <v-icon dark>mdi-microphone-off</v-icon>
+            </v-btn>
+            <v-btn
+              v-if="options.video"
+              class="mx-1"
+              small
+              fab
+              dark
+              color="#43A047"
+              @click="offVideo"
+            >
+              <v-icon dark>mdi-video</v-icon>
+            </v-btn>
+            <v-btn v-else class="mx-1" fab outlined small dark color="#43A047" @click="onVideo">
+              <v-icon dark>mdi-video-off</v-icon>
+            </v-btn>
+            <v-btn
+              v-if="showChatRoom"
+              class="mx-1"
+              fab
+              dark
+              small
+              color="#29B6F6"
+              @click="chatBtn()"
+            >
+              <v-icon dark>mdi-message-text-outline</v-icon>
+            </v-btn>
+            <v-btn v-else class="mx-1" fab outlined dark small color="#29B6F6" @click="chatBtn()">
+              <v-icon dark>mdi-message-text-outline</v-icon>
+            </v-btn>
+            <v-btn class="mx-1" fab dark small color="red" @click="checkout">
+              <v-icon dark>mdi-account-arrow-right-outline</v-icon>
+            </v-btn>
           </v-speed-dial>
         </div>
       </v-col>
-      <v-col class="py-0 pl-0 chatroom" sm="5" md="3" xs="12" height="92vh" v-show="showChatRoom">
+      <v-col
+        id="chatRoom"
+        class="py-0 pl-0 chatroom"
+        sm="5"
+        md="3"
+        xs="12"
+        height="92vh"
+        v-show="showChatRoom"
+      >
         <Chat :roomid="roomid" />
       </v-col>
     </v-row>
@@ -129,7 +124,6 @@
 import StudyDetailVue from "./StudyDetail.vue";
 import RoomNavbar from "@/components/room/RoomNavbar.vue";
 
-import Chatting from "@/components/room/Chatting.vue";
 import Chat from "@/components/chat/Chat.vue";
 import { log } from "util";
 
@@ -153,7 +147,8 @@ export default {
         pos3: 0,
         pos4: 0
       },
-      elem: {}
+      elem: {},
+      chatRoomWidth: 0
     };
   },
   components: {
@@ -162,18 +157,39 @@ export default {
   },
   created() {
     this.joinRoom();
+    window.addEventListener("resize", this.onResize);
   },
   mounted() {
+    if (window.innerWidth > 960) {
+      this.showChatRoom = true;
+      document.getElementsByClassName("chatRoomBtn").forEach(elem => {
+        elem.style.display = "none";
+      });
+    }
     this.$store.state.sg.onMeeting = false;
 
     this.options = this.$route.params.options;
-    console.log(this.options);
     this.check();
 
     this.initoptions();
     this.dragElement();
   },
+  // beforeDestroy() {
+  //   // window.removeEventListener("resize", this.onResize);
+  //   // this.connection.close();
+  // },
   methods: {
+    onResize() {
+      if (window.innerWidth > 960) {
+        this.showChatRoom = true;
+        document.getElementsByClassName("chatRoomBtn").forEach(elem => {
+          elem.style.display = "none";
+        });
+      }
+    },
+    chatBtn() {
+      this.showChatRoom = !this.showChatRoom;
+    },
     check() {
       alert(
         "현재 설정으로 미팅룸에 접속합니다. 접속 후 오디오와 비디오 기능을 재설정할 수 있습니다."
@@ -183,19 +199,20 @@ export default {
       this.connection.videosContainer = document.querySelector(
         ".videos-container"
       );
-      // this.connection.onstream = function(event) {
-      //   const video = event.mediaElement;
-      //   video.id = event.streamid;
-      //   // document.body.insertBefore(video, document.body.firstChild);
 
-      //   event.stream.mute("video");
-      //   if (this.$route.params.options.audio == false) {
-      //     this.mute();
-      //   }
-      //   if (this.$route.params.options.video == false) {
-      //     this.offVideo();
-      //   }
-      // };
+      const options = this.$route.params.options;
+      const connection = this.connection;
+      connection.onstream = function(e) {
+        e.mediaElement.id = e.streamid; // ---------- set ID
+
+        document.querySelector(".videos-container").appendChild(e.mediaElement);
+
+        if (e.type == "local") {
+          if (!options.video) e.stream.mute("video");
+          if (!options.audio) e.stream.mute("audio");
+        }
+      };
+      this.connection.enableLogs = false;
     },
     joinRoom() {
       this.connection = new RTCMultiConnection();
@@ -205,7 +222,7 @@ export default {
         data: true
       };
 
-      // this.connection.socketURL = "https://i3b103.p.ssafy.io/socket/"; //배포옹
+      //this.connection.socketURL = "https://i3b103.p.ssafy.io/socket/"; //배포옹
       this.connection.socketURL =
         "https://rtcmulticonnection.herokuapp.com:443/"; // 개발용
 
@@ -217,7 +234,13 @@ export default {
         OfferToReceiveAudio: true,
         OfferToReceiveVideo: true
       };
-      this.connection.openOrJoin(this.$route.params.id);
+      this.connection.openOrJoin(`stew${this.$route.params.id}ssafy3`);
+    },
+    checkout() {
+      const answer = confirm("회의를 종료하시겠습니까?");
+      if (answer) {
+        this.$router.push({ name: "StudyDetail" });
+      }
     },
     outRoom() {
       this.connection.getAllParticipants().forEach(participantId => {
@@ -233,25 +256,37 @@ export default {
     mute() {
       let localStream = this.connection.attachStreams[0];
       localStream.mute("audio");
+      localStream.muted = true;
       this.options.audio = false;
     },
     unmute() {
       let localStream = this.connection.attachStreams[0];
       localStream.unmute("audio");
+      // this.connection.streamEvents.selectFirst(
+      //   "local"
+      // ).mediaElement.muted = true;
       this.connection.streamEvents.selectFirst(
         "local"
       ).mediaElement.muted = true;
       this.options.audio = true;
     },
     offVideo() {
-      let localStream = this.connection.attachStreams[0];
-      localStream.mute("video");
+      // let localStream = this.connection.attachStreams[0];
+      // localStream.mute("video");
+
+      this.connection.streamEvents
+        .selectFirst("local")
+        .stream.getTracks()[1].enabled = false;
+
       this.options.video = false;
     },
     onVideo() {
-      this.connection.session.video = true;
+      // this.connection.session.video = true;
+
+      this.connection.streamEvents.selectFirst("local").isAudioMuted = false;
       let localStream = this.connection.attachStreams[0];
       localStream.unmute("video");
+
       this.options.video = true;
     },
     dragElement() {
@@ -314,15 +349,37 @@ video::-webkit-media-controls {
   /* grid-template-rows: ; */
   /* grid-template-columns: repeat(2, calc((100vw - 400px)/2.5) ); */
   grid-template-columns: repeat(3, 23.7vw);
+  /* grid-template-columns: repeat(3, 30vw); */
+  grid-auto-rows: max-content;
+
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .videos-container video {
-  display: block;
+  display: inline-block;
   width: 23.7vw;
-  /* width: calc((100vw - 400px)/2.5); */
+  /* width: 30vw; */
+  /* width: calc((100vw - 400px) / 2.5); */
   border: 1px solid;
 }
 
+@media (max-width: 960px) {
+  .videos-container video {
+    width: 49vw;
+  }
+  .videos-container {
+    grid-template-columns: repeat(2, 49vw);
+  }
+}
+/* @media (max-width: 600px) {
+  .videos-container video {
+    width: 95vw;
+  }
+  .videos-container {
+    grid-template-columns: repeat(1, 95vw);
+  }
+} */
 .footer {
   position: fixed;
   bottom: 25px;

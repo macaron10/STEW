@@ -1,7 +1,7 @@
 <template>
   <v-app id="inspire">
     <Navbar @drawer-onoff="turnOnDrawer"/>
-    <Sidebar :drawer="drawer" :key='componentKey' />
+    <Sidebar :drawer="drawer" />
     <v-main>
       <router-view />
     </v-main>
@@ -26,12 +26,8 @@ export default Vue.extend({
   data: () => ({
     dialog: false,
     drawer: false,
-    componentKey: 0
   }),
   methods: {
-    forceRerender() {
-      this.componentKey += 1;
-    },
     turnOnDrawer() {
       this.drawer = !this.drawer
     },

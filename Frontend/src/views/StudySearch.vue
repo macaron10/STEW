@@ -9,30 +9,31 @@
         <h2>검색결과</h2>
       </div>
       <v-row v-for="group in gpList" :key="group.gpNo">
-        <v-card height="150" width="80%" @click="enterStudy(group)" class="mx-auto my-2">
+        <v-card height="160" width="80%" @click="enterStudy(group)" class="mx-auto my-2">
           <div class="d-flex flex-no-wrap">
             <div width="200" class="d-flex align-stretch align-center">
               <v-img
-                class="ma-2"
+                class="ma-2 d-none d-sm-block"
                 :src="group.gpImg != null?($store.state.comm.baseUrl + '/image/group' + group.gpImg):gpImgDefault"
                 max-width="200"
                 max-height="140"
                 contain
+                
               />
             </div>
-            <div align="left" class="text-left align-center ml-3">
-              <v-card-title v-text="group.gpNm"></v-card-title>
-              <v-card-subtitle class="text-truncate py-1" v-text="group.gpIntro"></v-card-subtitle>
-              <v-card-text class="my-0 py-1">
+            <div align="left" class="text-truncate align-center ml-3">
+              <v-card-subtitle class="text-truncate text-h6 d-block pt-2 pb-1 font-weight-bold" color="#000000"><span>{{group.gpNm}}</span></v-card-subtitle>
+              <v-card-subtitle class="text-truncate py-0" v-text="group.gpIntro"></v-card-subtitle>
+              <v-card-text class="my-0 pb-0 pt-1">
                 <p class="body-2" v-if="!group.gpPublic">
                   <v-icon small color="#616161">mdi-lock</v-icon>
                   <span color="#616161">비공개 스터디</span>
                 </p>
-                <v-else>
+                <p v-else>
                   <span color="light-blue darken-2">공개 스터디</span>
-                </v-else>
+                </p>
               </v-card-text>
-              <div class="text-truncate">
+              <div class="text-truncate mb-2">
                 <v-chip
                   class="ma-2"
                   small
@@ -99,7 +100,7 @@ export default {
   },
   methods: {
     async enterStudy(group) {
-      if (!this.$store.state.comm.isLogin) {
+      if (!this.$store.state.auth.isLogin) {
         alert("로그인이 필요합니다!");
         this.$router.push({name:'Login'}) 
         return;

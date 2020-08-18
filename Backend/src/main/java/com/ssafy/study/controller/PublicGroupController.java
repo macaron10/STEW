@@ -95,12 +95,13 @@ public class PublicGroupController {
 	@GetMapping("/")
 	@ApiOperation("스터디 목록 페이지네이션 출력")
 	public ResponseEntity paginationStudyList(@RequestParam(required = false, defaultValue = "0") int page,
-			@RequestParam(required = false, defaultValue = "12") int size) {
+			@RequestParam(required = false, defaultValue = "12") int size,
+			@RequestParam(required = false, defaultValue = "-1") int cateNo) {
 		BasicResponse result = new BasicResponse();
 
-		Pageable pageable = PageRequest.of(page, size, Sort.by("regDate").descending());
+		Pageable pageable = PageRequest.of(page, size);
 
-		result.object = groupService.selectAllGroups(pageable);
+		result.object = groupService.searchGroupCate(pageable, cateNo);
 		result.msg = "success";
 		result.status = true;
 

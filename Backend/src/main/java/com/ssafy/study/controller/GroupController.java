@@ -35,6 +35,9 @@ import com.ssafy.study.group.model.exception.GroupNotExistException;
 import com.ssafy.study.group.model.exception.GroupNotJoinedExcpetion;
 import com.ssafy.study.group.model.exception.GroupUnAuthException;
 import com.ssafy.study.group.service.GroupService;
+import com.ssafy.study.notification.model.Notification;
+import com.ssafy.study.notification.model.Notification.NotiType;
+import com.ssafy.study.notification.service.NotiService;
 import com.ssafy.study.user.model.UserPrincipal;
 
 import io.swagger.annotations.ApiOperation;
@@ -53,15 +56,17 @@ public class GroupController {
 	private FileUtils fileUtil;
 
 	private final SimpMessagingTemplate template;
+	@Autowired
+	private NotiService notiService;
 
-//	private final String fileBaseUrl = "/home/ubuntu/app/img/group";
-	 private final String fileBaseUrl = "C:\\Users\\multicampus\\Desktop\\img\\group";
+	private final String fileBaseUrl = "/home/ubuntu/app/img/group";
+	// private final String fileBaseUrl =
+	// "C:\\Users\\multicampus\\Desktop\\img\\group";
 
 	@GetMapping("/my")
 	@ApiOperation("로그인한 회원의 스터디 목록 조회")
 	public ResponseEntity findMyStudyList(@ApiIgnore @AuthenticationPrincipal UserPrincipal principal) {
 		long userId = principal.getUserId();
-		System.out.println(userId);
 		BasicResponse result = new BasicResponse();
 		result.object = groupService.findMyGroups(userId);
 		result.msg = "success";
@@ -184,10 +189,12 @@ public class GroupController {
 			return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
 		}
 
-		result.object = groupService.passGroupMgr(gpNo, uid);
+		GroupDto gp = groupService.passGroupMgr(gpNo, uid);
+		result.object = gp;
 		result.msg = "success";
 		result.status = true;
 
+		notiService.sendNotification(new Notification(NotiType.INFO, uid, "'" + gp.getGpNm() + "'에 스터디장이 되었습니다!"));
 		return new ResponseEntity(result, HttpStatus.OK);
 	}
 
@@ -223,7 +230,8 @@ public class GroupController {
 
 			GroupReqDto reqDto = groupService.selectGroupReqByReqNo(req.getGpReqNo());
 			result.object = reqDto;
-			template.convertAndSend("/sub/mgr-req/" + group.getGpMgrId(), reqDto);
+
+			template.convertAndSend("/sub/req/" + group.getGpMgrId(), reqDto);
 		}
 		result.msg = "success";
 		result.status = true;
@@ -252,7 +260,10 @@ public class GroupController {
 		JsonObject msg = new JsonObject();
 		msg.addProperty("req", new Gson().toJson(req));
 		msg.addProperty("status", true);
-		template.convertAndSend("/sub/user-req/" + req.getUser().getUserId(), msg.toString());
+//		template.convertAndSend("/sub/user-req/" + req.getUser().getUserId(), msg.toString());
+		notiService.sendNotification(new Notification(NotiType.ACCEPT, req.getUser().getUserId(),
+				"'" + req.getGp().getGpNm() + "'에 가입이 승인되었습니다!", "/study/" + req.getGp().getGpNo()));
+
 		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 
@@ -273,7 +284,9 @@ public class GroupController {
 		JsonObject msg = new JsonObject();
 		msg.addProperty("req", new Gson().toJson(req));
 		msg.addProperty("status", false);
-		template.convertAndSend("/sub/user-req/" + req.getUser().getUserId(), msg.toString());
+//		template.convertAndSend("/sub/user-req/" + req.getUser().getUserId(), msg.toString());
+		notiService.sendNotification(new Notification(NotiType.REJECT, req.getUser().getUserId(),
+				"'" + req.getGp().getGpNm() + "'에 가입이 거절되었습니다."));
 		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 

@@ -41,8 +41,8 @@
         </v-simple-table>
       </div>
       <div v-else>
-        <h2 class="text-center">아직 공부기록이 없네요.</h2>
-        <h2 class="text-center">캠스터디에 입장하여 공부해 보세요!</h2>
+        <h3 class="text-center">아직 이번달 공부기록이 없네요 :(</h3>
+        <h3 class="text-center">캠스터디에 입장하여 공부해 보세요!</h3>
       </div>
     </v-container>
   </div>
@@ -60,7 +60,7 @@ export default {
       studyTotal: "00:00:00",
       rankData: null,
       pieData: [],
-      colors: ["#0F4C81", "#368F8B", "#25CED1", "#FFE66D", "#F79256", "#89023E"]
+      colors: ["#0277BD", "#00BFA5", "#B2EBF2", "#FFE082", "#FB8C00", "#E53935"]
     };
   },
   mounted() {
@@ -118,7 +118,6 @@ export default {
               color: this.colors[Number(idx)],
               value: totalTime ? (studyTime / totalTime) * 100 : 0
             });
-            console.log(this.pieData);
           }
         })
         .catch(err => console.log(err));

@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <h2 class="text-center">{{userInfo.userNm}}님의 {{searchDate.month}}월 공부기록</h2>
+    <h2 class="text-center">{{userInfo.userNm}}님의 {{getToday.month}}월 공부기록</h2>
     <v-row justify="center" id="userpage" class="mx-5 my-5">
       <v-col cols="12" class="flex-column">
         <!-- <v-row class="d-flex align-center mr-2">
@@ -43,7 +43,7 @@
           <v-col col="12">
             <h3
               class="text-center text-sm-left"
-            >{{searchDate.year}}년 {{searchDate.month}}월의 공부시간 달성률</h3>
+            >{{getToday.year}}년 {{getToday.month}}월의 공부시간 달성률</h3>
             <br />
             <template>
               <v-data-table
@@ -91,17 +91,12 @@ export default {
       ],
       userInfo: {},
       dateTimer: [],
-      today: {},
-      searchDate: {},
       goalSecond: 0
     };
   },
   mounted() {
     this.getUserInfo();
-    this.today = this.getToday();
-    this.searchDate = this.today;
-    // this.getUserTimer(this.today.year, this.today.month);
-    this.getUserTimer("2020", "8");
+    this.getUserTimer(this.getToday.year, this.getToday.month);
   },
   filters: {
     toPercent: (val, second) => {
@@ -111,14 +106,8 @@ export default {
       return percent > 100 ? 100 : percent;
     }
   },
-  methods: {
-    getUserInfo() {
-      axios.get("/user/").then(({ data }) => {
-        this.userInfo = data.object;
-        this.goalSecond = this.userInfo.userGoalHr * 60 * 60;
-      });
-    },
-    getToday() {
+  computed: {
+     getToday() {
       const date = new Date();
       const today = {
         date: String(date.getDate()).padStart(2, "0"),
@@ -127,10 +116,17 @@ export default {
       };
       return today;
     },
+  },
+  methods: {
+    getUserInfo() {
+      axios.get("/user/").then(({ data }) => {
+        this.userInfo = data.object;
+        this.goalSecond = this.userInfo.userGoalHr * 60 * 60;
+      });
+    },
     async getUserTimer(year, month) {
       await axios.get("/timer/my/" + year + "/" + month).then(({ data }) => {
         this.dateTimer = data.object;
-        console.log(this.dateTimer);
       });
     }
   }

@@ -51,6 +51,7 @@ export default {
         //   this.showPagination = true
       }
     },
+
     fetchGroups({ commit, state }: any) {
       const apiUrl = '/study/search'
       const config = {
@@ -64,6 +65,15 @@ export default {
           commit('setSearchGroups', res.data.object)
         })
         .catch(err => console.error(err))
+    },
+
+    async joinedGroup({ commit }: any, payload: any) {
+      // console.log(payload.gpNo);
+      return await axios.get('/study/user/joinck/'+ payload.gpNo)
+      .then(res => {
+        // console.log(res.data.object);
+        return res;
+      })
     },
   }
 }

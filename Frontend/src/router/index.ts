@@ -28,22 +28,36 @@ import MySchedule from "../views/MySchedule.vue"
 
 Vue.use(VueRouter);
 
+// 로그인 한 경우, 로그인/회원가입 페이지 접근 못하도록
 const rejectAuthUser = (to: any, from: any, next: any) => {
   if (store.getters['auth/loginStatus'] === true) {
-    alert('이미 로그인 하셨어요!')
+    alert('접근할 수 없는 페이지 입니다.')
   } else {
     next()
   }
 }
-// beforeEnter: rejectAuthUser, 해당 라우터에 이부분 써주기
 
-const onlyAuthUser = (to: any, from: any, next: (arg0: string | undefined) => void) => {
+// 로그인 하지 않은 경우, 로그인 필요한 페이지 접근 제한
+const onlyAuthUser = (to: any, from: any, next: any) => {
   if (store.getters['auth/loginStatus'] === false) {
-    alert("로그인됨") // 아직 로그인 안 된 유저여서 막아야됨
+    alert("로그인이 필요합니다.") 
     next("/main")
   } else {
-    next("");
+    next()
   }
+}
+
+// 가입하지 않은 스터디 페이지 접근 제한
+const participated = (to: any, from: any, next: any) => {
+  store.dispatch("sg/joinedGroup", {gpNo: to.params.id})
+  .then(res => {
+    // console.log(res);
+    if(res.data.object) {
+      next();
+    } else {
+      alert("가입하지 않은 스터디입니다.");
+    }
+  })
 }
 
 const routes: Array<RouteConfig> = [
@@ -72,12 +86,14 @@ const routes: Array<RouteConfig> = [
   {
     path: '/study/create',
     name: 'StudyCreate',
-    component: StudyCreate
+    component: StudyCreate,
+    beforeEnter: onlyAuthUser,
   },
   {
     path: '/study/:id',
     name: 'StudyDetail',
-    component: StudyDetail
+    component: StudyDetail,
+    beforeEnter: participated,
   },
   {
     path: '/study/:id',
@@ -113,12 +129,14 @@ const routes: Array<RouteConfig> = [
     path: "/ReadyMeeting/:id",
     name: "ReadyMeeting",
     component: ReadyMeeting,
-    props: true
+    beforeEnter: participated,
+    props: true 
   },
   {
     path: "/meetingroom/:id",
     name: "MeetingRoom",
     component: MeetingRoom,
+    beforeEnter: participated,
     props: true
   },
   {

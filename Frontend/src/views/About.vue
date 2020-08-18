@@ -7,37 +7,35 @@
       </v-stepper-step>
 
       <v-stepper-content step="1">
-        <v-card color="grey lighten-1" class="mb-12" width="700px"></v-card>
-        <v-btn icon @click="index++;" class="mr-3"><v-icon>mdi-menu-down</v-icon></v-btn>
-        <!-- <v-btn color="primary" @click="index = 2">다음</v-btn> -->
-        <!-- <v-btn text>Cancel</v-btn> -->
+        <img :src="aboutImg[0]" /><br>
+        <v-btn @click="index++;" text outlined class="mr-3">다음</v-btn>
+        <!-- <v-btn icon @click="index++;" class="mr-3"><v-icon>mdi-menu-down</v-icon></v-btn> -->
       </v-stepper-content>
 
       <v-stepper-step :complete="index > 2" step="2">시작하기 전</v-stepper-step>
 
       <v-stepper-content step="2">
-        <!-- <v-card color="grey lighten-1" class="mb-12" height="200px"></v-card> -->
-        <img :src="aboutImg1" /><br>
-        <v-btn icon @click="index++;" class="mr-3"><v-icon>mdi-menu-down</v-icon></v-btn>
-        <v-btn text outlined>회원가입으로 이동</v-btn>
+        <img :src="aboutImg[1]" />
+        <img :src="aboutImg[2]" /><br>
+        <v-btn @click="index++;" text outlined class="mr-3">다음</v-btn>
+        <v-btn text outlined @click="moveSignup">회원가입으로 이동</v-btn>
       </v-stepper-content>
 
       <v-stepper-step :complete="index > 3" step="3">스터디 참여하기</v-stepper-step>
 
       <v-stepper-content step="3">
-        <!-- <v-card color="grey lighten-1" class="mb-12" height="200px"></v-card> -->
-        <img :src="aboutImg2" /><br>
-        <v-btn icon @click="index++;" class="mr-3"><v-icon>mdi-menu-down</v-icon></v-btn>
-        <v-btn text outlined>스터디 생성하기</v-btn>
+        <img :src="aboutImg[3]" />
+        <img :src="aboutImg[4]" /><br>
+        <v-btn @click="index++;" text outlined class="mr-3">다음</v-btn>
+        <v-btn text outlined @click="moveCreateStd">스터디 생성하기</v-btn>
 
       </v-stepper-content>
 
       <v-stepper-step step="4">함께 공부하기</v-stepper-step>
       <v-stepper-content step="4">
-        <v-card color="grey lighten-1" class="mb-12" width="700px"></v-card>
-        <!-- <v-btn color="primary" @click="index = 1">다음</v-btn> -->
-        <v-btn icon @click="index = 1;" class="mr-3"><v-icon>mdi-menu-up</v-icon></v-btn>
-        <!-- <v-btn text>Cancel</v-btn> -->
+        <img :src="aboutImg[5]" />
+        <img :src="aboutImg[6]" /><br>
+        <v-btn @click="index = 1;" text outlined class="mr-3">처음으로</v-btn>
       </v-stepper-content>
     </v-stepper>
   </v-layout>
@@ -49,13 +47,30 @@
     data () {
       return {
         index: 1,
-        aboutImg1: this.$store.state.comm.baseUrl+"/image/main/About2.jpg",
-        aboutImg2: this.$store.state.comm.baseUrl+"/image/main/About3.jpg",
+        aboutImg: [],
       }
     },
+
+    created() {
+      for (let i = 0; i <= 6; i++) {
+        this.aboutImg[i] = this.$store.state.comm.baseUrl + "/image/main/about" + i + ".jpg";
+      }
+    },
+
+    methods: {
+      moveSignup() {
+        this.$router.push('/user/signup');
+      },
+
+      moveCreateStd() {
+        this.$router.push('/study/create');
+      }
+    }
   }
 </script>
 
 <style scoped>
-/* $stepper-elevation */
+  img {
+    max-height: 350px !important;
+  }
 </style>

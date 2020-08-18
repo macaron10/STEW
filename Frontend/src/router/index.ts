@@ -31,19 +31,19 @@ Vue.use(VueRouter);
 // 로그인 한 경우, 로그인/회원가입 페이지 접근 못하도록
 const rejectAuthUser = (to: any, from: any, next: any) => {
   if (store.getters['auth/loginStatus'] === true) {
-    alert('접근할 수 없는 페이지 입니다.')
+    alert('접근할 수 없는 페이지 입니다.');
   } else {
-    next()
+    next();
   }
 }
 
 // 로그인 하지 않은 경우, 로그인 필요한 페이지 접근 제한
 const onlyAuthUser = (to: any, from: any, next: any) => {
   if (store.getters['auth/loginStatus'] === false) {
-    alert("로그인이 필요합니다.") 
-    next("/main")
+    alert("로그인이 필요합니다.");
+    next("/login");
   } else {
-    next()
+    next();
   }
 }
 
@@ -119,7 +119,8 @@ const routes: Array<RouteConfig> = [
   {
     path: '/user/detail',
     name: 'UserDetail',
-    component: userPage
+    component: userPage,
+    beforeEnter: onlyAuthUser
   },
   {
     path: "/oauth2",
@@ -142,13 +143,15 @@ const routes: Array<RouteConfig> = [
   {
     path: "/user/myschedule",
     name: "MySchedule",
-    component: MySchedule
+    component: MySchedule,
+    beforeEnter: onlyAuthUser
   },
   {
     path: "/user/UserTimer",
     name: "UserTimer",
-    component: UserTimer
-  }
+    component: UserTimer,
+    beforeEnter: onlyAuthUser
+  },
 ];
 
 const router = new VueRouter({

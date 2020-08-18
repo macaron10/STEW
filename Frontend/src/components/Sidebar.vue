@@ -87,7 +87,6 @@ export default {
         page: "StudyCreate",
         needLogin: false
       },
-      { icon: "mdi-pen", text: "전체 스터디", page: "Main", needLogin: true },
       {
         icon: "mdi-help-circle",
         text: "가이드",

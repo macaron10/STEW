@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-container>
-      <v-row>
+      <v-row class="mb-5">
         <v-col cols="10" offset="1" sm="8" offset-sm="2" md="6" offset-md="0">
           <div class="d-flex justify-center ma-6" style="position: relative">
             <v-img
@@ -57,7 +57,7 @@
           <hr class="my-3">
           <h4>{{ group.gpIntro }}</h4>
         </v-col>
-        <v-col cols="10" offset="1" md="6" offset-md="0">
+        <v-col cols="10" offset="1" md="6" offset-md="0" class="pa-10">
           <v-card>
             <v-tabs
               v-model="tab"

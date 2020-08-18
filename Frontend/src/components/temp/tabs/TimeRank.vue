@@ -118,7 +118,6 @@ export default {
               color: this.colors[Number(idx)],
               value: totalTime ? (studyTime / totalTime) * 100 : 0
             });
-            console.log(this.pieData);
           }
         })
         .catch(err => console.log(err));

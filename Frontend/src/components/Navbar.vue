@@ -8,7 +8,7 @@
   >
     <v-app-bar-nav-icon @click.stop="$store.commit('drawerOnOff')" color="blue lighten-2"></v-app-bar-nav-icon>
     <v-toolbar-title style="width: 300px" class="ml-0 pl-10">
-      <v-btn icon dark large :to="{ name: 'Main' }" @click="getGroups">
+      <v-btn icon dark large :to="{ name: 'Main' }">
         <v-img
           :src="$store.state.comm.baseUrl + '/image/main/stew.png'"
           alt="Vuetify"

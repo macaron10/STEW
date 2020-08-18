@@ -66,14 +66,31 @@
         </v-row>
       </div>
       <br />
-      <div class="p-3 mx-5">
-        <h2>스터디 목록</h2>
-        <v-icon small color="#666666" class="ml-3">mdi-lock</v-icon>
-        <span class="text-caption">비공개 스터디</span>
-      </div>
-    </v-container>
-    <v-container>
-      <StudyList :key="componentKey" @event="forceRerender()" />
+      <v-row class="pl-10 pr-0 d-flex align-end">
+        <v-col md="2">
+          <h2>스터디 목록</h2>
+          <v-icon small color="#666666" class="ml-3">mdi-lock</v-icon>
+          <span class="text-caption">비공개 스터디</span>
+        </v-col>
+        <v-col class="pb-5" md="2">
+          <v-select
+            :items="categories"
+            item-value="gpCatNo"
+            item-text="gpCatNm"
+            label="카테고리"
+            v-model="gpCatNo"
+            hide-details
+          ></v-select>
+        </v-col>
+        <v-col md="2" offset-md="6">
+          <v-btn
+          class="ml-5 mb-3"
+          color="blue lighten-3 white--text"
+          :to="{name: 'StudyCreate'}"
+          ><v-icon class="mr-2">mdi-plus</v-icon>스터디 생성</v-btn>
+        </v-col>
+      </v-row>
+      <StudyList class="pt-0" :key="componentKey" @event="forceRerender()" />
     <!-- 상단으로 버튼 -->
       <v-btn
       color="red lighten-1"
@@ -120,6 +137,9 @@ export default {
     bottom: false,
     //상단 바로가기 버튼 -> 메인화면에 배너가 보일때 사라짐
     isIntersecting: false,
+    //카테고리 분류
+    categories: [],
+    gpCatNo: -1
   }),
   filters: {
     toTimeFormat: sec => {
@@ -174,26 +194,48 @@ export default {
       return bottomOfPage || pageHeight <= visible
     },
     // 상단 바로가기 버튼
-      onIntersect (entries, observer) {
-        this.isIntersecting = entries[0].isIntersecting
-      },
+    onIntersect (entries, observer) {
+      this.isIntersecting = entries[0].isIntersecting
+    },
+    async getCategories() {
+      const apiUrl = "/study/cate"
+      try{
+        const res = await axios.get(apiUrl)
+        const allGroups = {
+          "gpCatNo": -1,
+          "gpCatNm": "전체"
+        }
+        this.categories.push(allGroups)
+        this.categories.push(...res.data.object)
+      } catch (err) {
+        console.error(err)
+      }
+    },
+    // async getCateGroups() {
+
+    // }
   },
   watch: {
     // 무한스크롤
     bottom(bottom) {
       if (bottom) {
         setTimeout(
-          function () {this.getNextGroups(this.pageNumber), this.pageNumber++}.bind(this), 400
+          function () {this.getNextGroups([this.pageNumber, this.gpCatNo]), this.pageNumber++}.bind(this), 400
           )
       }
+    },
+    gpCatNo(gpCatNo) {
+      this.getGroups(gpCatNo)
+      this.pageNumber=1
     }
   },
   created() {
+    this.getCategories()
+    this.getGroups(this.gpCatNo);
     //무한스크롤
     window.addEventListener('scroll', () => {
       this.bottom = this.bottomVisible()
     })
-    this.getGroups();
   }
 };
 </script>

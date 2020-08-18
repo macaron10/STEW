@@ -134,7 +134,6 @@ export default {
       const apiUrl = "/study/user/accept?no=" + gpReqNo;
       try {
         const res = await axios.post(apiUrl);
-        console.log(res);
       } catch (err) {
         console.error(err);
       }
@@ -143,7 +142,6 @@ export default {
       const apiUrl = "/study/user/reject?no=" + gpReqNo;
       try {
         const res = await axios.post(apiUrl);
-        console.log(res);
       } catch (err) {
         console.error(err);
       }

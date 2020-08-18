@@ -72,7 +72,7 @@ export default {
       };
       axios
         .post("/timer", stringify(config))
-        .then(res => console.log(res))
+        .then(() => ({}))
         .catch(err => console.log(err));
       this.reset();
     },

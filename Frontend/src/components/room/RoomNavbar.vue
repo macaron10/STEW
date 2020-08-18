@@ -44,7 +44,6 @@ export default {
         this.group = JSON.parse(res.data.object).group;
         this.group = JSON.parse(this.group);
         this.membersData = JSON.parse(res.data.object).joinList;
-        console.log(this.group, "그룹데이터!");
       } catch (err) {
         console.error(err);
       }

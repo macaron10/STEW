@@ -45,7 +45,7 @@
               <v-icon>mdi-settings</v-icon>
             </v-btn>
           </h2>
-          <h4>
+          <h4 class="mt-3">
             <span v-if="group.gpPublic">
               <v-icon>mdi-lock-open-outline</v-icon>공개
             </span>

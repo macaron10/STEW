@@ -45,7 +45,7 @@ export default {
         accessToken: this.$store.state.auth.userInfo.accessToken
       };
       this.ws.connect(token, frame => {
-        console.log("소켓 연결 성공");
+        // console.log("소켓 연결 성공");
         this.ws.subscribe("/sub/chat/" + gpNo, msg => {
           // state.groupsReqs.push(JSON.parse(msg.body))
           this.messages.push(JSON.parse(msg.body));
@@ -62,7 +62,7 @@ export default {
             const idx = this.members.indexOf(itemToFind);
             if (idx > -1) this.members.splice(idx, 1);
           }
-          console.log(JSON.parse(msg.body), "구독msg");
+          // console.log(JSON.parse(msg.body), "구독msg");
         });
         // this.sendEnterMsg();
       });
@@ -121,7 +121,6 @@ export default {
         Object.values(userList).forEach(e => {
           this.members.push(e);
         });
-        console.log(this.members);
       } catch (err) {
         console.error(err);
       }
@@ -137,7 +136,7 @@ export default {
   },
   destroyed() {
     this.ws.disconnect();
-    this.sendQuitMsg();
+    // this.sendQuitMsg();
   }
 };
 </script>

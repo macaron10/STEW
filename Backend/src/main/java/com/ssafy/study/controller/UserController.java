@@ -24,6 +24,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ssafy.study.common.exception.FileUploadException;
 import com.ssafy.study.common.model.BasicResponse;
 import com.ssafy.study.common.util.FileUtils;
+import com.ssafy.study.notification.model.Notification;
+import com.ssafy.study.notification.model.Notification.NotiType;
+import com.ssafy.study.notification.service.NotiService;
 import com.ssafy.study.user.model.User;
 import com.ssafy.study.user.model.UserDto;
 import com.ssafy.study.user.model.UserModify;
@@ -50,190 +53,198 @@ public class UserController {
 	private UserService userService;
 	@Autowired
 	private FileUtils fileUtil;
-	
+
+	@Autowired
+	private NotiService notiservice;
+
 	private final String fileBaseUrl = "/home/ubuntu/app/img/user";
-	//  private final String fileBaseUrl = "C:\\Users\\multicampus\\Desktop\\img\\user";
+	// private final String fileBaseUrl =
+	// "C:\\Users\\multicampus\\Desktop\\img\\user";
 	private final String DEFAULT_USER_PROFILE = "\\userDefault.png";
-	
+
 	@PostMapping("/signup")
 	@ApiOperation("회원가입")
-	public ResponseEntity<BasicResponse> signUp(UserSignUp signUpInfo){
-		
+	public ResponseEntity<BasicResponse> signUp(UserSignUp signUpInfo) {
+
 		User user = signUpInfo.toEntity();
-		
+
 		user.setUserPw(new BCryptPasswordEncoder().encode(user.getUserPw()));
-		
-		if(signUpInfo.getUserImg() != null) {
+
+		if (signUpInfo.getUserImg() != null) {
 			try {
 				user.setUserImg(fileUtil.uploadFile(signUpInfo.getUserImg(), fileBaseUrl));
 			} catch (IOException e) {
 				e.printStackTrace();
 				throw new FileUploadException();
 			}
-		}else user.setUserImg(DEFAULT_USER_PROFILE);
-		
+		} else
+			user.setUserImg(DEFAULT_USER_PROFILE);
+
 		userService.save(user);
-		
+
 		BasicResponse result = new BasicResponse();
-		
+
 		result.status = true;
 		result.msg = "success";
 		result.object = user;
-		
+
+		notiservice.sendNotification(
+				new Notification(NotiType.INFO, user.getUserId(), "'" + user.getUserNm() + "'님! STEW에 가입하신 것을 환영합니다 :)"));
+
 		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
-	
+
 	@PostMapping("/checkpw")
 	@ApiOperation("비밀번호 확인")
-	public ResponseEntity<BasicResponse> checkPw(@AuthenticationPrincipal UserPrincipal principal, String userPw){
-		
+	public ResponseEntity<BasicResponse> checkPw(@AuthenticationPrincipal UserPrincipal principal, String userPw) {
+
 		BasicResponse result = new BasicResponse();
-		
+
 		result.status = true;
 		result.msg = "success";
 		result.object = false;
-		
+
 		BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-		
-		if(encoder.matches(userPw, principal.getPassword())) {
+
+		if (encoder.matches(userPw, principal.getPassword())) {
 			result.object = true;
 		}
-		
+
 		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
-	
-	
+
 	@GetMapping
 	@ApiOperation("회원 정보")
-	public ResponseEntity<BasicResponse> userDetail(@AuthenticationPrincipal UserPrincipal userPrincipal){
-		
+	public ResponseEntity<BasicResponse> userDetail(@AuthenticationPrincipal UserPrincipal userPrincipal) {
+
 		User user = userService.loadUserByUserId(userPrincipal.getUserId());
-		
+
 		BasicResponse result = new BasicResponse();
-		
+
 		result.status = true;
 		result.msg = "success";
 		result.object = user;
-		
+
 		return new ResponseEntity<>(result, HttpStatus.OK);
-		
+
 	}
-	
+
 	@DeleteMapping
 	@ApiOperation("회원 탈퇴")
-	public ResponseEntity<BasicResponse> signOut(HttpServletRequest request) throws ServletException{
-		
+	public ResponseEntity<BasicResponse> signOut(HttpServletRequest request) throws ServletException {
+
 		String accessToken = request.getHeader(JwtProperties.HEADER_STRING).replace(JwtProperties.TOKEN_PREFIX, "");
-		
+
 		UserDto user = JwtUtil.getUserFromToken(accessToken);
-		
+
 		userService.deleteById(user.getUserId());
-		
+
 		BasicResponse result = new BasicResponse();
-		
+
 		long remains = JwtUtil.getExpiringTime(accessToken) - System.currentTimeMillis();
-		
+
 //		BlackListing
 		redisTemplate.opsForValue().set(accessToken, "logout");
 		redisTemplate.expire(accessToken, remains, TimeUnit.MILLISECONDS);
-		
+
 //		Delete RefreshToken
 		redisTemplate.delete(JwtUtil.getRefreshKey(accessToken));
-		
+
 		result.status = true;
 		result.msg = "success";
 		result.object = true;
-		
+
 		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
-	
+
 	@PutMapping
 	@ApiOperation("회원 수정")
-	public ResponseEntity<BasicResponse> modify(
-			HttpServletRequest request, HttpServletResponse response,
-			UserModify userModify, @AuthenticationPrincipal UserPrincipal principal){
-		
+	public ResponseEntity<BasicResponse> modify(HttpServletRequest request, HttpServletResponse response,
+			UserModify userModify, @AuthenticationPrincipal UserPrincipal principal) {
+
 		BasicResponse result = new BasicResponse();
-		
+
 		User origin = userService.loadUserByUserId(principal.getUserId());
 		origin.update(userModify);
-		if(userModify.isUpdateImg()) {
-			if(userModify.getUserImg() != null) {
+		if (userModify.isUpdateImg()) {
+			if (userModify.getUserImg() != null) {
 				try {
 					origin.setUserImg(fileUtil.uploadFile(userModify.getUserImg(), fileBaseUrl));
 				} catch (IOException e) {
 					e.printStackTrace();
 					throw new FileUploadException();
 				}
-			}else {
+			} else {
 				origin.setUserImg(DEFAULT_USER_PROFILE);
 			}
 		}
-		
+
 		String accessToken = request.getHeader(JwtProperties.HEADER_STRING).replace(JwtProperties.TOKEN_PREFIX, "");
 		long remains = JwtUtil.getExpiringTime(accessToken) - System.currentTimeMillis();
-		
+
 //		BlackListing
 		redisTemplate.opsForValue().set(accessToken, "logout");
 		redisTemplate.expire(accessToken, remains, TimeUnit.MILLISECONDS);
-		
+
 		User modifiedUser = userService.save(origin);
-		result.status = true; 
+		result.status = true;
 		result.msg = "success";
 		result.object = modifiedUser;
-		
-		accessToken = JwtProperties.TOKEN_PREFIX + JwtUtil.generateAccessTokenExpireIn(new UserPrincipal(modifiedUser), remains);
+
+		accessToken = JwtProperties.TOKEN_PREFIX
+				+ JwtUtil.generateAccessTokenExpireIn(new UserPrincipal(modifiedUser), remains);
 		response.addHeader("accessToken", accessToken);
-		
+
 		return new ResponseEntity<>(result, HttpStatus.OK);
-		
+
 	}
-	
+
 	@GetMapping("/check")
 	@ApiOperation("중복 확인")
-	public ResponseEntity<BasicResponse> checkDuplicated(String userEmail){
-		
+	public ResponseEntity<BasicResponse> checkDuplicated(String userEmail) {
+
 		BasicResponse result = new BasicResponse();
-		
+
 		result.status = true;
 		result.msg = "success";
 		result.object = userService.findByUserEmailAndType(userEmail, "stew") == null ? true : false;
-		
+
 		return new ResponseEntity<>(result, HttpStatus.OK);
-		
+
 	}
-	
+
 	@GetMapping("/refresh")
 	@ApiOperation("토큰 갱신")
-	public ResponseEntity<BasicResponse> refreshToken(HttpServletRequest request, HttpServletResponse response){
-		
+	public ResponseEntity<BasicResponse> refreshToken(HttpServletRequest request, HttpServletResponse response) {
+
 		BasicResponse result = new BasicResponse();
-		
+
 		String refreshToken = request.getHeader("refreshToken").replace(JwtProperties.TOKEN_PREFIX, "");
-		
-		if(refreshToken == null || !JwtUtil.verify(refreshToken))
+
+		if (refreshToken == null || !JwtUtil.verify(refreshToken))
 			result.msg = "fail";
 
 		String accessToken = request.getHeader(JwtProperties.HEADER_STRING).replace(JwtProperties.TOKEN_PREFIX, "");
-		
-		if(accessToken == null) {
+
+		if (accessToken == null) {
 			result.msg = "accessToken not found";
 		}
-		
+
 		UserDto user = JwtUtil.getUserFromToken(accessToken);
-		
-		if(refreshToken.equals(redisTemplate.opsForValue().get(JwtUtil.getRefreshKey(accessToken)))){
+
+		if (refreshToken.equals(redisTemplate.opsForValue().get(JwtUtil.getRefreshKey(accessToken)))) {
 			UserPrincipal userPrincipal = new UserPrincipal(userService.loadUserByUserId(user.getUserId()));
-			
+
 			accessToken = JwtProperties.TOKEN_PREFIX + JwtUtil.generateAccessToken(userPrincipal);
-			
+
 			response.addHeader("accessToken", accessToken);
-			
+
 			result.status = true;
 			result.msg = "success";
-		}else result.msg = "Invalid RefreshToken";
-		
+		} else
+			result.msg = "Invalid RefreshToken";
+
 		return new ResponseEntity<>(result, result.status ? HttpStatus.OK : HttpStatus.FORBIDDEN);
 	}
-	
+
 }

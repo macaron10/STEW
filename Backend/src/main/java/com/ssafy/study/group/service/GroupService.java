@@ -27,11 +27,14 @@ public interface GroupService {
 
 	List<GroupDto> selectAllGroups(Pageable page);
 
+	List<GroupDto> searchGroupCate(Pageable pageable, int cateNo);
+
 	List<GroupDto> findMyGroups(long userId);
 
 	GroupDto passGroupMgr(long gpNo, long uid);
 
 	List<GroupDto> searchGroups(GroupSearchDto groupSearch);
+
 
 	List<GroupDto> rankGroupStudyTime();
 

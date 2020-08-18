@@ -57,6 +57,11 @@ public class GroupServiceImpl implements GroupService {
 	}
 
 	@Override
+	public List<GroupDto> searchGroupCate(Pageable page, int cateNo) {
+		return gpRepo.searchByGroupCate(page, cateNo);
+	}
+
+	@Override
 	public GroupDto selectGroup(long gpNo) {
 		return gpRepo.selectByGpNo(gpNo);
 	}

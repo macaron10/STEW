@@ -6,6 +6,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import com.ssafy.study.group.model.dto.GroupDto;
@@ -109,6 +110,28 @@ public class GroupRepositoryImpl /* extends QuerydslRepositorySupport */ impleme
 		if (str == null || str == "")
 			return true;
 		return false;
+	}
+
+	@Override
+	public List<GroupDto> searchByGroupCate(Pageable page, int cateNo) {
+		String jpql = "SELECT new com.ssafy.study.group.model.dto.GroupDto(gp, gc.gpCatNm) "
+				+ "FROM Group gp join GroupCategory gc on gp.gpCat.gpCatNo = gc.gpCatNo";
+		TypedQuery<GroupDto> query;
+		if (cateNo != -1) {
+			jpql += " where gc.gpCatNo = :cateNo";
+			jpql += " order by gp.regDate desc";
+			query = em.createQuery(jpql, GroupDto.class);
+
+			query.setParameter("cateNo", cateNo);
+		} else {
+			jpql += " order by gp.regDate desc";
+			query = em.createQuery(jpql, GroupDto.class);
+		}
+
+		query.setFirstResult(page.getPageNumber() * page.getPageSize() + 1);
+		query.setMaxResults(page.getPageSize());
+
+		return query.getResultList();
 	}
 
 }

@@ -1,13 +1,13 @@
 <template>
   <div id="clock">
-    <div class="btn-container">
+    <div class="btn-container float-right text-no-wrap" style="width: 230px">
       <v-row>
-        <v-icon class="ml-8">mdi-timer</v-icon>
-        <span class="pt-3 ml-5 mr-10 time">{{ time }}</span>
-        <v-btn class="ml-10" text icon color="blue lighten-2" v-if="!running" @click="start">
+        <v-icon>mdi-timer</v-icon>
+        <span class="pt-3 ml-5 time">{{ time }}</span>
+        <v-btn class="mx-2" text icon color="blue lighten-2" v-if="!running" @click="start">
           <v-icon>mdi-play</v-icon>
         </v-btn>
-        <v-btn class="ml-10" text icon color="grey lighten-2" v-if="running" @click="stop">
+        <v-btn class="mx-2" text icon color="grey lighten-2" v-if="running" @click="stop">
           <v-icon>mdi-pause</v-icon>
         </v-btn>
         <v-btn class="" text icon color="red lighten-2" v-if="timeBegan" @click="end">

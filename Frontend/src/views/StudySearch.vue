@@ -9,7 +9,7 @@
         <h2>검색결과</h2>
       </div>
       <v-row v-for="group in gpList" :key="group.gpNo">
-        <v-card height="150" width="80%" @click="enterStudy(group)" class="mx-auto my-2">
+        <v-card height="160" width="80%" @click="enterStudy(group)" class="mx-auto my-2">
           <div class="d-flex flex-no-wrap">
             <div width="200" class="d-flex align-stretch align-center">
               <v-img
@@ -22,7 +22,7 @@
               />
             </div>
             <div align="left" class="text-truncate align-center ml-3">
-              <v-card-subtitle class="text-truncate text-h6 d-block pt-2 pb-1" color="#000000"><span>{{group.gpNm}}</span></v-card-subtitle>
+              <v-card-subtitle class="text-truncate text-h6 d-block pt-2 pb-1 font-weight-bold" color="#000000"><span>{{group.gpNm}}</span></v-card-subtitle>
               <v-card-subtitle class="text-truncate py-0" v-text="group.gpIntro"></v-card-subtitle>
               <v-card-text class="my-0 pb-0 pt-1">
                 <p class="body-2" v-if="!group.gpPublic">

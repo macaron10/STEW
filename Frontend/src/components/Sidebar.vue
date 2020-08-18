@@ -30,8 +30,8 @@
           </template>
           <v-list-item v-for="(child, i) in item.children" :key="i" link>
             <v-list-item-action v-if="child.icon" ></v-list-item-action>
-            <v-list-item-content @click="goToStudy(child.value)"  class="ml-7">
-              <v-list-item-title class="d-flex justify-space-between my-auto" style="white-space: normal" v-if="!child.waiting">
+            <v-list-item-content  class="ml-7">
+              <v-list-item-title class="d-flex justify-space-between my-auto" style="white-space: normal" v-if="!child.waiting" @click="goToStudy(child.value)">
                 {{ child.text }}
                 <v-icon v-if="child.groupManager" color="amber" class="ml-2">mdi-crown</v-icon>
               </v-list-item-title>

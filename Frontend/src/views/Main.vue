@@ -85,12 +85,12 @@
         <v-col md="2" offset-md="6">
           <v-btn
           class="ml-5 mb-3"
-          color="blue lighten-3 white--text"
+          color="amber accent-3 white--text"
           :to="{name: 'StudyCreate'}"
           ><v-icon class="mr-2">mdi-plus</v-icon>스터디 생성</v-btn>
         </v-col>
       </v-row>
-      <StudyList class="pt-0" />
+      <StudyList class="pt-0 pb-10" />
     <!-- 상단으로 버튼 -->
       <v-btn
       color="red lighten-1"

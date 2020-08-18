@@ -137,7 +137,7 @@ export default {
   },
   destroyed() {
     this.ws.disconnect();
-    this.sendQuitMsg();
+    // this.sendQuitMsg();
   }
 };
 </script>

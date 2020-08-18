@@ -21,7 +21,7 @@ import lombok.RequiredArgsConstructor;
 @Repository
 public class ChatRoomRepository {
 	private static final String CHAT_ROOMS = "CHAT_ROOM";
-	private static final String USER_COUNT = "USER_COUNT";
+//	private static final String USER_COUNT = "USER_COUNT";
 	private static final String ENTER_INFO = "ENTER_INFO";
 
 //	private final RedisMessageListenerContainer redisMessageListner;
@@ -31,8 +31,8 @@ public class ChatRoomRepository {
 	private HashOperations<String, String, ChatRoom> hashOpsChatRoom;
 	@Resource(name = "redisTemplate")
 	private HashOperations<String, String, String> hashOpsEnterInfo;
-	@Resource(name = "redisTemplate")
-	private ValueOperations<String, String> valueOps;
+//	@Resource(name = "redisTemplate")
+//	private ValueOperations<String, String> valueOps;
 
 //	public List<ChatRoom> findAllChatRooms() {
 //		return hashOpsChatRoom.values(CHAT_ROOMS);

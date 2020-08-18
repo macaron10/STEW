@@ -21,7 +21,7 @@
           v-model="item.model"
           :prepend-icon="item.model ? item.icon : item['icon-alt']"
           append-icon light
-          @click="getStudyList()"
+          @click="getStudyList(), getMyReqs()"
         >
           <template v-slot:activator>
             <v-list-item-content>
@@ -85,7 +85,7 @@ export default {
         icon: "mdi-plus",
         text: "스터디 만들기",
         page: "StudyCreate",
-        needLogin: false
+        needLogin: true
       },
       {
         icon: "mdi-help-circle",
@@ -114,9 +114,6 @@ export default {
   },
   methods: {
     ...mapActions("notice", ["getMyReqs"]),
-    event(){
-      this.$emit('event')
-    },
     goToStudy(no) {
       this.$router.push({ name: "StudyDetail", params: { id: no } });
       this.$router.go();
@@ -149,7 +146,6 @@ export default {
             })
           }
           this.items[this.items.length - 1].children = myStudyList;
-          this.event()
         })
         .catch(err => console.log(err));
     }

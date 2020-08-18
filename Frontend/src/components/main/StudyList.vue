@@ -167,7 +167,7 @@ export default {
         this.snackbar = true;
         if (group.gpPublic) {
           alert("공개그룹입니다. 자동가입됩니다.");
-          this.$emit("event");
+          this.$router.push({name:'StudyDetail', params:{id : group.gpNo}})
         } else {
           alert("비공개 그룹입니다. 그룹장의 승인을 기다려 주세요");
         }
@@ -182,6 +182,7 @@ export default {
     ...mapState("sg", ["groups"])
   },
   created() {
+
     if (this.$store.state.auth.isLogin) {
       this.getMyGroups();
     }

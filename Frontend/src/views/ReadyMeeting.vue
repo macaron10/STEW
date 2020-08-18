@@ -61,6 +61,9 @@ export default {
     this.onVideo();
   },
   destroyed() {
+    if (this.localstream.getTracks===undefined) {
+      return
+    }
     this.localstream.getTracks().forEach(elem => {
       elem.stop();
     });

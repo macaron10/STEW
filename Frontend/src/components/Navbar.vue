@@ -181,7 +181,6 @@ export default {
       const apiUrl = "/study/user/accept?no=" + gpReqNo;
       try {
         const res = await axios.post(apiUrl);
-        console.log(res);
         this.$store.commit("notice/delReq", gpReqNo);
       } catch (err) {
         console.error(err);

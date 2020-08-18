@@ -212,6 +212,7 @@ export default {
           if (!options.audio) e.stream.mute("audio");
         }
       };
+      this.connection.enableLogs = false
     },
     joinRoom() {
       this.connection = new RTCMultiConnection();

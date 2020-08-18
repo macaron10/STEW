@@ -249,7 +249,7 @@ export default {
       } else {
         axios.get(`/study/user/${this.selectedEvent.cown}`)
           .then(res => {
-            this.scheduleType = `${JSON.parse(JSON.parse(res.data.object).group[0]).gpNm} 스터디의 일정`
+            this.scheduleType = `"${JSON.parse(JSON.parse(res.data.object).group[0]).gpNm}" 그룹의 일정`
           })
           .catch(err => console.log(err))
 

@@ -35,6 +35,7 @@ export default {
         console.error(err)
       }
     },
+
     async getNextGroups({ state }: any, payload: any){
       const apiUrl = '/study/?cateNo=' + payload[1] + '&page='+ payload[0]
       try {
@@ -43,8 +44,9 @@ export default {
         const listLength = state.groups.length
       } catch (err) {
         console.error(err)      
-    }
-  },  
+      }
+    },  
+
     fetchGroups({ commit, state }: any) {
       const apiUrl = '/study/search'
       const config = {
@@ -58,6 +60,15 @@ export default {
           commit('setSearchGroups', res.data.object)
         })
         .catch(err => console.error(err))
+    },
+
+    async joinedGroup({ commit }: any, payload: any) {
+      // console.log(payload.gpNo);
+      return await axios.get('/study/user/joinck/'+ payload.gpNo)
+      .then(res => {
+        // console.log(res.data.object);
+        return res;
+      })
     },
   }
 }

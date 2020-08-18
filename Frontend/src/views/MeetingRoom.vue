@@ -212,6 +212,7 @@ export default {
           if (!options.audio) e.stream.mute("audio");
         }
       };
+      this.connection.enableLogs = false;
     },
     joinRoom() {
       this.connection = new RTCMultiConnection();
@@ -234,13 +235,13 @@ export default {
       };
       this.connection.openOrJoin(`stew${this.$route.params.id}ssafy3`);
     },
-    checkout(){
+    checkout() {
       const answer = confirm("회의를 종료하시겠습니까?");
       if (answer) {
-        this.$router.push({name: 'StudyDetail'})
+        this.$router.push({ name: "StudyDetail" });
       }
     },
-    outRoom() {      
+    outRoom() {
       this.connection.getAllParticipants().forEach(participantId => {
         this.connection.disconnectWith(participantId);
       });
@@ -249,30 +250,42 @@ export default {
         localStream.stop();
       });
 
-      this.connection.closeSocket();      
+      this.connection.closeSocket();
     },
     mute() {
       let localStream = this.connection.attachStreams[0];
       localStream.mute("audio");
+      localStream.muted = true;
       this.options.audio = false;
     },
     unmute() {
       let localStream = this.connection.attachStreams[0];
       localStream.unmute("audio");
+      // this.connection.streamEvents.selectFirst(
+      //   "local"
+      // ).mediaElement.muted = true;
       this.connection.streamEvents.selectFirst(
         "local"
       ).mediaElement.muted = true;
       this.options.audio = true;
     },
     offVideo() {
-      let localStream = this.connection.attachStreams[0];
-      localStream.mute("video");
+      // let localStream = this.connection.attachStreams[0];
+      // localStream.mute("video");
+
+      this.connection.streamEvents
+        .selectFirst("local")
+        .stream.getTracks()[1].enabled = false;
+
       this.options.video = false;
     },
     onVideo() {
-      this.connection.session.video = true;
+      // this.connection.session.video = true;
+
+      this.connection.streamEvents.selectFirst("local").isAudioMuted = false;
       let localStream = this.connection.attachStreams[0];
       localStream.unmute("video");
+
       this.options.video = true;
     },
     dragElement() {

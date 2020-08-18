@@ -41,8 +41,8 @@
         </v-simple-table>
       </div>
       <div v-else>
-        <h2 class="text-center">아직 공부기록이 없네요.</h2>
-        <h2 class="text-center">캠스터디에 입장하여 공부해 보세요!</h2>
+        <h3 class="text-center">아직 이번달 공부기록이 없네요 :(</h3>
+        <h3 class="text-center">캠스터디에 입장하여 공부해 보세요!</h3>
       </div>
     </v-container>
   </div>

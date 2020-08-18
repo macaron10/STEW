@@ -176,7 +176,7 @@ export default {
         );
         this.dialog = false;
         this.snackbar = true;
-        if (group.isPublic) {
+        if (group.gpPublic) {
           alert("공개그룹입니다. 자동가입됩니다.");
           this.$emit("event");
         } else {

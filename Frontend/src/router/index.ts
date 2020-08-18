@@ -12,6 +12,7 @@ import StudySearch from '../views/StudySearch.vue';
 // Contact & Guide
 import Contact from '../views/Contact.vue';
 import Guide from '../views/Guide.vue';
+import About from "../views/About.vue";
 // User 관련
 import SignUp from "../views/user/SignUp.vue";
 import userPage from "../views/user/userPage.vue";
@@ -39,7 +40,7 @@ const rejectAuthUser = (to: any, from: any, next: any) => {
 const onlyAuthUser = (to: any, from: any, next: (arg0: string | undefined) => void) => {
   if (store.getters['auth/loginStatus'] === false) {
     alert("로그인됨") // 아직 로그인 안 된 유저여서 막아야됨
-    next("/")
+    next("/main")
   } else {
     next("");
   }
@@ -97,7 +98,7 @@ const routes: Array<RouteConfig> = [
   {
     path: '/guide',
     name: 'Guide',
-    component: Guide
+    component: About
   },
   {
     path: '/user/detail',

@@ -128,7 +128,7 @@ public class GroupRepositoryImpl /* extends QuerydslRepositorySupport */ impleme
 			query = em.createQuery(jpql, GroupDto.class);
 		}
 
-		query.setFirstResult(page.getPageNumber() * page.getPageSize() + 1);
+		query.setFirstResult(page.getPageNumber() * page.getPageSize());
 		query.setMaxResults(page.getPageSize());
 
 		return query.getResultList();

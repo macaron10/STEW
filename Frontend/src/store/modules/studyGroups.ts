@@ -25,25 +25,18 @@ export default {
 
   actions: {
     // 그룹들 불러오기
-    async getGroups({ state }: any) {
-      // const baseUrl = this.$store.state.baseUrl
-      const apiUrl = '/study/'
+    async getGroups({ state }: any, cateNo: number) {
+      const apiUrl = '/study/?cateNo='+ cateNo
       try {
         const res = await axios.get(apiUrl)
         state.groups = res.data.object
         const listLength = state.groups.length
-        // const listSize = this.listSize
-        // const page = Math.floor((listLength - 1) / listSize) + 1
-        // this.listSize = page
       } catch (err) {
         console.error(err)
-        // } finally {
-        //   this.sortBy(this.sortedBy)
-        //   this.showPagination = true
       }
     },
-    async getNextGroups({ state }: any, pageNumber: number){
-      const apiUrl = '/study/?page='+ pageNumber
+    async getNextGroups({ state }: any, payload: any){
+      const apiUrl = '/study/?cateNo=' + payload[1] + '&page='+ payload[0]
       try {
         const res = await axios.get(apiUrl)
         state.groups.push(...res.data.object)

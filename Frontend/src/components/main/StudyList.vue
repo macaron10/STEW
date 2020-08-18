@@ -116,7 +116,7 @@ export default {
       selectedGroup: {},
       snackbar: false,
       message: "",
-      gpImgDefault: this.$store.state.comm.baseUrl + "/image/group/default.png"
+      gpImgDefault: this.$store.state.comm.baseUrl + "/image/group/default.png",
     };
   },
   methods: {
@@ -149,17 +149,6 @@ export default {
         this.dialog = true;
       }
     },
-    // signUpGroup(gpNo) {
-    //   const apiUrl = '/study/user/req'
-    //   this.gpNoData.gpNo = gpNo
-    //   console.log(this.gpNoData)
-    //   axios.post(apiUrl, this.gpNoData)
-    //   .then((res) => {
-    //     console.log(res)
-    //     this.dialog = false
-    //     this.snackbar = true
-    //     })
-    // },
     async signUpGroup(group) {
       if (group.gpCurNum === group.gpMaxNum) {
         alert("정원이 가득 찼습니다.");
@@ -192,11 +181,11 @@ export default {
     // groups () { return this.$store.state.sg.groups }
     ...mapState("sg", ["groups"])
   },
-
   created() {
     if (this.$store.state.auth.isLogin) {
       this.getMyGroups();
     }
+
   }
 };
 </script>

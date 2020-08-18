@@ -368,14 +368,14 @@ video::-webkit-media-controls {
     grid-template-columns: repeat(2, 49vw);
   }
 }
-@media (max-width: 600px) {
+/* @media (max-width: 600px) {
   .videos-container video {
     width: 95vw;
   }
   .videos-container {
     grid-template-columns: repeat(1, 95vw);
   }
-}
+} */
 .footer {
   position: fixed;
   bottom: 25px;

@@ -94,11 +94,7 @@
 
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn
-            color="primary"
-            text
-            @click="signUpGroup(selectedGroup.gpNo, selectedGroup.gpPublic, selectedGroup.gpCurNum)"
-          >가입신청</v-btn>
+          <v-btn color="primary" text @click="signUpGroup(selectedGroup)">가입신청</v-btn>
           <v-btn color="primary" text @click="dialog = false">닫기</v-btn>
         </v-card-actions>
       </v-card>
@@ -164,12 +160,12 @@ export default {
     //     this.snackbar = true
     //     })
     // },
-    async signUpGroup(gpNo, isPublic, gpCurNum) {
-      if (gpCurNum === 6) {
+    async signUpGroup(group) {
+      if (group.gpCurNum === group.gpMaxNum) {
         alert("정원이 가득 찼습니다.");
         return;
       }
-      const apiUrl = "/study/user/req?gpNo=" + gpNo;
+      const apiUrl = "/study/user/req?gpNo=" + group.gpNo;
       const msg = {
         reqMsg: this.message
       };
@@ -180,7 +176,7 @@ export default {
         );
         this.dialog = false;
         this.snackbar = true;
-        if (isPublic) {
+        if (group.isPublic) {
           alert("공개그룹입니다. 자동가입됩니다.");
           this.$emit("event");
         } else {

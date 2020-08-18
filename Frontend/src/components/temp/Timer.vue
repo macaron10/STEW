@@ -10,7 +10,7 @@
         <v-btn class="ml-10" text icon color="grey lighten-2" v-if="running" @click="stop">
           <v-icon>mdi-pause</v-icon>
         </v-btn>
-        <v-btn class="" text icon color="red lighten-2" v-if="timeBegan" @click="end">
+        <v-btn class text icon color="red lighten-2" v-if="timeBegan" @click="end">
           <v-icon>mdi-stop</v-icon>
         </v-btn>
       </v-row>
@@ -19,8 +19,8 @@
 </template>
 
 <script>
-import axios from 'axios';
-import { stringify } from 'querystring';
+import axios from "axios";
+import { stringify } from "querystring";
 // @ is an alias to /src
 export default {
   name: "template",
@@ -37,16 +37,11 @@ export default {
   },
   computed: {
     secondTime() {
-      const hours = Number(this.time.slice(0, 2))
-      console.log(hours)
-      const minutes = Number(this.time.slice(3, 5))
-      console.log(minutes)
-      const seconds = Number(this.time.slice(6, 8))
-      console.log(seconds)
-      return hours*3600 + minutes*60 + seconds
-
+      const hours = Number(this.time.slice(0, 2));
+      const minutes = Number(this.time.slice(3, 5));
+      const seconds = Number(this.time.slice(6, 8));
+      return hours * 3600 + minutes * 60 + seconds;
     }
-  
   },
   methods: {
     start() {
@@ -71,18 +66,15 @@ export default {
       clearInterval(this.started);
     },
     end() {
-      const answer = confirm("현재까지의 공부시간이 누적됩니다.")
-      if (answer) {
-        const config = {
-          gpNo : Number(this.$route.params.id),
-          tmAcmlTime : this.secondTime
-        }
-        axios
-          .post("/timer", stringify(config))
-          .then(res => console.log(res))
-          .catch(err => console.log(err))
-        this.reset()
-      }
+      const config = {
+        gpNo: Number(this.$route.params.id),
+        tmAcmlTime: this.secondTime
+      };
+      axios
+        .post("/timer", stringify(config))
+        .then(res => console.log(res))
+        .catch(err => console.log(err));
+      this.reset();
     },
     clockRunning() {
       const currentTime = new Date(),
@@ -117,7 +109,7 @@ export default {
     }
   },
   destroyed() {
-    this.end()
+    this.end();
   }
 };
 </script>

@@ -67,7 +67,7 @@
           <v-col offset="1" sm="5">
             <v-checkbox v-model="form.gpPublic" color="blue">
               <template @click.stop="form.gpPublic=!form.gpPublic" v-slot:label>
-                <div >
+                <div>
                   <span v-if="form.gpPublic">공개 스터디</span>
                   <span v-else>비공개 스터디</span>
                 </div>
@@ -132,7 +132,7 @@ export default {
       gpNm: "", //스터디 이름ㅇ
       gpCatNo: 0, // 타입 아이디 ㅇ
       gpEndTm: 0, // 선호 종료 시간 ㅇ
-      gpImg: null,
+      gpImg: { size: 0, length: 0 },
       gpIntro: "", //스터디 소개ㅇ
       gpPublic: true, //스터디 공개 ㅇ
       gpStTm: 0, // 선호 시작 시간 ㅇ
@@ -144,7 +144,7 @@ export default {
       form: Object.assign({}, groupData),
       rules: {
         types: [val => val.length > 0 || "타입을 지정해 주세요."],
-        groupName: [val => val.length > 0 || "이름을 입력해 주세요."]
+        groupName: [val => (21 > val.length && val.length > 0) || "그룹이름은 1~20자 이내로 가능합니다."]
       },
       correctExt: true,
       categories: [],
@@ -155,39 +155,52 @@ export default {
       terms: false,
       groupData,
       formData,
-      
-      gpImgDefault : this.$store.state.comm.baseUrl + "/image/group/default.png",
-      imgSrc : this.$store.state.comm.baseUrl + "/image/group/default.png",
-    // 해쉬태그 데이터
-    tagItems: [],
-    model: [],
-    search: null,
-    }
+      gpImgDefault: this.$store.state.comm.baseUrl + "/image/group/default.png",
+      imgSrc: this.$store.state.comm.baseUrl + "/image/group/default.png",
+      // 해쉬태그 데이터
+      tagItems: [],
+      model: [],
+      search: null
+    };
   },
-    watch: {
-      model (val) {
-        if (val.length > 5) {
-          this.$nextTick(() => this.model.pop())
-        }
+  watch: {
+    model(val) {
+      if (val.length > 5) {
+        this.$nextTick(() => this.model.pop());
       }
     },
+    tags(tags) {
+      if (tags.length > 5) {
+        alert("태그는 5개까지 허용됩니다.");
+        this.tags.pop();
+      }
+    },
+  },
   computed: {
     formIsValid() {
-      return this.form.gpNm && this.form.gpCatNo && this.correctExt;
+      return 0 < this.form.gpNm.length && this.form.gpNm.length < 21 && this.form.gpCatNo && this.correctExt;
     }
   },
 
   methods: {
-    tagKey(e){
-      if(e.key == ' ' || e.key == ','){
-        const tag = this.search.replace(',','').replace(' ','')
-        if(tag.length>0 && !this.tags.includes(tag))
-          this.tags.push(tag);
+    tagKey(e) {
+      if (e.key == " " || e.key == ",") {
+        const tag = this.search.replace(",", "").replace(" ", "");
+        if (tag.length > 0 && !this.tags.includes(tag)) this.tags.push(tag);
         this.search = "";
       }
     },
     changeImg(e) {
       // const file = e.target.files[0]; // Get first index in files
+
+      if (e === undefined || e.size === 0) {
+        this.$refs.imgpreview.src =
+          this.$store.state.comm.baseUrl + "/image/group/default.png";
+
+        this.form.gpImg = { size: 0, name: "default.png" };
+        return;
+      }
+
       const ext = this.form.gpImg.name
         .substring(
           this.form.gpImg.name.lastIndexOf(".") + 1,
@@ -202,16 +215,20 @@ export default {
         if (ext == eachExts[i]) {
           this.correctExt = true;
           this.$refs.imgpreview.src = e ? URL.createObjectURL(e) : "";
-          return;
+          break;
         } else {
           this.correctExt = false;
         }
       }
-      this.$refs.imgpreview.src = e ? URL.createObjectURL(e) : this.gpImgDefault;
+      this.$refs.imgpreview.src = e
+        ? URL.createObjectURL(e)
+        : this.gpImgDefault;
     },
     resetForm() {
-      this.form = Object.assign({}, this.form);
-      this.$refs.form.reset();
+      this.form = Object.assign({}, this.groupData);
+      this.tags = [];
+      this.$refs.imgpreview.src =
+        this.$store.state.comm.baseUrl + "/image/group/default.png";
     },
     inputGpCatNo() {
       this.form.gpCatNo = this.categoryObj[this.form.gpCatNo];
@@ -220,13 +237,13 @@ export default {
       this.formData.append("gpNm", this.form.gpNm); // 순서는 상관 없음
       this.formData.append("gpCatNo", Number(this.form.gpCatNo));
       this.formData.append("gpEndTm", Number(this.form.gpEndTm));
-      if (this.form.gpImg != null) {
+      if (this.form.gpImg.size !== 0) {
         this.formData.append("gpImg", this.form.gpImg);
       }
       this.formData.append("gpIntro", this.form.gpIntro);
       this.formData.append("gpPublic", Boolean(this.form.gpPublic));
       this.formData.append("gpStTm", Number(this.form.gpStTm));
-      if (this.form.gpTag.length > 0)
+      if (this.form.gpTag !== "")
         this.formData.append("gpTag", this.form.gpTag);
     },
     async createGroup() {
@@ -247,12 +264,12 @@ export default {
       }
     },
     submit() {
-      this.form.gpTag = this.tags;
+      this.form.gpTag = this.tags===[] ? this.tags : ""
       this.snackbar = true;
       this.inputGpCatNo();
       this.makeFormData();
       this.createGroup();
-      this.resetForm();
+      // this.resetForm();
     },
     async getCategories() {
       try {

@@ -42,14 +42,7 @@
               >
                 <v-icon dark>mdi-message-text-outline</v-icon>
               </v-btn>
-              <v-btn
-                class="mx-1"
-                fab
-                dark
-                color="red"
-                @click="outRoom"
-                :to="{ name: 'StudyDetail' }"
-              >
+              <v-btn class="mx-1" fab dark color="red" @click="checkout">
                 <v-icon dark>mdi-account-arrow-right-outline</v-icon>
               </v-btn>
             </div>
@@ -105,15 +98,7 @@
             <v-btn v-else class="mx-1" fab outlined dark small color="#29B6F6" @click="chatBtn()">
               <v-icon dark>mdi-message-text-outline</v-icon>
             </v-btn>
-            <v-btn
-              class="mx-1"
-              fab
-              dark
-              small
-              color="red"
-              @click="outRoom"
-              :to="{ name: 'StudyDetail' }"
-            >
+            <v-btn class="mx-1" fab dark small color="red" @click="checkout">
               <v-icon dark>mdi-account-arrow-right-outline</v-icon>
             </v-btn>
           </v-speed-dial>
@@ -176,24 +161,23 @@ export default {
   },
   mounted() {
     if (window.innerWidth > 960) {
-        this.showChatRoom = true;
-        document.getElementsByClassName("chatRoomBtn").forEach(elem => {
-          elem.style.display = "none";
-        });
-      }
+      this.showChatRoom = true;
+      document.getElementsByClassName("chatRoomBtn").forEach(elem => {
+        elem.style.display = "none";
+      });
+    }
     this.$store.state.sg.onMeeting = false;
 
     this.options = this.$route.params.options;
-    console.log(this.options);
     this.check();
 
     this.initoptions();
     this.dragElement();
   },
-  beforeDestroy() {
-    window.removeEventListener("resize", this.onResize);
-    this.connection.close();
-  },
+  // beforeDestroy() {
+  //   // window.removeEventListener("resize", this.onResize);
+  //   // this.connection.close();
+  // },
   methods: {
     onResize() {
       if (window.innerWidth > 960) {
@@ -238,7 +222,8 @@ export default {
       };
 
       //this.connection.socketURL = "https://i3b103.p.ssafy.io/socket/"; //배포옹
-       this.connection.socketURL = "https://rtcmulticonnection.herokuapp.com:443/"; // 개발용
+      this.connection.socketURL =
+        "https://rtcmulticonnection.herokuapp.com:443/"; // 개발용
 
       this.connection.mediaConstraints = {
         audio: true,
@@ -248,9 +233,15 @@ export default {
         OfferToReceiveAudio: true,
         OfferToReceiveVideo: true
       };
-      this.connection.openOrJoin(`stew${this.$route.params.id}ssafy3`)
+      this.connection.openOrJoin(`stew${this.$route.params.id}ssafy3`);
     },
-    outRoom() {
+    checkout(){
+      const answer = confirm("회의를 종료하시겠습니까?");
+      if (answer) {
+        this.$router.push({name: 'StudyDetail'})
+      }
+    },
+    outRoom() {      
       this.connection.getAllParticipants().forEach(participantId => {
         this.connection.disconnectWith(participantId);
       });
@@ -259,7 +250,7 @@ export default {
         localStream.stop();
       });
 
-      this.connection.closeSocket();
+      this.connection.closeSocket();      
     },
     mute() {
       let localStream = this.connection.attachStreams[0];

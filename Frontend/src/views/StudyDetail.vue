@@ -182,7 +182,7 @@ export default {
         try {
           const res = await axios.post(apiUrl);
           if (res.data.msg === "success") {
-            this.$router.push("/main/");
+            this.$router.push("/");
           } else if (res.data.msg === "매니저 탈퇴 불가") {
             alert("매니저는 탈퇴가 불가능합니다.");
           }

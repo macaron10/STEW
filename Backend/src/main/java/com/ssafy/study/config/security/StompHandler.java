@@ -49,8 +49,8 @@ public class StompHandler implements ChannelInterceptor {
 
 			return message;
 		}
-		if (((String) message.getHeaders().get("simpDestination")).contains("chat")) {
-			if (StompCommand.SUBSCRIBE == accessor.getCommand()) {
+		if (StompCommand.SUBSCRIBE == accessor.getCommand()) {
+			if (((String) message.getHeaders().get("simpDestination")).contains("chat")) {
 				String gpNo = chatService.getGpNo(Optional
 						.ofNullable((String) message.getHeaders().get("simpDestination")).orElse("InvalidRoomId"));
 				String sessionId = (String) message.getHeaders().get("simpSessionId");
@@ -63,14 +63,19 @@ public class StompHandler implements ChannelInterceptor {
 
 				log.info("SUBSCRIBED {}, {}", sessionId, gpNo);
 
-			} else if (StompCommand.DISCONNECT == accessor.getCommand()) { // Websocket 연결 종료
-				String sessionId = (String) message.getHeaders().get("simpSessionId");
+				return message;
+			}
+		}
+		if (StompCommand.DISCONNECT == accessor.getCommand()) { // Websocket 연결 종료
+			String sessionId = (String) message.getHeaders().get("simpSessionId");
+			if (sessionMap.containsKey(sessionId)) {
+				sessionMap.remove(sessionId);
+			} else {
 				String roomId = chatRoomRepo.getUserEnterRoomId(sessionId);
 				UserDto user = chatRoomRepo.exitUser(roomId, sessionId);
 				chatRoomRepo.removeUserEnterInfo(sessionId);
 
 				chatService.sendChatMessage(new ChatMessage(user, roomId, ChatMessage.MessageType.QUIT));
-
 				log.info("DISCONNECTED {}, {}", sessionId, roomId);
 			}
 		}

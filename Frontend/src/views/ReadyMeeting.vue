@@ -3,7 +3,7 @@
     <!-- <h1 class="mt-5 text-center">화면과 마이크를 테스트해주세요</h1> -->
     <v-container>
       <v-layout text-center wrap>
-        <div style="background:black; width: 80%; height:25em;" class="mt-5 mx-auto">
+        <div style="background:black; width: 80%; height:25em;" class="mt-10 mx-auto">
           <div></div>
           <video autoplay playsinline ref="video" id="video" style="width:100%; height:100%;"></video>
         </div>
@@ -13,10 +13,10 @@
     <v-footer color="#ffffff" padless>
       <v-row class="d-flex justify-center" no-gutters>
         <v-btn v-if="options.audio" class="mr-2" fab dark color="#FB8C00" @click="mute">
-          <v-icon dark>mdi-volume-high</v-icon>
+          <v-icon dark>mdi-microphone</v-icon>
         </v-btn>
         <v-btn v-else class="mr-2" fab outlined dark color="#FB8C00" @click="unmute">
-          <v-icon dark>mdi-volume-off</v-icon>
+          <v-icon dark>mdi-microphone-off</v-icon>
         </v-btn>
         <v-btn v-if="options.video" class="mx-1" fab dark color="#FF8A65" @click="offVideo">
           <v-icon dark>mdi-video</v-icon>
@@ -49,8 +49,8 @@ export default {
   data: () => ({
     gpNo: "",
     options: {
-      video: false,
-      audio: false
+      video: true,
+      audio: true
     },
     video: {},
     localstream: {}
@@ -58,6 +58,7 @@ export default {
   mounted() {
     this.gpNo = this.$route.params.id;
     this.video = this.$refs.video;
+    this.onVideo();
   },
   destroyed() {
     this.localstream.getTracks().forEach(elem => {

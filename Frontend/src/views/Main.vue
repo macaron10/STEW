@@ -58,7 +58,7 @@
               <v-card class="mx-auto" height="180px" color="#42A5F5" dark>
                 <v-card-title class="font-weight-bold">나의 다짐</v-card-title>
                 <v-row justify="center" align="center" class="m-5">
-                  <v-card-text class="h3 headline text-center">{{userIntro}}</v-card-text>
+                  <v-card-text class="h3 headline text-center font-weight-bold">{{userIntro}}</v-card-text>
                 </v-row>
               </v-card>
             </v-col>

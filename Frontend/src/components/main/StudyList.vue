@@ -13,7 +13,7 @@
         <v-hover>
           <template v-slot:default="{ hover }">
             <!-- :to="'/study/' + group.gpNo" -->
-            <v-card class="mx-1" height="250" @click="toDetail(group)">
+            <v-card class="mx-1" height="250" @click="toDetail(group)" :elevation="1">
               <v-img
                 :src="group.gpImg != null?($store.state.comm.baseUrl + '/image/group' + group.gpImg):gpImgDefault"
                 height="170"
@@ -58,7 +58,7 @@
               <v-fade-transition>
                 <v-overlay v-if="hover" absolute color="#424242">
                   <div>
-                    <p class="multiwrap mx-auto">{{group.gpIntro}}</p>
+                    <p style="min-width: 200px;" class="multiwrap mx-auto">{{group.gpIntro}}</p>
                     <div class="text-justify p-10 text-center mx-auto" style="width:80%">
                       <span v-for="tag in group.gpTag" samll :key="tag">#{{tag}}&nbsp;&nbsp;</span>
                     </div>
@@ -94,11 +94,7 @@
 
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn
-            color="primary"
-            text
-            @click="signUpGroup(selectedGroup.gpNo, selectedGroup.gpPublic, selectedGroup.gpCurNum)"
-          >가입신청</v-btn>
+          <v-btn color="primary" text @click="signUpGroup(selectedGroup)">가입신청</v-btn>
           <v-btn color="primary" text @click="dialog = false">닫기</v-btn>
         </v-card-actions>
       </v-card>
@@ -120,23 +116,10 @@ export default {
       selectedGroup: {},
       snackbar: false,
       message: "",
-      gpImgDefault: this.$store.state.comm.baseUrl + "/image/group/default.png"
+      gpImgDefault: this.$store.state.comm.baseUrl + "/image/group/default.png",
     };
   },
   methods: {
-    ...mapActions("sg", ["getGroups"]),
-    // 솔팅 함수
-    // sortBy (prop) {
-    //   if (prop === 'popularity') {
-    //     this.sortCriteria = 'Most Popular'
-    //   } else if (prop === 'vote_average') {
-    //     this.sortCriteria = 'Highest Rated'
-    //   } else if (prop === 'release_date') {
-    //     this.sortCriteria = 'Release Date'
-    //   }
-    //   this.sortedBy = prop
-    //   this.movies.sort((a, b) => (a[prop] > b[prop] ? -1 : 1))
-    // }
     async getMyGroups() {
       const apiUrl = "/study/user/my";
       try {
@@ -166,23 +149,12 @@ export default {
         this.dialog = true;
       }
     },
-    // signUpGroup(gpNo) {
-    //   const apiUrl = '/study/user/req'
-    //   this.gpNoData.gpNo = gpNo
-    //   console.log(this.gpNoData)
-    //   axios.post(apiUrl, this.gpNoData)
-    //   .then((res) => {
-    //     console.log(res)
-    //     this.dialog = false
-    //     this.snackbar = true
-    //     })
-    // },
-    async signUpGroup(gpNo, isPublic, gpCurNum) {
-      if (gpCurNum === 6) {
+    async signUpGroup(group) {
+      if (group.gpCurNum === group.gpMaxNum) {
         alert("정원이 가득 찼습니다.");
         return;
       }
-      const apiUrl = "/study/user/req?gpNo=" + gpNo;
+      const apiUrl = "/study/user/req?gpNo=" + group.gpNo;
       const msg = {
         reqMsg: this.message
       };
@@ -193,7 +165,7 @@ export default {
         );
         this.dialog = false;
         this.snackbar = true;
-        if (isPublic) {
+        if (group.gpPublic) {
           alert("공개그룹입니다. 자동가입됩니다.");
           this.$emit("event");
         } else {
@@ -203,17 +175,17 @@ export default {
       } catch (err) {
         console.error(err);
       }
-    }
+    },
   },
   computed: {
     // groups () { return this.$store.state.sg.groups }
     ...mapState("sg", ["groups"])
   },
   created() {
-    this.getGroups();
     if (this.$store.state.auth.isLogin) {
       this.getMyGroups();
     }
+
   }
 };
 </script>

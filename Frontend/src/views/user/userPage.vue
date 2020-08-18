@@ -48,7 +48,8 @@
                 </v-row>
 
                 <v-row class="d-flex justify-center" >
-                    <v-btn depressed class="mb-2 mx-5" @click.stop="updatePwdDialog=true">비밀번호 변경</v-btn>
+
+                    <v-btn v-if="userInfo.type ? userInfo.type.match('stew') : false" depressed class="mb-2 mx-5" @click.stop="updatePwdDialog=true">비밀번호 변경</v-btn>
                     <v-dialog v-model="updatePwdDialog" persistent max-width="300">
                         <v-card>
                             <v-card-title class="headline">비밀번호 변경</v-card-title>
@@ -87,7 +88,7 @@
                         </v-card>
                     </v-dialog>
                     <v-btn depressed color="primary" class="mb-2 mx-5" @click="updateUserInfo">프로필 설정 완료</v-btn>
-                    <v-btn depressed color="error" class="mb-2 mx-5" @click="deleteUserDialog=true">회원 탈퇴</v-btn>
+                    <!-- <v-btn depressed color="error" class="mb-2 mx-5" @click="deleteUserDialog=true">회원 탈퇴</v-btn> -->
                     <v-dialog v-model="deleteUserDialog" persistent max-width="300">
                         <v-card>
                             <v-card-title class="headline">회원 탈퇴</v-card-title>
@@ -144,7 +145,7 @@ export default {
         }
     },
     
-    mounted() {
+    created() {
         this.getUserInfo();
     },
     
@@ -152,17 +153,14 @@ export default {
         getUserInfo() {
             axios.get('/user')
             .then(({ data }) => {
-                console.log(data);
                 this.userInfo = data.object;
                 this.imgInfo.originSrc = this.imgInfo.originSrc.concat(this.userInfo.userImg);
                 this.imgSrc =this.imgInfo.originSrc;
                 this.userInfo.userImg = [];
-                console.log(this.imgInfo.originSrc);
             })
         },
 
         changeImg(e){
-            console.log(e);
             // const file = e.target.files[0]; // Get first index in files
             this.imgInfo.correctExt = false;
             if (e) {

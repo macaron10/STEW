@@ -66,7 +66,6 @@ export default {
     initTodayStudy() {
       axios.get("/timer/today").then(({ data }) => {
         this.todayStudyTime = data.object;
-        console.log(this.todayStudyTime);
       });
     }
   }

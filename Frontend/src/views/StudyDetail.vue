@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-container>
-      <v-row>
+      <v-row class="mb-5">
         <v-col cols="10" offset="1" sm="8" offset-sm="2" md="6" offset-md="0">
           <div class="d-flex justify-center ma-6" style="position: relative">
             <v-img
@@ -45,7 +45,7 @@
               <v-icon>mdi-settings</v-icon>
             </v-btn>
           </h2>
-          <h4>
+          <h4 class="mt-3">
             <span v-if="group.gpPublic">
               <v-icon>mdi-lock-open-outline</v-icon>공개
             </span>
@@ -54,8 +54,10 @@
             </span>
             그룹 · 멤버 {{group.gpCurNum}}명
           </h4>
+          <hr class="my-3">
+          <h4>{{ group.gpIntro }}</h4>
         </v-col>
-        <v-col cols="10" offset="1" md="6" offset-md="0">
+        <v-col cols="10" offset="1" md="6" offset-md="0" class="pa-10">
           <v-card>
             <v-tabs
               v-model="tab"
@@ -149,6 +151,10 @@ export default {
     this.id = this.$route.params.id;
     this.userId = this.$store.state.auth.userInfo.userId;
     this.getDetail();
+    this.$vuetify.goTo(0, {
+        duration: 100,
+        offset: 0
+      })
   },
   methods: {
     forceRerender() {
@@ -176,7 +182,7 @@ export default {
         try {
           const res = await axios.post(apiUrl);
           if (res.data.msg === "success") {
-            this.$router.push("/main/");
+            this.$router.push("/");
           } else if (res.data.msg === "매니저 탈퇴 불가") {
             alert("매니저는 탈퇴가 불가능합니다.");
           }

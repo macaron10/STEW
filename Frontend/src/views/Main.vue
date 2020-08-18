@@ -75,15 +75,19 @@
         <v-col class="pb-5" md="2">
           <v-select
             :items="categories"
-            item-text="gpCatNm"
             item-value="gpCatNo"
+            item-text="gpCatNm"
             label="카테고리"
             v-model="gpCatNo"
             hide-details
           ></v-select>
         </v-col>
         <v-col md="2" offset-md="6">
-          <v-btn class="ml-5">스터디 생성</v-btn>
+          <v-btn
+          class="ml-5 mb-3"
+          color="blue lighten-3 white--text"
+          :to="{name: 'StudyCreate'}"
+          ><v-icon class="mr-2">mdi-plus</v-icon>스터디 생성</v-btn>
         </v-col>
       </v-row>
       <StudyList class="pt-0" :key="componentKey" @event="forceRerender()" />
@@ -135,7 +139,7 @@ export default {
     isIntersecting: false,
     //카테고리 분류
     categories: [],
-    gpCatNo: -1,
+    gpCatNo: -1
   }),
   filters: {
     toTimeFormat: sec => {
@@ -203,7 +207,6 @@ export default {
         }
         this.categories.push(allGroups)
         this.categories.push(...res.data.object)
-        console.log(this.categories)
       } catch (err) {
         console.error(err)
       }
@@ -221,18 +224,18 @@ export default {
           )
       }
     },
-    gpCatNo() {
-      this.getGroups(this.gpCatNo)
+    gpCatNo(gpCatNo) {
+      this.getGroups(gpCatNo)
       this.pageNumber=1
     }
   },
   created() {
+    this.getCategories()
+    this.getGroups(this.gpCatNo);
     //무한스크롤
     window.addEventListener('scroll', () => {
       this.bottom = this.bottomVisible()
     })
-    this.getGroups(this.gpCatNo);
-    this.getCategories()
   }
 };
 </script>

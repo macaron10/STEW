@@ -156,6 +156,15 @@ export default {
         offset: 0
       })
   },
+
+  watch: {
+    '$route'(to, from) {
+      this.id = this.$route.params.id;
+      this.userId = this.$store.state.auth.userInfo.userId;
+      this.getDetail();
+    }
+  },
+
   methods: {
     forceRerender() {
       this.componentKey += 1;

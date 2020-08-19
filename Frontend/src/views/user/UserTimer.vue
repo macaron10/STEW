@@ -37,7 +37,7 @@
             </v-card>
           </v-col>
         </v-row>-->
-        <TodayTimer />
+        <UserTodayTime />
         <v-col></v-col>
         <v-row>
           <v-col col="12">
@@ -74,12 +74,12 @@
 
 <script>
 import axios from "axios";
-import TodayTimer from "@/components/timer/UserTodayTime.vue";
+import UserTodayTime from "@/components/timer/UserTodayTime.vue";
 
 export default {
   name: "UserTimer",
   components: {
-    TodayTimer
+    UserTodayTime
   },
 
   data() {

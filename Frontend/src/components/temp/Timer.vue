@@ -23,7 +23,7 @@ import axios from "axios";
 import { stringify } from "querystring";
 // @ is an alias to /src
 export default {
-  name: "template",
+  name: "Timer",
   components: {},
   data() {
     return {
@@ -71,10 +71,9 @@ export default {
         gpNo: this.groupNo,
         tmAcmlTime: this.secondTime
       };
-      console.log(config.gpNo)
       axios
         .post("/timer", stringify(config))
-        .then((res) => (console.log(res)))
+        .then((res) => ({}))
         .catch(err => console.log(err));
       this.reset();
     },

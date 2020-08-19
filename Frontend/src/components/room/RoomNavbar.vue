@@ -16,22 +16,16 @@
         </v-row>
       </v-toolbar-title>
     </v-col>
-    <v-col absolute bottom right>
-      <Timer />
-    </v-col>
   </v-app-bar>
 </template>
 
 <script>
 import axios from "axios";
 import { mapState, mapActions, mapMutations } from "vuex";
-import Timer from "@/components/temp/Timer.vue";
 
 export default {
   name: "RoomNavbar",
-  components: {
-    Timer
-  },
+
   computed: {
     ...mapState("auth", ["userInfo", "isLogin"])
   },

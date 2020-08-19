@@ -116,7 +116,7 @@ export default {
     ...mapActions("notice", ["getMyReqs"]),
     goToStudy(no) {
       this.$router.push({ name: "StudyDetail", params: { id: no } });
-      this.$router.go();
+      // this.$router.go();
     },
     getStudyList() {
       if (!this.isLogin) {

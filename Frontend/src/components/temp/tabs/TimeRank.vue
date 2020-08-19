@@ -20,8 +20,8 @@
             </thead>
             <tbody>
               <tr v-for="(item, idx) in rankData" :key="item.user.userid">
-                <td>{{idx+1}}</td>
-                <td class="d-flex">
+                <td v-if="idx < 6">{{idx+1}}</td>
+                <td v-if="idx < 6" class="d-flex">
                   <img
                     :src="$store.state.comm.baseUrl+'/image/user'+item.user.userImg"
                     class="d-sm-flex rounded-circle my-auto d-none"
@@ -30,8 +30,8 @@
                   />
                   <p class="d-flex my-auto ml-2">{{ item.user.userNm }}</p>
                 </td>
-                <td>{{item.tmAcmlTime.slice(0,2)}}시간 {{item.tmAcmlTime.slice(3,5)}}분 {{item.tmAcmlTime.slice(6,8)}}초</td>
-                <td class="d-sm-table-cell d-none">
+                <td v-if="idx < 6">{{item.tmAcmlTime.slice(0,2)}}시간 {{item.tmAcmlTime.slice(3,5)}}분 {{item.tmAcmlTime.slice(6,8)}}초</td>
+                <td v-if="idx < 6" class="d-sm-table-cell d-none">
                   {{parseInt(parseInt(item.tmAcmlTimeLong/(new Date().getDate())) / 3600)}}시간
                   {{parseInt((parseInt(item.tmAcmlTimeLong/(new Date().getDate()))%3600)/60)}}분 / {{item.user.userGoalHr}}시간
                 </td>
@@ -114,10 +114,14 @@ export default {
               Number(time.slice(0, 2)) * 3600 +
               Number(time.slice(3, 5)) * 60 +
               Number(time.slice(6, 8));
-            this.pieData.push({
-              color: this.colors[Number(idx)],
-              value: totalTime ? (studyTime / totalTime) * 100 : 0
-            });
+            if (this.pieData.length == 6) {
+              break;
+            } else {
+              this.pieData.push({
+                color: this.colors[Number(idx)],
+                value: totalTime ? (studyTime / totalTime) * 100 : 0
+              });
+            }
           }
         })
         .catch(err => console.log(err));

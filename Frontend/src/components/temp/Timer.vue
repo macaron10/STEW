@@ -1,16 +1,16 @@
 <template>
-  <div id="clock">
+  <div>
     <div class="btn-container float-right text-no-wrap" style="width: 230px">
       <v-row>
         <v-icon>mdi-timer</v-icon>
-        <span class="pt-3 ml-5 time">{{ time }}</span>
-        <v-btn class="mx-2" text icon color="blue lighten-2" v-if="!running" @click="start">
+        <span class="py-auto my-auto mx-auto time">{{ time }}</span>
+        <v-btn class="mx-2 my-3" text icon color="blue lighten-2" v-if="!running" @click="start">
           <v-icon>mdi-play</v-icon>
         </v-btn>
-        <v-btn class="mx-2" text icon color="grey lighten-2" v-if="running" @click="stop">
+        <v-btn class="mx-2 my-3" text icon color="grey lighten-2" v-if="running" @click="stop">
           <v-icon>mdi-pause</v-icon>
         </v-btn>
-        <v-btn class text icon color="red lighten-2" v-if="timeBegan" @click="end">
+        <v-btn class="my-3" text icon color="red lighten-2" v-if="timeBegan" @click="end">
           <v-icon>mdi-stop</v-icon>
         </v-btn>
       </v-row>
@@ -32,7 +32,8 @@ export default {
       timeStopped: null,
       stoppedDuration: 0,
       started: null,
-      running: false
+      running: false,
+      groupNo: 0
     };
   },
   computed: {
@@ -67,12 +68,13 @@ export default {
     },
     end() {
       const config = {
-        gpNo: Number(this.$route.params.id),
+        gpNo: this.groupNo,
         tmAcmlTime: this.secondTime
       };
+      console.log(config.gpNo)
       axios
         .post("/timer", stringify(config))
-        .then(() => ({}))
+        .then((res) => (console.log(res)))
         .catch(err => console.log(err));
       this.reset();
     },
@@ -107,6 +109,9 @@ export default {
       this.timeStopped = null;
       this.time = "00:00:00";
     }
+  },
+  mounted() {
+    this.groupNo = this.$route.params.id
   },
   destroyed() {
     this.end();

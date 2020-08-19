@@ -1,6 +1,7 @@
 <template>
   <div class="meeting-room">
     <RoomNavbar />
+    <v-row><Timer /></v-row>
     <v-row>
       <v-col class="py-0">
         <div class="videos-container">
@@ -123,6 +124,7 @@
 <script>
 import StudyDetailVue from "./StudyDetail.vue";
 import RoomNavbar from "@/components/room/RoomNavbar.vue";
+import Timer from "@/components/temp/Timer.vue"
 
 import Chat from "@/components/chat/Chat.vue";
 import { log } from "util";
@@ -153,7 +155,8 @@ export default {
   },
   components: {
     RoomNavbar,
-    Chat
+    Chat,
+    Timer,
   },
   created() {
     this.joinRoom();

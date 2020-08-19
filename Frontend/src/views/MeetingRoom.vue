@@ -121,7 +121,6 @@
 <script src="https://cdn.jsdelivr.net/npm/rtcmulticonnection@latest/dist/RTCMultiConnection.min.js"></script>
 <script src="https://rtcmulticonnection.herokuapp.com/socket.io/socket.io.js"></script>
 <script>
-import StudyDetailVue from "./StudyDetail.vue";
 import RoomNavbar from "@/components/room/RoomNavbar.vue";
 
 import Chat from "@/components/chat/Chat.vue";
@@ -153,7 +152,7 @@ export default {
   },
   components: {
     RoomNavbar,
-    Chat
+    Chat,
   },
   created() {
     this.joinRoom();
@@ -221,7 +220,7 @@ export default {
           if (!options.audio) e.stream.mute("audio");
         }
       };
-      this.connection.enableLogs = true;
+      this.connection.enableLogs = false;
     },
     joinRoom() {
       this.connection = new RTCMultiConnection();
@@ -246,7 +245,7 @@ export default {
       this.connection.openOrJoin(`stew${this.$route.params.id}ssafy3`);
     },
     checkout() {
-      const answer = confirm("회의를 종료하시겠습니까?");
+      const answer = confirm("캠스터디를 종료하시겠습니까?");
       if (answer) {
         this.$router.push({ name: "StudyDetail" });
       }

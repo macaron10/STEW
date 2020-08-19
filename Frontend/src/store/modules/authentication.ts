@@ -63,7 +63,6 @@ export default {
       async signIn({ commit, dispatch }: any, userObj: any) {
         await axios.post('/user/signin', userObj)
           .then(res => {
-            console.log(res);
             const userInfo = {
               'accessToken': res.headers.accesstoken,
               'refreshToken': res.headers.refreshtoken
@@ -86,7 +85,6 @@ export default {
           .then(res => {
             // console.log(res);
             commit("logoutSuccess");
-            console.log();
             router.push("/").catch(()=>({}));
           })
       },
@@ -118,7 +116,6 @@ export default {
       tokenInformation({ state, commit }: any) {
         const token = state.userInfo.accessToken.replace("Bearer ", "");
         const decode: any = jwt.decode(token);
-        console.log(decode);
         if (decode) {
           const userInfo = {
             'userId': decode.userId,

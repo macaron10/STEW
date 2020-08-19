@@ -287,6 +287,13 @@ export default {
   },
   mounted() {
     this.getCategories();
+
+    this.$vuetify.goTo(0, {
+      duration: 100,
+      offset: 0
+    })
+
+    console.log("mounted Fin");
   }
 };
 </script>

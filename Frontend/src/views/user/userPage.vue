@@ -163,22 +163,29 @@ export default {
         changeImg(e){
             // const file = e.target.files[0]; // Get first index in files
             this.imgInfo.correctExt = false;
-            if (e) {
+            if (e && e.size < 3000000) {
                 this.confirmExt();
+                
                 if (this.imgInfo.correctExt) {
+                    console.log(this.$refs.imgpreview.src);
+                    console.log(URL.createObjectURL(e));
                     this.$refs.imgpreview.src = e ? URL.createObjectURL(e) : this.imgInfo.originSrc;
                     this.imgInfo.updateImg = true;
                 } else {
                     alert("지원하지 않는 확장자입니다.");
-                    this.userInfo.userImg = "";
+                    this.userInfo.userImg = [];
                 }
+            } else {
+                if (e && e.size > 3000000)  alert("3MB 이하의 파일만 등록 가능합니다.");
+                this.userInfo.userImg = [];
+                this.$refs.imgpreview.src = this.imgInfo.originSrc;
             }
         },
 
         resetImg(){
             this.imgInfo.updateImg = true;
             this.$refs.imgpreview.src = this.imgInfo.default;
-            this.userInfo.userImg = "";
+            this.userInfo.userImg = [];
         },
 
         confirmExt() {

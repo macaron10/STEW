@@ -8,6 +8,22 @@
           <!-- footer -->
 
           <v-row class="footer d-none d-md-block" style="z-index:1">
+            <!-- <v-select
+              v-model="audioInput"
+              :items="audioInputSelect"
+              item-value="value"
+              item-text="text"
+              color="pink"
+              @change="change"
+            ></v-select>
+            <v-select
+              v-model="videoInput"
+              :items="videoInputSelect"
+              item-value="value"
+              item-text="text"
+              color="pink"
+              @change="change"
+            ></v-select> -->
             <div width="100%" class="text-center">
               <v-btn v-if="options.audio" class="mx-1" fab dark color="#FB8C00" @click="mute">
                 <v-icon dark>mdi-microphone</v-icon>
@@ -41,6 +57,9 @@
                 @click="showChatRoom = !showChatRoom"
               >
                 <v-icon dark>mdi-message-text-outline</v-icon>
+              </v-btn>
+              <v-btn class="mx-1" fab dark color="grey darken-1" @click="test">
+                <v-icon dark>mdi-camera-retake-outline</v-icon>
               </v-btn>
               <v-btn class="mx-1" fab dark color="red" @click="checkout">
                 <v-icon dark>mdi-account-arrow-right-outline</v-icon>
@@ -134,8 +153,8 @@ export default {
       roomid: "",
       connection: null,
       options: {
-        video: false,
-        audio: false
+        video: true,
+        audio: true
       },
       localStream: {},
       videos: {},
@@ -148,7 +167,12 @@ export default {
         pos4: 0
       },
       elem: {},
-      chatRoomWidth: 0
+      audioInputSelect: [],
+      audioOutputSelect: [],
+      videoInputSelect: [],
+      audioInput: {},
+      audioOutput: {},
+      videoInput: {}
     };
   },
   components: {
@@ -177,11 +201,12 @@ export default {
         window.addEventListener("resize", function() {
           if (window.matchMedia("(orientation: portrait)").matches) {
             this.check();
-          } 
+          }
         });
       }
     }
 
+    // this.getDevices();
     this.initoptions();
     this.dragElement();
   },
@@ -198,6 +223,139 @@ export default {
         });
       }
     },
+    change() {
+      console.log(this.audioInput);
+      console.log(this.videoInput);
+
+      const constraints = {
+        audio: { deviceId: { exact: this.audioInput.deviceId } },
+        video: { deviceId: { exact: this.videoInput.deviceId } }
+      };
+      navigator.mediaDevices
+        .getUserMedia(constraints)
+        .then(this.getStream)
+        .then(this.getDevices);
+
+      navigator.mediaDevices
+        .getUserMedia({ audio: true, video: true })
+        .then(st => {
+          console.log(st.getTracks());
+          console.log(st.getAudioTracks());
+          console.log(st.getVideoTracks());
+        });
+
+      // navigator.mediaDevices
+      //   .getUserMedia({
+      //     audio: {
+      //       deviceId: {
+      //         exact: this.audioInput.deviceId
+      //       }
+      //     }
+      //   })
+      //   .then(stream => {
+      //     console.log(stream)
+      //     const foo = this.connection.getAllParticipants().forEach(pid => {
+      //       const { peer } = this.connection.peers[pid];
+      //       peer.getSenders().forEach(sender => {
+      //         console.log(sender);
+      //         consoel.log(stream )
+      //         if (sender.track.kind === 'audio' && stream)
+      //           sender.replaceTrack(stream);
+      //       });
+      //     });
+      //     Promise.all(foo)
+      //       .then(() => resolve())
+      //       .catch(() => reject());
+      //   });
+    },
+    getDevices() {
+      let audioInput = [];
+      let audioOutput = [];
+      let videoInput = [];
+      navigator.mediaDevices.enumerateDevices().then(function(devices) {
+        devices.forEach(function(device) {
+          let option = {};
+          option.value = device;
+          if (device.kind == "audioinput") {
+            option.text = device.label || `microphone ${audioInput.length + 1}`;
+            audioInput.push(option);
+          } else if (device.kind === "audiooutput") {
+            option.text = device.label || `speaker ${audioOutput.length + 1}`;
+            audioOutput.push(option);
+          } else if (device.kind === "videoinput") {
+            option.text = device.label || `camera ${videoInput.length + 1}`;
+            videoInput.push(option);
+          }
+        });
+      });
+      this.audioInputSelect = audioInput;
+      this.audioOutputSelect = audioOutput;
+      this.videoInputSelect = videoInput;
+    },
+    getStream(stream) {
+      window.stream = stream;
+      // console.log(this.connection.attachStreams[0])
+      document.querySelector('video').srcObject = stream;
+    },
+    attachSinkId(element, sinkId) {
+      if (typeof element.sinkId !== "undefined") {
+        element
+          .setSinkId(sinkId)
+          .then(() => {
+            console.log(`Success, audio output device attached: ${sinkId}`);
+          })
+          .catch(error => {
+            console.log(error);
+          });
+      } else {
+        console.warn("Browser does not support output device selection.");
+      }
+    },
+    test() {
+      const streamId = this.connection.attachStreams[0].streamid;
+      this.connection.send(streamId);
+      document.getElementById(streamId).classList.toggle("mirror-video");
+
+      navigator.mediaDevices
+        .getUserMedia({ audio: true, video: true })
+        .then(st => {
+          console.log(st);
+          console.log(st.getTracks());
+          console.log(st.getAudioTracks());
+          console.log(st.getVideoTracks());
+        });
+
+      // console.log(
+      //   this.connection.streamEvents.selectFirst("local").stream.getTracks()
+      // );
+
+      this.connection.streamEvents
+        .selectFirst("local")
+        .stream.getTracks()
+        .forEach(track => {
+          if (track.kind == "audio") track.stop();
+        });
+    },
+    ddd(track, type) {
+      return new Promise((resolve, reject) => {
+        // if (!track || !type)
+        //   reject(new Error("You don't set track or type track."));
+        // if (track.readyState === "ended")
+        //   reject(new Error("You don't can't replace with an \"ended\" track."));
+        console.log(this.connection.getAllParticipants());
+        const foo = this.connection.getAllParticipants().forEach(pid => {
+          const { peer } = this.connection.peers[pid];
+          peer.getSenders().forEach(sender => {
+            console.log(sender.track);
+            console.log(track);
+            if (sender.track.kind === type && track) sender.replaceTrack(track);
+          });
+        });
+        Promise.all(foo)
+          .then(() => resolve())
+          .catch(() => reject());
+      });
+    },
     chatBtn() {
       this.showChatRoom = !this.showChatRoom;
     },
@@ -208,8 +366,8 @@ export default {
       this.connection.videosContainer = document.querySelector(
         ".videos-container"
       );
-
-      const options = this.$route.params.options;
+      let options = { video: true, audio: true };
+      if (!!this.$route.params.options) options = this.$route.params.options;
       const connection = this.connection;
       connection.onstream = function(e) {
         e.mediaElement.id = e.streamid; // ---------- set ID
@@ -218,8 +376,14 @@ export default {
 
         if (e.type == "local") {
           if (!options.video) e.stream.mute("video");
-          if (!options.audio) e.stream.mute("audio");
+          if (!options.audio) {
+            e.stream.mute("audio");
+            e.stream.muted = true;
+          }
         }
+      };
+      connection.onmessage = function(event) {
+        document.getElementById(event.data).classList.toggle("mirror-video");
       };
       this.connection.enableLogs = true;
     },
@@ -243,6 +407,7 @@ export default {
         OfferToReceiveAudio: true,
         OfferToReceiveVideo: true
       };
+
       this.connection.openOrJoin(`stew${this.$route.params.id}ssafy3`);
     },
     checkout() {
@@ -265,39 +430,40 @@ export default {
     mute() {
       let localStream = this.connection.attachStreams[0];
       localStream.mute("audio");
-      // localStream.muted = true;
+      localStream.muted = true;
       this.options.audio = false;
     },
     unmute() {
       let localStream = this.connection.attachStreams[0];
       localStream.unmute("audio");
-      this.connection.streamEvents.selectFirst(
-        "local"
-      ).mediaElement.muted = true;
       // this.connection.streamEvents.selectFirst(
       //   "local"
       // ).mediaElement.muted = true;
+      this.connection.streamEvents.selectFirst(
+        "local"
+      ).mediaElement.muted = true;
       this.options.audio = true;
     },
     offVideo() {
-      let localStream = this.connection.attachStreams[0];
-      localStream.mute("video");
+      // let localStream = this.connection.attachStreams[0];
+      // localStream.mute("video");
 
-      // this.connection.streamEvents
-      //   .selectFirst("local")
-      //   .stream.getTracks()[1].enabled = false;
+      this.connection.streamEvents
+        .selectFirst("local")
+        .stream.getTracks()[1].enabled = false;
 
       this.options.video = false;
     },
     onVideo() {
       // this.connection.session.video = true;
 
-      // this.connection.streamEvents.selectFirst("local").isAudioMuted = false;
+      this.connection.streamEvents.selectFirst("local").isAudioMuted = false;
       let localStream = this.connection.attachStreams[0];
       localStream.unmute("video");
 
       this.options.video = true;
     },
+
     dragElement() {
       this.elem = document.getElementById("fab");
       this.elem.onmousedown = this.dragMouseDown;
@@ -336,37 +502,11 @@ export default {
 </script>
 
 <style>
-/* @media (orientation: portrait) {
-  .landscape {
-    height: 100vw;
-    -webkit-transform: rotate(90deg);
-    -moz-transform: rotate(90deg);
-    -o-transform: rotate(90deg);
-    -ms-transform: rotate(90deg);
-    transform: rotate(90deg);
-  }
+.mirror-video {
+  transform: rotateY(180deg);
+  -webkit-transform: rotateY(180deg); /* Safari and Chrome */
+  -moz-transform: rotateY(180deg); /* Firefox */
 }
-@media (orientation: landscape) {
-  .landscape {
-    -webkit-transform: rotate(0deg);
-    -moz-transform: rotate(0deg);
-    -o-transform: rotate(0deg);
-    -ms-transform: rotate(0deg);
-    transform: rotate(0deg);
-  }
-} */
-/* @media (orientation: portrait) {
-  .landscape {
-    transform: rotate(-90deg);
-    transform-origin: top left;
-    position: absolute;
-    top: 100%;
-    left: 0;
-    width: 100vh;
-    height: 100vw;
-  }
-} */
-
 .meeting-room {
   background-color: #5f5f5f;
 }

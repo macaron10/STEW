@@ -70,8 +70,9 @@ export default {
             //임시(userId 불러오기용)
             commit("loginSuccess", userInfo);
             dispatch("tokenInformation");
-            // dispatch("notice/getReqsSock", null, { root: true });
-            // dispatch("notice/getReqs", null, { root: true });
+            dispatch("notice/getReqsSock", null, { root: true });
+            dispatch("notice/getReqs", null, { root: true });
+            dispatch("notice/getNotis", null, { root: true });
           })
           .catch(err => {
             alert("이메일과 비밀번호를 확인하세요");
@@ -80,11 +81,12 @@ export default {
       },
   
       // 로그아웃
-      logout({ commit }: any) {
+      logout({ commit, dispatch }: any) {
         axios.get('/user/logout')
           .then(res => {
             // console.log(res);
             commit("logoutSuccess");
+            commit("notice/wsDisconnect", null, { root: true });
             router.push("/").catch(()=>({}));
           })
       },

@@ -277,9 +277,11 @@ export default {
     };
   },
   mounted() {
-    this.getReqs();
-    this.getReqsSock();
-    this.getNotis();
+    if (this.isLogin) {
+      this.getReqs();
+      this.getReqsSock();
+      this.getNotis();
+    }
   }
 };
 </script>

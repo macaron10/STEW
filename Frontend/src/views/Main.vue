@@ -26,6 +26,7 @@
                     width="40px"
                     class="mx-auto"
                   ></v-img>
+                  <div v-else style="height:40px; width:40px"></div>
                   </v-col>
                   </v-row>
                   <v-col cols="12" class="text-center">
@@ -51,7 +52,7 @@
       <div class="p-3 ma-5" v-if="$store.state.auth.isLogin">
         <v-row>
           <v-col cols="12" lg="8" class="pb-0">
-            <TodayTimer />
+            <UserTodayTime />
           </v-col>
           <v-col class="pt-0 pt-lg-3 pl-lg-0" lg="4">
             <v-col cols="12" sm="6" lg="12" class="pl-lg-0">
@@ -66,13 +67,13 @@
         </v-row>
       </div>
       <br />
-      <v-row class="pl-10 pr-0 d-flex align-end">
-        <v-col md="2">
+      <v-row class="pl-10 d-flex align-end">
+        <v-col cols="12" sm="4" md="2">
           <h2>스터디 목록</h2>
           <v-icon small color="#666666" class="ml-3">mdi-lock</v-icon>
           <span class="text-caption">비공개 스터디</span>
         </v-col>
-        <v-col class="pb-5" md="2">
+        <v-col class="pb-5" cols="4" sm="4" md="4">
           <v-select
             :items="categories"
             item-value="gpCatNo"
@@ -82,9 +83,9 @@
             hide-details
           ></v-select>
         </v-col>
-        <v-col md="2" offset-md="6">
+        <v-col cols="5" sm="3" lg="2" offset="2" offset-sm="0" offset-md="3" offset-lg="4">
           <v-btn
-          class="ml-5 mb-3"
+          class="mx-auto mb-3"
           color="amber accent-3 white--text"
           :to="{name: 'StudyCreate'}"
           ><v-icon class="mr-2">mdi-plus</v-icon>스터디 생성</v-btn>
@@ -120,14 +121,14 @@ import { mapActions } from "vuex";
 
 import MyPage from "@/components/main/MyPage.vue";
 import StudyList from "@/components/main/StudyList.vue";
-import TodayTimer from "@/components/timer/UserTodayTime.vue";
+import UserTodayTime from "@/components/timer/UserTodayTime.vue";
 
 export default {
   name: "Main",
   components: {
     MyPage,
     StudyList,
-    TodayTimer,
+    UserTodayTime,
   },
   data: () => ({
     rankGpList: [],

@@ -168,12 +168,16 @@ export default {
     this.$store.state.sg.onMeeting = false;
 
     this.options = this.$route.params.options;
-    this.check();
 
     const filter = "win16|win32|win64|mac";
     if (navigator.platform) {
       if (0 > filter.indexOf(navigator.platform.toLowerCase())) {
-        document.querySelector("html").classList.add("landscape");
+        this.check();
+        window.addEventListener("resize", function() {
+          if (window.matchMedia("(orientation: portrait)").matches) {
+            this.check();
+          } 
+        });
       }
     }
 
@@ -197,9 +201,7 @@ export default {
       this.showChatRoom = !this.showChatRoom;
     },
     check() {
-      alert(
-        "현재 설정으로 미팅룸에 접속합니다. 접속 후 오디오와 비디오 기능을 재설정할 수 있습니다."
-      );
+      alert("모바일에서는 가로모드를 이용해 주세요!");
     },
     initoptions() {
       this.connection.videosContainer = document.querySelector(
@@ -352,7 +354,7 @@ export default {
     transform: rotate(0deg);
   }
 } */
-@media (orientation: portrait) {
+/* @media (orientation: portrait) {
   .landscape {
     transform: rotate(-90deg);
     transform-origin: top left;
@@ -362,7 +364,7 @@ export default {
     width: 100vh;
     height: 100vw;
   }
-}
+} */
 
 .meeting-room {
   background-color: #5f5f5f;

@@ -20,6 +20,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.ssafy.study.user.model.UserPrincipal;
 import com.ssafy.study.user.service.UserPrincipalDetailsService;
 import com.ssafy.study.util.JwtProperties;
@@ -53,11 +54,19 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter{
 				redisTemplate.opsForValue().get(token.replace(JwtProperties.TOKEN_PREFIX, "")) != null) {
 			chain.doFilter(request, response);
 			return;
+		}else {
+			try {
+				JwtUtil.verify(token, request);
+			}catch(TokenExpiredException e) {
+				request.setAttribute("error", "token expired");
+				chain.doFilter(request, response);
+				return;
+			}
 		}
 		
 		token = token.replace(JwtProperties.TOKEN_PREFIX, "");
 		
-		Authentication authentication = JwtUtil.verify(token) ? getUsernamePasswordAuthentication(request, response, token) : null;
+		Authentication authentication = getUsernamePasswordAuthentication(request, response, token);
 		
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 		

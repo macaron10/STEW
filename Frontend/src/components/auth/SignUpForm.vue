@@ -17,7 +17,6 @@
           label="이메일 *"
           :clearable=false
           required
-          @blur="idCheckHandler"
         />
         <!-- <v-btn icon depressed
           tabindex="-1"

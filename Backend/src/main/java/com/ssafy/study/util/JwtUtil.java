@@ -6,6 +6,8 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
@@ -62,8 +64,15 @@ public class JwtUtil implements Serializable{
 		return authorities;
 	}
 	
+	public static void verify(String token, HttpServletRequest request) {
+		JWT.require(Algorithm.HMAC512(JwtProperties.SECRET.getBytes()))
+		.build()
+		.verify(sliceBearer(token));
+	}
+	
 	public static boolean verify(String token) {
 		try {
+			
 			JWT.require(Algorithm.HMAC512(JwtProperties.SECRET.getBytes()))
 			.build()
 			.verify(sliceBearer(token));

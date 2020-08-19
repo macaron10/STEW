@@ -7,30 +7,34 @@ export default {
   state: {
     groupsReqs: [],
     myGroupsReqs: [],
-    notis: []
+    notis: [],
+    ws: {}
   },
   mutations: {
     setReqs({ state, rootState }: any, groupsReqs: any) {
       state.groupsReqs = groupsReqs
     },
     delReq(state: any, reqNo: any) {
-      state.groupsReqs.forEach((elem :any , index: any) => {
+      state.groupsReqs.forEach((elem: any, index: any) => {
         if (elem.gpReqNo == reqNo) {
           state.groupsReqs.splice(index, 1);
         }
       });
     },
     delNoti(state: any, notiNo: any) {
-      state.notis.forEach((elem :any , index: any) => {
+      state.notis.forEach((elem: any, index: any) => {
         if (elem.notiNo == notiNo) {
           state.notis.splice(index, 1);
         }
       });
-    },
+    }, 
+    wsDisconnect(state: any) {
+      state.ws.disconnect();
+    }
   },
   actions: {
     async getReqs({ state, rootState }: any, event: any) {
-      if (rootState.auth.isLogin===true){
+      if (rootState.auth.isLogin === true) {
         const apiUrl = '/study/user/reqlist'
         try {
           const res = await axios.get(apiUrl)
@@ -41,7 +45,7 @@ export default {
       }
     },
     async getMyReqs({ state, rootState }: any, event: any) {
-      if (rootState.auth.isLogin===true) {
+      if (rootState.auth.isLogin === true) {
         const apiUrl = '/study/user/ureqlist'
         try {
           const res = await axios.get(apiUrl)
@@ -52,21 +56,22 @@ export default {
       }
     },
     async getNotis({ state, rootState }: any, event: any) {
-    if (rootState.auth.isLogin===true){
-      const apiUrl = '/noti/list'
-      try {
-        const res = await axios.get(apiUrl)
-        state.notis = res.data.object
-      } catch (err) {
-        console.error(err)
+      if (rootState.auth.isLogin === true) {
+        const apiUrl = '/noti/list'
+        try {
+          const res = await axios.get(apiUrl)
+          state.notis = res.data.object
+        } catch (err) {
+          console.error(err)
+        }
       }
-    }
     },
     getReqsSock({ state, rootState }: any, event: any) {
       const apiUrl = rootState.comm.baseSocketUrl + '/sock'
       const socket = new SockJS(apiUrl)
       const ws = Stomp.over(socket)
-      ws.debug = () => {return };
+      ws.debug = () => { return };
+      state.ws = ws;
 
       const token = {
         'accessToken': rootState.auth.userInfo.accessToken
@@ -81,5 +86,6 @@ export default {
           })
         })
     }
+
   },
 }

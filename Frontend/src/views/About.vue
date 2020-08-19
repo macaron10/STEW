@@ -7,7 +7,7 @@
       </v-stepper-step>
 
       <v-stepper-content step="1">
-        <img :src="aboutImg[0]" /><br>
+        <img :src="aboutImg[0]"><br>
         <v-btn @click="index++;" text outlined class="mr-3">다음</v-btn>
         <!-- <v-btn icon @click="index++;" class="mr-3"><v-icon>mdi-menu-down</v-icon></v-btn> -->
       </v-stepper-content>
@@ -72,5 +72,7 @@
 <style scoped>
   img {
     max-height: 350px !important;
+    max-width: 100%;
+    height: auto;
   }
 </style>

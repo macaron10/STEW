@@ -43,7 +43,7 @@
                     <v-textarea
                         v-model="userInfo.userIntro"
                         label="나의 목표"
-                        class="ma-3" solo counter=100 
+                        class="ma-3" solo counter=30 
                     ></v-textarea>
                 </v-row>
 

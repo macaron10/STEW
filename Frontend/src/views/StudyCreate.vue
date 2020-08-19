@@ -264,7 +264,7 @@ export default {
       }
     },
     submit() {
-      this.form.gpTag = this.tags===[] ? this.tags : ""
+      this.form.gpTag = this.tags===[] ? "" : this.tags
       this.snackbar = true;
       this.inputGpCatNo();
       this.makeFormData();

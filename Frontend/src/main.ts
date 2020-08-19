@@ -32,15 +32,15 @@ axios.interceptors.response.use(
 
   function (err) {
     const originReq = err.config;
-    console.log("err response");
-    console.log(err);
+    // console.log("err response");
+    // console.log(err);
     
     if (err.response.status === 401 && !originReq._retry) {
       originReq._retry = true;
       
       const refreshInfo: any = jwt.decode(store.getters['auth/getUserInfo'].refreshToken.replace("Bearer ", ""));
       
-      if (Date.now() - refreshInfo.exp * 1000 < 0) {
+      if (refreshInfo.exp && Date.now() - refreshInfo.exp * 1000 < 0) {
         // console.log("token refresh start");
         
         return store.dispatch('auth/tokenRefresh').then(() => {
@@ -53,6 +53,8 @@ axios.interceptors.response.use(
       } else {
         // console.log("can't refresh. have to logout")
         store.commit("auth/logoutSuccess");
+        alert("다시 로그인해주세요");
+        router.push('/');
         return Promise.reject(err);
       }
     }

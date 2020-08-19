@@ -55,9 +55,9 @@
           </v-col>
           <v-col class="pt-0 pt-lg-3 pl-lg-0" lg="4">
             <v-col cols="12" sm="6" lg="12" class="pl-lg-0">
-              <v-card class="mx-auto" height="180px" color="#42A5F5" dark>
-                <v-card-title class="font-weight-bold">나의 다짐</v-card-title>
-                <v-row justify="center" align="center" class="m-5">
+              <v-card class="mx-auto" height="180px" color="#42A5F5" dark >
+                <v-card-title class="font-weight-bold pb-0">나의 다짐</v-card-title>
+                <v-row justify="center" align="center" class="" style="height: 100px; overflow: hidden;">
                   <v-card-text class="text-h5 text-sm-h5 pa-0 multiwrap">{{userIntro}}</v-card-text>
                 </v-row>
               </v-card>

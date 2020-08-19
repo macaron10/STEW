@@ -63,7 +63,6 @@ export default {
       async signIn({ commit, dispatch }: any, userObj: any) {
         await axios.post('/user/signin', userObj)
           .then(res => {
-            console.log(res);
             const userInfo = {
               'accessToken': res.headers.accesstoken,
               'refreshToken': res.headers.refreshtoken
@@ -86,7 +85,6 @@ export default {
           .then(res => {
             // console.log(res);
             commit("logoutSuccess");
-            console.log();
             router.push("/").catch(()=>({}));
           })
       },
@@ -103,10 +101,10 @@ export default {
   
           axios.get('/user/refresh', config)
             .then(res => {
-              console.log("토큰 재발급 요청 응답");
+              // console.log("토큰 재발급 응답");
               commit("refreshSuccess", res.headers.accesstoken);
-              console.log("origin : " + origin);
-              console.log("new : " + state.userInfo.accessToken);
+              //console.log(origin);
+              //console.log(state.userInfo.accessToken);
               if (origin !== state.userInfo.accessToken) {
                 resolve();
               }
@@ -118,7 +116,6 @@ export default {
       tokenInformation({ state, commit }: any) {
         const token = state.userInfo.accessToken.replace("Bearer ", "");
         const decode: any = jwt.decode(token);
-        console.log(decode);
         if (decode) {
           const userInfo = {
             'userId': decode.userId,

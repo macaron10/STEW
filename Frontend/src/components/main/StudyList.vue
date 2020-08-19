@@ -1,6 +1,12 @@
 <template>
   <v-container>
     <v-row>
+      <v-col cols="12" v-if="groups.length == 0" class="my-10">
+        <div style="color:#424242;" class="text-center">
+          <h1>카테고리에 등록된 스터디가 없습니다 :(</h1>
+          <h3>새로운 스터디를 만들어 STEW와 함께 공부해요!</h3>
+        </div>
+      </v-col>
       <v-col
         v-for="group in groups"
         :key="group.gpNo"
@@ -165,9 +171,9 @@ export default {
         );
         this.dialog = false;
         this.snackbar = true;
-        if (group.isPublic) {
+        if (group.gpPublic) {
           alert("공개그룹입니다. 자동가입됩니다.");
-          this.$emit("event");
+          this.$router.push({name:'StudyDetail', params:{id : group.gpNo}})
         } else {
           alert("비공개 그룹입니다. 그룹장의 승인을 기다려 주세요");
         }
@@ -182,6 +188,7 @@ export default {
     ...mapState("sg", ["groups"])
   },
   created() {
+
     if (this.$store.state.auth.isLogin) {
       this.getMyGroups();
     }

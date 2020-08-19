@@ -40,7 +40,7 @@
               @change="changeImg"
               :rules="[
                 () => form.gpImg.size <= 3000000 || '3MB 이하의 파일만 등록 가능합니다.',
-                () => form.gpImg.length > 0 || form.updateGpImg || '지원하지 않는 확장자입니다 기존 사진이 적용됩니다..'
+                () => form.gpImg.length > 0 || correctExt || '지원하지 않는 확장자입니다.'
               ]"
             ></v-file-input>
           </v-col>
@@ -138,7 +138,7 @@ export default {
     const groupData = Object.freeze({
       // gpCatNm: "", // 카테고리이름
       gpCatNo: 0, // 타입 아이디 ㅇ
-      gpImg: null, // 스터디 썸네일 ㅇ
+      gpImg: { size: 0, length: 1 }, // 스터디 썸네일 ㅇ
       gpIntro: "", //스터디 소개ㅇ
       gpNm: "", //스터디 이름ㅇ
       gpPublic: true, //스터디 공개 ㅇ
@@ -153,7 +153,7 @@ export default {
       form: Object.assign({}, this.groupData),
       rules: {
         types: [val => val >= 1 || "타입을 지정해 주세요."],
-        groupName: [val => (val || "").length > 0 || "이름을 입력해 주세요."]
+        groupName: [val => (21 > val.length && val.length > 0) || "그룹이름은 1~20자 이내로 가능합니다."]
       },
       categories: [],
       categoryObj: {},
@@ -165,21 +165,25 @@ export default {
       groupData,
       formData,
       imgSrc: "",
+      gpImgDefault: this.$store.state.comm.baseUrl + "/image/group/default.png",
       // 해쉬태그 데이터
       tagItems: [],
       model: [],
       search: null,
-      watch: {
-        model(val) {
-          if (val.length > 5) {
-            this.$nextTick(() => this.model.pop());
-          }
-        }
+      correctExt: true,
+    }
+  },
+  watch: {
+    tags(tags) {
+      if (tags.length > 5) {
+        alert("태그는 5개까지 허용됩니다.");
+        this.tags.pop();
       }
-    };
+    }
   },
   beforeMount() {
     this.form.gpImg = { size: 0, length: 1 };
+    this.form.gpNm = ''
   },
   mounted() {
     this.id = this.$route.params.id;
@@ -188,22 +192,28 @@ export default {
   },
   computed: {
     formIsValid() {
-      return this.form.gpNm && this.form.gpCatNo;
+
+      return 0 < this.form.gpNm.length && this.form.gpNm.length < 21 && this.form.gpCatNo && this.correctExt;
     }
   },
+
   methods: {
-    tagKey(e){
-      if(e.key == ' ' || e.key == ','){
-        const tag = this.search.replace(',','').replace(' ','');
-        if(tag.length>0 && !this.tags.includes(tag))
-          this.tags.push(tag);
+    tagKey(e) {
+      if (e.key == " " || e.key == ",") {
+        const tag = this.search.replace(",", "").replace(" ", "");
+        if (tag.length > 0 && !this.tags.includes(tag)) this.tags.push(tag);
         this.search = "";
       }
     },
-    changeImg(e){
-      this.form.updateGpImg = false;
-      // console.log(e);
-      // const file = e.target.files[0]; // Get first index in files
+    changeImg(e) {
+      this.form.updateGpImg = true;
+      if (e === undefined || e.size === 0) {
+        this.$refs.imgpreview.src =
+          this.$store.state.comm.baseUrl + "/image/group/default.png";
+          this.form.gpImg = { size: 0, name: "default.png", length: 1 };
+        return;
+      }
+
       const ext = this.form.gpImg.name
         .substring(
           this.form.gpImg.name.lastIndexOf(".") + 1,
@@ -216,11 +226,16 @@ export default {
 
       for (let i = 0; i < eachExts.length; i++) {
         if (ext == eachExts[i]) {
-          this.form.updateGpImg = true;
+          this.correctExt = true;
           this.$refs.imgpreview.src = e ? URL.createObjectURL(e) : "";
-      this.$refs.imgpreview.src = e ? URL.createObjectURL(e) : this.gpImgDefault;
+          break;
+        } else {
+          this.correctExt = false;
         }
       }
+      this.$refs.imgpreview.src = e
+        ? URL.createObjectURL(e)
+        : this.gpImgDefault;
     },
     async getDetail() {
       const apiUrl = "/study/user/" + this.id;
@@ -230,10 +245,12 @@ export default {
         this.groupData = JSON.parse(res.data.object).group;
         this.groupData = JSON.parse(this.groupData);
         this.form = this.groupData;
-        this.imgSrc = this.groupData.gpImg != null? baseUrl + '/image/group' + this.groupData.gpImg : this.gpImgDefault;
-        this.form.updateGpImg = false
-        if(this.groupData.gpTag != null)
-          this.tags = this.groupData.gpTag;
+        this.imgSrc =
+          this.groupData.gpImg != null
+            ? baseUrl + "/image/group" + this.groupData.gpImg
+            : this.gpImgDefault;
+        this.form.gpImg = { size: 0, length: 1 }
+        if (this.groupData.gpTag != null) this.tags = this.groupData.gpTag;
         this.form.updateGpImg = false;
       } catch (err) {
         console.error(err);
@@ -246,17 +263,18 @@ export default {
     goToBefore() {
       this.$router.go(-1);
     },
-    makeFormData () {
-    this.formData.append('gpNm', this.form.gpNm)
-    this.formData.append('gpCatNo', Number(this.form.gpCatNo))
-    if(this.form.updateGpImg)
-      this.formData.append('gpImg', this.form.gpImg)
-    this.formData.append('gpIntro', this.form.gpIntro)
-    this.formData.append('gpPublic', Boolean(this.form.gpPublic))
-    if(this.form.gpTag.length > 0)
-      this.formData.append('gpTag', this.form.gpTag)
-    this.formData.append('gpNo', this.id)
-    this.formData.append('updateGpImg',this.form.updateGpImg)
+    makeFormData() {
+      this.formData.append("gpNm", this.form.gpNm);
+      this.formData.append("gpCatNo", Number(this.form.gpCatNo));
+      if (this.form.updateGpImg && this.form.gpImg.size > 0) {
+        this.formData.append("gpImg", this.form.gpImg)
+      } 
+      this.formData.append("gpIntro", this.form.gpIntro);
+      this.formData.append("gpPublic", Boolean(this.form.gpPublic));
+      if (this.form.gpTag.length > 0)
+        this.formData.append("gpTag", this.form.gpTag);
+      this.formData.append("gpNo", this.id);
+      this.formData.append("updateGpImg", this.form.updateGpImg);
     },
     async updateGroup() {
       try {
@@ -266,9 +284,6 @@ export default {
           }
         };
         const apiUrl = "/study/user/" + this.id;
-        for (const pair of this.formData.entries()) {
-          console.log(pair[0] + ", " + pair[1]);
-        }
         const res = await axios.put(apiUrl, this.formData, config);
         this.$router.push({ name: "StudyDetail", params: { id: this.id } });
       } catch (err) {
@@ -278,13 +293,12 @@ export default {
     inputGpCatNo() {
       this.form.gpCatNo = this.categoryObj[this.form.gpCatNo];
     },
-    submit () {
+    submit() {
       this.form.gpTag = this.tags;
-      this.snackbar = true
+      this.snackbar = true;
       // this.inputGpCatNo()
       this.makeFormData();
       this.updateGroup();
-      this.resetForm();
     },
     async getCategories() {
       try {

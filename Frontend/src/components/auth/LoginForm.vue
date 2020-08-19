@@ -7,6 +7,7 @@
             label="이메일"
             type="text"
             v-model="userEmail"
+            @keyup.enter="signInHandler"
             ></v-text-field>
 
             <v-text-field dense outlined
@@ -17,6 +18,7 @@
             @click:append="showPassword = !showPassword"
             v-bind:type="showPassword ? 'text' : 'password'"
             v-model="userPw"
+            @keyup.enter="signInHandler"
             ></v-text-field>
 
             <v-btn block dark depressed

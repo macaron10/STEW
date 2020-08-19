@@ -45,7 +45,7 @@
               <v-icon>mdi-settings</v-icon>
             </v-btn>
           </h2>
-          <h4>
+          <h4 class="mt-3">
             <span v-if="group.gpPublic">
               <v-icon>mdi-lock-open-outline</v-icon>공개
             </span>
@@ -57,7 +57,7 @@
           <hr class="my-3">
           <h4>{{ group.gpIntro }}</h4>
         </v-col>
-        <v-col cols="10" offset="1" md="6" offset-md="0" class="pa-10">
+        <v-col cols="10" offset="1" md="6" offset-md="0" class="mt-5">
           <v-card>
             <v-tabs
               v-model="tab"
@@ -182,7 +182,7 @@ export default {
         try {
           const res = await axios.post(apiUrl);
           if (res.data.msg === "success") {
-            this.$router.push("/main/");
+            this.$router.push("/");
           } else if (res.data.msg === "매니저 탈퇴 불가") {
             alert("매니저는 탈퇴가 불가능합니다.");
           }

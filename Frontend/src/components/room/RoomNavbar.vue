@@ -16,22 +16,16 @@
         </v-row>
       </v-toolbar-title>
     </v-col>
-    <v-col absolute bottom right>
-      <Timer />
-    </v-col>
   </v-app-bar>
 </template>
 
 <script>
 import axios from "axios";
 import { mapState, mapActions, mapMutations } from "vuex";
-import Timer from "@/components/temp/Timer.vue";
 
 export default {
   name: "RoomNavbar",
-  components: {
-    Timer
-  },
+
   computed: {
     ...mapState("auth", ["userInfo", "isLogin"])
   },
@@ -44,7 +38,6 @@ export default {
         this.group = JSON.parse(res.data.object).group;
         this.group = JSON.parse(this.group);
         this.membersData = JSON.parse(res.data.object).joinList;
-        console.log(this.group, "그룹데이터!");
       } catch (err) {
         console.error(err);
       }

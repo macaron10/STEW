@@ -1,5 +1,6 @@
 package com.ssafy.study.controller;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.http.HttpStatus;
@@ -26,9 +27,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ChatController {
 
-	private final SimpMessageSendingOperations template;
-	private final RedisTemplate redisTemplate;
-	private final ChannelTopic channelTopic;
 	private final ChatRoomRepository chatRoomRepo;
 	private final ChatService chatService;
 

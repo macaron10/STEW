@@ -16,9 +16,14 @@ import com.ssafy.study.chat.service.RedisSubscriber;
 @Configuration
 public class RedisConfig {
 
-	@Bean
-	public ChannelTopic channelTopic() {
+	@Bean(name = "chatChannelTopic")
+	public ChannelTopic chatChannelTopic() {
 		return new ChannelTopic("chatroom");
+	}
+
+	@Bean(name = "notiChannelTopic")
+	public ChannelTopic notiChannelTopic() {
+		return new ChannelTopic("notification");
 	}
 
 	@Bean
@@ -44,17 +49,25 @@ public class RedisConfig {
 
 	@Bean
 	public RedisMessageListenerContainer redisMessageListener(RedisConnectionFactory connectionFactory,
-			MessageListenerAdapter listenerAdapter, ChannelTopic channelTopic) {
+			MessageListenerAdapter msgAdapter, ChannelTopic chatChannelTopic, MessageListenerAdapter notiAdapter,
+			ChannelTopic notiChannelTopic) {
 		RedisMessageListenerContainer container = new RedisMessageListenerContainer();
 
 		container.setConnectionFactory(connectionFactory);
-		container.addMessageListener(listenerAdapter, channelTopic);
+		container.addMessageListener(msgAdapter, chatChannelTopic);
+		container.addMessageListener(notiAdapter, notiChannelTopic);
+
 		return container;
 	}
 
-	@Bean
-	public MessageListenerAdapter listenerAdapter(RedisSubscriber subscriber) {
+	@Bean("msgAdapter")
+	public MessageListenerAdapter msgAdapter(RedisSubscriber subscriber) {
 		return new MessageListenerAdapter(subscriber, "sendMessage");
+	}
+
+	@Bean("notiAdapter")
+	public MessageListenerAdapter notiAdapter(RedisSubscriber subscriber) {
+		return new MessageListenerAdapter(subscriber, "sendNotification");
 	}
 
 }

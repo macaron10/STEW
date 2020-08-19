@@ -1,6 +1,7 @@
 <template>
   <div class="meeting-room">
     <RoomNavbar />
+    <v-row><Timer /></v-row>
     <v-row>
       <v-col class="py-0">
         <div class="videos-container">
@@ -42,14 +43,7 @@
               >
                 <v-icon dark>mdi-message-text-outline</v-icon>
               </v-btn>
-              <v-btn
-                class="mx-1"
-                fab
-                dark
-                color="red"
-                @click="outRoom"
-                :to="{ name: 'StudyDetail' }"
-              >
+              <v-btn class="mx-1" fab dark color="red" @click="checkout">
                 <v-icon dark>mdi-account-arrow-right-outline</v-icon>
               </v-btn>
             </div>
@@ -105,15 +99,7 @@
             <v-btn v-else class="mx-1" fab outlined dark small color="#29B6F6" @click="chatBtn()">
               <v-icon dark>mdi-message-text-outline</v-icon>
             </v-btn>
-            <v-btn
-              class="mx-1"
-              fab
-              dark
-              small
-              color="red"
-              @click="outRoom"
-              :to="{ name: 'StudyDetail' }"
-            >
+            <v-btn class="mx-1" fab dark small color="red" @click="checkout">
               <v-icon dark>mdi-account-arrow-right-outline</v-icon>
             </v-btn>
           </v-speed-dial>
@@ -138,6 +124,7 @@
 <script>
 import StudyDetailVue from "./StudyDetail.vue";
 import RoomNavbar from "@/components/room/RoomNavbar.vue";
+import Timer from "@/components/temp/Timer.vue"
 
 import Chat from "@/components/chat/Chat.vue";
 import { log } from "util";
@@ -168,7 +155,8 @@ export default {
   },
   components: {
     RoomNavbar,
-    Chat
+    Chat,
+    Timer,
   },
   created() {
     this.joinRoom();
@@ -176,11 +164,11 @@ export default {
   },
   mounted() {
     if (window.innerWidth > 960) {
-        this.showChatRoom = true;
-        document.getElementsByClassName("chatRoomBtn").forEach(elem => {
-          elem.style.display = "none";
-        });
-      }
+      this.showChatRoom = true;
+      document.getElementsByClassName("chatRoomBtn").forEach(elem => {
+        elem.style.display = "none";
+      });
+    }
     this.$store.state.sg.onMeeting = false;
 
     this.options = this.$route.params.options;
@@ -189,10 +177,10 @@ export default {
     this.initoptions();
     this.dragElement();
   },
-  beforeDestroy() {
-    window.removeEventListener("resize", this.onResize);
-    this.connection.close();
-  },
+  // beforeDestroy() {
+  //   // window.removeEventListener("resize", this.onResize);
+  //   // this.connection.close();
+  // },
   methods: {
     onResize() {
       if (window.innerWidth > 960) {
@@ -227,6 +215,7 @@ export default {
           if (!options.audio) e.stream.mute("audio");
         }
       };
+      this.connection.enableLogs = true;
     },
     joinRoom() {
       this.connection = new RTCMultiConnection();
@@ -237,7 +226,8 @@ export default {
       };
 
       //this.connection.socketURL = "https://i3b103.p.ssafy.io/socket/"; //배포옹
-       this.connection.socketURL = "https://rtcmulticonnection.herokuapp.com:443/"; // 개발용
+      this.connection.socketURL =
+        "https://rtcmulticonnection.herokuapp.com:443/"; // 개발용
 
       this.connection.mediaConstraints = {
         audio: true,
@@ -247,7 +237,13 @@ export default {
         OfferToReceiveAudio: true,
         OfferToReceiveVideo: true
       };
-      this.connection.openOrJoin(`stew${this.$route.params.id}ssafy3`)
+      this.connection.openOrJoin(`stew${this.$route.params.id}ssafy3`);
+    },
+    checkout() {
+      const answer = confirm("회의를 종료하시겠습니까?");
+      if (answer) {
+        this.$router.push({ name: "StudyDetail" });
+      }
     },
     outRoom() {
       this.connection.getAllParticipants().forEach(participantId => {
@@ -263,25 +259,37 @@ export default {
     mute() {
       let localStream = this.connection.attachStreams[0];
       localStream.mute("audio");
+      localStream.muted = true;
       this.options.audio = false;
     },
     unmute() {
       let localStream = this.connection.attachStreams[0];
       localStream.unmute("audio");
+      // this.connection.streamEvents.selectFirst(
+      //   "local"
+      // ).mediaElement.muted = true;
       this.connection.streamEvents.selectFirst(
         "local"
       ).mediaElement.muted = true;
       this.options.audio = true;
     },
     offVideo() {
-      let localStream = this.connection.attachStreams[0];
-      localStream.mute("video");
+      // let localStream = this.connection.attachStreams[0];
+      // localStream.mute("video");
+
+      this.connection.streamEvents
+        .selectFirst("local")
+        .stream.getTracks()[1].enabled = false;
+
       this.options.video = false;
     },
     onVideo() {
-      this.connection.session.video = true;
+      // this.connection.session.video = true;
+
+      this.connection.streamEvents.selectFirst("local").isAudioMuted = false;
       let localStream = this.connection.attachStreams[0];
       localStream.unmute("video");
+
       this.options.video = true;
     },
     dragElement() {

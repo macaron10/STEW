@@ -2,13 +2,22 @@ import router from "@/router";
 import axios from 'axios';
 import jwt from "jsonwebtoken";
 
-interface UserInfo {
-  userId: number,
-  userNm: string,
-  userEmail: string,
-  userImg: string,
-  accessToken: string,
-  refreshToken: string,
+class User {
+  userId: number;
+  userNm: string;
+  userEmail: string;
+  userImg: string;
+  accessToken: string;
+  refreshToken: string;
+
+  constructor() {
+    this.userId = 0;
+    this.userNm = "";
+    this.userEmail = "";
+    this.userImg = "";
+    this.accessToken = "";
+    this.refreshToken = "";
+  }
 }
 
 // 유저 인증 정보 모듈화
@@ -17,20 +26,12 @@ export default {
     
     state: {
       isLogin: false,
-      userInfo: {
-        userId: 0,
-        userNm: "",
-        userEmail: "",
-        userImg: "",
-        accessToken: "",
-        refreshToken: "",
-      },
-
+      userInfo: new User(),
     },
 
     getters: {
       loginStatus: (state: { isLogin: any; }) => state.isLogin,
-      getUserInfo: (state: { userInfo: UserInfo; }) => state.userInfo
+      getUserInfo: (state: { userInfo: User; }) => state.userInfo
     },
   
     mutations: {
@@ -41,9 +42,7 @@ export default {
   
       logoutSuccess(state: any) {
         state.isLogin = false;
-        state.userInfo.userId = 0;
-        state.userInfo.accessToken = "";
-        state.userInfo.refreshToken = "";
+        state.userInfo = new User();
       },
   
       refreshSuccess(state: any, payload: any) {
@@ -75,7 +74,7 @@ export default {
           })
           .catch(err => {
             alert("이메일과 비밀번호를 확인하세요");
-            // console.log(err)
+            console.log(err)
           })
       },
   

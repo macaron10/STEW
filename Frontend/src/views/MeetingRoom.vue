@@ -231,9 +231,8 @@ export default {
         data: true
       };
 
-      //this.connection.socketURL = "http://i3b103.p.ssafy.io/socket/"; //배포옹
-      this.connection.socketURL =
-        "https://rtcmulticonnection.herokuapp.com:443/"; // 개발용
+      this.connection.socketURL = "https://i3b103.p.ssafy.io/socket/"; //배포옹
+      //this.connection.socketURL = "https://rtcmulticonnection.herokuapp.com:443/"; // 개발용
 
       this.connection.mediaConstraints = {
         audio: true,

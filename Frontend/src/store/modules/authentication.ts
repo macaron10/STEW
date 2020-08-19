@@ -101,10 +101,10 @@ export default {
   
           axios.get('/user/refresh', config)
             .then(res => {
-              console.log("토큰 재발급 요청 응답");
+              // console.log("토큰 재발급 응답");
               commit("refreshSuccess", res.headers.accesstoken);
-              console.log("origin : " + origin);
-              console.log("new : " + state.userInfo.accessToken);
+              //console.log(origin);
+              //console.log(state.userInfo.accessToken);
               if (origin !== state.userInfo.accessToken) {
                 resolve();
               }

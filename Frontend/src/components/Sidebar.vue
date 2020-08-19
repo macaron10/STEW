@@ -108,7 +108,7 @@ export default {
       return this.$store.state.auth.isLogin;
     }
   },
-  mounted() {
+  created() {
     this.getMyReqs()
     this.getStudyList();
   },

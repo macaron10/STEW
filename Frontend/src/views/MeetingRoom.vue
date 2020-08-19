@@ -1,7 +1,6 @@
 <template>
   <div class="meeting-room">
     <RoomNavbar />
-    <v-row><Timer /></v-row>
     <v-row>
       <v-col class="py-0">
         <div class="videos-container">
@@ -124,7 +123,6 @@
 <script>
 import StudyDetailVue from "./StudyDetail.vue";
 import RoomNavbar from "@/components/room/RoomNavbar.vue";
-import Timer from "@/components/temp/Timer.vue"
 
 import Chat from "@/components/chat/Chat.vue";
 import { log } from "util";
@@ -155,8 +153,7 @@ export default {
   },
   components: {
     RoomNavbar,
-    Chat,
-    Timer,
+    Chat
   },
   created() {
     this.joinRoom();
@@ -173,6 +170,13 @@ export default {
 
     this.options = this.$route.params.options;
     this.check();
+
+    const filter = "win16|win32|win64|mac";
+    if (navigator.platform) {
+      if (0 > filter.indexOf(navigator.platform.toLowerCase())) {
+        document.querySelector("html").classList.add("landscape");
+      }
+    }
 
     this.initoptions();
     this.dragElement();
@@ -225,8 +229,9 @@ export default {
         data: true
       };
 
-    this.connection.socketURL = "http://i3b103.p.ssafy.io/socket/"; //배포옹
-     //  this.connection.socketURL =  "https://rtcmulticonnection.herokuapp.com:443/"; // 개발용
+      //this.connection.socketURL = "http://i3b103.p.ssafy.io/socket/"; //배포옹
+      this.connection.socketURL =
+        "https://rtcmulticonnection.herokuapp.com:443/"; // 개발용
 
       this.connection.mediaConstraints = {
         audio: true,
@@ -258,34 +263,34 @@ export default {
     mute() {
       let localStream = this.connection.attachStreams[0];
       localStream.mute("audio");
-      localStream.muted = true;
+      // localStream.muted = true;
       this.options.audio = false;
     },
     unmute() {
       let localStream = this.connection.attachStreams[0];
       localStream.unmute("audio");
-      // this.connection.streamEvents.selectFirst(
-      //   "local"
-      // ).mediaElement.muted = true;
       this.connection.streamEvents.selectFirst(
         "local"
       ).mediaElement.muted = true;
+      // this.connection.streamEvents.selectFirst(
+      //   "local"
+      // ).mediaElement.muted = true;
       this.options.audio = true;
     },
     offVideo() {
-      // let localStream = this.connection.attachStreams[0];
-      // localStream.mute("video");
+      let localStream = this.connection.attachStreams[0];
+      localStream.mute("video");
 
-      this.connection.streamEvents
-        .selectFirst("local")
-        .stream.getTracks()[1].enabled = false;
+      // this.connection.streamEvents
+      //   .selectFirst("local")
+      //   .stream.getTracks()[1].enabled = false;
 
       this.options.video = false;
     },
     onVideo() {
       // this.connection.session.video = true;
 
-      this.connection.streamEvents.selectFirst("local").isAudioMuted = false;
+      // this.connection.streamEvents.selectFirst("local").isAudioMuted = false;
       let localStream = this.connection.attachStreams[0];
       localStream.unmute("video");
 
@@ -323,11 +328,43 @@ export default {
   destroyed() {
     this.$store.state.sg.onMeeting = true;
     this.outRoom();
+    document.querySelector("html").classList.remove("landscape");
   }
 };
 </script>
 
 <style>
+/* @media (orientation: portrait) {
+  .landscape {
+    height: 100vw;
+    -webkit-transform: rotate(90deg);
+    -moz-transform: rotate(90deg);
+    -o-transform: rotate(90deg);
+    -ms-transform: rotate(90deg);
+    transform: rotate(90deg);
+  }
+}
+@media (orientation: landscape) {
+  .landscape {
+    -webkit-transform: rotate(0deg);
+    -moz-transform: rotate(0deg);
+    -o-transform: rotate(0deg);
+    -ms-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+} */
+@media (orientation: portrait) {
+  .landscape {
+    transform: rotate(-90deg);
+    transform-origin: top left;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100vh;
+    height: 100vw;
+  }
+}
+
 .meeting-room {
   background-color: #5f5f5f;
 }

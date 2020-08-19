@@ -8,7 +8,7 @@
     fixed
   >
     <v-app-bar-nav-icon @click.stop="$store.commit('drawerOnOff')"></v-app-bar-nav-icon>
-    <v-col>
+    <v-col class="d-none d-sm-block">
       <v-toolbar-title class="text-truncate">
         <v-row>
           <h3 class="pl-10">{{ group.gpNm }}</h3>
@@ -16,16 +16,21 @@
         </v-row>
       </v-toolbar-title>
     </v-col>
+    <v-col absolute bottom right>
+      <Timer />
+    </v-col>
   </v-app-bar>
 </template>
 
 <script>
 import axios from "axios";
 import { mapState, mapActions, mapMutations } from "vuex";
-
+import Timer from "@/components/temp/Timer.vue";
 export default {
   name: "RoomNavbar",
-
+  components: {
+    Timer
+  },
   computed: {
     ...mapState("auth", ["userInfo", "isLogin"])
   },

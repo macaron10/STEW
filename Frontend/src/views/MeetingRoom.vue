@@ -184,7 +184,6 @@ export default {
     this.$store.state.sg.onMeeting = false;
 
     this.options = this.$route.params.options;
-    console.log(this.options);
     this.check();
 
     this.initoptions();

@@ -39,13 +39,14 @@ export default {
       const socket = new SockJS(apiUrl);
       const ws = Stomp.over(socket);
       this.ws = ws;
+      this.ws.debug = () => {return };
+
     },
     getChattingSock(gpNo) {
       const token = {
         accessToken: this.$store.state.auth.userInfo.accessToken
       };
       this.ws.connect(token, frame => {
-        console.log("소켓 연결 성공");
         this.ws.subscribe("/sub/chat/" + gpNo, msg => {
           // state.groupsReqs.push(JSON.parse(msg.body))
           this.messages.push(JSON.parse(msg.body));
@@ -62,7 +63,6 @@ export default {
             const idx = this.members.indexOf(itemToFind);
             if (idx > -1) this.members.splice(idx, 1);
           }
-          console.log(JSON.parse(msg.body), "구독msg");
         });
         // this.sendEnterMsg();
       });
@@ -81,12 +81,6 @@ export default {
       this.ws.send("/pub/chat", stringMsg, token);
     },
     sendEnterMsg() {
-      //멤버에 나 추가
-      // console.log("나 추가 되는 중?")
-      // const userInformation = {
-      //   "userNm": "나"
-      // }
-      // this.members.push({userInformation})
       const token = {
         accessToken: this.$store.state.auth.userInfo.accessToken
       };
@@ -106,7 +100,7 @@ export default {
       const quitMsg = {
         type: "QUIT",
         gpNo: this.roomid,
-        chatMsg: "님이 퇴장했습니다.(유저네임 들어오면 수정)"
+        chatMsg: "님이 퇴장했습니다."
       };
       const stringMsg = JSON.stringify(quitMsg);
       // this.messages.push(message)
@@ -121,7 +115,6 @@ export default {
         Object.values(userList).forEach(e => {
           this.members.push(e);
         });
-        console.log(this.members);
       } catch (err) {
         console.error(err);
       }

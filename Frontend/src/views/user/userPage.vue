@@ -159,6 +159,12 @@ export default {
   created() {
     this.getUserInfo();
   },
+  mounted() {
+    this.$vuetify.goTo(0, {
+      duration: 100,
+      offset: 0
+    })
+  },
 
   methods: {
     getUserInfo() {

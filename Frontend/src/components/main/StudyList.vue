@@ -158,6 +158,7 @@ export default {
     async signUpGroup(group) {
       if (group.gpCurNum === group.gpMaxNum) {
         alert("정원이 가득 찼습니다.");
+        this.dialog = false
         return;
       }
       const apiUrl = "/study/user/req?gpNo=" + group.gpNo;

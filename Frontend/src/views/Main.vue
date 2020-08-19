@@ -26,6 +26,7 @@
                     width="40px"
                     class="mx-auto"
                   ></v-img>
+                  <div v-else style="height:40px; width:40px"></div>
                   </v-col>
                   </v-row>
                   <v-col cols="12" class="text-center">

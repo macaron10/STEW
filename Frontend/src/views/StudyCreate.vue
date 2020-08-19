@@ -292,8 +292,6 @@ export default {
       duration: 100,
       offset: 0
     })
-
-    console.log("mounted Fin");
   }
 };
 </script>

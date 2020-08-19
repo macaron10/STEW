@@ -201,6 +201,10 @@ export default {
     if (!this.private) {
       this.getGroupIdManagerId();
     }
+    this.$vuetify.goTo(0, {
+      duration: 100,
+      offset: 0
+    })
   },
   computed: {
     dateRangeText() {

@@ -4,26 +4,7 @@
     <v-row>
       <v-col class="py-0">
         <div class="videos-container">
-          <!-- <h1>비디오의 상태 {{options.video}}</h1> -->
-          <!-- footer -->
-
           <v-row class="footer d-none d-md-block" style="z-index:1">
-            <v-select
-              v-model="audioInput"
-              :items="audioInputSelect"
-              item-value="value"
-              item-text="text"
-              color="pink"
-              @change="change"
-            ></v-select>
-            <v-select
-              v-model="videoInput"
-              :items="videoInputSelect"
-              item-value="value"
-              item-text="text"
-              color="pink"
-              @change="change"
-            ></v-select>
             <div width="100%" class="text-center">
               <v-btn v-if="options.audio" class="mx-1" fab dark color="#FB8C00" @click="mute">
                 <v-icon dark>mdi-microphone</v-icon>
@@ -58,9 +39,10 @@
               >
                 <v-icon dark>mdi-message-text-outline</v-icon>
               </v-btn>
-              <v-btn class="mx-1" fab dark color="grey darken-1" @click="reverseCamera">
-                <v-icon dark>mdi-camera-retake-outline</v-icon>
+              <v-btn class="mx-1" fab dark color="grey darken-1" @click.stop="openDialog">
+                <v-icon dark>mdi-settings-helper</v-icon>
               </v-btn>
+              <!-- <v-btn color="primary" dark @click.stop="openDialog">Setting</v-btn> -->
               <v-btn class="mx-1" fab dark color="red" @click="checkout">
                 <v-icon dark>mdi-account-arrow-right-outline</v-icon>
               </v-btn>
@@ -103,8 +85,8 @@
             <v-btn v-else class="mx-1" fab outlined small dark color="#43A047" @click="onVideo">
               <v-icon dark>mdi-video-off</v-icon>
             </v-btn>
-            <v-btn class="mx-1" fab small dark color="grey darken-1" @click="reverseCamera">
-              <v-icon dark>mdi-camera-retake-outline</v-icon>
+            <v-btn class="mx-1" fab small dark color="grey darken-1" @click.stop="openDialog">
+              <v-icon dark>mdi-settings-helper</v-icon>
             </v-btn>
             <v-btn
               v-if="showChatRoom"
@@ -137,6 +119,37 @@
       >
         <Chat :roomid="roomid" />
       </v-col>
+    </v-row>
+
+    <v-row justify="center">
+      <v-dialog v-model="dialog" max-width="400">
+        <v-card>
+          <v-card-title class="headline">설정</v-card-title>
+
+          <v-card-text>
+            <v-select
+              v-model="audioInputTmp"
+              :items="audioInputSelect"
+              item-value="value"
+              item-text="text"
+              color="pink"
+            ></v-select>
+            <v-select
+              v-model="videoInputTmp"
+              :items="videoInputSelect"
+              item-value="value"
+              item-text="text"
+              color="pink"
+            ></v-select>
+            <v-checkbox v-model="reverseCamTmp" label="카메라 좌우반전"></v-checkbox>
+          </v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="blue darken-1" text @click="saveSetting()">확인</v-btn>
+            <v-btn color="red darken-1" text @click="dialog=false">취소</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
     </v-row>
   </div>
 </template>
@@ -173,10 +186,15 @@ export default {
       audioInputSelect: [],
       audioOutputSelect: [],
       videoInputSelect: [],
-      audioInput: {},
-      audioOutput: {},
-      videoInput: {},
-      localStream: {}
+      audioInput: "",
+      audioOutput: "",
+      videoInput: "",
+      audioInputTmp: "",
+      audioOutputTmp: "",
+      videoInputTmp: "",
+      reverseCam: false,
+      reverseCamTmp: true,
+      dialog: false
     };
   },
   components: {
@@ -217,7 +235,6 @@ export default {
       }
     }
 
-    this.getDevices();
     this.initoptions();
     this.dragElement();
   },
@@ -226,6 +243,10 @@ export default {
   //   // this.connection.close();
   // },
   methods: {
+    openDialog() {
+      this.getDevices();
+      this.dialog = true;
+    },
     onResize() {
       if (window.innerWidth > 960) {
         this.showChatRoom = true;
@@ -234,97 +255,81 @@ export default {
         });
       }
     },
-    change() {
+    saveSetting() {
+      this.dialog = false;
+
+      this.audioInput = this.audioInputTmp;
+      this.videoInput = this.videoInputTmp;
+      this.reverseCam = this.reverseCamTmp;
+
       const constraints = {
-        audio: { deviceId: this.audioInput.deviceId },
-        video: { deviceId: this.videoInput.deviceId }
+        audio: { deviceId: this.audioInput },
+        video: { deviceId: this.videoInput }
       };
       navigator.mediaDevices
         .getUserMedia(constraints)
         .then(this.getStream)
-        .then(this.getDevices);
-
-      // this.connection.mediaConstraints.video.optional = [];
-      // this.connection.mediaConstraints.video.optional.push({
-      //   sourceId: this.videoInput.deviceId
-      // });
-      // this.connection.mediaConstraints.video.optional.push({
-      //   bandwidth: this.connection.bandwidth.video * 8 * 1024 || 128 * 8 * 1024
-      // });
-
-      // this.connection.addStream({
-      //   video: true
-      // });
-      ///////////////////////////////////////////////////////////////////////
-      // navigator.mediaDevices
-      //   .getUserMedia({ audio: true, video: true })
-      //   .then(st => {
-      //     console.log(st.getAudioTracks());
-      //     console.log(st.getVideoTracks());
-      //   });
-
-      // navigator.mediaDevices
-      //   .getUserMedia({
-      //     audio: {
-      //       deviceId: {
-      //         exact: this.audioInput.deviceId
-      //       }
-      //     }
-      //   })
-      //   .then(stream => {
-      //     console.log(stream)
-      //     const foo = this.connection.getAllParticipants().forEach(pid => {
-      //       const { peer } = this.connection.peers[pid];
-      //       peer.getSenders().forEach(sender => {
-      //         console.log(sender);
-      //         consoel.log(stream )
-      //         if (sender.track.kind === 'audio' && stream)
-      //           sender.replaceTrack(stream);
-      //       });
-      //     });
-      //     Promise.all(foo)
-      //       .then(() => resolve())
-      //       .catch(() => reject());
-      //   });
+        .then(this.reverseCamera);
     },
     getDevices() {
       let audioInput = [];
       let audioOutput = [];
       let videoInput = [];
-      navigator.mediaDevices.enumerateDevices().then(function(devices) {
-        devices.forEach(function(device) {
-          let option = {};
-          option.value = device;
-          if (device.kind == "audioinput") {
-            option.text = device.label || `microphone ${audioInput.length + 1}`;
-            audioInput.push(option);
-          } else if (device.kind === "audiooutput") {
-            option.text = device.label || `speaker ${audioOutput.length + 1}`;
-            audioOutput.push(option);
-          } else if (device.kind === "videoinput") {
-            option.text = device.label || `camera ${videoInput.length + 1}`;
-            videoInput.push(option);
-          }
+      navigator.mediaDevices
+        .enumerateDevices()
+        .then(function(devices) {
+          devices.forEach(function(device) {
+            let option = {};
+            option.value = device.deviceId;
+            if (device.kind == "audioinput") {
+              option.text =
+                device.label || `microphone ${audioInput.length + 1}`;
+              audioInput.push(option);
+            } else if (device.kind === "audiooutput") {
+              option.text = device.label || `speaker ${audioOutput.length + 1}`;
+              audioOutput.push(option);
+            } else if (device.kind === "videoinput") {
+              option.text = device.label || `camera ${videoInput.length + 1}`;
+              videoInput.push(option);
+            }
+          });
+        })
+        .then(() => {
+          this.audioInputSelect = audioInput;
+          this.audioOutputSelect = audioOutput;
+          this.videoInputSelect = videoInput;
+
+          if (this.audioInput == "") this.audioInput = this.audioInputSelect[0];
+          if (this.videoInput == "") this.videoInput = this.videoInputSelect[0];
+
+          this.audioInputTmp = this.audioInput;
+          this.videoInputTmp = this.videoInput;
+          this.reverseCamTmp = this.reverseCam;
         });
-      });
-      this.audioInputSelect = audioInput;
-      this.audioOutputSelect = audioOutput;
-      this.videoInputSelect = videoInput;
     },
     getStream(stream) {
-      // this.connection.attachStreams[0].getTracks().forEach(track => {
-      //   track.stop();
-      // });
       this.replaceTrack(stream.getAudioTracks()[0], "audio");
       this.replaceTrack(stream.getVideoTracks()[0], "video");
 
-      let connection = this.connection;
-      connection.captureUserMedia(function() {
-        connection.renegotiate(); // share with all existing users
-      });
+      // let connection = this.connection;
+      // connection.captureUserMedia(function() {
+      //   connection.renegotiate(); // share with all existing users
+      // });
+
+      let localStream = this.connection.attachStreams[0];
+
+      localStream.removeTrack(localStream.getVideoTracks()[0]);
+      localStream.removeTrack(localStream.getAudioTracks()[0]);
+
+      localStream.addTrack(stream.getVideoTracks()[0]);
+      localStream.addTrack(stream.getAudioTracks()[0]);
+
+      console.log(localStream.getTracks());
 
       window.stream = stream;
-      // document.querySelector("video").srcObject = stream;
+      document.getElementById(
+        this.connection.attachStreams[0].streamid
+      ).srcObject = stream;
     },
     attachSinkId(element, sinkId) {
       if (typeof element.sinkId !== "undefined") {
@@ -341,17 +346,22 @@ export default {
       }
     },
     reverseCamera() {
-      const localStream = this.connection.attachStreams[0];
-      const streamId = localStream.streamid;
-      this.connection.send(streamId);
-      document.getElementById(streamId).classList.toggle("mirror-video");
+      const msg = {
+        id: this.connection.attachStreams[0].streamid,
+        state: this.reverseCam
+      };
+
+      this.connection.send(msg);
+      this.reverseCam
+        ? document.getElementById(msg.id).classList.add("mirror-video")
+        : document.getElementById(msg.id).classList.remove("mirror-video");
     },
     replaceTrack(track, type) {
       if (this.connection.getAllParticipants().length == 0) return;
       this.connection.getAllParticipants().forEach(pid => {
         const { peer } = this.connection.peers[pid];
         peer.getSenders().forEach(sender => {
-          console.log(sender.track);
+          console.log(sender);
           if (sender.track.kind === type && track) sender.replaceTrack(track);
         });
       });
@@ -370,6 +380,7 @@ export default {
       if (!!this.$route.params.options) options = this.$route.params.options;
       const connection = this.connection;
 
+      let audioinput, videoInput;
       connection.onstream = function(e) {
         e.mediaElement.id = e.streamid; // ---------- set ID
         document.querySelector(".videos-container").appendChild(e.mediaElement);
@@ -384,7 +395,10 @@ export default {
       };
 
       connection.onmessage = function(event) {
-        document.getElementById(event.data).classList.toggle("mirror-video");
+        const data = event.data;
+        data.state
+          ? document.getElementById(data.id).classList.add("mirror-video")
+          : document.getElementById(data.id).classList.remove("mirror-video");
       };
       this.connection.enableLogs = false;
     },
@@ -421,8 +435,19 @@ export default {
         this.connection.disconnectWith(participantId);
       });
 
-      this.connection.attachStreams.forEach(function(localStream) {
-        localStream.stop();
+      // this.connection.attachStreams.forEach(function(localStream) {
+      //   localStream.stop();
+      // });
+
+      this.connection.attachStreams.forEach(function(stream) {
+        stream.stop();
+        stream.getTracks().forEach(function(track) {
+          stream.removeTrack(track);
+
+          if (track.stop) {
+            track.stop();
+          }
+        });
       });
 
       this.connection.closeSocket();
@@ -496,7 +521,6 @@ export default {
   destroyed() {
     this.$store.state.sg.onMeeting = true;
     this.outRoom();
-    document.querySelector("html").classList.remove("landscape");
   }
 };
 </script>

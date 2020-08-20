@@ -21,8 +21,13 @@ axios.interceptors.request.use(config => {
     const tokenInfo: any = jwt.decode(store.getters['auth/getUserInfo'].accessToken.replace("Bearer ", ""));
 
     if (tokenInfo.exp && Date.now() - tokenInfo.exp * 1000 < 60000) { // accessToken의 만료시간이 1분(이하) 후 일 때
-      store.dispatch('auth/tokenRefresh').then(() => {
+      store.dispatch('auth/tokenRefresh')
+      .then(() => {
         config.headers.Authorization = store.getters['auth/getUserInfo'].accessToken;
+      })
+      .catch(()=> {
+        alert("캐치캐채ㅣ");
+        throw new axios.Cancel('test');
       })
     } else {
       config.headers.Authorization = token;

@@ -2,6 +2,14 @@ import router from "@/router";
 import axios from 'axios';
 import jwt from "jsonwebtoken";
 import { rejects } from 'assert';
+import { getBaseUrl } from '@/constants'
+import store from "@/store";
+import Vue from "vue";
+
+Vue.config.productionTip = false;
+const refreshInstance = axios.create()
+
+refreshInstance.defaults.baseURL = getBaseUrl('api')
 
 interface UserInfo {
   userId: number,
@@ -91,18 +99,17 @@ export default {
       },
   
       // 토큰 갱신
-      tokenRefresh({ state, commit }: any) {
+      async tokenRefresh({ state, commit }: any) {
         return new Promise((resolve, reject) => {
           const config = {
             headers: {
+              "Authorization": state.userInfo.accessToken,
               "refreshToken": state.userInfo.refreshToken
             }
           }
           const origin = state.userInfo.accessToken;
-  
-          axios.get('/user/refresh', config)
+          refreshInstance.get('/user/refresh', config)
             .then(res => {
-              console.log(res.data.msg)
               // console.log("토큰 재발급 응답");
               if(res.data.msg == 'success'){
                 commit("refreshSuccess", res.headers.accesstoken);
@@ -115,7 +122,7 @@ export default {
                 commit("logoutSuccess");
                 alert("다시 로그인해주세요");
                 reject();
-                router.push('/');
+                router.push('/').catch(()=>({}));
               }
             })
         })

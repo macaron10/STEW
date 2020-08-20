@@ -40,7 +40,7 @@ export default {
     },
     watch:{
         loginStatus: function(){
-            this.$router.push({ name: this.prevPage });
+            this.$router.push({ name: this.prevPage }).catch(()=>({}));
         }
     }
 }

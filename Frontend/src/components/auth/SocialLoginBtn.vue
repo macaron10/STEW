@@ -44,6 +44,10 @@ export default {
   },
   methods:{
     SocialSignIn(){
+      if(this.provider == 'Naver' || this.provider == 'Facebook') {
+        alert("해당 기능은 검수 중입니다.")
+        return;
+      }
       this.loading = !this.loading;
 
       if(this.signInWindow == null){

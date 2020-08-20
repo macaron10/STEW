@@ -59,6 +59,14 @@ const participated = (to: any, from: any, next: any) => {
   })
 }
 
+import axios from 'axios';
+
+const isExpired = (to: any, from: any, next: any) => {
+  if(store.getters['auth/getUserInfo'].accessToken != "") {
+    axios.get('/user').finally(() => { next() })
+  } else next();
+}
+
 const routes: Array<RouteConfig> = [
   { 
     path: '/login',
@@ -75,7 +83,8 @@ const routes: Array<RouteConfig> = [
   {
     path: '/',
     name: 'Main',
-    component: Main
+    component: Main,
+    beforeEnter: isExpired
   },
   {
     path: '/study/create',

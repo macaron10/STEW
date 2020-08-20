@@ -4,7 +4,6 @@ import java.io.IOException;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -12,17 +11,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.security.access.AuthorizationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.ssafy.study.user.model.UserPrincipal;
+import com.ssafy.study.user.model.UserToken;
 import com.ssafy.study.user.service.UserPrincipalDetailsService;
 import com.ssafy.study.util.JwtProperties;
 import com.ssafy.study.util.JwtUtil;
@@ -52,7 +49,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter{
 		if(token == null ||
 				!token.startsWith(JwtProperties.TOKEN_PREFIX) ||
 //				블랙리스트 
-				redisTemplate.opsForValue().get(token.replace(JwtProperties.TOKEN_PREFIX, "")) != null) {
+				((UserToken) redisTemplate.opsForValue().get(token.replace(JwtProperties.TOKEN_PREFIX, ""))) != null) {
 			chain.doFilter(request, response);
 			return;
 		}else {

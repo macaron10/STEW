@@ -40,9 +40,10 @@ public class JwtAuthenticationSuccessHandler extends SavedRequestAwareAuthentica
 		String tokenKey = userPrincipal.getUsername() + "#" + userPrincipal.getType();
 		
 		UserToken userToken = (UserToken) redisTemplate.opsForValue().get(tokenKey);
+		
 		if(userToken != null) {
 //			원래 액세스 토큰 로그아웃
-			redisTemplate.opsForValue().set(userToken.getAccessToken(), "logout");
+			redisTemplate.opsForValue().set(userToken.getAccessToken(), new UserToken());
 			redisTemplate.expire(userToken.getAccessToken(), JwtUtil.getExpiringTime(userToken.getAccessToken()) - System.currentTimeMillis(), TimeUnit.MILLISECONDS);
 			
 		}

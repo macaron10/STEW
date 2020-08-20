@@ -242,7 +242,7 @@ public class UserController {
 			String tokenKey = user.getUserEmail() + "#" + user.getType();
 			UserToken userToken = (UserToken) redisTemplate.opsForValue().get(tokenKey);
 			
-			if (refreshToken.equals(userToken.getRefreshToken())) {
+			if (userToken != null && refreshToken.equals(userToken.getRefreshToken())) {
 				UserPrincipal userPrincipal = new UserPrincipal(userService.loadUserByUserId(user.getUserId()));
 				
 				accessToken = JwtProperties.TOKEN_PREFIX + JwtUtil.generateAccessToken(userPrincipal);
@@ -257,7 +257,6 @@ public class UserController {
 				result.msg = "success";
 			} else result.msg = "invalid refreshToken";
 		}
-
 
 		return new ResponseEntity<>(result, HttpStatus.OK);
 	}

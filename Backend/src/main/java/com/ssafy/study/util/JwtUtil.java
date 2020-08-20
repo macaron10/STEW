@@ -149,9 +149,9 @@ public class JwtUtil implements Serializable{
 		
 	}
 	
-	private static String sliceBearer(String token) {
+	public static String sliceBearer(String token) {
 		if(token.startsWith(JwtProperties.TOKEN_PREFIX)) {
-			token = token.replace(JwtProperties.TOKEN_PREFIX, "");
+			return token.replace(JwtProperties.TOKEN_PREFIX, "");
 		}
 		
 		return token;

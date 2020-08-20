@@ -1,6 +1,15 @@
 import router from "@/router";
 import axios from 'axios';
 import jwt from "jsonwebtoken";
+import { rejects } from 'assert';
+import { getBaseUrl } from '@/constants'
+import store from "@/store";
+import Vue from "vue";
+
+Vue.config.productionTip = false;
+const refreshInstance = axios.create()
+
+refreshInstance.defaults.baseURL = getBaseUrl('api')
 
 class User {
   userId: number;
@@ -91,23 +100,30 @@ export default {
       },
   
       // 토큰 갱신
-      tokenRefresh({ state, commit }: any) {
-        return new Promise(resolve => {
+      async tokenRefresh({ state, commit }: any) {
+        return new Promise((resolve, reject) => {
           const config = {
             headers: {
+              "Authorization": state.userInfo.accessToken,
               "refreshToken": state.userInfo.refreshToken
             }
           }
           const origin = state.userInfo.accessToken;
-  
-          axios.get('/user/refresh', config)
+          refreshInstance.get('/user/refresh', config)
             .then(res => {
               // console.log("토큰 재발급 응답");
-              commit("refreshSuccess", res.headers.accesstoken);
-              //console.log(origin);
-              //console.log(state.userInfo.accessToken);
-              if (origin !== state.userInfo.accessToken) {
-                resolve();
+              if(res.data.msg == 'success'){
+                commit("refreshSuccess", res.headers.accesstoken);
+                if (origin !== state.userInfo.accessToken) {
+                  resolve();
+                  //console.log(origin);
+                  //console.log(state.userInfo.accessToken);
+                }
+              }else if(res.data.msg == 'invalid refreshToken'){
+                commit("logoutSuccess");
+                alert("다시 로그인해주세요");
+                reject();
+                router.push('/').catch(()=>({}));
               }
             })
         })

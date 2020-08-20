@@ -20,6 +20,7 @@ import lombok.ToString;
 public class GroupJoinDto {
 	private long gpJoinNo;
 	private long gpGpNo;
+	private GroupDto gp;
 
 	private UserDto user;
 	private long userId;
@@ -29,6 +30,8 @@ public class GroupJoinDto {
 	public GroupJoinDto(GroupJoin join) {
 		this.gpJoinNo = join.getGpJoinNo();
 		this.gpGpNo = join.getGp().getGpNo();
+		
+		this.gp = new GroupDto(join.getGp());
 
 		this.userId = join.getUser().getUserId();
 

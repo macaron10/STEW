@@ -14,7 +14,7 @@
               class="align-start"
               color="#fcfcfc"
             >
-              <v-container  v-bind:class="{ 'd-none d-sm-flex' : index > 2}">
+              <v-container  v-bind:class="{ 'd-none' : index > 2}">
                 <v-row>
                   <v-row>
                   <v-col cols="12" class="pa-0">
@@ -239,7 +239,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 #Mainpage {
   background-color: #fcfcfc;
 }

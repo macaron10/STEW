@@ -12,6 +12,7 @@ import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 import com.ssafy.study.chat.service.RedisSubscriber;
+import com.ssafy.study.user.model.UserToken;
 
 @Configuration
 public class RedisConfig {
@@ -38,10 +39,10 @@ public class RedisConfig {
 
 		redisTemplate.setConnectionFactory(redisConnectionFactory());
 		redisTemplate.setKeySerializer(new StringRedisSerializer());
-		redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<>(String.class));
+//		redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<>(String.class));
 
 //		객체를 Json 형태로 깨지지 않고 받기 위한 직렬화
-//		redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<>(UserToken.class));
+		redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<>(UserToken.class));
 
 		return redisTemplate;
 

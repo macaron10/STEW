@@ -15,7 +15,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,6 +31,7 @@ import com.ssafy.study.user.model.UserDto;
 import com.ssafy.study.user.model.UserModify;
 import com.ssafy.study.user.model.UserPrincipal;
 import com.ssafy.study.user.model.UserSignUp;
+import com.ssafy.study.user.model.UserToken;
 import com.ssafy.study.user.service.UserService;
 import com.ssafy.study.util.JwtProperties;
 import com.ssafy.study.util.JwtUtil;
@@ -191,8 +191,17 @@ public class UserController {
 		result.msg = "success";
 		result.object = modifiedUser;
 
+		String tokenKey = JwtUtil.getRefreshKey(accessToken);
+		
+		UserToken userToken = (UserToken) redisTemplate.opsForValue().get(tokenKey);
+		
 		accessToken = JwtProperties.TOKEN_PREFIX
 				+ JwtUtil.generateAccessTokenExpireIn(new UserPrincipal(modifiedUser), remains);
+		userToken.setAccessToken(accessToken);
+		
+		redisTemplate.opsForValue().set(tokenKey, userToken);
+		redisTemplate.expire(tokenKey, JwtProperties.EXPIRATION_TIME_REFRESH, TimeUnit.MILLISECONDS);
+		
 		response.addHeader("accessToken", accessToken);
 
 		return new ResponseEntity<>(result, HttpStatus.OK);
@@ -231,12 +240,18 @@ public class UserController {
 		}
 
 		UserDto user = JwtUtil.getUserFromToken(accessToken);
-
-		if (refreshToken.equals(redisTemplate.opsForValue().get(JwtUtil.getRefreshKey(accessToken)))) {
+		String tokenKey = user.getUserEmail() + "#" + user.getType();
+		UserToken userToken = (UserToken) redisTemplate.opsForValue().get(tokenKey);
+		
+		if (refreshToken.equals(userToken.getRefreshToken())) {
 			UserPrincipal userPrincipal = new UserPrincipal(userService.loadUserByUserId(user.getUserId()));
-
+			
 			accessToken = JwtProperties.TOKEN_PREFIX + JwtUtil.generateAccessToken(userPrincipal);
-
+			
+			userToken.setAccessToken(accessToken);
+			redisTemplate.opsForValue().set(tokenKey, userToken);
+			redisTemplate.expire(tokenKey, JwtProperties.EXPIRATION_TIME_REFRESH, TimeUnit.MILLISECONDS);
+			
 			response.addHeader("accessToken", accessToken);
 
 			result.status = true;

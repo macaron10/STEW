@@ -19,6 +19,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import com.auth0.jwt.JWT;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.ssafy.study.user.model.UserPrincipal;
@@ -66,7 +67,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter{
 		
 		token = token.replace(JwtProperties.TOKEN_PREFIX, "");
 		
-		Authentication authentication = getUsernamePasswordAuthentication(request, response, token);
+		Authentication authentication = getUsernamePasswordAuthentication(token);
 		
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 		
@@ -80,8 +81,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter{
         return registration;
     }
 	
-	private Authentication getUsernamePasswordAuthentication(HttpServletRequest request, HttpServletResponse response, String token) {
-		
+	private Authentication getUsernamePasswordAuthentication(String token) {
 		UserPrincipal userPrincipal = (UserPrincipal) userPrincipalDetailsService.loadUserByUserEmailAndType(
 				JwtUtil.getUsernameFromToken(token),
 				JwtUtil.getUserTypeFromToken(token)

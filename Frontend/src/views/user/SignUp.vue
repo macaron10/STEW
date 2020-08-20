@@ -10,7 +10,30 @@
 
 <script>
 import SignUpForm from '@/components/auth/SignUpForm'
+import { mapGetters } from 'vuex'
+
 export default {
+  beforeRouteEnter(to, from, next){   
+      next(vm => {
+          vm.$data.prevPage = from.name == 'Login' ? 'Main' : from.name;
+      })
+  },
+  data(){
+      return{
+          prevPage: '',
+      }
+  },
+  computed: {
+      ...mapGetters('auth', [
+          'loginStatus',
+      ]),
+  },
+  watch:{
+      loginStatus: function(){
+        console.log(this.prevPage)
+          this.$router.push({ name: this.prevPage }).catch(()=>({}));
+      }
+  },
   components: {
     SignUpForm,
   },

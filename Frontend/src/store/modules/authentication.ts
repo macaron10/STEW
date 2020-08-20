@@ -108,6 +108,10 @@ export default {
               if (origin !== state.userInfo.accessToken) {
                 resolve();
               }
+            }).catch(()=>{
+              commit("logoutSuccess");
+              alert("다시 로그인해주세요");
+              router.push('/');
             })
         })
       },

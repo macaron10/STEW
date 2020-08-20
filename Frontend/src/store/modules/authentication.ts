@@ -1,6 +1,7 @@
 import router from "@/router";
 import axios from 'axios';
 import jwt from "jsonwebtoken";
+import { rejects } from 'assert';
 
 interface UserInfo {
   userId: number,
@@ -91,7 +92,7 @@ export default {
   
       // 토큰 갱신
       tokenRefresh({ state, commit }: any) {
-        return new Promise(resolve => {
+        return new Promise((resolve, reject) => {
           const config = {
             headers: {
               "refreshToken": state.userInfo.refreshToken
@@ -113,6 +114,7 @@ export default {
               }else if(res.data.msg == 'invalid refreshToken'){
                 commit("logoutSuccess");
                 alert("다시 로그인해주세요");
+                reject();
                 router.push('/');
               }
             })

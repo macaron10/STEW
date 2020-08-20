@@ -33,7 +33,7 @@
               prepend-icon="mdi-camera"
               @change="changeImg"
               :rules="[
-                () => form.gpImg.size <= 3000000 || '3MB 이하의 파일만 등록 가능합니다.',
+                () => form.gpImg.size <= 1000000 || '1MB 이하의 파일만 등록 가능합니다.',
                 () => form.gpImg.length > 0 || correctExt || '지원하지 않는 확장자입니다.'
               ]"
             ></v-file-input>

@@ -5,8 +5,7 @@
           <h2 class="mb-3 pl-7 text-center text-sm-left">{{new Date().getMonth()+1}}월의 스터디 랭킹</h2>
           <div v-if="rankGpList.length == 0">아직 이달의 랭킹이 존재하지 않습니다!</div>
         <v-row>
-
-          <v-col cols="4" color="#fcfcfc" class="d-flex justify-center align-center">
+          <v-col cols="12" md="4" color="#fcfcfc" class="d-flex justify-center align-center">
             <v-card
               flat
               tile
@@ -47,7 +46,7 @@
               </v-container>
             </v-card>
           </v-col>
-          <v-col cols="8">
+          <v-col cols="12" md="8">
               <Banner v-intersect="onIntersect" ref="Banner"/>
           </v-col>
         </v-row>

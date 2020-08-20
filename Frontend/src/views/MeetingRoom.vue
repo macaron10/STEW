@@ -124,7 +124,8 @@
     <v-row justify="center">
       <v-dialog v-model="dialog" max-width="400">
         <v-card>
-          <v-card-title class="headline">설정</v-card-title>
+          <v-card-title class="headline font-weight-bold">설정</v-card-title>
+          <v-card-subtitle class="pb-0">시범 운행 중인 기능입니다!</v-card-subtitle>
 
           <v-card-text>
             <v-select
@@ -142,6 +143,12 @@
               color="pink"
             ></v-select>
             <v-checkbox v-model="reverseCamTmp" label="카메라 좌우반전"></v-checkbox>
+            <v-alert
+              border="left"
+              colored-border
+              type="warning"
+              elevation="2"
+            >설정을 변경하시면 카메라와 오디오가 자동으로 켜집니다!</v-alert>
           </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
@@ -258,15 +265,17 @@ export default {
     saveSetting() {
       this.dialog = false;
 
-      // this.connection.attachStreams.forEach(function(stream) {
-      //   stream.getTracks().forEach(function(track) {
-      //     track.stop();
-      //   });
-      // });
+      this.reverseCam = this.reverseCamTmp;
+      if (
+        this.audioInput == this.audioInputTmp &&
+        this.videoInput == this.videoInputTmp
+      ) {
+        this.reverseCamera();
 
+        return;
+      }
       this.audioInput = this.audioInputTmp;
       this.videoInput = this.videoInputTmp;
-      this.reverseCam = this.reverseCamTmp;
 
       const constraints = {
         audio: { deviceId: this.audioInput },
@@ -274,9 +283,8 @@ export default {
       };
       navigator.mediaDevices
         .getUserMedia(constraints)
-      .then(this.getStream)
-      .then(this.reverseCamera);
-      // this.reverseCamera();
+        .then(this.getStream)
+        .then(this.reverseCamera);
     },
     getDevices() {
       let audioInput = [];
@@ -325,6 +333,12 @@ export default {
 
       let localStream = this.connection.attachStreams[0];
 
+      // this.connection.attachStreams.forEach(function(stream) {
+      // stream.getTracks().forEach(function(track) {
+      //   track.stop();
+      // });
+      // });
+
       // localStream.removeTrack(localStream.getVideoTracks()[0]);
       // localStream.removeTrack(localStream.getAudioTracks()[0]);
 
@@ -332,6 +346,13 @@ export default {
       // localStream.addTrack(stream.getAudioTracks()[0]);
 
       window.stream = stream;
+      // if (!this.options.video) stream.mute("video");
+      // if (!this.options.audio) {
+      //   stream.mute("audio");
+      //   stream.muted = true;
+      // }
+      this.options.video = true;
+      this.options.audio = true;
       document.getElementById(localStream.streamid).srcObject = stream;
     },
     attachSinkId(element, sinkId) {
@@ -349,7 +370,6 @@ export default {
       }
     },
     reverseCamera() {
-      console.log(this.connection.attachStreams[0]);
       const msg = {
         id: this.connection.attachStreams[0].streamid,
         state: this.reverseCam
@@ -365,7 +385,6 @@ export default {
       this.connection.getAllParticipants().forEach(pid => {
         const { peer } = this.connection.peers[pid];
         peer.getSenders().forEach(sender => {
-          console.log(sender);
           if (sender.track.kind === type) sender.replaceTrack(track);
         });
       });
@@ -444,6 +463,10 @@ export default {
       // this.connection.attachStreams.forEach(function(localStream) {
       //   localStream.stop();
       // });
+
+      this.connection.attachStreams[0].getTracks().forEach(t => {
+        t.stop();
+      });
 
       this.connection.attachStreams.forEach(function(stream) {
         stream.stop();

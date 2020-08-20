@@ -304,7 +304,9 @@ public class GroupController {
 		BasicResponse result = new BasicResponse();
 		result.msg = "success";
 		result.status = true;
-
+		
+		notiService.sendNotification(new Notification(NotiType.REJECT, join.getUserId(),
+				"'" + join.getGp().getGpNm() + "'에서 퇴장당하셨습니다."));
 		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 

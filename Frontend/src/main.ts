@@ -37,42 +37,42 @@ axios.interceptors.request.use(config => {
   return config;
 })
 
-// axios.interceptors.response.use(
-//   function (res) {
-//     // console.log(res);
-//     return res;
-//   },
+axios.interceptors.response.use(
+  function (res) {
+    // console.log(res);
+    return res;
+  },
 
-//   function (err) {
-//     const originReq = err.config;
-//     // console.log("err response");
-//     // console.log(err);
+  function (err) {
+    const originReq = err.config;
+    // console.log("err response");
+    // console.log(err);
     
-//     if (err.response.status === 401 && !originReq._retry) {
-//       originReq._retry = true;
+    if (err.response && err.response.status === 401 && !originReq._retry) {
+      originReq._retry = true;
       
-//       const refreshInfo: any = jwt.decode(store.getters['auth/getUserInfo'].refreshToken.replace("Bearer ", ""));
+      const refreshInfo: any = jwt.decode(store.getters['auth/getUserInfo'].refreshToken.replace("Bearer ", ""));
       
-//       if (refreshInfo.exp && Date.now() - refreshInfo.exp * 1000 < 0) {
-//         // console.log("token refresh start");
+      if (refreshInfo.exp && Date.now() - refreshInfo.exp * 1000 < 0) {
+        // console.log("token refresh start");
         
-//         return store.dispatch('auth/tokenRefresh').then(() => {
-//           // console.log("token refresh fin");
+        return store.dispatch('auth/tokenRefresh').then(() => {
+          // console.log("token refresh fin");
           
-//           originReq.headers.Authorization = store.getters['auth/getUserInfo'].accessToken;
-//           return axios.request(originReq);
-//           // return Promise.resolve(originReq);
-//         });
-//       } else {
-//         // console.log("can't refresh. have to logout")
-//         store.commit("auth/logoutSuccess");
-//         alert("다시 로그인해주세요");
-//         router.push('/').catch(()=>({}));
-//         return Promise.reject(err);
-//       }
-//     }
-//   }
-// )
+          originReq.headers.Authorization = store.getters['auth/getUserInfo'].accessToken;
+          return axios.request(originReq);
+          // return Promise.resolve(originReq);
+        });
+      } else {
+        // console.log("can't refresh. have to logout")
+        store.commit("auth/logoutSuccess");
+        alert("다시 로그인해주세요");
+        router.push('/').catch(()=>({}));
+        return Promise.reject(err);
+      }
+    }
+  }
+)
 
 const v = new Vue({
   router,

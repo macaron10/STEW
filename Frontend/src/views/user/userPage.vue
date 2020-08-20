@@ -181,7 +181,7 @@ export default {
     changeImg(e){
       // const file = e.target.files[0]; // Get first index in files
       this.imgInfo.correctExt = false;
-      if (e && e.size < 3000000) {
+      if (e && e.size < 1000000) {
         this.confirmExt();
           
         if (this.imgInfo.correctExt) {
@@ -194,7 +194,7 @@ export default {
           this.userInfo.userImg = [];
         }
       } else {
-        if (e && e.size > 3000000)  alert("3MB 이하의 파일만 등록 가능합니다.");
+        if (e && e.size > 1000000)  alert("1MB 이하의 파일만 등록 가능합니다.");
         this.userInfo.userImg = [];
         this.$refs.imgpreview.src = this.imgInfo.originSrc;
       }

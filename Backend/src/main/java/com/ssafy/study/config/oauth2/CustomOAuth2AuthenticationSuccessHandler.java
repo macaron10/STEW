@@ -16,6 +16,7 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 
 import com.ssafy.study.user.model.User;
 import com.ssafy.study.user.model.UserPrincipal;
+import com.ssafy.study.user.model.UserToken;
 import com.ssafy.study.user.service.UserService;
 import com.ssafy.study.util.BaseProperties;
 import com.ssafy.study.util.JwtProperties;
@@ -78,14 +79,13 @@ public class CustomOAuth2AuthenticationSuccessHandler implements AuthenticationS
 		
 		UserPrincipal principal = new UserPrincipal(user);
 		
-		String accessToken = JwtUtil.generateAccessToken(principal);
-		String refreshToken = JwtUtil.generateRefreshToken();
-		String refreshKey = JwtUtil.getRefreshKey(accessToken);
+		UserToken userToken = new UserToken(JwtUtil.generateAccessToken(principal), JwtUtil.generateAccessToken(principal));
+		String refreshKey = JwtUtil.getRefreshKey(userToken.getAccessToken());
 		
-		redisTemplate.opsForValue().set(refreshKey, refreshToken);
+		redisTemplate.opsForValue().set(refreshKey, userToken);
 		redisTemplate.expire(refreshKey, JwtProperties.EXPIRATION_TIME_REFRESH, TimeUnit.MILLISECONDS);
 		
-		response.sendRedirect(BaseProperties.BASE_URL_FRONT + "/#/oauth2" + "?email=" + userEmail + "&accessToken=" + accessToken + "&refreshToken=" + refreshToken);
+		response.sendRedirect(BaseProperties.BASE_URL_FRONT + "/#/oauth2" + "?email=" + userEmail + "&accessToken=" + userToken.getAccessToken() + "&refreshToken=" + userToken.getRefreshToken());
 		
 	}
 	

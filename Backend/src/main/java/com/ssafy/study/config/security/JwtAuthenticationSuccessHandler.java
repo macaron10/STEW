@@ -6,12 +6,12 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import javax.servlet.ServletException;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -37,17 +37,25 @@ public class JwtAuthenticationSuccessHandler extends SavedRequestAwareAuthentica
 			authorities.add(p.getAuthority());
 		}
 		
-		String refreshToken = JwtUtil.generateRefreshToken();
-		String accessToken = JwtUtil.generateAccessToken(userPrincipal);
-		String tokenKey = JwtUtil.getRefreshKey(accessToken);
+		String tokenKey = userPrincipal.getUsername() + "#" + userPrincipal.getType();
 		
-		redisTemplate.opsForValue().set(tokenKey, refreshToken);
+		UserToken userToken = (UserToken) redisTemplate.opsForValue().get(tokenKey);
+		
+		if(userToken != null) {
+//			원래 액세스 토큰 로그아웃
+			redisTemplate.opsForValue().set(userToken.getAccessToken(), new UserToken());
+			redisTemplate.expire(userToken.getAccessToken(), JwtUtil.getExpiringTime(userToken.getAccessToken()) - System.currentTimeMillis(), TimeUnit.MILLISECONDS);
+			
+		}
+		userToken = new UserToken(JwtUtil.generateAccessToken(userPrincipal), JwtUtil.generateRefreshToken());
+		
+		redisTemplate.opsForValue().set(tokenKey, userToken);
 		redisTemplate.expire(tokenKey, JwtProperties.EXPIRATION_TIME_REFRESH, TimeUnit.MILLISECONDS);
 		
 		SecurityContextHolder.getContext().setAuthentication(authResult);
 		
-		response.addHeader("accessToken", JwtProperties.TOKEN_PREFIX + accessToken);
-		response.addHeader("refreshToken", JwtProperties.TOKEN_PREFIX + refreshToken);
+		response.addHeader("accessToken", JwtProperties.TOKEN_PREFIX + userToken.getAccessToken());
+		response.addHeader("refreshToken", JwtProperties.TOKEN_PREFIX + userToken.getRefreshToken());
 		
 	}
 	

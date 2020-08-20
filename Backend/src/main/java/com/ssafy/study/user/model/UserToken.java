@@ -6,13 +6,15 @@ import org.springframework.data.redis.core.RedisHash;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @RedisHash
 @AllArgsConstructor
+@NoArgsConstructor
 public class UserToken implements Serializable{
 	
-	private String username;
+	private String accessToken;
 	private String refreshToken;
 	
 }

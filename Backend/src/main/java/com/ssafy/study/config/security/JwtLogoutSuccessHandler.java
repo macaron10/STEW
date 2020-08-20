@@ -3,7 +3,6 @@ package com.ssafy.study.config.security;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -12,6 +11,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.logout.HttpStatusReturningLogoutSuccessHandler;
 
+import com.ssafy.study.user.model.UserToken;
 import com.ssafy.study.util.JwtProperties;
 import com.ssafy.study.util.JwtUtil;
 
@@ -29,13 +29,10 @@ public class JwtLogoutSuccessHandler extends HttpStatusReturningLogoutSuccessHan
 		long remains = JwtUtil.getExpiringTime(accessToken) - System.currentTimeMillis();
 		
 //		BlackListing
-		redisTemplate.opsForValue().set(accessToken, "logout");
+		redisTemplate.opsForValue().set(accessToken, new UserToken());
 		redisTemplate.expire(accessToken, remains, TimeUnit.MILLISECONDS);
 		
 //		Delete RefreshToken
-		
-		if(redisTemplate.opsForValue().get(JwtUtil.getRefreshKey(accessToken)) != null)
-			redisTemplate.delete(JwtUtil.getRefreshKey(accessToken));
-		
+		redisTemplate.delete(JwtUtil.getRefreshKey(accessToken));
 	}
 }

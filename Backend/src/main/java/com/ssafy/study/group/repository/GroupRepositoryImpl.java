@@ -102,7 +102,7 @@ public class GroupRepositoryImpl /* extends QuerydslRepositorySupport */ impleme
 
 		TypedQuery<GroupDto> query = em.createQuery(jpql, GroupDto.class);
 
-		query.setMaxResults(5);
+		query.setMaxResults(3);
 		return query.getResultList();
 	}
 

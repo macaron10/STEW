@@ -97,6 +97,14 @@ export default {
       return this.$store.state.sg.searchedGroups;
     }
   },
+  mounted() {
+    this.getCategories();
+
+    this.$vuetify.goTo(0, {
+      duration: 100,
+      offset: 0
+    })
+  },
   methods: {
     async enterStudy(group) {
       if (!this.$store.state.auth.isLogin) {

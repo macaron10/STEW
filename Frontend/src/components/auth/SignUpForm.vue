@@ -70,7 +70,7 @@
           label="프로필 이미지"
           prepend-icon="mdi-camera" show-size
           :rules="[
-              () => !user.img || user.img.size <= 3000000 || '3MB 이하의 파일만 등록 가능합니다.',
+              () => !user.img || user.img.size <= 1000000 || '1MB 이하의 파일만 등록 가능합니다.',
               () => !user.img || correctExt || '지원하지 않는 확장자입니다.'
           ]"
           @change="confirmExt"
@@ -98,6 +98,7 @@
         <v-btn block dark 
           :color="baseColor"
           @click.once="formCheckHandler"
+          :key="btnKey"
         >
           <v-icon class="mr-4"
           >mdi-account-plus</v-icon>
@@ -142,6 +143,7 @@
         showPassword: false,
         correctExt: false,
         formData,
+        btnKey: 1,
       }
     },
     computed: {
@@ -202,9 +204,11 @@
             this.makeFormData();
             this.signupHandler();
           } else {
+            this.btnKey++;
             alert("이메일 확인을 눌러주세요!!")
           }
         } else {
+          this.btnKey++;
           alert("입력폼을 다시 확인해주세요!!");
         }
       },

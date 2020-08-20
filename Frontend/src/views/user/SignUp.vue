@@ -31,7 +31,8 @@ export default {
   watch:{
       loginStatus: function(){
         console.log(this.prevPage)
-          this.$router.push({ name: this.prevPage }).catch(()=>({}));
+        // this.$router.push({ name: this.prevPage }).catch(()=>({}));
+        this.$router.push({ name: 'Main' })
       }
   },
   components: {

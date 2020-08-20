@@ -237,29 +237,29 @@ public class UserController {
 
 		if (accessToken == null) {
 			result.msg = "accessToken not found";
+		}else {
+			UserDto user = JwtUtil.getUserFromToken(accessToken);
+			String tokenKey = user.getUserEmail() + "#" + user.getType();
+			UserToken userToken = (UserToken) redisTemplate.opsForValue().get(tokenKey);
+			
+			if (refreshToken.equals(userToken.getRefreshToken())) {
+				UserPrincipal userPrincipal = new UserPrincipal(userService.loadUserByUserId(user.getUserId()));
+				
+				accessToken = JwtProperties.TOKEN_PREFIX + JwtUtil.generateAccessToken(userPrincipal);
+				
+				userToken.setAccessToken(accessToken);
+				redisTemplate.opsForValue().set(tokenKey, userToken);
+				redisTemplate.expire(tokenKey, JwtProperties.EXPIRATION_TIME_REFRESH, TimeUnit.MILLISECONDS);
+				
+				response.addHeader("accessToken", accessToken);
+				
+				result.status = true;
+				result.msg = "success";
+			} else result.msg = "invalid refreshToken";
 		}
 
-		UserDto user = JwtUtil.getUserFromToken(accessToken);
-		String tokenKey = user.getUserEmail() + "#" + user.getType();
-		UserToken userToken = (UserToken) redisTemplate.opsForValue().get(tokenKey);
-		
-		if (refreshToken.equals(userToken.getRefreshToken())) {
-			UserPrincipal userPrincipal = new UserPrincipal(userService.loadUserByUserId(user.getUserId()));
-			
-			accessToken = JwtProperties.TOKEN_PREFIX + JwtUtil.generateAccessToken(userPrincipal);
-			
-			userToken.setAccessToken(accessToken);
-			redisTemplate.opsForValue().set(tokenKey, userToken);
-			redisTemplate.expire(tokenKey, JwtProperties.EXPIRATION_TIME_REFRESH, TimeUnit.MILLISECONDS);
-			
-			response.addHeader("accessToken", accessToken);
 
-			result.status = true;
-			result.msg = "success";
-		} else
-			result.msg = "Invalid RefreshToken";
-
-		return new ResponseEntity<>(result, result.status ? HttpStatus.OK : HttpStatus.FORBIDDEN);
+		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 
 }

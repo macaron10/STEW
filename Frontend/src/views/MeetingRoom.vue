@@ -40,7 +40,7 @@
                 <v-icon dark>mdi-message-text-outline</v-icon>
               </v-btn>
               <v-btn class="mx-1" fab dark color="grey darken-1" @click.stop="openDialog">
-                <v-icon dark>mdi-settings-helper</v-icon>
+                <v-icon dark>mdi-camera-metering-partial</v-icon>
               </v-btn>
               <!-- <v-btn color="primary" dark @click.stop="openDialog">Setting</v-btn> -->
               <v-btn class="mx-1" fab dark color="red" @click="checkout">
@@ -86,7 +86,7 @@
               <v-icon dark>mdi-video-off</v-icon>
             </v-btn>
             <v-btn class="mx-1" fab small dark color="grey darken-1" @click.stop="openDialog">
-              <v-icon dark>mdi-settings-helper</v-icon>
+              <v-icon dark>mdi-camera-metering-partial</v-icon>
             </v-btn>
             <v-btn
               v-if="showChatRoom"
@@ -258,6 +258,12 @@ export default {
     saveSetting() {
       this.dialog = false;
 
+      // this.connection.attachStreams.forEach(function(stream) {
+      //   stream.getTracks().forEach(function(track) {
+      //     track.stop();
+      //   });
+      // });
+
       this.audioInput = this.audioInputTmp;
       this.videoInput = this.videoInputTmp;
       this.reverseCam = this.reverseCamTmp;
@@ -268,8 +274,9 @@ export default {
       };
       navigator.mediaDevices
         .getUserMedia(constraints)
-        .then(this.getStream)
-        .then(this.reverseCamera);
+      .then(this.getStream)
+      .then(this.reverseCamera);
+      // this.reverseCamera();
     },
     getDevices() {
       let audioInput = [];
@@ -318,18 +325,14 @@ export default {
 
       let localStream = this.connection.attachStreams[0];
 
-      localStream.removeTrack(localStream.getVideoTracks()[0]);
-      localStream.removeTrack(localStream.getAudioTracks()[0]);
+      // localStream.removeTrack(localStream.getVideoTracks()[0]);
+      // localStream.removeTrack(localStream.getAudioTracks()[0]);
 
-      localStream.addTrack(stream.getVideoTracks()[0]);
-      localStream.addTrack(stream.getAudioTracks()[0]);
-
-      console.log(localStream.getTracks());
+      // localStream.addTrack(stream.getVideoTracks()[0]);
+      // localStream.addTrack(stream.getAudioTracks()[0]);
 
       window.stream = stream;
-      document.getElementById(
-        this.connection.attachStreams[0].streamid
-      ).srcObject = stream;
+      document.getElementById(localStream.streamid).srcObject = stream;
     },
     attachSinkId(element, sinkId) {
       if (typeof element.sinkId !== "undefined") {
@@ -346,6 +349,7 @@ export default {
       }
     },
     reverseCamera() {
+      console.log(this.connection.attachStreams[0]);
       const msg = {
         id: this.connection.attachStreams[0].streamid,
         state: this.reverseCam
@@ -362,7 +366,7 @@ export default {
         const { peer } = this.connection.peers[pid];
         peer.getSenders().forEach(sender => {
           console.log(sender);
-          if (sender.track.kind === type && track) sender.replaceTrack(track);
+          if (sender.track.kind === type) sender.replaceTrack(track);
         });
       });
     },
@@ -396,9 +400,11 @@ export default {
 
       connection.onmessage = function(event) {
         const data = event.data;
-        data.state
-          ? document.getElementById(data.id).classList.add("mirror-video")
-          : document.getElementById(data.id).classList.remove("mirror-video");
+
+        // document.getElementById(data.id).classList.toggle("mirror-video");
+        if (data.state)
+          document.getElementById(data.id).classList.add("mirror-video");
+        else document.getElementById(data.id).classList.remove("mirror-video");
       };
       this.connection.enableLogs = false;
     },
@@ -442,13 +448,13 @@ export default {
 
       this.connection.attachStreams.forEach(function(stream) {
         stream.stop();
-        stream.getTracks().forEach(function(track) {
-          stream.removeTrack(track);
+        // stream.getTracks().forEach(function(track) {
+        //   stream.removeTrack(track);
 
-          if (track.stop) {
-            track.stop();
-          }
-        });
+        //   if (track.stop) {
+        //     track.stop();
+        //   }
+        // });
       });
 
       this.connection.closeSocket();
@@ -491,7 +497,7 @@ export default {
     },
 
     dragElement() {
-      this.elem = document.getElementById("fab");
+      // this.elem = document.getElementById("fab");
       this.elem.onmousedown = this.dragMouseDown;
     },
     dragMouseDown(e) {

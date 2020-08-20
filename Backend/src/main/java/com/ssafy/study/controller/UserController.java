@@ -89,7 +89,7 @@ public class UserController {
 		result.object = user;
 
 		notiservice.sendNotification(
-				new Notification(NotiType.INFO, user.getUserId(), "'" + user.getUserNm() + "'님! STEW에 가입하신 것을 환영합니다 :)"));
+				new Notification(NotiType.INFO, user.getUserId(), "'" + user.getUserNm() + "'님! STEW에 가입하신 것을 환영합니다 :)","/guide"));
 
 		return new ResponseEntity<>(result, HttpStatus.OK);
 	}

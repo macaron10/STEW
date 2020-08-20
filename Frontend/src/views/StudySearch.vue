@@ -18,11 +18,15 @@
                 max-width="200"
                 max-height="140"
                 contain
-                
               />
             </div>
             <div align="left" class="text-truncate align-center ml-3">
-              <v-card-subtitle class="text-truncate text-h6 d-block pt-2 pb-1 font-weight-bold" color="#000000"><span>{{group.gpNm}}</span></v-card-subtitle>
+              <v-card-subtitle
+                class="text-truncate text-h6 d-block pt-2 pb-1 font-weight-bold"
+                color="#000000"
+              >
+                <span>{{group.gpNm}}</span>
+              </v-card-subtitle>
               <v-card-subtitle class="text-truncate py-0" v-text="group.gpIntro"></v-card-subtitle>
               <v-card-text class="my-0 pb-0 pt-1">
                 <p class="body-2" v-if="!group.gpPublic">
@@ -48,26 +52,21 @@
       </v-row>
       <v-dialog v-model="dialog" width="500">
         <v-card>
-          <v-card-title
-            class="headline blue accent-2 white--text"
-          >'{{ selectedGroup.gpNm }}' 에 가입하시겠습니까?</v-card-title>
-
-          <v-card-text class="py-1">{{selectedGroup.gpIntro}}</v-card-text>
-
-          <v-divider></v-divider>
-          <v-textarea v-model="message" color="teal" class="mx-5">
+          <v-card-title class="headline grey lighten-4">
+            <b>{{ selectedGroup.gpNm }}에 가입하시겠습니까?</b>
+          </v-card-title>
+          <v-textarea v-model="message" color="teal" class="mx-5" v-if="!selectedGroup.gpPublic">
             <template v-slot:label>
               <div class="px-5">
-                보낼 메세지
-                <small>(optional)</small>
+                가입신청 메세지를 작성해 보세요!
               </div>
             </template>
           </v-textarea>
 
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn color="primary" text @click="signUpGroup(selectedGroup.gpNo)">가입신청</v-btn>
-            <v-btn color="primary" text @click="dialog = false">닫기</v-btn>
+            <v-btn color="primary" text @click="signUpGroup(selectedGroup.gpNo)">신청하기</v-btn>
+            <v-btn text @click="dialog = false">닫기</v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>
@@ -102,7 +101,7 @@ export default {
     async enterStudy(group) {
       if (!this.$store.state.auth.isLogin) {
         alert("로그인이 필요합니다!");
-        this.$router.push({name:'Login'}) 
+        this.$router.push({ name: "Login" });
         return;
       }
 

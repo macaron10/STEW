@@ -1,7 +1,6 @@
 <template>
   <div class="meeting-room">
     <RoomNavbar />
-    <v-row><Timer /></v-row>
     <v-row>
       <v-col class="py-0">
         <div class="videos-container">
@@ -9,6 +8,22 @@
           <!-- footer -->
 
           <v-row class="footer d-none d-md-block" style="z-index:1">
+            <!-- <v-select
+              v-model="audioInput"
+              :items="audioInputSelect"
+              item-value="value"
+              item-text="text"
+              color="pink"
+              @change="change"
+            ></v-select>
+            <v-select
+              v-model="videoInput"
+              :items="videoInputSelect"
+              item-value="value"
+              item-text="text"
+              color="pink"
+              @change="change"
+            ></v-select> -->
             <div width="100%" class="text-center">
               <v-btn v-if="options.audio" class="mx-1" fab dark color="#FB8C00" @click="mute">
                 <v-icon dark>mdi-microphone</v-icon>
@@ -42,6 +57,9 @@
                 @click="showChatRoom = !showChatRoom"
               >
                 <v-icon dark>mdi-message-text-outline</v-icon>
+              </v-btn>
+              <v-btn class="mx-1" fab dark color="grey darken-1" @click="test">
+                <v-icon dark>mdi-camera-retake-outline</v-icon>
               </v-btn>
               <v-btn class="mx-1" fab dark color="red" @click="checkout">
                 <v-icon dark>mdi-account-arrow-right-outline</v-icon>
@@ -124,7 +142,6 @@
 <script>
 import StudyDetailVue from "./StudyDetail.vue";
 import RoomNavbar from "@/components/room/RoomNavbar.vue";
-import Timer from "@/components/temp/Timer.vue"
 
 import Chat from "@/components/chat/Chat.vue";
 import { log } from "util";
@@ -136,8 +153,8 @@ export default {
       roomid: "",
       connection: null,
       options: {
-        video: false,
-        audio: false
+        video: true,
+        audio: true
       },
       localStream: {},
       videos: {},
@@ -150,13 +167,17 @@ export default {
         pos4: 0
       },
       elem: {},
-      chatRoomWidth: 0
+      audioInputSelect: [],
+      audioOutputSelect: [],
+      videoInputSelect: [],
+      audioInput: {},
+      audioOutput: {},
+      videoInput: {}
     };
   },
   components: {
     RoomNavbar,
-    Chat,
-    Timer,
+    Chat
   },
   created() {
     this.joinRoom();
@@ -172,8 +193,20 @@ export default {
     this.$store.state.sg.onMeeting = false;
 
     this.options = this.$route.params.options;
-    this.check();
 
+    const filter = "win16|win32|win64|mac";
+    if (navigator.platform) {
+      if (0 > filter.indexOf(navigator.platform.toLowerCase())) {
+        this.check();
+        window.addEventListener("resize", function() {
+          if (window.matchMedia("(orientation: portrait)").matches) {
+            this.check();
+          }
+        });
+      }
+    }
+
+    // this.getDevices();
     this.initoptions();
     this.dragElement();
   },
@@ -190,20 +223,151 @@ export default {
         });
       }
     },
+    change() {
+      console.log(this.audioInput);
+      console.log(this.videoInput);
+
+      const constraints = {
+        audio: { deviceId: { exact: this.audioInput.deviceId } },
+        video: { deviceId: { exact: this.videoInput.deviceId } }
+      };
+      navigator.mediaDevices
+        .getUserMedia(constraints)
+        .then(this.getStream)
+        .then(this.getDevices);
+
+      navigator.mediaDevices
+        .getUserMedia({ audio: true, video: true })
+        .then(st => {
+          console.log(st.getTracks());
+          console.log(st.getAudioTracks());
+          console.log(st.getVideoTracks());
+        });
+
+      // navigator.mediaDevices
+      //   .getUserMedia({
+      //     audio: {
+      //       deviceId: {
+      //         exact: this.audioInput.deviceId
+      //       }
+      //     }
+      //   })
+      //   .then(stream => {
+      //     console.log(stream)
+      //     const foo = this.connection.getAllParticipants().forEach(pid => {
+      //       const { peer } = this.connection.peers[pid];
+      //       peer.getSenders().forEach(sender => {
+      //         console.log(sender);
+      //         consoel.log(stream )
+      //         if (sender.track.kind === 'audio' && stream)
+      //           sender.replaceTrack(stream);
+      //       });
+      //     });
+      //     Promise.all(foo)
+      //       .then(() => resolve())
+      //       .catch(() => reject());
+      //   });
+    },
+    getDevices() {
+      let audioInput = [];
+      let audioOutput = [];
+      let videoInput = [];
+      navigator.mediaDevices.enumerateDevices().then(function(devices) {
+        devices.forEach(function(device) {
+          let option = {};
+          option.value = device;
+          if (device.kind == "audioinput") {
+            option.text = device.label || `microphone ${audioInput.length + 1}`;
+            audioInput.push(option);
+          } else if (device.kind === "audiooutput") {
+            option.text = device.label || `speaker ${audioOutput.length + 1}`;
+            audioOutput.push(option);
+          } else if (device.kind === "videoinput") {
+            option.text = device.label || `camera ${videoInput.length + 1}`;
+            videoInput.push(option);
+          }
+        });
+      });
+      this.audioInputSelect = audioInput;
+      this.audioOutputSelect = audioOutput;
+      this.videoInputSelect = videoInput;
+    },
+    getStream(stream) {
+      window.stream = stream;
+      // console.log(this.connection.attachStreams[0])
+      document.querySelector('video').srcObject = stream;
+    },
+    attachSinkId(element, sinkId) {
+      if (typeof element.sinkId !== "undefined") {
+        element
+          .setSinkId(sinkId)
+          .then(() => {
+            console.log(`Success, audio output device attached: ${sinkId}`);
+          })
+          .catch(error => {
+            console.log(error);
+          });
+      } else {
+        console.warn("Browser does not support output device selection.");
+      }
+    },
+    test() {
+      const streamId = this.connection.attachStreams[0].streamid;
+      this.connection.send(streamId);
+      document.getElementById(streamId).classList.toggle("mirror-video");
+
+      navigator.mediaDevices
+        .getUserMedia({ audio: true, video: true })
+        .then(st => {
+          console.log(st);
+          console.log(st.getTracks());
+          console.log(st.getAudioTracks());
+          console.log(st.getVideoTracks());
+        });
+
+      // console.log(
+      //   this.connection.streamEvents.selectFirst("local").stream.getTracks()
+      // );
+
+      this.connection.streamEvents
+        .selectFirst("local")
+        .stream.getTracks()
+        .forEach(track => {
+          if (track.kind == "audio") track.stop();
+        });
+    },
+    ddd(track, type) {
+      return new Promise((resolve, reject) => {
+        // if (!track || !type)
+        //   reject(new Error("You don't set track or type track."));
+        // if (track.readyState === "ended")
+        //   reject(new Error("You don't can't replace with an \"ended\" track."));
+        console.log(this.connection.getAllParticipants());
+        const foo = this.connection.getAllParticipants().forEach(pid => {
+          const { peer } = this.connection.peers[pid];
+          peer.getSenders().forEach(sender => {
+            console.log(sender.track);
+            console.log(track);
+            if (sender.track.kind === type && track) sender.replaceTrack(track);
+          });
+        });
+        Promise.all(foo)
+          .then(() => resolve())
+          .catch(() => reject());
+      });
+    },
     chatBtn() {
       this.showChatRoom = !this.showChatRoom;
     },
     check() {
-      alert(
-        "현재 설정으로 미팅룸에 접속합니다. 접속 후 오디오와 비디오 기능을 재설정할 수 있습니다."
-      );
+      alert("모바일에서는 가로모드를 이용해 주세요!");
     },
     initoptions() {
       this.connection.videosContainer = document.querySelector(
         ".videos-container"
       );
-
-      const options = this.$route.params.options;
+      let options = { video: true, audio: true };
+      if (!!this.$route.params.options) options = this.$route.params.options;
       const connection = this.connection;
       connection.onstream = function(e) {
         e.mediaElement.id = e.streamid; // ---------- set ID
@@ -212,10 +376,16 @@ export default {
 
         if (e.type == "local") {
           if (!options.video) e.stream.mute("video");
-          if (!options.audio) e.stream.mute("audio");
+          if (!options.audio) {
+            e.stream.mute("audio");
+            e.stream.muted = true;
+          }
         }
       };
-      this.connection.enableLogs = true;
+      connection.onmessage = function(event) {
+        document.getElementById(event.data).classList.toggle("mirror-video");
+      };
+      this.connection.enableLogs = false;
     },
     joinRoom() {
       this.connection = new RTCMultiConnection();
@@ -225,7 +395,7 @@ export default {
         data: true
       };
 
-      //this.connection.socketURL = "https://i3b103.p.ssafy.io/socket/"; //배포옹
+      //this.connection.socketURL = "http://i3b103.p.ssafy.io/socket/"; //배포옹
       this.connection.socketURL =
         "https://rtcmulticonnection.herokuapp.com:443/"; // 개발용
 
@@ -237,6 +407,7 @@ export default {
         OfferToReceiveAudio: true,
         OfferToReceiveVideo: true
       };
+
       this.connection.openOrJoin(`stew${this.$route.params.id}ssafy3`);
     },
     checkout() {
@@ -292,6 +463,7 @@ export default {
 
       this.options.video = true;
     },
+
     dragElement() {
       this.elem = document.getElementById("fab");
       this.elem.onmousedown = this.dragMouseDown;
@@ -324,11 +496,17 @@ export default {
   destroyed() {
     this.$store.state.sg.onMeeting = true;
     this.outRoom();
+    document.querySelector("html").classList.remove("landscape");
   }
 };
 </script>
 
 <style>
+.mirror-video {
+  transform: rotateY(180deg);
+  -webkit-transform: rotateY(180deg); /* Safari and Chrome */
+  -moz-transform: rotateY(180deg); /* Firefox */
+}
 .meeting-room {
   background-color: #5f5f5f;
 }

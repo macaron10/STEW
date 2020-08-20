@@ -17,7 +17,6 @@
           label="이메일 *"
           :clearable=false
           required
-          @blur="idCheckHandler"
         />
         <!-- <v-btn icon depressed
           tabindex="-1"
@@ -71,8 +70,8 @@
           label="프로필 이미지"
           prepend-icon="mdi-camera" show-size
           :rules="[
-              () => user.img.length == 0 || user.img.size <= 3000000 || '3MB 이하의 파일만 등록 가능합니다.',
-              () => user.img.length == 0 || correctExt || '지원하지 않는 확장자입니다.'
+              () => !user.img || user.img.size <= 3000000 || '3MB 이하의 파일만 등록 가능합니다.',
+              () => !user.img || correctExt || '지원하지 않는 확장자입니다.'
           ]"
           @change="confirmExt"
         ></v-file-input>
@@ -168,12 +167,14 @@
       ]),
       confirmExt() {
         this.correctExt = false;
-        const ext = this.user.img.name.substring(this.user.img.name.lastIndexOf(".")+1, this.user.img.name.length).toLowerCase();
-        const imgExts = "xbm,tif,pjp,pjpeg,svgz,jpg,jpeg,ico,tiff,gif,svg,bmp,png,gfif,webp";
-        const eachExts = imgExts.split(",");
-
-        for (let i = 0; i < eachExts.length; i++) {
-          if (ext == eachExts[i]) this.correctExt = true;
+        if (this.user.img) {
+          const ext = this.user.img.name.substring(this.user.img.name.lastIndexOf(".")+1, this.user.img.name.length).toLowerCase();
+          const imgExts = "xbm,tif,pjp,pjpeg,svgz,jpg,jpeg,ico,tiff,gif,svg,bmp,png,gfif,webp";
+          const eachExts = imgExts.split(",");
+  
+          for (let i = 0; i < eachExts.length; i++) {
+            if (ext == eachExts[i]) this.correctExt = true;
+          }
         }
       },
 

@@ -23,7 +23,7 @@
               item-text="text"
               color="pink"
               @change="change"
-            ></v-select> -->
+            ></v-select>-->
             <div width="100%" class="text-center">
               <v-btn v-if="options.audio" class="mx-1" fab dark color="#FB8C00" @click="mute">
                 <v-icon dark>mdi-microphone</v-icon>
@@ -180,6 +180,13 @@ export default {
     Chat
   },
   created() {
+    if(!this.$route.params.options){
+      alert("페이지를 새로고침 할 수 없습니다ㅠㅡㅠ")
+      this.$router.push({ name: "ReadyMeeting" });
+
+      return;
+    }
+
     this.joinRoom();
     window.addEventListener("resize", this.onResize);
   },
@@ -295,7 +302,7 @@ export default {
     getStream(stream) {
       window.stream = stream;
       // console.log(this.connection.attachStreams[0])
-      document.querySelector('video').srcObject = stream;
+      document.querySelector("video").srcObject = stream;
     },
     attachSinkId(element, sinkId) {
       if (typeof element.sinkId !== "undefined") {

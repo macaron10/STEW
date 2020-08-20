@@ -1,12 +1,11 @@
 <template>
   <div id="Mainpage">
-    <MyPage v-intersect="onIntersect" ref="MyPage"/>
     <v-container >
       <div class="p-3 ma-5">
-        <div>
-          <h2 class="mb-3 text-center text-sm-left">{{new Date().getMonth()+1}}월의 스터디 랭킹</h2>
+          <h2 class="mb-3 pl-7 text-center text-sm-left">{{new Date().getMonth()+1}}월의 스터디 랭킹</h2>
           <div v-if="rankGpList.length == 0">아직 이달의 랭킹이 존재하지 않습니다!</div>
-          <v-card flat tile color="#fcfcfc" class="d-flex justify-center justify-sm-start">
+        <v-row>
+          <v-col cols="12" md="4" color="#fcfcfc" class="d-flex justify-center align-center">
             <v-card
               flat
               tile
@@ -46,8 +45,11 @@
                 </v-row>
               </v-container>
             </v-card>
-          </v-card>
-        </div>
+          </v-col>
+          <v-col cols="12" md="8">
+              <Banner v-intersect="onIntersect" ref="Banner"/>
+          </v-col>
+        </v-row>
       </div>
       <div class="p-3 ma-5" v-if="$store.state.auth.isLogin">
         <v-row>
@@ -119,14 +121,14 @@
 import axios from "axios";
 import { mapActions } from "vuex";
 
-import MyPage from "@/components/main/MyPage.vue";
+import Banner from "@/components/main/Banner.vue";
 import StudyList from "@/components/main/StudyList.vue";
 import UserTodayTime from "@/components/timer/UserTodayTime.vue";
 
 export default {
   name: "Main",
   components: {
-    MyPage,
+    Banner,
     StudyList,
     UserTodayTime,
   },

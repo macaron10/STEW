@@ -97,7 +97,7 @@
         ></v-text-field>
         <v-btn block dark 
           :color="baseColor"
-          @click="formCheckHandler"
+          @click.once="formCheckHandler"
         >
           <v-icon class="mr-4"
           >mdi-account-plus</v-icon>
@@ -132,7 +132,7 @@
           pwd: '',
           pwdCheck: '',
           name: '',
-          img: [],
+          img: undefined,
           intro: '',
           goalHr: ''
         },
@@ -210,6 +210,8 @@
       },
 
       makeFormData() {
+        this.formData = new FormData();
+
         this.formData.append('userEmail', this.user.email);
         this.formData.append('userPw', this.user.pwd);
         this.formData.append('userNm', this.user.name);
@@ -237,8 +239,6 @@
             msg = '회원가입 성공';
             this.signInHandler();
             this.moveMain();
-          } else {
-            this.formData = new FormData();
           }
           alert(msg);
         })

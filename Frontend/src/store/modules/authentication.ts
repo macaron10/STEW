@@ -101,17 +101,20 @@ export default {
   
           axios.get('/user/refresh', config)
             .then(res => {
+              console.log(res.data.msg)
               // console.log("토큰 재발급 응답");
-              commit("refreshSuccess", res.headers.accesstoken);
-              //console.log(origin);
-              //console.log(state.userInfo.accessToken);
-              if (origin !== state.userInfo.accessToken) {
-                resolve();
+              if(res.data.msg == 'success'){
+                commit("refreshSuccess", res.headers.accesstoken);
+                if (origin !== state.userInfo.accessToken) {
+                  resolve();
+                  //console.log(origin);
+                  //console.log(state.userInfo.accessToken);
+                }
+              }else if(res.data.msg == 'invalid refreshToken'){
+                commit("logoutSuccess");
+                alert("다시 로그인해주세요");
+                router.push('/');
               }
-            }).catch(()=>{
-              commit("logoutSuccess");
-              alert("다시 로그인해주세요");
-              router.push('/');
             })
         })
       },
